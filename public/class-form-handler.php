@@ -1,0 +1,166 @@
+<?php
+/**
+ * Multi-step member registration form (shortcode [biodevas_alta]).
+ *
+ * @package Convoca\Members
+ */
+
+namespace Convoca\Members;
+
+if (!defined('ABSPATH')) {
+    exit;
+}
+
+class Form_Handler
+{
+
+    public function __construct()
+    {
+        add_shortcode('biodevas_alta', [$this, 'render']);
+        add_action('wp_ajax_bdv_alta_submit', [$this, 'handle_submit']);
+        add_action('wp_ajax_nopriv_bdv_alta_submit', [$this, 'handle_submit']);
+
+        // Dynamic nonce endpoint (bypass cache) + plans data.
+        add_action('wp_ajax_bdv_get_nonce', [$this, 'ajax_get_nonce']);
+        add_action('wp_ajax_nopriv_bdv_get_nonce', [$this, 'ajax_get_nonce']);
+
+        // Register REST route for form submission
+        add_action('rest_api_init', function () {
+            register_rest_route('biodevas/v1', '/alta', [
+                'methods'             => 'POST',
+                'callback'            => [self::class, 'handle_submit_rest'],
+                'permission_callback' => '__return_true',
+            ]);
+        });
+    }
+
+    /**
+     * Render the multi-step form via template.
+     */
+    public function render(): string
+    {
+        wp_enqueue_style(
+            'bdv-members-public',
+            BDV_MEMBERS_URL . 'assets/css/biodevas-members-public.css',
+            [],
+            BDV_MEMBERS_VERSION
+        );
+        wp_enqueue_script(
+            'bdv-members-public',
+            BDV_MEMBERS_URL . 'assets/js/biodevas-members-public.js',
+            ['biodevas-common-js'],
+            BDV_MEMBERS_VERSION,
+            true
+        );
+        $raw_gateway = function_exists('Biodevas\\Gateway\\bdv_get_gateway_settings') ? \Convoca\Gateway\bdv_get_gateway_settings() : [];
+        $public_gateway = array_intersect_key($raw_gateway, array_flip(['iban', 'beneficiary', 'instructions']));
+        
+        $config = [
+            'restUrl' => rest_url('biodevas/v1/alta'),
+            'restNonce' => wp_create_nonce('wp_rest'),
+            'ajaxUrl' => admin_url('admin-ajax.php'),
+            'nonce' => wp_create_nonce('bdv_alta_nonce'),
+            'plans' => CPT_Miembro::get_plans(),
+            'gateway' => $public_gateway,
+        ];
+
+        ob_start();
+        include BDV_MEMBERS_DIR . 'templates/form-alta.php';
+        $html = ob_get_clean();
+
+        // Inject data-config into the wrapper
+        $html = str_replace(
+            'id="biodevas-form-alta"',
+            'id="biodevas-form-alta" data-config=\'' . esc_attr(wp_json_encode($config)) . '\'',
+            $html
+        );
+
+        return $html;
+    }
+
+    /**
+     * REST API callback for member registration.
+     * Validates custom nonce for public (non-authenticated) access.
+     */
+    public static function handle_submit_rest(\WP_REST_Request $request): \WP_REST_Response
+    {
+        // 1. Validate custom nonce (works for public users)
+        $nonce = $request->get_header('X-BDV-Nonce') ?: $request->get_param('nonce');
+        if (!$nonce || !wp_verify_nonce($nonce, 'bdv_alta_nonce')) {
+            return new \WP_REST_Response([
+                'success' => false,
+                'data' => ['errors' => ['Petición no autorizada (Nonce inválido)']],
+            ], 403);
+        }
+
+        // 1b. Rate limit
+        if (!\Convoca\Core\Utils::check_rate_limit('alta_socio', 3, 3600)) {
+            return new \WP_REST_Response([
+                'success' => false,
+                'data' => ['errors' => ['Demasiados intentos de registro. Inténtalo de nuevo en una hora.']],
+            ], 429);
+        }
+
+        // 2. Process via Central Logic
+        $params = $request->get_params();
+        $files = $_FILES; // WP REST doesn't handle $_FILES naturally in all cases, but for this multipart it should be populated
+
+        $result = Process_Member::register($params, $files);
+
+        if (is_wp_error($result)) {
+            return new \WP_REST_Response([
+                'success' => false,
+                'data' => ['errors' => [$result->get_error_message()]],
+            ], 400);
+        }
+
+        return new \WP_REST_Response([
+            'success' => true,
+            'data' => $result,
+        ], 200);
+    }
+
+    /**
+     * AJAX form submission handler (legacy — kept for backward compat).
+     */
+    public function handle_submit(): void
+    {
+        check_ajax_referer('bdv_alta_nonce', 'nonce');
+
+        if (!\Convoca\Core\Utils::check_rate_limit('alta_socio', 3, 3600)) {
+            wp_send_json_error(['errors' => ['Demasiados intentos de registro. Inténtalo de nuevo en una hora.']], 429);
+        }
+
+        $result = Process_Member::register(wp_unslash($_POST), $_FILES);
+
+        if (is_wp_error($result)) {
+            wp_send_json_error(['errors' => [$result->get_error_message()]]);
+        }
+
+        do_action('bdv_member_created', $result['member_id'], $result);
+
+        wp_send_json_success($result);
+    }
+
+    /**
+     * Get fresh nonce and plans via AJAX.
+     * Bypasses page cache and ensures frontend has latest config.
+     */
+    public function ajax_get_nonce(): void
+    {
+        // Rate limit: max 30 requests per hour per IP
+        if (!\Convoca\Core\Utils::check_rate_limit('bdv_get_nonce', 30, 3600)) {
+            wp_send_json_error(['message' => __('Demasiadas peticiones. Inténtalo de nuevo más tarde.', 'convoca-members')], 429);
+        }
+
+        // Add headers to prevent caching of this response
+        header('Cache-Control: no-store, no-cache, must-revalidate, max-age=0');
+        header('Pragma: no-cache');
+
+        wp_send_json_success([
+            'nonce' => wp_create_nonce('bdv_alta_nonce'),
+            'rest_nonce' => wp_create_nonce('wp_rest'),
+            'plans' => CPT_Miembro::get_plans()
+        ]);
+    }
+}

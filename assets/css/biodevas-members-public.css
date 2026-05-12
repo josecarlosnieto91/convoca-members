@@ -1,0 +1,359 @@
+/**
+ * Biodevas Members — Public CSS v2
+ * Aligned with Biodevas Theme v2.
+ * Uses theme CSS variables exclusively (with fallbacks).
+ */
+
+/* ── Step Indicator ───────────────────────────── */
+.bdv-step-indicator {
+    display: flex;
+    gap: 0.75rem;
+    justify-content: center;
+    margin-bottom: 2rem;
+}
+
+.bdv-step-dot {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--wp--preset--font-family--display, 'Outfit', sans-serif);
+    font-weight: 700;
+    font-size: 0.9rem;
+    background: var(--wp--preset--color--gris-medio, #e0e0e0);
+    color: #999;
+    transition: all var(--wp--custom--transition, 0.3s ease);
+    position: relative;
+}
+
+.bdv-step-dot:not(:last-child)::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 100%;
+    width: 0.75rem;
+    height: 2px;
+    background: var(--wp--preset--color--gris-medio, #e0e0e0);
+    transition: background var(--wp--custom--transition, 0.3s ease);
+}
+
+.bdv-step-dot.done::after {
+    background: var(--wp--preset--color--verde, #2d5a27);
+}
+
+.bdv-step-dot.active {
+    background: var(--wp--preset--color--naranja, #ff8700);
+    color: var(--wp--preset--color--blanco, #fff);
+    box-shadow: 0 0 0 4px rgba(255, 135, 0, 0.2);
+}
+
+.bdv-step-dot.done {
+    background: var(--wp--preset--color--verde, #2d5a27);
+    color: var(--wp--preset--color--blanco, #fff);
+}
+
+/* ── Steps (multi-step navigation) ───────────── */
+.bdv-form-step {
+    display: none;
+    animation: bdv-fade-in 0.3s ease;
+}
+
+.bdv-form-step.active {
+    display: block;
+}
+
+@keyframes bdv-fade-in {
+    from {
+        opacity: 0;
+        transform: translateY(8px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.bdv-form-nav {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 1.5rem;
+    gap: 1rem;
+}
+
+/* ── Plan Grid ────────────────────────────────── */
+.bdv-plan-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+.bdv-plan-option {
+    position: relative;
+    cursor: pointer;
+}
+
+.bdv-plan-option input {
+    position: absolute;
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.bdv-plan-label {
+    display: block;
+    padding: 1rem 1.25rem;
+    border: 2px solid var(--wp--preset--color--gris-medio, #e0e0e0);
+    border-radius: var(--wp--custom--radius--default, 12px);
+    text-align: center;
+    transition: all var(--wp--custom--transition, 0.3s ease);
+    background: var(--wp--preset--color--blanco, #fff);
+    display: block;
+    height: 100%;
+}
+
+.bdv-plan-label h4 {
+    font-family: var(--wp--preset--font-family--display, 'Outfit', sans-serif);
+    font-size: 1.05rem;
+    margin: 0 0 0.25rem;
+    color: var(--wp--preset--color--violeta, #320028);
+}
+
+.bdv-price {
+    font-family: var(--wp--preset--font-family--display, 'Outfit', sans-serif);
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: var(--wp--preset--color--naranja, #ff8700);
+}
+
+.bdv-alt {
+    font-size: 0.8rem;
+    color: #888;
+    display: block;
+    margin-top: 0.15rem;
+}
+
+.bdv-plan-option input:checked+.bdv-plan-label {
+    border-color: var(--wp--preset--color--naranja, #ff8700);
+    background: rgba(255, 135, 0, 0.06);
+    box-shadow: 0 0 0 2px var(--wp--preset--color--naranja, #ff8700);
+}
+
+.bdv-plan-option:hover .bdv-plan-label {
+    border-color: var(--wp--preset--color--naranja, #ff8700);
+}
+
+.bdv-plan-option input:focus-visible+.bdv-plan-label {
+    outline: 3px solid var(--wp--preset--color--amarillo, #ffab00);
+    outline-offset: 2px;
+}
+
+/* ── Advantages Box (from static web) ─────────── */
+.bdv-advantages {
+    background: var(--wp--preset--color--gris-piedra, #f4f4f4);
+    border-radius: var(--wp--custom--radius--small, 8px);
+    padding: 0.75rem 1.25rem;
+    margin: 1rem 0;
+    font-size: 0.9rem;
+    animation: bdv-fade-in 0.3s ease;
+}
+
+.bdv-advantages p {
+    font-weight: 700;
+    margin: 0 0 0.3rem;
+    color: var(--wp--preset--color--violeta, #320028);
+}
+
+.bdv-advantages ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.bdv-advantages li {
+    padding: 0.3rem 0;
+}
+
+.bdv-advantages li::before {
+    content: '✓ ';
+    color: var(--wp--preset--color--naranja, #ff8700);
+    font-weight: 700;
+}
+
+/* ── Sub-Plans ────────────────────────────────── */
+.bdv-sub-plan {
+    margin-top: 1rem;
+    padding: 1rem;
+    background: var(--wp--preset--color--gris-piedra, #f4f4f4);
+    border-radius: var(--wp--custom--radius--small, 8px);
+    animation: bdv-fade-in 0.3s ease;
+}
+
+.bdv-sub-plan label {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.4rem 0;
+    cursor: pointer;
+    font-size: 0.92rem;
+}
+
+.bdv-sub-plan input[type="radio"] {
+    accent-color: var(--wp--preset--color--naranja, #ff8700);
+}
+
+/* Common utility classes and grid systems removed in favor of biodevas-common.css */
+
+/* ── Summary Table ────────────────────────────── */
+.bdv-summary-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 1rem 0;
+}
+
+.bdv-summary-table td {
+    padding: 0.6rem 0.75rem;
+    border-bottom: 1px solid var(--wp--preset--color--gris-medio, #e0e0e0);
+    font-size: 0.92rem;
+}
+
+.bdv-summary-table td:first-child {
+    font-weight: 700;
+    width: 40%;
+    color: var(--wp--preset--color--violeta, #320028);
+}
+
+/* ── Card Preview ─────────────────────────────── */
+.bdv-card-preview {
+    background: linear-gradient(135deg,
+            var(--wp--preset--color--violeta, #320028),
+            var(--wp--preset--color--granate, #7d0032));
+    color: var(--wp--preset--color--blanco, #fff);
+    border-radius: var(--wp--custom--radius--default, 12px);
+    padding: 1.5rem;
+    max-width: 420px;
+    margin: 1.5rem auto;
+    position: relative;
+    overflow: hidden;
+}
+
+.bdv-card-preview::after {
+    content: '';
+    position: absolute;
+    top: -30px;
+    right: -30px;
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    background: rgba(255, 135, 0, 0.2);
+    pointer-events: none;
+}
+
+.bdv-card-preview h3 {
+    font-family: var(--wp--preset--font-family--display, 'Outfit', sans-serif);
+    color: var(--wp--preset--color--amarillo, #ffab00);
+    margin: 0 0 0.2rem;
+    font-size: 1.1rem;
+    position: relative;
+    z-index: 1;
+}
+
+.bdv-card-name {
+    font-size: 1.4rem;
+    font-family: var(--wp--preset--font-family--display, 'Outfit', sans-serif);
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+    position: relative;
+    z-index: 1;
+}
+
+.bdv-card-id {
+    font-size: 0.85rem;
+    opacity: 0.7;
+    position: relative;
+    z-index: 1;
+}
+
+.bdv-card-type {
+    display: inline-block;
+    background: var(--wp--preset--color--naranja, #ff8700);
+    padding: 0.15rem 0.7rem;
+    border-radius: var(--wp--custom--radius--pill, 50px);
+    font-size: 0.8rem;
+    font-weight: 600;
+    margin-top: 0.5rem;
+    position: relative;
+    z-index: 1;
+}
+
+.bdv-card-date {
+    font-size: 0.8rem;
+    opacity: 0.6;
+    margin-top: 0.3rem;
+    position: relative;
+    z-index: 1;
+}
+
+/* ── Interest Grid ────────────────────────────── */
+.bdv-interest-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+}
+
+.bdv-interest-grid label {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 0.7rem;
+    background: var(--wp--preset--color--gris-piedra, #f4f4f4);
+    border-radius: var(--wp--custom--radius--small, 8px);
+    cursor: pointer;
+    font-size: 0.9rem;
+    transition: background var(--wp--custom--transition, 0.3s ease);
+    border: 2px solid transparent;
+}
+
+.bdv-interest-grid label:hover {
+    background: rgba(255, 135, 0, 0.08);
+}
+
+.bdv-interest-grid input:checked+span,
+.bdv-interest-grid label:has(input:checked) {
+    border-color: var(--wp--preset--color--naranja, #ff8700);
+    background: rgba(255, 135, 0, 0.06);
+}
+
+.bdv-interest-grid input {
+    accent-color: var(--wp--preset--color--naranja, #ff8700);
+}
+
+/* Success screen and buttons managed by biodevas-common.css */
+
+/* ── Print ────────────────────────────────────── */
+@media print {
+
+    .bdv-step-indicator,
+    .bdv-form-nav {
+        display: none !important;
+    }
+
+    .bdv-card-preview {
+        break-inside: avoid;
+    }
+}
+
+/* ── Reduced Motion ───────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        transition-duration: 0.01ms !important;
+    }
+}

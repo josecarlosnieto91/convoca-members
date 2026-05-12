@@ -1,0 +1,250 @@
+/**
+ * Biodevas Members — Admin CSS
+ */
+
+/* ── Stats Bar ────────────────────────────────── */
+.bdv-stats-bar {
+    display: flex;
+    gap: 1rem;
+    margin: 1rem 0 1.5rem;
+    flex-wrap: wrap;
+}
+
+.bdv-stat {
+    background: #fff;
+    border: 1px solid #c3c4c7;
+    border-radius: 4px;
+    padding: 0.75rem 1.25rem;
+    text-align: center;
+    min-width: 100px;
+}
+
+.bdv-stat-num {
+    display: block;
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: #320028;
+    line-height: 1;
+    margin-bottom: 0.2rem;
+}
+
+/* ── Detail Grid ──────────────────────────────── */
+.bdv-detail-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
+    margin-top: 1rem;
+}
+
+@media (max-width: 900px) {
+    .bdv-detail-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+.bdv-detail-card {
+    background: #fff;
+    border: 1px solid #c3c4c7;
+    border-radius: 4px;
+    padding: 1rem 1.25rem;
+}
+
+.bdv-detail-card h3 {
+    margin-top: 0;
+    color: #320028;
+}
+
+/* ── Template Cards (Settings) ────────────────── */
+.bdv-template-card {
+    background: #fff;
+    border: 1px solid #c3c4c7;
+    border-radius: 4px;
+    padding: 1rem 1.25rem;
+    margin-bottom: 1rem;
+}
+
+.bdv-template-card h3 {
+    margin-top: 0;
+    color: #320028;
+}
+}
+
+/* ── WP List Table Row Actions Fix ───────────── */
+/* Always visible, flex layout to avoid overlap */
+.column-nombre .row-actions {
+    margin-top: 4px !important;
+    visibility: visible !important;
+    position: static !important;
+    display: flex !important;
+    flex-wrap: wrap;
+    gap: 4px 12px;
+}
+
+.row-actions span {
+    display: inline-flex !important;
+    align-items: center;
+    margin: 0 !important;
+    padding: 0 !important;
+    border: none !important;
+    background: none !important;
+}
+
+.row-actions span a {
+    text-decoration: none;
+    font-size: 11px;
+    white-space: nowrap;
+}
+
+/* Preserve standard scroll on small screens */
+@media (max-width: 782px) {
+    .wp-list-table {
+        overflow-x: auto;
+        display: block;
+    }
+}
+
+/* Badge font override for WP admin tables (smaller) */
+.biodevas-badge {
+    font-size: 11px;
+    line-height: 1;
+}
+
+/* ── CSV Export Modal ──────────────────────────── */
+.bdv-modal-overlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 100000;
+    align-items: center;
+    justify-content: center;
+    overflow-y: auto;
+    padding: 20px;
+    box-sizing: border-box;
+}
+
+body.bdv-modal-open {
+    overflow: hidden;
+}
+
+.bdv-modal-content {
+    background: #fff;
+    border-radius: 6px;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+    max-width: 720px;
+    width: 100%;
+    max-height: 85vh;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    animation: bdv-fade-in 0.15s ease-out;
+}
+
+@keyframes bdv-fade-in {
+    from { opacity: 0; transform: translateY(-10px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+.bdv-modal-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px 24px;
+    border-bottom: 1px solid #e0e0e0;
+    flex-shrink: 0;
+}
+
+.bdv-modal-header h2 {
+    margin: 0;
+    font-size: 1.3em;
+    color: #320028;
+}
+
+.bdv-modal-close {
+    background: none;
+    border: none;
+    font-size: 28px;
+    line-height: 1;
+    cursor: pointer;
+    color: #666;
+    padding: 0 4px;
+}
+
+.bdv-modal-close:hover {
+    color: #000;
+}
+
+.bdv-modal-body {
+    padding: 16px 24px;
+    overflow-y: auto;
+    flex: 1;
+}
+
+.bdv-modal-body .description {
+    margin-top: 0;
+    margin-bottom: 12px;
+    color: #666;
+}
+
+.bdv-columns-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    gap: 6px 16px;
+}
+
+.bdv-column-checkbox {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 6px;
+    border-radius: 3px;
+    cursor: pointer;
+    font-size: 13px;
+    line-height: 1.4;
+    transition: background 0.1s;
+}
+
+.bdv-column-checkbox:hover {
+    background: #f0f7ff;
+}
+
+.bdv-column-checkbox input[type="checkbox"] {
+    margin: 0;
+    flex-shrink: 0;
+}
+
+.bdv-modal-footer {
+    display: flex;
+    gap: 8px;
+    padding: 12px 24px;
+    border-top: 1px solid #e0e0e0;
+    flex-wrap: wrap;
+    flex-shrink: 0;
+}
+
+.bdv-modal-footer .button {
+    flex-shrink: 0;
+}
+
+/* Responsive */
+@media (max-width: 600px) {
+    .bdv-modal-content {
+        max-height: 90vh;
+        border-radius: 0;
+    }
+    .bdv-modal-overlay {
+        padding: 0;
+    }
+    .bdv-columns-grid {
+        grid-template-columns: 1fr;
+    }
+    .bdv-modal-footer {
+        flex-direction: column;
+    }
+    .bdv-modal-footer .button {
+        width: 100%;
+        text-align: center;
+    }
