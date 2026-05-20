@@ -71,22 +71,22 @@ class Email_Manager
     public function __construct()
     {
         // New standard hooks
-        add_action('biodevas_members_email_solicitud', [$this, 'send_solicitud']);
-        add_action('biodevas_members_email_bienvenida', [$this, 'send_bienvenida']);
-        add_action('biodevas_members_email_recordatorio_pago', [$this, 'send_recordatorio_pago'], 10, 2);
-        add_action('biodevas_members_email_renovacion', [$this, 'send_renovacion']);
-        add_action('biodevas_members_email_renovacion_automatica', [$this, 'send_renovacion_automatica'], 10, 2);
-        add_action('biodevas_members_email_renovacion_completada', [$this, 'send_renovacion_completada']);
-        add_action('biodevas_members_email_objetivo_voluntariado', [$this, 'send_objetivo_voluntariado']);
+        add_action('convoca_members_email_solicitud', [$this, 'send_solicitud']);
+        add_action('convoca_members_email_bienvenida', [$this, 'send_bienvenida']);
+        add_action('convoca_members_email_recordatorio_pago', [$this, 'send_recordatorio_pago'], 10, 2);
+        add_action('convoca_members_email_renovacion', [$this, 'send_renovacion']);
+        add_action('convoca_members_email_renovacion_automatica', [$this, 'send_renovacion_automatica'], 10, 2);
+        add_action('convoca_members_email_renovacion_completada', [$this, 'send_renovacion_completada']);
+        add_action('convoca_members_email_objetivo_voluntariado', [$this, 'send_objetivo_voluntariado']);
 
         // Legacy hooks removed. The do_action() call in Process_Member and
         // other dispatchers fires both old and new hooks via Utils::do_action().
         // Keeping both add_action() and do_action() would trigger deprecation notices.
         // Use the new hook names (biodevas_members_*) going forward.
-        add_action('biodevas_email_objetivo_voluntariado', [$this, 'send_objetivo_voluntariado']);
+        add_action('convoca_email_objetivo_voluntariado', [$this, 'send_objetivo_voluntariado']);
 
         // Credentials hook (called by Process_Member::handle_approved)
-        add_action('biodevas_members_email_credenciales', [$this, 'send_credenciales'], 10, 2);
+        add_action('convoca_members_email_credenciales', [$this, 'send_credenciales'], 10, 2);
     }
 
     /* ── Default templates (installed on activation) ───── */

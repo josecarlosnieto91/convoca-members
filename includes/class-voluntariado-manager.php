@@ -18,7 +18,7 @@ class Voluntariado_Manager
      */
     public static function init(): void
     {
-        add_action('biodevas_members_hora_aprobada', [__CLASS__, 'on_hora_aprobada'], 10, 2);
+        add_action('convoca_members_hora_aprobada', [__CLASS__, 'on_hora_aprobada'], 10, 2);
     }
 
     /**

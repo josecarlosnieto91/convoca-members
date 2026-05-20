@@ -77,7 +77,7 @@ class Audit_Logger
         }
 
         // 2. Filter sensitive fields
-        $sensitive_fields = apply_filters('biodevas_members_sensitive_meta', [
+        $sensitive_fields = apply_filters('convoca_members_sensitive_meta', [
             '_bdv_dni',
             '_bdv_email',
             '_bdv_telefono',

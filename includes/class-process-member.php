@@ -278,8 +278,8 @@ class Process_Member
         }
 
         // 9. Notifications
-        \Convoca\Core\Utils::do_action('biodevas_members_email_solicitud', 'biodevas_email_solicitud', $post_id);
-        \Convoca\Core\Utils::do_action('biodevas_members_created', 'biodevas_miembro_creado', $post_id);
+        \Convoca\Core\Utils::do_action('convoca_members_email_solicitud', 'biodevas_email_solicitud', $post_id);
+        \Convoca\Core\Utils::do_action('convoca_members_created', 'biodevas_miembro_creado', $post_id);
 
         // 10. Handle Gateway Redirection
         $importe = (float) ($plan_data['price'] ?? 0);

@@ -647,9 +647,9 @@ class Admin_Horas extends \WP_List_Table
             update_post_meta($record_id, '_bdv_aprobada_por', get_current_user_id());
             
             if ($new_status === 'aprobada') {
-                do_action('biodevas_members_hora_aprobada', $record_id, $miembro_id);
+                do_action('convoca_members_hora_aprobada', $record_id, $miembro_id);
             } elseif ($new_status === 'rechazada') {
-                do_action('biodevas_members_hora_rechazada', $record_id, $miembro_id);
+                do_action('convoca_members_hora_rechazada', $record_id, $miembro_id);
             }
             
             // Log activity

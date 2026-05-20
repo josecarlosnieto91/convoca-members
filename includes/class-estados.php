@@ -57,7 +57,7 @@ class Estados
     public function __construct()
     {
         // Listen for state changes to trigger emails.
-        add_action('biodevas_members_estado_changed', [$this, 'on_state_change'], 10, 3);
+        add_action('convoca_members_estado_changed', [$this, 'on_state_change'], 10, 3);
     }
 
     /**
@@ -141,7 +141,7 @@ class Estados
          * @param string $new      New state.
          * @param string $old      Previous state.
          */
-        \Convoca\Core\Utils::do_action('biodevas_members_estado_changed', 'biodevas_estado_changed', $post_id, $new, $old);
+        \Convoca\Core\Utils::do_action('convoca_members_estado_changed', 'biodevas_estado_changed', $post_id, $new, $old);
 
         return true;
     }
@@ -179,10 +179,10 @@ class Estados
     {
         switch ($new) {
             case 'activo':
-                \Convoca\Core\Utils::do_action('biodevas_members_email_bienvenida', 'biodevas_email_bienvenida', $post_id);
+                \Convoca\Core\Utils::do_action('convoca_members_email_bienvenida', 'biodevas_email_bienvenida', $post_id);
                 break;
             case 'pendiente_pago':
-                \Convoca\Core\Utils::do_action('biodevas_members_email_recordatorio_pago', 'biodevas_email_recordatorio_pago', $post_id);
+                \Convoca\Core\Utils::do_action('convoca_members_email_recordatorio_pago', 'biodevas_email_recordatorio_pago', $post_id);
                 break;
         }
     }

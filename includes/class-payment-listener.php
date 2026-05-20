@@ -19,8 +19,8 @@ class Payment_Listener
     public function __construct()
     {
         // Only listen to the unified hook to avoid duplication
-        add_action('biodevas_gateway_payment_completed', [$this, 'on_payment_completed'], 10, 5);
-        add_action('biodevas_gateway_payment_failed', [$this, 'on_payment_failed'], 10, 2);
+        add_action('convoca_gateway_payment_completed', [$this, 'on_payment_completed'], 10, 5);
+        add_action('convoca_gateway_payment_failed', [$this, 'on_payment_failed'], 10, 2);
     }
 
     /**
@@ -112,7 +112,7 @@ class Payment_Listener
         }
 
         // Fire custom action for other integrations.
-        \Convoca\Core\Utils::do_action('biodevas_members_cuota_pagada', 'biodevas_miembro_cuota_pagada', $origin_id, $pago_id);
+        \Convoca\Core\Utils::do_action('convoca_members_cuota_pagada', 'biodevas_miembro_cuota_pagada', $origin_id, $pago_id);
     }
 
     /**

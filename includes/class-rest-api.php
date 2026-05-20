@@ -441,7 +441,7 @@ class Rest_API
         }
 
         // Notification to admin via action
-        \Convoca\Core\Utils::do_action('biodevas_members_hours_submitted', 'biodevas_hours_submitted', $post_id, $member_id);
+        \Convoca\Core\Utils::do_action('convoca_members_hours_submitted', 'biodevas_hours_submitted', $post_id, $member_id);
 
         return new \WP_REST_Response(['success' => true, 'id' => $post_id]);
     }
@@ -663,7 +663,7 @@ class Rest_API
         Estados::change($member_id, 'baja_solicitada', 'Solicitud de baja desde el panel de socio.');
         
         // Action for Email Manager to hook into.
-        \Convoca\Core\Utils::do_action('biodevas_members_unsubscribe_request', 'biodevas_member_unsubscribe_request', $member_id);
+        \Convoca\Core\Utils::do_action('convoca_members_unsubscribe_request', 'biodevas_member_unsubscribe_request', $member_id);
 
         return new \WP_REST_Response(['success' => true]);
     }

@@ -185,7 +185,7 @@ class Cron_Manager
                         $post_id
                     );
 
-                    do_action('biodevas_members_payment_reminder_sent', $post_id, $reminder_key, $days_diff);
+                    do_action('convoca_members_payment_reminder_sent', $post_id, $reminder_key, $days_diff);
                 }
             } finally {
                 \Convoca\Core\Utils::release_lock($lock_key);
@@ -260,7 +260,7 @@ class Cron_Manager
                 );
 
                 // Fire webhook
-                do_action('biodevas_members_renewal_reminder_sent', $post_id, $days);
+                do_action('convoca_members_renewal_reminder_sent', $post_id, $days);
             }
         }
     }
@@ -443,7 +443,7 @@ class Cron_Manager
             $email_manager->send_renovacion_automatica($member_id);
 
             // Fire webhook
-            do_action('biodevas_members_auto_renewal_created', $member_id, $pago_id);
+            do_action('convoca_members_auto_renewal_created', $member_id, $pago_id);
         }
     }
 
@@ -480,7 +480,7 @@ class Cron_Manager
             );
 
             // Fire webhook
-            do_action('biodevas_members_membership_expired', $member_id);
+            do_action('convoca_members_membership_expired', $member_id);
         }
     }
 
