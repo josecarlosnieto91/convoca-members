@@ -48,7 +48,7 @@ class Form_Voluntariado
         wp_enqueue_script(
             'bdv-members-public',
             BDV_MEMBERS_URL . 'assets/js/biodevas-members-public.js',
-            ['biodevas-common-js'],
+            ['convoca-common-js'],
             BDV_MEMBERS_VERSION,
             true
         );

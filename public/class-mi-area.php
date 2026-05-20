@@ -25,7 +25,7 @@ class Mi_Area
     public function enqueue_assets(): void
     {
         wp_enqueue_style('biodevas-mi-area', BDV_MEMBERS_URL . 'public/assets/mi-area.css', [], BDV_MEMBERS_VERSION);
-        wp_enqueue_script('biodevas-mi-area', BDV_MEMBERS_URL . 'public/assets/mi-area.js', ['biodevas-common-js'], BDV_MEMBERS_VERSION, true);
+        wp_enqueue_script('biodevas-mi-area', BDV_MEMBERS_URL . 'public/assets/mi-area.js', ['convoca-common-js'], BDV_MEMBERS_VERSION, true);
 
         $member_id = Member_Auth::get_current_member_id();
         wp_localize_script('biodevas-mi-area', 'bdvMiArea', [
