@@ -887,27 +887,27 @@ class Admin_Settings
 
         // 2. Pages
         $required_pages = [
-            'biodevas_alta' => [
+            'convoca_alta_socio' => [
                 'title' => __('Página: Alta de Socio', 'convoca-members'),
                 'shortcode' => '[biodevas_alta]',
                 'fix' => __('Crea una página con el shortcode [biodevas_alta].', 'convoca-members'),
             ],
-            'biodevas_voluntariado' => [
+            'convoca_voluntariado' => [
                 'title' => __('Página: Registro Voluntariado', 'convoca-members'),
                 'shortcode' => '[biodevas_voluntariado]',
                 'fix' => __('Crea una página con el shortcode [biodevas_voluntariado].', 'convoca-members'),
             ],
-            'biodevas_mi_area' => [
+            'convoca_mi_area' => [
                 'title' => __('Página: Área de Miembro', 'convoca-members'),
                 'shortcode' => '[biodevas_mi_area]',
                 'fix' => __('Crea una página con el shortcode [biodevas_mi_area].', 'convoca-members'),
             ],
-            'biodevas_verificar_certificado' => [
+            'convoca_verificar_certificado' => [
                 'title' => __('Página: Verificación de Certificados', 'convoca-members'),
                 'shortcode' => '[biodevas_verificar_certificado]',
                 'fix' => __('Crea una página con el shortcode [biodevas_verificar_certificado].', 'convoca-members'),
             ],
-            'biodevas_panel_reservas' => [
+            'convoca_panel_reservas' => [
                 'title' => __('Página: Panel de Reservas', 'convoca-members'),
                 'shortcode' => '[biodevas_panel_reservas]',
                 'fix' => __('Esta página es necesaria para el enlace QR de la tarjeta. Créala con el shortcode [biodevas_panel_reservas].', 'convoca-members'),

@@ -16,7 +16,7 @@ class Form_Handler
 
     public function __construct()
     {
-        add_shortcode('biodevas_alta', [$this, 'render']);
+        add_shortcode('convoca_alta_socio', [$this, 'render']);
         add_action('wp_ajax_bdv_alta_submit', [$this, 'handle_submit']);
         add_action('wp_ajax_nopriv_bdv_alta_submit', [$this, 'handle_submit']);
 

@@ -16,7 +16,7 @@ class Verificar_Certificado
 {
     public function __construct()
     {
-        add_shortcode('biodevas_verificar_certificado', [$this, 'render']);
+        add_shortcode('convoca_verificar_certificado', [$this, 'render']);
     }
 
     public function render(): string

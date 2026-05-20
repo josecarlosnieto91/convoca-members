@@ -15,7 +15,7 @@ class Mi_Area
 {
     public function __construct()
     {
-        add_shortcode('biodevas_mi_area', [$this, 'render']);
+        add_shortcode('convoca_mi_area', [$this, 'render']);
         add_action('wp_enqueue_scripts', [$this, 'enqueue_assets']);
     }
 

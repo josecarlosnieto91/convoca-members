@@ -32,7 +32,7 @@ class Form_Voluntariado
 
     public function __construct()
     {
-        add_shortcode('biodevas_voluntariado', [$this, 'render']);
+        add_shortcode('convoca_voluntariado', [$this, 'render']);
         add_action('wp_ajax_bdv_voluntariado_submit', [$this, 'handle_submit']);
         add_action('wp_ajax_nopriv_bdv_voluntariado_submit', [$this, 'handle_submit']);
     }

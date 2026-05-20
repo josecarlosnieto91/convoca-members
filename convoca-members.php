@@ -1,7 +1,7 @@
 <?php
 /**
  * Plugin Name:       Convoca Members
- * Plugin URI:        https://biodevas.org
+ * Plugin URI:        https://convoca.org
  * Description:       Members, volunteers and communications management.
  * Version: 2.6.1
  * Requires at least: 6.4
@@ -126,7 +126,7 @@ register_activation_hook(__FILE__, function (): void {
         $role->add_cap('common_manage_backup');
     }
 
-    // Ensure monitor_actividad role exists (also created by biodevas-enroll)
+    // Ensure monitor_actividad role exists (also created by convoca-enroll)
     if (!get_role('monitor_actividad')) {
         add_role('monitor_actividad', __('Monitor de Actividad', 'convoca-members'), [
             'read' => true,
@@ -308,7 +308,7 @@ add_action('admin_post_bdv_pdf_card', function () {
 });
 
 /**
- * Verification shortcode: [biodevas_verificar_socio]
+ * Verification shortcode: [convoca_verificar_socio]
  * Accessible publicly. Shows member name + plan if token is valid.
  */
 // Activar miembro del voluntario cuando se aprueba desde Centro Social
@@ -329,19 +329,19 @@ add_action('bdv_voluntario_aprobado', function (int $user_id): void {
         }
     }
 });
-add_shortcode('biodevas_verificar_socio', function (): string {
+add_shortcode('convoca_verificar_socio', function (): string {
     $member_id = (int) ($_GET['id'] ?? 0);
     $token = sanitize_text_field($_GET['token'] ?? '');
 
     if (!$member_id || !$token) {
-        return '<div class="biodevas-alert biodevas-alert--info" style="display:block;max-width:500px;margin:40px auto;text-align:center;">
+        return '<div class="convoca-alert convoca-alert--info" style="display:block;max-width:500px;margin:40px auto;text-align:center;">
             <p>' . __('Escanea el código QR de tu tarjeta de socio para verificar tu membresía.', 'convoca-members') . '</p>
         </div>';
     }
 
     $expected = hash_hmac('sha256', 'member_' . $member_id, \Convoca\Core\Utils::get_persistent_salt());
     if (!hash_equals($expected, $token)) {
-        return '<div class="biodevas-alert biodevas-alert--danger" style="display:block;max-width:500px;margin:40px auto;text-align:center;">
+        return '<div class="convoca-alert convoca-alert--danger" style="display:block;max-width:500px;margin:40px auto;text-align:center;">
             <p><strong>' . __('Tarjeta no válida', 'convoca-members') . '</strong></p>
             <p>' . __('El código de verificación no coincide.', 'convoca-members') . '</p>
         </div>';
@@ -349,14 +349,14 @@ add_shortcode('biodevas_verificar_socio', function (): string {
 
     $post = get_post($member_id);
     if (!$post || $post->post_type !== 'miembro') {
-        return '<div class="biodevas-alert biodevas-alert--danger" style="display:block;max-width:500px;margin:40px auto;text-align:center;">
+        return '<div class="convoca-alert convoca-alert--danger" style="display:block;max-width:500px;margin:40px auto;text-align:center;">
             <p>' . __('Socio no encontrado.', 'convoca-members') . '</p>
         </div>';
     }
 
     $estado = get_post_meta($member_id, '_bdv_estado_miembro', true);
     if ($estado !== 'activo') {
-        return '<div class="biodevas-alert biodevas-alert--warning" style="display:block;max-width:500px;margin:40px auto;text-align:center;">
+        return '<div class="convoca-alert convoca-alert--warning" style="display:block;max-width:500px;margin:40px auto;text-align:center;">
             <p><strong>' . __('Membresía no activa', 'convoca-members') . '</strong></p>
             <p>' . __('El socio no tiene una membresía activa en este momento.', 'convoca-members') . '</p>
         </div>';

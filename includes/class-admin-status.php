@@ -34,7 +34,7 @@ class Admin_Status
         $slug = 'mi-area';
         $page = get_page_by_path($slug);
         if ($page && $page->post_status === 'publish') {
-            $has = has_shortcode($page->post_content, 'biodevas_mi_area');
+            $has = has_shortcode($page->post_content, 'convoca_mi_area');
             return self::result('page_mi_area', 'Página Mi Área',
                 $has ? 'Existe con shortcode [biodevas_mi_area]' : 'Existe pero sin el shortcode',
                 $has ? self::SEVERITY_OK : self::SEVERITY_WARNING,
