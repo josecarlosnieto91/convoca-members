@@ -233,7 +233,7 @@ class Voluntariado_Gamification
     }
 
     /**
-     * Register REST route: GET /biodevas/v1/me/gamification
+     * Register REST route: GET /convoca-members/v1/me/gamification
      */
     public static function register_routes(): void
     {

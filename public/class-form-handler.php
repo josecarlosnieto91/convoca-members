@@ -26,7 +26,7 @@ class Form_Handler
 
         // Register REST route for form submission
         add_action('rest_api_init', function () {
-            register_rest_route('biodevas/v1', '/alta', [
+            register_rest_route('convoca-members/v1', '/alta', [
                 'methods'             => 'POST',
                 'callback'            => [self::class, 'handle_submit_rest'],
                 'permission_callback' => '__return_true',
@@ -56,7 +56,7 @@ class Form_Handler
         $public_gateway = array_intersect_key($raw_gateway, array_flip(['iban', 'beneficiary', 'instructions']));
         
         $config = [
-            'restUrl' => rest_url('biodevas/v1/alta'),
+            'restUrl' => rest_url('convoca-members/v1/alta'),
             'restNonce' => wp_create_nonce('wp_rest'),
             'ajaxUrl' => admin_url('admin-ajax.php'),
             'nonce' => wp_create_nonce('bdv_alta_nonce'),

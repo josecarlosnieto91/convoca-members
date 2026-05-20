@@ -472,7 +472,7 @@ class Email_Manager
             '{proyectos_participados}' => $proyectos ?: '—',
             '{certificado_id}' => $certificado_id,
             '{certificado_url_verificacion}' => $certificado_id !== '—'
-                ? rest_url('biodevas/v1/me/certificate')
+                ? rest_url('convoca-members/v1/me/certificate')
                 : '—',
         // Credentials (usually injected via extra_vars, not from meta)
         '{usuario}'   => $extra_vars['{usuario}'] ?? '—',

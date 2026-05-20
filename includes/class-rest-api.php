@@ -16,7 +16,7 @@ class Rest_API
     /**
      * Namespace for the API.
      */
-    public const NAMESPACE = 'biodevas/v1';
+    public const NAMESPACE = 'convoca-members/v1';
 
     /**
      * Rate limit: max attempts per IP in window.
@@ -146,7 +146,7 @@ class Rest_API
             'permission_callback' => [$this, 'check_member_auth'],
         ]);
 
-        // Unified full-text search: /biodevas/v1/search?q=...
+        // Unified full-text search: /convoca-members/v1/search?q=...
         register_rest_route(self::NAMESPACE, '/search', [
             'methods'             => 'GET',
             'callback'            => [$this, 'fulltext_search'],
@@ -473,7 +473,7 @@ class Rest_API
     /**
      * Unified full-text search across members and activities.
      *
-     * GET /biodevas/v1/search?q=...&type=members|activities&limit=20
+     * GET /convoca-members/v1/search?q=...&type=members|activities&limit=20
      *
      * Public endpoint — returns only non-sensitive data.
      * Members search requires auth to see personal info.
@@ -520,7 +520,7 @@ class Rest_API
                     'title'      => $p->post_title,
                     'email'      => get_post_meta($p->ID, '_bdv_email', true),
                     'estado'     => get_post_meta($p->ID, '_bdv_estado_miembro', true),
-                    'url'        => rest_url('biodevas/v1/me'),
+                    'url'        => rest_url('convoca-members/v1/me'),
                 ];
             }
         }
@@ -632,7 +632,7 @@ class Rest_API
             'certificado_id' => $cert_id,
             'horas' => $horas_aprobadas,
             'objetivo' => $objetivo,
-            'download_url' => rest_url('biodevas/v1/me/certificate/download'),
+            'download_url' => rest_url('convoca-members/v1/me/certificate/download'),
         ]);
     }
 

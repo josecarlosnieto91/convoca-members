@@ -213,7 +213,7 @@ class PDF_Document
             update_post_meta($temp_post_id, '_bdv_usuario_id', $user_id);
             update_post_meta($temp_post_id, '_bdv_tipo_documento', 'acuerdo_voluntariado');
             update_post_meta($temp_post_id, '_bdv_hash', $hash);
-            update_post_meta($temp_post_id, '_bdv_documento_url', rest_url('biodevas/v1/documentos/' . $temp_post_id));
+            update_post_meta($temp_post_id, '_bdv_documento_url', rest_url('convoca-members/v1/documentos/' . $temp_post_id));
             update_post_meta($temp_post_id, '_bdv_documento_path', $generated_path);
             
             $wpdb->query('COMMIT');
