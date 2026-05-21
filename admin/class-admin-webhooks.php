@@ -285,7 +285,7 @@ class Admin_Webhooks {
 
 		// URL.
 		echo '<tr><th><label for="webhook_url">URL del Webhook</label></th>';
-		echo '<td><input type="url" id="webhook_url" name="webhook_url" value="' . esc_attr( $webhook['url'] ?? '' ) . '" class="regular-text" required placeholder="https://ejemplo.com/webhook"></td></tr>'; .
+		echo '<td><input type="url" id="webhook_url" name="webhook_url" value="' . esc_attr( $webhook['url'] ?? '' ) . '" class="regular-text" required placeholder="https://ejemplo.com/webhook"></td></tr>';
 
 		// Secret.
 		echo '<tr><th><label for="webhook_secret">Secreto HMAC (opcional)</label></th>';

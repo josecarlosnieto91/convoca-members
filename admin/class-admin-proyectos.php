@@ -162,7 +162,7 @@ class Admin_Proyectos extends \WP_List_Table {
 		header( 'Pragma: no-cache' );
 		header( 'Expires: 0' );
 
-		$out = fopen( 'php://output', 'w' ); .
+		$out = fopen( 'php://output', 'w' );
 		fprintf( $out, chr( 0xEF ) . chr( 0xBB ) . chr( 0xBF ) );
 
 		fputcsv(

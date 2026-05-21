@@ -333,7 +333,7 @@ class CPT_Miembro {
 		}
 		$clean = ltrim( $clean, '+' );
 
-		$url = 'https://wa.me/' . $clean; .
+		$url = 'https://wa.me/' . $clean;
 		if ( $message ) {
 			$nombre = get_post_meta( $post_id, '_conv_nombre', true ) ?: get_the_title( $post_id );
 			$msg    = str_replace( '{nombre}', $nombre, $message );
