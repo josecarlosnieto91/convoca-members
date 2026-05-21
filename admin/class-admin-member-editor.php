@@ -21,7 +21,7 @@ class Admin_Member_Editor {
 	public function __construct() {
 		add_action( 'admin_post_bdv_save_member', array( $this, 'handle_save' ) );
 		add_action( 'admin_post_bdv_delete_member', array( $this, 'handle_delete' ) );
-		// Redirect from WP default editor
+		// Redirect from WP default editor.
 		add_action( 'load-post-new.php', array( $this, 'redirect_from_default' ) );
 		add_action( 'load-post.php', array( $this, 'redirect_from_default' ) );
 	}
@@ -61,7 +61,7 @@ class Admin_Member_Editor {
 
 		$plans = CPT_Miembro::get_plans();
 
-		// Detect if we are adding a volunteer
+		// Detect if we are adding a volunteer.
 		$is_vol_slug     = isset( $_GET['page'] ) && $_GET['page'] === self::SLUG . '-voluntario';
 		$voluntario_flag = ( isset( $_GET['es_voluntario'] ) || $is_vol_slug ) ? '1' : $m( 'es_voluntario' );
 		?>
@@ -257,14 +257,14 @@ class Admin_Member_Editor {
 			}
 		}
 
-		// Get the full name (used as post title)
+		// Get the full name (used as post title).
 		$nombre = sanitize_text_field( $data['bdv_nombre'] ?? '' );
 		if ( empty( $nombre ) ) {
 			wp_die( __( 'El nombre es obligatorio.', 'convoca-members' ) );
 		}
 
 		if ( $is_edit ) {
-			// Update existing post
+			// Update existing post.
 			wp_update_post(
 				array(
 					'ID'         => $post_id,
@@ -272,7 +272,7 @@ class Admin_Member_Editor {
 				)
 			);
 		} else {
-			// Create new member post
+			// Create new member post.
 			$post_id = wp_insert_post(
 				array(
 					'post_type'   => CPT_Miembro::SLUG,
@@ -287,7 +287,7 @@ class Admin_Member_Editor {
 			}
 		}
 
-		// Save meta fields
+		// Save meta fields.
 		$fields = array(
 			'plan'              => 'sanitize_text_field',
 			'sub_plan'          => 'sanitize_text_field',
@@ -314,14 +314,14 @@ class Admin_Member_Editor {
 			update_post_meta( $post_id, '_bdv_' . $key, $val );
 		}
 
-		// Boolean checkboxes
+		// Boolean checkboxes.
 		$bool_fields = array( 'pago_recurrente', 'es_voluntario' );
 		foreach ( $bool_fields as $key ) {
 			$val = isset( $data[ 'bdv_' . $key ] ) ? '1' : '0';
 			update_post_meta( $post_id, '_bdv_' . $key, $val );
 		}
 
-		// Handle state change via state machine
+		// Handle state change via state machine.
 		$new_state = $data['bdv_estado_miembro'] ?? '';
 		$old_state = get_post_meta( $post_id, '_bdv_estado_miembro', true );
 

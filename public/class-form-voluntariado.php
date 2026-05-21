@@ -59,7 +59,7 @@ class Form_Voluntariado {
 		include BDV_MEMBERS_DIR . 'templates/form-voluntariado.php';
 		$html = ob_get_clean();
 
-		// Inject data-config into the wrapper
+		// Inject data-config into the wrapper.
 		$html = str_replace(
 			'id="bdv-vol-wrapper"',
 			'id="bdv-vol-wrapper" data-config=\'' . esc_attr( wp_json_encode( $config ) ) . '\'',
@@ -72,12 +72,12 @@ class Form_Voluntariado {
 	public function handle_submit(): void {
 		check_ajax_referer( 'bdv_voluntariado_nonce', 'nonce' );
 
-		// Rate limit: max 3 volunteer registrations per hour per IP
+		// Rate limit: max 3 volunteer registrations per hour per IP.
 		if ( ! \Convoca\Core\Utils::check_rate_limit( 'bdv_voluntariado_submit', 3, 3600 ) ) {
 			wp_send_json_error( array( 'errors' => array( 'Demasiados intentos. Inténtalo de nuevo en una hora.' ) ), 429 );
 		}
 
-		// Unslash POST data to handle magic_quotes
+		// Unslash POST data to handle magic_quotes.
 		$post_data = wp_unslash( $_POST );
 
 		$nombre         = sanitize_text_field( $post_data['nombre'] ?? '' );
@@ -160,7 +160,7 @@ class Form_Voluntariado {
 			}
 		}
 
-		// Dynamic fields validation
+		// Dynamic fields validation.
 		$dynamic_fields = get_option( 'bdv_volunteer_fields', array() );
 		$dynamic_data   = array();
 		foreach ( $dynamic_fields as $field ) {
@@ -181,7 +181,7 @@ class Form_Voluntariado {
 			wp_send_json_error( array( 'errors' => array( 'Ese correo ya está registrado en el sistema.' ) ) );
 		}
 
-		// Check for duplicate DNI in user meta
+		// Check for duplicate DNI in user meta.
 		$existing_dni = get_users(
 			array(
 				'meta_key'   => '_cst_dni',
@@ -193,7 +193,7 @@ class Form_Voluntariado {
 			wp_send_json_error( array( 'errors' => array( 'Ese DNI ya está registrado en el sistema.' ) ) );
 		}
 
-		// Create WP User
+		// Create WP User.
 		$username = sanitize_user( current( explode( '@', $email ) ) . random_int( 100, 999 ) );
 		$password = wp_generate_password( 12, false );
 		$user_id  = wp_create_user( $username, $password, $email );
@@ -202,7 +202,7 @@ class Form_Voluntariado {
 			wp_send_json_error( array( 'errors' => array( 'Error al crear el registro: ' . $user_id->get_error_message() ) ) );
 		}
 
-		// Update basic user info
+		// Update basic user info.
 		wp_update_user(
 			array(
 				'ID'         => $user_id,
@@ -210,7 +210,7 @@ class Form_Voluntariado {
 			)
 		);
 
-		// Crear registro de miembro (CPT) para que el voluntario tenga acceso al certificado
+		// Crear registro de miembro (CPT) para que el voluntario tenga acceso al certificado.
 		// y las horas de todas las fuentes se vinculen correctamente.
 		$member_post_id = wp_insert_post(
 			array(
@@ -221,7 +221,7 @@ class Form_Voluntariado {
 		);
 
 		if ( ! is_wp_error( $member_post_id ) ) {
-			// Guardar metadatos básicos del miembro
+			// Guardar metadatos básicos del miembro.
 			$member_meta = array(
 				'estado_miembro'    => 'pendiente_documentacion',
 				'dni'               => $dni,
@@ -244,7 +244,7 @@ class Form_Voluntariado {
 				update_post_meta( $member_post_id, '_bdv_' . $key, $value );
 			}
 
-			// Vincular WP user con el miembro
+			// Vincular WP user con el miembro.
 			update_post_meta( $member_post_id, '_bdv_user_id', $user_id );
 			update_user_meta( $user_id, '_bdv_member_id', $member_post_id );
 		}
@@ -252,7 +252,7 @@ class Form_Voluntariado {
 		$settings = get_option( 'bdv_members_settings', array() );
 
 		$meta_map = array(
-			'_cst_aprobado'                => 0, // Pending approval
+			'_cst_aprobado'                => 0, // Pending approval.
 			'_cst_dni'                     => $dni,
 			'_cst_fecha_nacimiento'        => $fecha_nac,
 			'_cst_telefono'                => $telefono,
@@ -276,14 +276,14 @@ class Form_Voluntariado {
 			$meta_map['_cst_tutor_dni']    = sanitize_text_field( $post_data['tutor_dni'] ?? '' );
 		}
 
-		// Merge dynamic fields
+		// Merge dynamic fields.
 		$meta_map = array_merge( $meta_map, $dynamic_data );
 
 		foreach ( $meta_map as $key => $value ) {
 			update_user_meta( $user_id, $key, $value );
 		}
 
-		// Notify admins
+		// Notify admins.
 		wp_mail(
 			$settings['admin_email'] ?? get_option( 'admin_email' ),
 			'Nueva solicitud de voluntariado',

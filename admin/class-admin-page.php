@@ -150,7 +150,7 @@ class Admin_Page {
 			return;
 		}
 
-		// Mostrar mensajes de feedback después de acciones admin-post
+		// Mostrar mensajes de feedback después de acciones admin-post.
 		$msg = sanitize_text_field( $_GET['msg'] ?? '' );
 		if ( $msg === 'approved' ) {
 			echo '<div class="notice notice-success is-dismissible"><p>' . esc_html__( 'Miembro aprobado correctamente.', 'convoca-members' ) . '</p></div>';

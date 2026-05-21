@@ -31,10 +31,10 @@ class Cron_Manager {
 	private const META_VOLUNTARIADO_REMINDER_Q = '_bdv_voluntariado_reminder_q';
 
 	public function __construct() {
-		// Daily cron
+		// Daily cron.
 		add_action( 'bdv_daily_event', array( $this, 'run_daily' ) );
 
-		// Weekly cron (admin digest)
+		// Weekly cron (admin digest).
 		add_action( 'bdv_weekly_event', array( $this, 'run_weekly' ) );
 	}
 
@@ -83,7 +83,7 @@ class Cron_Manager {
 	 * - Day 14: Final warning (pago_pendiente_ultimo)
 	 */
 	private function process_pending_payments(): void {
-		// Limit to 50 members per cron run to avoid timeout
+		// Limit to 50 members per cron run to avoid timeout.
 		$args = array(
 			'post_type'      => 'miembro',
 			'meta_query'     => array(
@@ -107,10 +107,10 @@ class Cron_Manager {
 		$email_manager = new Email_Manager();
 
 		foreach ( $ids as $post_id ) {
-			// Use the timestamp when the member moved to pending payment state
+			// Use the timestamp when the member moved to pending payment state.
 			$pending_date = get_post_meta( $post_id, '_bdv_fecha_pendiente_pago', true );
 
-			// Fallback to post_modified if meta is missing
+			// Fallback to post_modified if meta is missing.
 			if ( empty( $pending_date ) ) {
 				$post = get_post( $post_id );
 				if ( $post ) {
@@ -130,20 +130,20 @@ class Cron_Manager {
 			$today     = time();
 			$days_diff = (int) floor( ( $today - $base_ts ) / DAY_IN_SECONDS );
 
-			// Per-member lock to prevent duplicate sends if cron overlaps
+			// Per-member lock to prevent duplicate sends if cron overlaps.
 			$lock_key = 'bdv_reminder_' . $post_id;
 			if ( ! \Convoca\Core\Utils::acquire_lock( $lock_key, 600 ) ) {
 				continue;
 			}
 
 			try {
-				// Re-check state to avoid race condition: member may have paid while this cron runs
+				// Re-check state to avoid race condition: member may have paid while this cron runs.
 				$current_state = get_post_meta( $post_id, '_bdv_estado_miembro', true );
 				if ( $current_state !== 'pendiente_pago' ) {
 					continue;
 				}
 
-				// Determine which reminder to send (inside lock to prevent race with parallel cron)
+				// Determine which reminder to send (inside lock to prevent race with parallel cron).
 				$last_sent    = get_post_meta( $post_id, self::META_LAST_REMINDER, true );
 				$template     = null;
 				$reminder_key = null;
@@ -198,7 +198,7 @@ class Cron_Manager {
 		global $wpdb;
 		$email_manager = new Email_Manager();
 
-		// Check each interval
+		// Check each interval.
 		$intervals = array(
 			30 => 'renovacion',
 			15 => 'renovacion_15d',
@@ -210,7 +210,7 @@ class Cron_Manager {
 				->modify( "+{$days} days" )
 				->format( 'Y-m-d' );
 
-			// Use $wpdb for robust date comparison (ignoring time if present)
+			// Use $wpdb for robust date comparison (ignoring time if present).
 			$query = "
                 SELECT p.ID 
                 FROM {$wpdb->posts} p
@@ -230,7 +230,7 @@ class Cron_Manager {
 
 			foreach ( $ids as $post_id ) {
 				$post_id = (int) $post_id;
-				// Check if this notice was already sent
+				// Check if this notice was already sent.
 				$last_notice = get_post_meta( $post_id, self::META_LAST_RENEWAL_NOTICE, true );
 				if ( $last_notice === (string) $days ) {
 					continue;
@@ -238,7 +238,7 @@ class Cron_Manager {
 
 				$link = $this->get_renewal_link( $post_id );
 
-				// Use the specific send method
+				// Use the specific send method.
 				$method = 'send_' . $template;
 				if ( method_exists( $email_manager, $method ) ) {
 					$email_manager->$method( $post_id, array( '{link_pago}' => $link ) );
@@ -254,7 +254,7 @@ class Cron_Manager {
 					$post_id
 				);
 
-				// Fire webhook
+				// Fire webhook.
 				do_action( 'convoca_members_renewal_reminder_sent', $post_id, $days );
 			}
 		}
@@ -287,7 +287,7 @@ class Cron_Manager {
 					'compare' => '!=',
 				),
 			),
-			'posts_per_page' => 100, // Process more per run
+			'posts_per_page' => 100, // Process more per run.
 			'fields'         => 'ids',
 			'orderby'        => 'date',
 			'order'          => 'ASC',
@@ -302,7 +302,7 @@ class Cron_Manager {
 		$email_manager = new Email_Manager();
 
 		foreach ( $ids as $post_id ) {
-			// Calculate volunteer hours progress
+			// Calculate volunteer hours progress.
 			$horas_data = $this->get_volunteer_hours_summary( $post_id );
 			$extra_vars = array(
 				'{horas_actuales}'          => $horas_data['total'],
@@ -355,7 +355,7 @@ class Cron_Manager {
 			$member_id = (int) $member_id;
 			$lock_key  = 'bdv_autorenewal_' . $member_id;
 
-			// Prevent concurrent/double processing via atomic lock
+			// Prevent concurrent/double processing via atomic lock.
 			if ( ! \Convoca\Core\Utils::acquire_lock( $lock_key, 300 ) ) {
 				continue;
 			}
@@ -372,7 +372,7 @@ class Cron_Manager {
 				continue;
 			}
 
-			// Verify recurring token (Hardening Task)
+			// Verify recurring token (Hardening Task).
 			$token              = \Convoca\Gateway\Payment_Handler::get_member_token( $member_id );
 			$needs_tokenization = empty( $token );
 
@@ -384,7 +384,7 @@ class Cron_Manager {
 				);
 			}
 
-			// Create payment via Gateway
+			// Create payment via Gateway.
 			if ( ! \Convoca\Core\Features::is_gateway_active() ) {
 				\Convoca\Core\Logger::error(
 					"Gateway no disponible para renovación automática del miembro #$member_id.",
@@ -413,12 +413,12 @@ class Cron_Manager {
 					$member_id
 				);
 
-				// Notificar al socio que la renovación falló
+				// Notificar al socio que la renovación falló.
 				if ( method_exists( $email_manager, 'send_renovacion_fallida' ) ) {
 					$email_manager->send_renovacion_fallida( $member_id );
 				}
 
-				// Cambiar estado a pendiente_pago via state machine (triggers audit log)
+				// Cambiar estado a pendiente_pago via state machine (triggers audit log).
 				Estados::change( $member_id, 'pendiente_pago', 'Renovación automática fallida - requerido pago manual' );
 
 				continue;
@@ -437,7 +437,7 @@ class Cron_Manager {
 
 			$email_manager->send_renovacion_automatica( $member_id );
 
-			// Fire webhook
+			// Fire webhook.
 			do_action( 'convoca_members_auto_renewal_created', $member_id, $pago_id );
 		}
 	}
@@ -473,7 +473,7 @@ class Cron_Manager {
 				$member_id
 			);
 
-			// Fire webhook
+			// Fire webhook.
 			do_action( 'convoca_members_membership_expired', $member_id );
 		}
 	}
@@ -487,7 +487,7 @@ class Cron_Manager {
 		$settings    = get_option( 'bdv_members_settings', array() );
 		$admin_email = $settings['admin_email'] ?? get_option( 'admin_email' );
 
-		// Fallback if admin_email is empty
+		// Fallback if admin_email is empty.
 		if ( empty( $admin_email ) ) {
 			$admin_email = get_site_option( 'admin_email' ) ?: get_option( 'admin_email' );
 		}
@@ -499,10 +499,10 @@ class Cron_Manager {
 
 		$sender_name = $settings['sender_name'] ?? get_bloginfo( 'name' );
 
-		// Gather stats
+		// Gather stats.
 		$stats = $this->gather_weekly_stats();
 
-		// Build email body
+		// Build email body.
 		$body = $this->build_digest_body( $stats );
 
 		$subject = sprintf(
@@ -515,7 +515,7 @@ class Cron_Manager {
 			'From: ' . $sender_name . ' <' . $admin_email . '>',
 		);
 
-		// Also send to extra admin emails if configured
+		// Also send to extra admin emails if configured.
 		$extra_emails = $settings['digest_extra_emails'] ?? '';
 		$recipients   = array( $admin_email );
 		if ( ! empty( $extra_emails ) ) {
@@ -549,7 +549,7 @@ class Cron_Manager {
 		$week_ago = ( new \DateTime( 'now', $tz ) )->modify( '-7 days' )->format( 'Y-m-d' );
 		$today    = ( new \DateTime( 'now', $tz ) )->format( 'Y-m-d' );
 
-		// New members this week
+		// New members this week.
 		$new_members = (int) $wpdb->get_var(
 			$wpdb->prepare(
 				"SELECT COUNT(*) FROM {$wpdb->posts} 
@@ -560,7 +560,7 @@ class Cron_Manager {
 			)
 		);
 
-		// Status counts
+		// Status counts.
 		$status_counts = array();
 		foreach ( Estados::STATES as $state ) {
 			$status_counts[ $state ] = (int) $wpdb->get_var(
@@ -576,7 +576,7 @@ class Cron_Manager {
 			);
 		}
 
-		// Expiring in the next 7 days
+		// Expiring in the next 7 days.
 		$expiring_soon = (int) $wpdb->get_var(
 			$wpdb->prepare(
 				"SELECT COUNT(*) FROM {$wpdb->posts} p
@@ -590,10 +590,10 @@ class Cron_Manager {
 			)
 		);
 
-		// Pending payments
+		// Pending payments.
 		$pending_payments = $status_counts['pendiente_pago'] ?? 0;
 
-		// Volunteer hours logged this week
+		// Volunteer hours logged this week.
 		$hours_logged = (float) $wpdb->get_var(
 			$wpdb->prepare(
 				"SELECT COALESCE(SUM(pm.meta_value), 0) FROM {$wpdb->posts} p
@@ -605,7 +605,7 @@ class Cron_Manager {
 			)
 		);
 
-		// Recent errors from logs
+		// Recent errors from logs.
 		$recent_errors = (int) $wpdb->get_var(
 			$wpdb->prepare(
 				"SELECT COUNT(*) FROM {$wpdb->prefix}biodevas_logs 
@@ -638,16 +638,16 @@ class Cron_Manager {
 
 		$html = '<div style="font-family:Arial,sans-serif;max-width:600px;margin:0 auto;padding:20px;">';
 
-		// Header
+		// Header.
 		$html .= '<div style="background:#2c5e3e;color:#fff;padding:20px;border-radius:8px 8px 0 0;text-align:center;">';
 		$html .= '<h1 style="margin:0;font-size:22px;">📊 Resumen Semanal Biodevas</h1>';
 		$html .= '<p style="margin:5px 0 0;opacity:0.8;font-size:14px;">' . esc_html( $date_range ) . '</p>';
 		$html .= '</div>';
 
-		// Body
+		// Body.
 		$html .= '<div style="background:#f8f9fa;padding:20px;border:1px solid #e9ecef;">';
 
-		// Key metrics row
+		// Key metrics row.
 		$html .= '<table style="width:100%;border-collapse:collapse;margin-bottom:20px;">';
 		$html .= '<tr>';
 		$html .= $this->digest_metric_cell( 'Socios Activos', $stats['total_active'], '#2c5e3e' );
@@ -656,7 +656,7 @@ class Cron_Manager {
 		$html .= '</tr>';
 		$html .= '</table>';
 
-		// Alerts
+		// Alerts.
 		if ( $stats['expiring_soon'] > 0 || $stats['pending_payments'] > 0 || $stats['recent_errors'] > 0 ) {
 			$html .= '<div style="background:#fff3cd;border:1px solid #ffc107;padding:12px;border-radius:6px;margin-bottom:15px;">';
 			$html .= '<strong>⚠️ Requiere atención:</strong><ul style="margin:8px 0 0;padding-left:20px;">';
@@ -674,7 +674,7 @@ class Cron_Manager {
 			$html .= '</ul></div>';
 		}
 
-		// Status breakdown
+		// Status breakdown.
 		$html .= '<div style="background:#fff;padding:15px;border-radius:6px;border:1px solid #dee2e6;">';
 		$html .= '<h3 style="margin:0 0 10px;font-size:16px;">Desglose por estado</h3>';
 		$html .= '<table style="width:100%;font-size:14px;">';
@@ -689,7 +689,7 @@ class Cron_Manager {
 
 		$html .= '</div>';
 
-		// Footer
+		// Footer.
 		$html .= '<div style="background:#e9ecef;padding:15px;border-radius:0 0 8px 8px;text-align:center;font-size:13px;color:#6c757d;">';
 		$html .= '<a href="' . esc_url( $admin_url ) . '" style="color:#2c5e3e;text-decoration:none;font-weight:bold;">Ver panel de administración →</a>';
 		$html .= '<br><br>Este email se genera automáticamente cada lunes.';
@@ -717,7 +717,7 @@ class Cron_Manager {
 	 */
 	private function get_payment_link( int $pago_id ): string {
 		if ( \Convoca\Core\Features::is_gateway_active() ) {
-			// Get or create persistent token for long-lived links
+			// Get or create persistent token for long-lived links.
 			$token = get_post_meta( $pago_id, '_bdg_link_key', true );
 			if ( empty( $token ) ) {
 				$token = wp_generate_password( 32, false, false );
@@ -732,7 +732,7 @@ class Cron_Manager {
 	 * Get renewal link for a member (try existing payment, fallback to renew page).
 	 */
 	private function get_renewal_link( int $post_id ): string {
-		// If recurrent, create payment automatically
+		// If recurrent, create payment automatically.
 		$es_recurrente = get_post_meta( $post_id, '_bdv_pago_recurrente', true );
 		$forma_pago    = get_post_meta( $post_id, '_bdv_forma_pago', true );
 
@@ -764,7 +764,7 @@ class Cron_Manager {
 			}
 		}
 
-		// Fallback: try existing payment link
+		// Fallback: try existing payment link.
 		$pago_id = (int) get_post_meta( $post_id, '_bdv_pago_id', true );
 		if ( $pago_id ) {
 			return $this->get_payment_link( $pago_id );
@@ -781,7 +781,7 @@ class Cron_Manager {
 
 		$year = wp_date( 'Y' );
 
-		// Get total approved hours for current year
+		// Get total approved hours for current year.
 		$total = (float) $wpdb->get_var(
 			$wpdb->prepare(
 				"SELECT COALESCE(SUM(pm_h.meta_value), 0)
@@ -797,7 +797,7 @@ class Cron_Manager {
 			)
 		);
 
-		// Get the objective from plan
+		// Get the objective from plan.
 		$plan_key  = get_post_meta( $post_id, '_bdv_plan', true );
 		$plan_data = CPT_Miembro::get_plan( $plan_key );
 		$objetivo  = (float) ( $plan_data ? $plan_data['hours'] : 40 );
@@ -816,14 +816,14 @@ class Cron_Manager {
 	 * This serves templates that don't have a dedicated public method.
 	 */
 	private function send_template_email( Email_Manager $email_manager, string $template, int $post_id, array $extra_vars = array() ): void {
-		// Try dedicated method first
+		// Try dedicated method first.
 		$method = 'send_' . $template;
 		if ( method_exists( $email_manager, $method ) ) {
 			$email_manager->$method( $post_id, $extra_vars );
 			return;
 		}
 
-		// For templates without a dedicated method, manually replicate the send logic
+		// For templates without a dedicated method, manually replicate the send logic.
 		$templates = Email_Manager::get_templates();
 		$tpl       = $templates[ $template ] ?? null;
 
@@ -836,7 +836,7 @@ class Cron_Manager {
 			return;
 		}
 
-		// Build basic vars
+		// Build basic vars.
 		$nombre = get_the_title( $post_id );
 		$vars   = array_merge(
 			array(

@@ -53,7 +53,7 @@ class Members_Upgrade_Manager extends Upgrade_Manager {
 		$table           = $wpdb->prefix . 'bdv_member_sequence';
 		$charset_collate = $wpdb->get_charset_collate();
 
-		// Table is now created in the common Installer, but ensure it exists
+		// Table is now created in the common Installer, but ensure it exists.
 		require_once ABSPATH . 'wp-admin/includes/upgrade.php';
 		$sql = "CREATE TABLE IF NOT EXISTS $table (
             id BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
@@ -63,16 +63,16 @@ class Members_Upgrade_Manager extends Upgrade_Manager {
         ) $charset_collate;";
 		dbDelta( $sql );
 
-		// Idempotent: only initialize if empty
+		// Idempotent: only initialize if empty.
 		$current_max_seq = (int) $wpdb->get_var( "SELECT MAX(id) FROM $table" );
 		if ( $current_max_seq === 0 ) {
 			$last_number = (int) get_option( 'bdv_last_member_number', 0 );
 
 			if ( $last_number > 0 ) {
-				// Initialize the AUTO_INCREMENT to the last known number
+				// Initialize the AUTO_INCREMENT to the last known number.
 				$wpdb->query( "ALTER TABLE $table AUTO_INCREMENT = " . ( $last_number + 1 ) );
 			} else {
-				// Sync with existing postmeta if option is missing
+				// Sync with existing postmeta if option is missing.
 				$max_postmeta = (int) $wpdb->get_var(
 					"
                     SELECT MAX(CAST(meta_value AS UNSIGNED)) 
@@ -105,12 +105,12 @@ class Members_Upgrade_Manager extends Upgrade_Manager {
 		foreach ( $metas as $meta ) {
 			$current = trim( (string) $meta->meta_value );
 
-			// Skip empty, zero, or '0' values (not parseable as dates)
+			// Skip empty, zero, or '0' values (not parseable as dates).
 			if ( empty( $current ) || $current === '0' || $current === '0000-00-00' ) {
 				continue;
 			}
 
-			// Extract only the date part if it contains time or other chars
+			// Extract only the date part if it contains time or other chars.
 			$timestamp = strtotime( $current );
 			if ( $timestamp === false || $timestamp <= 0 ) {
 				\Convoca\Core\Logger::warning( "Upgrade 1.0.2: fecha inválida '{$current}' para post_id {$meta->post_id}, omitiendo.", 'Members/Upgrade' );

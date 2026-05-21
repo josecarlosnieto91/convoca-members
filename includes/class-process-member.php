@@ -28,10 +28,10 @@ class Process_Member {
 		$email  = get_post_meta( $member_id, '_bdv_email', true );
 		$nombre = $member ? $member->post_title : 'Miembro';
 
-		// Check if WP user already exists via meta link
+		// Check if WP user already exists via meta link.
 		$existing_user_id = (int) get_post_meta( $member_id, '_bdv_user_id', true );
 		if ( $existing_user_id && get_userdata( $existing_user_id ) ) {
-			// User exists — generate new password and send
+			// User exists — generate new password and send.
 			$new_password = wp_generate_password( 12, false );
 			wp_set_password( $new_password, $existing_user_id );
 			return array(
@@ -42,7 +42,7 @@ class Process_Member {
 			);
 		}
 
-		// Create new WP user
+		// Create new WP user.
 		$base_username = sanitize_user( current( explode( '@', $email ) ), true );
 		$username      = $base_username;
 		$suffix        = 1;
@@ -56,7 +56,7 @@ class Process_Member {
 
 		if ( is_wp_error( $user_id ) ) {
 			Logger::error( "Error al crear usuario WP para miembro #{$member_id}: " . $user_id->get_error_message(), 'Members' );
-			// Fallback: try with a more unique username
+			// Fallback: try with a more unique username.
 			$username = $base_username . '_' . $member_id;
 			$user_id  = wp_create_user( $username, $password, $email );
 			if ( is_wp_error( $user_id ) ) {
@@ -70,7 +70,7 @@ class Process_Member {
 			}
 		}
 
-		// Update user info
+		// Update user info.
 		wp_update_user(
 			array(
 				'ID'           => $user_id,
@@ -79,11 +79,11 @@ class Process_Member {
 			)
 		);
 
-		// Link WP user to member
+		// Link WP user to member.
 		update_post_meta( $member_id, '_bdv_user_id', $user_id );
 		update_user_meta( $user_id, '_bdv_member_id', $member_id );
 
-		// Copy member data to user meta
+		// Copy member data to user meta.
 		update_user_meta( $user_id, '_bdv_email', $email );
 		update_user_meta( $user_id, '_bdv_dni', get_post_meta( $member_id, '_bdv_dni', true ) );
 		update_user_meta( $user_id, '_bdv_telefono', get_post_meta( $member_id, '_bdv_telefono', true ) );
@@ -113,7 +113,7 @@ class Process_Member {
 			return;
 		}
 
-		// Send via Email_Manager template (customizable in admin)
+		// Send via Email_Manager template (customizable in admin).
 		$email_manager = new Email_Manager();
 		$email_manager->send_credenciales(
 			$member_id,
@@ -162,7 +162,7 @@ class Process_Member {
 		$sub_plan   = sanitize_text_field( $data['sub_plan'] ?? '' );
 		$forma_pago = sanitize_text_field( $data['forma_pago'] ?? '' );
 
-		// Mask DNI for logging (show only first 2 and last 2 chars)
+		// Mask DNI for logging (show only first 2 and last 2 chars).
 		$dni_masked = strlen( $dni ) > 4 ? substr( $dni, 0, 2 ) . '...' . substr( $dni, -2 ) : 'XXXX';
 		\Convoca\Core\Logger::info( "Iniciando registro de nuevo miembro: $nombre (DNI: $dni_masked, Email: $email)", 'Members' );
 
@@ -184,8 +184,8 @@ class Process_Member {
 		}
 
 		// 6. Determine initial state
-		// If they choose 'voluntariado' (hours instead of money), they are 'pendiente_documentacion' (proof of volunteering or similar)
-		// If they choose 'cuota' (money), they are 'pendiente_pago'
+		// If they choose 'voluntariado' (hours instead of money), they are 'pendiente_documentacion' (proof of volunteering or similar).
+		// If they choose 'cuota' (money), they are 'pendiente_pago'.
 		$estado = ( $forma_pago === 'voluntariado' ) ? 'pendiente_documentacion' : 'pendiente_pago';
 
 		// 7. Create Post with transaction
@@ -193,7 +193,7 @@ class Process_Member {
 		$wpdb->query( 'START TRANSACTION' );
 
 		try {
-			// Check for duplicates ATOMICALLY inside transaction to prevent race conditions
+			// Check for duplicates ATOMICALLY inside transaction to prevent race conditions.
 			$exists = $wpdb->get_var(
 				$wpdb->prepare(
 					"SELECT COUNT(*) FROM {$wpdb->postmeta} pm
@@ -218,7 +218,7 @@ class Process_Member {
 				array(
 					'post_type'   => 'miembro',
 					'post_title'  => $nombre,
-					'post_status' => 'publish', // CPT is private, so 'publish' means internally available
+					'post_status' => 'publish', // CPT is private, so 'publish' means internally available.
 				)
 			);
 
@@ -237,7 +237,7 @@ class Process_Member {
 				'plan_label'        => ( $p = CPT_Miembro::get_plan( $plan ) ) ? $p['label'] : $plan,
 				'sub_plan'          => $sub_plan,
 				'forma_pago'        => $forma_pago,
-				'cuota'             => $plan_key, // legacy alias
+				'cuota'             => $plan_key, // legacy alias.
 				'modalidad'         => $plan_data['modalidad'] ?? 'Numerario',
 				'importe_cuota'     => $plan_data['price'] ?? 0,
 				'estado_cuota'      => ( $forma_pago === 'voluntariado' ) ? 'activa' : 'pendiente',
@@ -277,10 +277,10 @@ class Process_Member {
 				$settings['rgpd_version'] ?? '1.0'
 			);
 
-			// Initial state log
+			// Initial state log.
 			Estados::change( $post_id, $estado, 'Registro inicial desde formulario' );
 
-			// Commit transaction
+			// Commit transaction.
 			$wpdb->query( 'COMMIT' );
 		} catch ( \Throwable $e ) {
 			$wpdb->query( 'ROLLBACK' );
@@ -318,7 +318,7 @@ class Process_Member {
 			} else {
 				\Convoca\Core\Logger::error( 'Error al crear pago en pasarela: ' . $payment->get_error_message(), 'Members', $post_id );
 
-				// Flag for manual review since payment failed
+				// Flag for manual review since payment failed.
 				update_post_meta( $post_id, '_bdv_needs_manual_review', '1' );
 				update_post_meta( $post_id, '_bdv_review_note', 'Error pasarela: ' . $payment->get_error_message() );
 
@@ -359,7 +359,7 @@ class Process_Member {
 			$errors[] = 'El email no es válido.';
 		}
 
-		// Validate fecha_nacimiento: not empty, valid date, not in the future
+		// Validate fecha_nacimiento: not empty, valid date, not in the future.
 		$fecha_nac = $data['fecha_nacimiento'] ?? '';
 		if ( empty( $fecha_nac ) ) {
 			$errors[] = 'La fecha de nacimiento es obligatoria.';
@@ -372,7 +372,7 @@ class Process_Member {
 			} elseif ( $dob < new \DateTime( '1900-01-01' ) ) {
 				$errors[] = 'La fecha de nacimiento no es válida (mínimo año 1900).';
 			} else {
-				// Minimum age validation (Task 45)
+				// Minimum age validation (Task 45).
 				$today    = new \DateTime();
 				$age      = $today->diff( $dob )->y;
 				$settings = get_option( 'bdv_members_settings', array() );
@@ -384,7 +384,7 @@ class Process_Member {
 			}
 		}
 
-		// Validate telefono: not empty and reasonable format
+		// Validate telefono: not empty and reasonable format.
 		$telefono = $data['telefono'] ?? '';
 		if ( empty( $telefono ) ) {
 			$errors[] = 'El teléfono es obligatorio.';
@@ -408,20 +408,20 @@ class Process_Member {
 			$errors[] = 'Debes aceptar la política de privacidad.';
 		}
 
-		// DNI Checksum
+		// DNI Checksum.
 		$dni = strtoupper( trim( $data['dni'] ?? '' ) );
 		if ( $dni && ! Utils::validar_dni( $dni ) ) {
 			$errors[] = 'El formato del DNI/NIE no es correcto.';
 		}
 
-		// Juvenile check: age must be <= 30
+		// Juvenile check: age must be <= 30.
 		$plan      = $data['plan'] ?? '';
 		$sub_plan  = $data['sub_plan'] ?? '';
 		$plan_key  = ( in_array( $plan, array( 'familiar', 'juvenil' ), true ) && $sub_plan ) ? $sub_plan : $plan;
 		$plan_data = CPT_Miembro::get_plan( $plan_key );
 
 		if ( $plan_data && ! empty( $fecha_nac ) ) {
-			// Check if it's a juvenile modality or the plan name implies it
+			// Check if it's a juvenile modality or the plan name implies it.
 			$is_juvenil = ( isset( $plan_data['modalidad'] ) && $plan_data['modalidad'] === 'Juvenil' ) || $plan === 'juvenil' || str_starts_with( $plan_key, 'juv-' );
 
 			if ( $is_juvenil ) {

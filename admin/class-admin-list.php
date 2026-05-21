@@ -99,7 +99,7 @@ class Admin_List extends \WP_List_Table {
 			'post_status'    => array( 'publish', 'pending', 'draft', 'private', 'future' ),
 			'orderby'        => sanitize_text_field( $request_data['orderby'] ?? 'date' ),
 			'order'          => strtoupper( sanitize_text_field( $request_data['order'] ?? 'DESC' ) ) === 'ASC' ? 'ASC' : 'DESC',
-			'no_found_rows'  => $page > 1, // Only count rows on first page
+			'no_found_rows'  => $page > 1, // Only count rows on first page.
 		);
 
 		// Search by name, email, DNI, phone, member number or access code.

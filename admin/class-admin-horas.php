@@ -91,7 +91,7 @@ class Admin_Horas extends \WP_List_Table {
 			'nota_admin'   => sanitize_textarea_field( $_POST['nota_admin'] ),
 		);
 
-		// Validar autoridad de aprobación también en el editor admin
+		// Validar autoridad de aprobación también en el editor admin.
 		$estado_solicitado = $data['estado'];
 		if ( in_array( $estado_solicitado, array( 'aprobada', 'rechazada' ), true ) ) {
 			$current_user_id = get_current_user_id();
@@ -100,14 +100,14 @@ class Admin_Horas extends \WP_List_Table {
 			$is_admin        = in_array( 'administrator', $current_roles, true );
 			$is_monitor      = in_array( 'monitor_actividad', $current_roles, true );
 
-			// Identificar a qué usuario pertenece este registro
+			// Identificar a qué usuario pertenece este registro.
 			$record_user_id = 0;
 			$record_id      = $data['id'];
 			if ( $record_id ) {
 				$record_user_id = (int) get_post_meta( $record_id, '_bdv_usuario_id', true );
 			}
 			if ( ! $record_user_id ) {
-				// Nuevo registro — buscar el user_id a partir del miembro_id
+				// Nuevo registro — buscar el user_id a partir del miembro_id.
 				$member_email = get_post_meta( $data['miembro_id'], '_bdv_email', true );
 				if ( $member_email ) {
 					$user = get_user_by( 'email', $member_email );
@@ -122,7 +122,7 @@ class Admin_Horas extends \WP_List_Table {
 			$record_is_monitor = in_array( 'monitor_actividad', $record_roles, true );
 
 			if ( ! $is_admin ) {
-				// No-admin aprobando/rechazando:
+				// No-admin aprobando/rechazando:.
 				if ( $record_user_id > 0 && $record_user_id === $current_user_id ) {
 					wp_die( __( 'No puedes aprobar o rechazar tus propias horas de voluntariado.', 'convoca-members' ) );
 				}
@@ -156,7 +156,7 @@ class Admin_Horas extends \WP_List_Table {
 		$estado       = $record ? get_post_meta( $record_id, '_bdv_estado', true ) : 'pendiente';
 		$nota_admin   = $record ? get_post_meta( $record_id, '_bdv_nota_admin', true ) : '';
 
-		// Fetch options
+		// Fetch options.
 		$members  = get_posts(
 			array(
 				'post_type'      => 'miembro',
@@ -176,7 +176,7 @@ class Admin_Horas extends \WP_List_Table {
 			)
 		);
 
-		// Fetch recent activities
+		// Fetch recent activities.
 		$activities = get_posts(
 			array(
 				'post_type'      => 'actividad',
@@ -385,7 +385,7 @@ class Admin_Horas extends \WP_List_Table {
 		header( 'Pragma: no-cache' );
 		header( 'Expires: 0' );
 
-		$out = fopen( 'php://output', 'w' );
+		$out = fopen( 'php://output', 'w' ); .
 		fprintf( $out, chr( 0xEF ) . chr( 0xBB ) . chr( 0xBF ) );
 
 		fputcsv(
@@ -608,10 +608,10 @@ class Admin_Horas extends \WP_List_Table {
 			$miembro_id      = (int) get_post_meta( $record_id, '_bdv_miembro_id', true );
 			$current_user_id = get_current_user_id();
 
-			// Robust identification of the volunteer user ID
+			// Robust identification of the volunteer user ID.
 			$volunteer_user_id = (int) get_post_meta( $record_id, '_bdv_usuario_id', true );
 
-			// Fallback: Check linked member profile for an email/user
+			// Fallback: Check linked member profile for an email/user.
 			if ( ! $volunteer_user_id && $miembro_id ) {
 				$member_email = get_post_meta( $miembro_id, '_bdv_email', true );
 				if ( $member_email ) {
@@ -622,7 +622,7 @@ class Admin_Horas extends \WP_List_Table {
 				}
 			}
 
-			// Final fallback: check post author (legacy or secondary check)
+			// Final fallback: check post author (legacy or secondary check).
 			if ( ! $volunteer_user_id && $miembro_id ) {
 				$member_post = get_post( $miembro_id );
 				if ( $member_post && $member_post->post_author ) {
@@ -636,16 +636,16 @@ class Admin_Horas extends \WP_List_Table {
 			$is_admin      = in_array( 'administrator', $current_roles, true );
 			$is_monitor    = in_array( 'monitor_actividad', $current_roles, true );
 
-			// Determine the submitting user's roles to see if they are a monitor
+			// Determine the submitting user's roles to see if they are a monitor.
 			$volunteer_user  = $volunteer_user_id ? get_userdata( $volunteer_user_id ) : null;
 			$volunteer_roles = $volunteer_user ? (array) $volunteer_user->roles : array();
 			$vol_is_monitor  = in_array( 'monitor_actividad', $volunteer_roles, true );
 
 			if ( $is_admin ) {
-				// Admin puede aprobar cualquier hora (propias inclusive)
-				// no-op
+				// Admin puede aprobar cualquier hora (propias inclusive).
+				// no-op.
 			} elseif ( $is_monitor ) {
-				// Monitor no puede aprobar sus propias horas
+				// Monitor no puede aprobar sus propias horas.
 				if ( $volunteer_user_id > 0 && $volunteer_user_id === $current_user_id ) {
 					\Convoca\Core\Logger::warning(
 						"Monitor intentó auto-aprobarse horas. Usuario: $current_user_id, Registro: $record_id",
@@ -654,7 +654,7 @@ class Admin_Horas extends \WP_List_Table {
 					);
 					wp_die( __( 'No puedes aprobar tus propias horas de voluntariado.', 'convoca-members' ) );
 				}
-				// Monitor no puede aprobar horas de otro monitor
+				// Monitor no puede aprobar horas de otro monitor.
 				if ( $vol_is_monitor ) {
 					\Convoca\Core\Logger::warning(
 						"Monitor intentó aprobar horas de otro monitor. Aprobador: $current_user_id, Objetivo: $volunteer_user_id, Registro: $record_id",
@@ -664,7 +664,7 @@ class Admin_Horas extends \WP_List_Table {
 					wp_die( __( 'Solo un administrador puede aprobar las horas de los monitores.', 'convoca-members' ) );
 				}
 			} else {
-				// Otros roles con gestionar_miembros (p.ej. shop_manager) → mismo límite que monitor
+				// Otros roles con gestionar_miembros (p.ej. shop_manager) → mismo límite que monitor.
 				if ( $volunteer_user_id > 0 && $volunteer_user_id === $current_user_id ) {
 					wp_die( __( 'No puedes aprobar tus propias horas de voluntariado.', 'convoca-members' ) );
 				}
@@ -682,7 +682,7 @@ class Admin_Horas extends \WP_List_Table {
 				do_action( 'convoca_members_hora_rechazada', $record_id, $miembro_id );
 			}
 
-			// Log activity
+			// Log activity.
 			$socio_id = get_post_meta( $record_id, '_bdv_miembro_id', true );
 			\Convoca\Core\Logger::log( "Registro de horas $record_id marcado como $new_status por admin " . get_current_user_id(), 'Members/Hours', $socio_id );
 		}

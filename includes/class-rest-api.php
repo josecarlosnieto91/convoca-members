@@ -258,7 +258,7 @@ class Rest_API {
 	 * Login handler — WordPress credentials (username or email + password).
 	 */
 	public function login( \WP_REST_Request $request ): \WP_REST_Response {
-		// Check rate limit before processing
+		// Check rate limit before processing.
 		if ( ! $this->check_rate_limit( 'login' ) ) {
 			return new \WP_REST_Response(
 				array(
@@ -378,12 +378,12 @@ class Rest_API {
 					'estado'    => $estado,
 				);
 
-				// Only include token for confirmed states (needed for ICS download)
+				// Only include token for confirmed states (needed for ICS download).
 				if ( in_array( $estado, array( 'confirmada', 'pagada' ), true ) ) {
 					$item['token'] = get_post_meta( $post->ID, '_bde_checkin_token', true );
 				}
 
-				// Include Google Photos album link if available
+				// Include Google Photos album link if available.
 				if ( $actividad_id ) {
 					$album_url = get_post_meta( $actividad_id, '_bde_google_album_url', true );
 					if ( ! empty( $album_url ) ) {
@@ -528,7 +528,7 @@ class Rest_API {
 			);
 		}
 
-		// Notification to admin via action
+		// Notification to admin via action.
 		\Convoca\Core\Utils::do_action( 'convoca_members_hours_submitted', 'biodevas_hours_submitted', $post_id, $member_id );
 
 		return new \WP_REST_Response(
@@ -673,7 +673,7 @@ class Rest_API {
 			}
 		}
 
-		// Sort: members before activities, then by title
+		// Sort: members before activities, then by title.
 		usort(
 			$results,
 			function ( $a, $b ) {
@@ -684,7 +684,7 @@ class Rest_API {
 			}
 		);
 
-		// Trim to limit after sort
+		// Trim to limit after sort.
 		$results = array_slice( $results, 0, $limit );
 
 		return new \WP_REST_Response(
@@ -736,7 +736,7 @@ class Rest_API {
 			return new \WP_REST_Response( array( 'error' => 'Miembro no encontrado.' ), 404 );
 		}
 
-		// Verify completion by recalculating actual hours (not just meta)
+		// Verify completion by recalculating actual hours (not just meta).
 		$horas_aprobadas = Voluntariado_Manager::get_horas_aprobadas( $member_id );
 		$objetivo        = Voluntariado_Manager::get_horas_objetivo( $member_id );
 		$completado      = $horas_aprobadas >= $objetivo;
@@ -872,7 +872,7 @@ class Rest_API {
 		$user_id         = (int) get_post_meta( $id, '_bdv_usuario_id', true );
 		$current_user_id = get_current_user_id();
 
-		// Security check: Admin OR Owner
+		// Security check: Admin OR Owner.
 		if ( ! current_user_can( 'manage_options' ) && $user_id !== $current_user_id ) {
 			wp_die( 'No tienes permiso para ver este documento.', 'Acceso Denegado', array( 'response' => 403 ) );
 		}
@@ -883,7 +883,7 @@ class Rest_API {
 			wp_die( 'El archivo físico no existe en el servidor.', 'Error', array( 'response' => 404 ) );
 		}
 
-		// Path traversal protection: ensure file is within the safe documents directory
+		// Path traversal protection: ensure file is within the safe documents directory.
 		$real_path = realpath( $filepath );
 		$safe_base = realpath( wp_upload_dir()['basedir'] . '/biodevas-documentos' );
 		if ( $real_path === false || $safe_base === false || ! str_starts_with( $real_path, $safe_base ) ) {
@@ -891,7 +891,7 @@ class Rest_API {
 			wp_die( 'Archivo no válido.', 'Acceso Denegado', array( 'response' => 403 ) );
 		}
 
-		// Clear output buffer to avoid corruption
+		// Clear output buffer to avoid corruption.
 		if ( ob_get_level() ) {
 			ob_end_clean();
 		}

@@ -49,7 +49,7 @@ class Admin_Webhooks {
 			return;
 		}
 
-		// Handle POST actions (create/update)
+		// Handle POST actions (create/update).
 		if ( isset( $_POST['bdv_webhook_action'] ) ) {
 			check_admin_referer( 'bdv_webhook_nonce' );
 
@@ -92,7 +92,7 @@ class Admin_Webhooks {
 			}
 		}
 
-		// Handle GET actions (delete, test, toggle)
+		// Handle GET actions (delete, test, toggle).
 		if ( isset( $_GET['bdv_wh_action'] ) ) {
 			$get_data = wp_unslash( $_GET );
 			$action   = sanitize_text_field( $get_data['bdv_wh_action'] );
@@ -139,7 +139,7 @@ class Admin_Webhooks {
 		echo '<div class="wrap">';
 		echo '<h1>🔗 Webhooks — Biodevas</h1>';
 
-		// Flash messages
+		// Flash messages.
 		$messages = array(
 			'created'      => array( 'success', 'Webhook creado correctamente.' ),
 			'updated'      => array( 'success', 'Webhook actualizado.' ),
@@ -217,27 +217,27 @@ class Admin_Webhooks {
 			echo '<td>' . esc_html( $created ? \Convoca\Core\Utils::format_date( $created, 'd/m/Y' ) : '—' ) . '</td>';
 			echo '<td>';
 
-			// Edit
+			// Edit.
 			echo '<a href="' . esc_url( admin_url( 'admin.php?page=bdv-webhooks&view=edit&webhook_id=' . $id ) ) . '" class="button button-small">Editar</a> ';
 
-			// Test
+			// Test.
 			$test_url = wp_nonce_url(
 				admin_url( 'admin.php?page=bdv-webhooks&bdv_wh_action=test&webhook_id=' . $id ),
 				'bdv_wh_action_' . $id
 			);
 			echo '<a href="' . esc_url( $test_url ) . '" class="button button-small">🔔 Test</a> ';
 
-			// Logs
+			// Logs.
 			echo '<a href="' . esc_url( admin_url( 'admin.php?page=bdv-webhooks&view=logs&webhook_id=' . $id ) ) . '" class="button button-small">📋 Logs</a> ';
 
-			// Toggle
+			// Toggle.
 			$toggle_url = wp_nonce_url(
 				admin_url( 'admin.php?page=bdv-webhooks&bdv_wh_action=toggle&webhook_id=' . $id ),
 				'bdv_wh_action_' . $id
 			);
 			echo '<a href="' . esc_url( $toggle_url ) . '" class="button button-small">' . ( $active ? '⏸ Pausar' : '▶ Activar' ) . '</a> ';
 
-			// Delete
+			// Delete.
 			$delete_url = wp_nonce_url(
 				admin_url( 'admin.php?page=bdv-webhooks&bdv_wh_action=delete&webhook_id=' . $id ),
 				'bdv_wh_action_' . $id
@@ -279,26 +279,26 @@ class Admin_Webhooks {
 
 		echo '<table class="form-table">';
 
-		// Label
+		// Label.
 		echo '<tr><th><label for="webhook_label">Nombre / Etiqueta</label></th>';
 		echo '<td><input type="text" id="webhook_label" name="webhook_label" value="' . esc_attr( $webhook['label'] ?? '' ) . '" class="regular-text" placeholder="Ej: Slack Notifications"></td></tr>';
 
-		// URL
+		// URL.
 		echo '<tr><th><label for="webhook_url">URL del Webhook</label></th>';
-		echo '<td><input type="url" id="webhook_url" name="webhook_url" value="' . esc_attr( $webhook['url'] ?? '' ) . '" class="regular-text" required placeholder="https://ejemplo.com/webhook"></td></tr>';
+		echo '<td><input type="url" id="webhook_url" name="webhook_url" value="' . esc_attr( $webhook['url'] ?? '' ) . '" class="regular-text" required placeholder="https://ejemplo.com/webhook"></td></tr>'; .
 
-		// Secret
+		// Secret.
 		echo '<tr><th><label for="webhook_secret">Secreto HMAC (opcional)</label></th>';
 		echo '<td><input type="text" id="webhook_secret" name="webhook_secret" value="' . esc_attr( $webhook['secret'] ?? '' ) . '" class="regular-text" placeholder="Se usa para firmar los payloads">';
 		echo '<p class="description">Si se configura, cada entrega incluirá un header <code>X-Assoc-Signature</code> con el HMAC-SHA256.</p></td></tr>';
 
-		// Active (only for edit)
+		// Active (only for edit).
 		if ( $is_edit ) {
 			echo '<tr><th>Estado</th>';
 			echo '<td><label><input type="checkbox" name="webhook_active" value="1" ' . checked( $webhook['active'] ?? true, true, false ) . '> Activo</label></td></tr>';
 		}
 
-		// Events
+		// Events.
 		echo '<tr><th>Eventos suscritos</th>';
 		echo '<td><fieldset>';
 		echo '<p class="description" style="margin-bottom:10px;">Selecciona los eventos. Si no seleccionas ninguno, recibirá <strong>todos</strong> los eventos.</p>';

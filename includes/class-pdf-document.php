@@ -92,7 +92,7 @@ class PDF_Document {
 				'post_type'   => 'bdv_documento',
 				'post_title'  => 'Acuerdo Voluntariado - ' . $nombre,
 				'post_status' => 'draft',
-				'post_author' => 1, // System
+				'post_author' => 1, // System.
 			)
 		);
 
@@ -131,7 +131,7 @@ class PDF_Document {
 
 			$signature = new \Convoca\Core\BDV_Signature();
 
-			// Collect user data
+			// Collect user data.
 			$dni       = get_user_meta( $user_id, '_cst_dni', true );
 			$email     = $user->user_email;
 			$telefono  = get_user_meta( $user_id, '_cst_telefono', true );
@@ -144,7 +144,7 @@ class PDF_Document {
 			$timestamp = time();
 			$ip        = filter_var( $_SERVER['REMOTE_ADDR'] ?? '', FILTER_VALIDATE_IP ) ?: 'Desconocida';
 
-			// Dynamic fields
+			// Dynamic fields.
 			$dynamic_fields = get_option( 'bdv_volunteer_fields', array() );
 			$dynamic_html   = '';
 			if ( ! empty( $dynamic_fields ) ) {
@@ -166,7 +166,7 @@ class PDF_Document {
 			$templates     = get_option( 'bdv_pdf_templates', array() );
 			$template_html = isset( $templates['acuerdo_incorporacion'] ) ? $templates['acuerdo_incorporacion']['content'] : '<h1>Acuerdo de Incorporación</h1><p>Nombre: {{nombre}}</p><p>DNI: {{dni}}</p>{{dynamic_fields}}{{declaracion}}';
 
-			// Append digital stamp
+			// Append digital stamp.
 			$content_for_hash = $user_id . $dni . $email . $timestamp;
 			$stamp_html       = $signature->get_acceptance_stamp_html( $nombre, $ip, $timestamp, $content_for_hash );
 
@@ -187,7 +187,7 @@ class PDF_Document {
 				'dynamic_fields'      => $dynamic_html,
 			);
 
-			// Create upload directory
+			// Create upload directory.
 			$upload_dir = wp_upload_dir();
 			$target_dir = $upload_dir['basedir'] . '/biodevas-documentos';
 			if ( ! file_exists( $target_dir ) ) {

@@ -37,7 +37,7 @@ class Hours_Manager {
 			return new \WP_Error( 'missing_tareas', __( 'Debes describir las tareas realizadas.', 'convoca-members' ) );
 		}
 
-		// Validate proyecto_id
+		// Validate proyecto_id.
 		$proyecto = get_post( (int) $data['proyecto_id'] );
 		if ( ! $proyecto || $proyecto->post_type !== 'proyecto' ) {
 			return new \WP_Error( 'invalid_proyecto', __( 'El proyecto seleccionado no es válido.', 'convoca-members' ) );
@@ -113,7 +113,7 @@ class Hours_Manager {
 			update_post_meta( $post_id, '_bdv_nota_admin', $nota_admin );
 		}
 
-		// Handle state changes
+		// Handle state changes.
 		if ( $estado !== $old_status ) {
 			self::process_approval( $post_id, $estado, get_current_user_id() );
 		}
@@ -130,7 +130,7 @@ class Hours_Manager {
 	 * @return bool
 	 */
 	public static function process_approval( int $record_id, string|bool $new_status, int $admin_id ): bool {
-		// Normalize bool values: true → 'aprobada', false → 'rechazada'
+		// Normalize bool values: true → 'aprobada', false → 'rechazada'.
 		if ( is_bool( $new_status ) ) {
 			$new_status = $new_status ? 'aprobada' : 'rechazada';
 		}

@@ -77,7 +77,7 @@ class Admin_Import_CSV {
 			</div>
 
 			<?php
-			// Check for batch import progress
+			// Check for batch import progress.
 			$batch_key      = 'bdv_import_batch_' . get_current_user_id();
 			$batch_progress = get_transient( $batch_key );
 			?>
@@ -215,7 +215,7 @@ class Admin_Import_CSV {
 			$rows[] = $data;
 			++$total;
 		}
-		// Count total rows
+		// Count total rows.
 		while ( fgetcsv( $handle, 0, ',', '"', '' ) !== false ) {
 			++$total;
 		}
@@ -254,8 +254,8 @@ class Admin_Import_CSV {
 		header( 'Pragma: no-cache' );
 		header( 'Expires: 0' );
 
-		$out = fopen( 'php://output', 'w' );
-		// BOM for Excel
+		$out = fopen( 'php://output', 'w' ); .
+		// BOM for Excel.
 		fprintf( $out, chr( 0xEF ) . chr( 0xBB ) . chr( 0xBF ) );
 		fputcsv( $out, $headers );
 		fputcsv( $out, $example );
@@ -279,7 +279,7 @@ class Admin_Import_CSV {
 		$send_welcome    = isset( $_POST['send_welcome'] );
 		$update_existing = isset( $_POST['update_existing'] );
 
-		// Read all rows into memory
+		// Read all rows into memory.
 		$handle  = fopen( $filepath, 'r' );
 		$headers = fgetcsv( $handle, 0, ',', '"', '' );
 		if ( ! $headers ) {
@@ -306,9 +306,9 @@ class Admin_Import_CSV {
 		$total      = count( $rows );
 		$batch_size = 25;
 
-		// For large imports, use batch processing
+		// For large imports, use batch processing.
 		if ( $total > 50 ) {
-			// Store import state in transient for batch processing
+			// Store import state in transient for batch processing.
 			$batch_key = 'bdv_import_batch_' . get_current_user_id();
 			set_transient(
 				$batch_key,
@@ -327,15 +327,15 @@ class Admin_Import_CSV {
 
 			delete_transient( 'bdv_csv_preview_' . get_current_user_id() );
 
-			// Process first batch synchronously within this request
+			// Process first batch synchronously within this request.
 			$this->process_batch( $batch_key, $batch_size );
 
-			// Redirect back to continue
+			// Redirect back to continue.
 			wp_safe_redirect( admin_url( 'admin.php?page=bdv-import-csv' ) );
 			exit;
 		}
 
-		// Small import: process all at once
+		// Small import: process all at once.
 		$imported = 0;
 		$errors   = array();
 		foreach ( $rows as $row ) {
@@ -424,7 +424,7 @@ class Admin_Import_CSV {
 		$state['errors']   = $errors;
 
 		if ( $end >= count( $rows ) ) {
-			// Batch complete
+			// Batch complete.
 			delete_transient( $batch_key );
 			if ( ! empty( $state['filepath'] ) && file_exists( $state['filepath'] ) ) {
 				unlink( $state['filepath'] );
@@ -440,7 +440,7 @@ class Admin_Import_CSV {
 				$message .= ' ' . sprintf( __( '%d errores:', 'convoca-members' ), count( $errors ) ) . ' ' . implode( ' | ', array_slice( $errors, 0, 10 ) );
 			}
 
-			// Store result message and redirect
+			// Store result message and redirect.
 			set_transient( 'bdv_import_batch_' . get_current_user_id() . '_done', $message, 60 );
 		} else {
 			set_transient( $batch_key, $state, 3600 );
@@ -462,7 +462,7 @@ class Admin_Import_CSV {
 		$email  = $row['email'] ?? '';
 		$dni    = $row['dni'] ?? '';
 
-		// Validate required fields
+		// Validate required fields.
 		if ( empty( $nombre ) || empty( $email ) ) {
 			$errors[] = sprintf( __( 'Fila %d: nombre y email obligatorios.', 'convoca-members' ), $line );
 			return false;
@@ -473,13 +473,13 @@ class Admin_Import_CSV {
 			return false;
 		}
 
-		// Validate DNI
+		// Validate DNI.
 		if ( ! empty( $dni ) && ! \Convoca\Core\Utils::validar_dni( $dni ) ) {
 			$errors[] = sprintf( __( 'Fila %1$d: DNI inválido (%2$s).', 'convoca-members' ), $line, $dni );
 			return false;
 		}
 
-		// Check for existing member by email or DNI
+		// Check for existing member by email or DNI.
 		$existing_id = $this->find_existing_member( $email, $dni );
 
 		if ( $existing_id ) {
@@ -492,7 +492,7 @@ class Admin_Import_CSV {
 				return false;
 			}
 
-			// Update existing member
+			// Update existing member.
 			wp_update_post(
 				array(
 					'ID'         => $existing_id,
@@ -501,7 +501,7 @@ class Admin_Import_CSV {
 			);
 			$post_id = $existing_id;
 		} else {
-			// Create new member
+			// Create new member.
 			$post_id = wp_insert_post(
 				array(
 					'post_type'   => 'miembro',
@@ -515,16 +515,16 @@ class Admin_Import_CSV {
 				return $post_id;
 			}
 
-			// Generate access code for new members
+			// Generate access code for new members.
 			$access_code = \Convoca\Core\Utils::generate_access_code();
 			update_post_meta( $post_id, '_bdv_access_code', $access_code );
 
-			// Assign member number only to new members
+			// Assign member number only to new members.
 			$num = CPT_Miembro::get_next_member_number( $post_id );
 			update_post_meta( $post_id, '_bdv_numero_socio', $num );
 		}
 
-		// Save meta (for both new and updated members)
+		// Save meta (for both new and updated members).
 		$meta_map = array( 'email', 'dni', 'telefono', 'direccion', 'municipio', 'plan' );
 		foreach ( $meta_map as $m ) {
 			if ( ! empty( $row[ $m ] ) ) {
@@ -548,13 +548,13 @@ class Admin_Import_CSV {
 	 * @return int|null Post ID if found, null otherwise.
 	 */
 	private function find_existing_member( string $email, string $dni ): ?int {
-		// Check by email first
+		// Check by email first.
 		$user = get_user_by( 'email', $email );
 		if ( $user ) {
-			return null; // This is a WP user, not a member post; don't treat as duplicate
+			return null; // This is a WP user, not a member post; don't treat as duplicate.
 		}
 
-		// Check by email meta
+		// Check by email meta.
 		$by_email = get_posts(
 			array(
 				'post_type'      => 'miembro',
@@ -568,7 +568,7 @@ class Admin_Import_CSV {
 			return (int) $by_email[0];
 		}
 
-		// Check by DNI
+		// Check by DNI.
 		if ( ! empty( $dni ) ) {
 			$by_dni = get_posts(
 				array(

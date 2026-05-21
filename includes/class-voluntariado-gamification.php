@@ -169,7 +169,7 @@ class Voluntariado_Gamification {
 			return self::DEFAULT_TRACK;
 		}
 
-		// Extract track from the suffix: fam-busgosu → busgosu, juv-lugg → lugg, deva → deva
+		// Extract track from the suffix: fam-busgosu → busgosu, juv-lugg → lugg, deva → deva.
 		foreach ( array( 'busgosu', 'lugg', 'deva' ) as $track ) {
 			if ( str_ends_with( $key, $track ) ) {
 				return $track;
@@ -196,7 +196,7 @@ class Voluntariado_Gamification {
 			if ( isset( $saved[ $track_key ]['levels'] ) && is_array( $saved[ $track_key ]['levels'] ) ) {
 				foreach ( $track['levels'] as $i => &$default_level ) {
 					if ( isset( $saved[ $track_key ]['levels'][ $i ] ) && is_array( $saved[ $track_key ]['levels'][ $i ] ) ) {
-						// Merge saved values over defaults (preserves all keys)
+						// Merge saved values over defaults (preserves all keys).
 						$default_level = array_merge( $default_level, $saved[ $track_key ]['levels'][ $i ] );
 					}
 				}
@@ -381,7 +381,7 @@ class Voluntariado_Gamification {
 			);
 		}
 
-		// Include full levels list for the step ladder UI
+		// Include full levels list for the step ladder UI.
 		$response['levels'] = array();
 		$current_index      = $level['index'];
 		foreach ( $levels_def as $i => $lvl ) {

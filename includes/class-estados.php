@@ -68,7 +68,7 @@ class Estados {
 	 * @return bool|\WP_Error
 	 */
 	public static function change( int $post_id, string $new, string $note = '' ): bool|\WP_Error {
-		// Prevent concurrent state changes with transient lock
+		// Prevent concurrent state changes with transient lock.
 		$lock_key = "bdv_state_change_{$post_id}";
 		if ( get_transient( $lock_key ) ) {
 			\Convoca\Core\Logger::warning(
@@ -79,10 +79,10 @@ class Estados {
 			return new \WP_Error( 'concurrent_change', 'Ya hay un cambio de estado en proceso para este miembro.' );
 		}
 
-		// Set lock for 10 seconds
+		// Set lock for 10 seconds.
 		set_transient( $lock_key, 1, 10 );
 
-		// Register shutdown function to ensure lock is cleared even on fatal errors
+		// Register shutdown function to ensure lock is cleared even on fatal errors.
 		register_shutdown_function(
 			function () use ( $lock_key ) {
 				delete_transient( $lock_key );
@@ -123,7 +123,7 @@ class Estados {
 		// Save new state.
 		update_post_meta( $post_id, '_bdv_estado_miembro', $new );
 
-		// Record timestamp for pending payment state (for cron reminders)
+		// Record timestamp for pending payment state (for cron reminders).
 		if ( $new === 'pendiente_pago' ) {
 			update_post_meta( $post_id, '_bdv_fecha_pendiente_pago', current_time( 'mysql' ) );
 		}
@@ -131,7 +131,7 @@ class Estados {
 		// Audit log.
 		self::log( $post_id, $old, $new, $note );
 
-		// Release lock
+		// Release lock.
 		delete_transient( $lock_key );
 
 		/**

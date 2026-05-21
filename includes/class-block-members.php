@@ -49,7 +49,7 @@ class Block_Members {
 				'keywords'        => array( 'alta', 'socio', 'registro', 'convoca-core' ),
 				'render_callback' => array( $this, 'render_alta' ),
 				'editor_script'   => 'bdv-blocks-editor',
-				'style'           => 'biodevas-mi-area', // Reusing the style handle from Mi_Area if registered
+				'style'           => 'biodevas-mi-area', // Reusing the style handle from Mi_Area if registered.
 			)
 		);
 
@@ -104,7 +104,7 @@ class Block_Members {
 	}
 
 	public function editor_assets(): void {
-		// Handled by register_assets and block registration
+		// Handled by register_assets and block registration.
 	}
 
 	public function render_alta( array $attrs ): string {

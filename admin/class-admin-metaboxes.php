@@ -19,13 +19,13 @@ class Admin_Metaboxes {
 		add_action( 'add_meta_boxes', array( $this, 'add_metaboxes' ) );
 		add_action( 'save_post_miembro', array( $this, 'save_metaboxes' ) );
 
-		// AJAX Handlers
+		// AJAX Handlers.
 		add_action( 'wp_ajax_bdv_send_payment_link', array( $this, 'ajax_send_payment_link' ) );
 		add_action( 'wp_ajax_bdv_send_reminder', array( $this, 'ajax_send_reminder' ) );
 		add_action( 'wp_ajax_bdv_export_member_data', array( $this, 'ajax_export_member_data' ) );
 		add_action( 'wp_ajax_bdv_delete_member_data', array( $this, 'ajax_delete_member_data' ) );
 
-		// User Profile (for Volunteers)
+		// User Profile (for Volunteers).
 		add_action( 'show_user_profile', array( $this, 'render_user_documents_section' ), 10, 1 );
 		add_action( 'edit_user_profile', array( $this, 'render_user_documents_section' ), 10, 1 );
 	}
@@ -361,7 +361,7 @@ class Admin_Metaboxes {
 				<div class="biodevas-check-group">
 					<?php
 					$is_vol = $get( 'es_voluntario' );
-					// If creating new and es_voluntario=1 in URL
+					// If creating new and es_voluntario=1 in URL.
 					if ( $post->post_status === 'auto-draft' && isset( $_GET['es_voluntario'] ) ) {
 						$is_vol = '1';
 					}
@@ -404,7 +404,7 @@ class Admin_Metaboxes {
 		$data    = wp_unslash( $_POST );
 		$post_id = (int) $data['post_id'];
 
-		// Get Plan and Price
+		// Get Plan and Price.
 		$plan_key = get_post_meta( $post_id, '_bdv_plan', true );
 		$plan     = CPT_Miembro::get_plan( $plan_key );
 
@@ -417,7 +417,7 @@ class Admin_Metaboxes {
 			wp_send_json_error( array( 'message' => 'Este plan no tiene coste económico.' ) );
 		}
 
-		// Create Payment in Gateway
+		// Create Payment in Gateway.
 		if ( ! \Convoca\Core\Features::is_gateway_active() || ! function_exists( 'Convoca\Gateway\bdv_gateway_create_payment' ) ) {
 			wp_send_json_error( array( 'message' => 'Gateway no activo.' ) );
 		}
@@ -435,11 +435,11 @@ class Admin_Metaboxes {
 			wp_send_json_error( array( 'message' => $result->get_error_message() ) );
 		}
 
-		// Save Payment ID to Member
+		// Save Payment ID to Member.
 		update_post_meta( $post_id, '_bdv_pago_id', $result['pago_id'] );
 		update_post_meta( $post_id, '_bdv_estado_cuota', 'pendiente' );
 
-		// Send Email
+		// Send Email.
 		$email_manager = new Email_Manager();
 		$email_manager->send_recordatorio_pago( $post_id, array( '{link_pago}' => $result['payment_url'] ) );
 
@@ -463,7 +463,7 @@ class Admin_Metaboxes {
 
 		$payment_url = Payment_Handler::get_payment_link( (int) $pago_id );
 
-		// Send Email using existing functionality
+		// Send Email using existing functionality.
 		$email_manager = new Email_Manager();
 		$email_manager->send_recordatorio_pago( $post_id, array( '{link_pago}' => $payment_url ) );
 
@@ -522,14 +522,14 @@ class Admin_Metaboxes {
 			update_post_meta( $post_id, '_bdv_' . $field, $val );
 		}
 
-		// Handle State Change via State Machine
+		// Handle State Change via State Machine.
 		$new_state = isset( $data['bdv_estado_miembro'] ) ? sanitize_text_field( $data['bdv_estado_miembro'] ) : '';
 		$old_state = get_post_meta( $post_id, '_bdv_estado_miembro', true );
 
 		if ( $new_state && $new_state !== $old_state ) {
 			Estados::change( $post_id, $new_state, __( 'Cambio manual desde edición de miembro.', 'convoca-members' ) );
 
-			// If activating, ensure they have a number and cuota is active
+			// If activating, ensure they have a number and cuota is active.
 			if ( $new_state === 'activo' ) {
 				$num = get_post_meta( $post_id, '_bdv_numero_socio', true );
 				if ( ! $num ) {
@@ -546,9 +546,9 @@ class Admin_Metaboxes {
 			}
 		}
 
-		// Handle title sync if needed (optional)
+		// Handle title sync if needed (optional).
 		if ( isset( $_POST['post_title'] ) && empty( $_POST['post_title'] ) ) {
-			// Could auto-generate title from name if we had a separate name field, currently post_title is Name
+			// Could auto-generate title from name if we had a separate name field, currently post_title is Name.
 		}
 	}
 

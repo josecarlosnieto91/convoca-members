@@ -28,32 +28,32 @@ class CPT_Miembro {
 		'email',
 		'dni',
 		'fecha_nacimiento',
-		'menor_edad',           // boolean
+		'menor_edad',           // boolean.
 
 		// ── Contact ──
 		'telefono',
-		'whatsapp',             // si / no
-		'canal_contacto',       // whatsapp, email, telefono
+		'whatsapp',             // si / no.
+		'canal_contacto',       // whatsapp, email, telefono.
 		'direccion',
 		'municipio',
 
 		// ── Membership ──
 		'plan',                 // busgosu, lugg, deva, etc.
 		'sub_plan',             // fam-busgosu, juv-busgosu, etc.
-		'modalidad',            // Numerario, Familiar, Juvenil
-		'estado_miembro',       // activo, proximo_vencer, baja
-		'forma_pago',           // cuota, voluntariado
-		'importe_cuota',        // e.g. 100
-		'estado_cuota',         // activa, pendiente, vencida
-		'pago_id',              // Gateway pago post ID
-		'metodo_pago',          // tarjeta | bizum
-		'cuota',                // legacy alias
+		'modalidad',            // Numerario, Familiar, Juvenil.
+		'estado_miembro',       // activo, proximo_vencer, baja.
+		'forma_pago',           // cuota, voluntariado.
+		'importe_cuota',        // e.g. 100.
+		'estado_cuota',         // activa, pendiente, vencida.
+		'pago_id',              // Gateway pago post ID.
+		'metodo_pago',          // tarjeta | bizum.
+		'cuota',                // legacy alias.
 		'fecha_renovacion',
 		'fecha_baja',
 
 		// ── Volunteer ──
-		'es_voluntario',        // boolean
-		'tipo_voluntariado',    // string description
+		'es_voluntario',        // boolean.
+		'tipo_voluntariado',    // string description.
 		'intereses',
 		'disponibilidad',
 		'experiencia',
@@ -62,22 +62,22 @@ class CPT_Miembro {
 		// ── Minor ──
 		'tutor_nombre',
 		'tutor_dni',
-		'tutor_autorizacion',   // boolean
+		'tutor_autorizacion',   // boolean.
 
 		// ── Legal ──
 		'rgpd_version',
 		'rgpd_timestamp',
-		'comunicaciones_ok',    // boolean
+		'comunicaciones_ok',    // boolean.
 
 		// ── Admin / Tracking ──
-		'observaciones',        // admin notes (textarea)
-		'incidencias',          // admin notes (textarea)
-		'ultimo_contacto',      // date of last contact
-		'responsable',          // responsible admin user
+		'observaciones',        // admin notes (textarea).
+		'incidencias',          // admin notes (textarea).
+		'ultimo_contacto',      // date of last contact.
+		'responsable',          // responsible admin user.
 		'msg_bienvenida',       // boolean — sent?
 		'msg_renovacion',       // boolean — sent?
-		'avisos_generales',     // free text
-		'access_code',          // member portal access code
+		'avisos_generales',     // free text.
+		'access_code',          // member portal access code.
 	);
 
 	/** Status for payments (cuotas). */
@@ -285,7 +285,7 @@ class CPT_Miembro {
 		// If DB is empty, use defaults (legacy mode).
 		$plans = empty( $db_plans ) ? self::PLANS : $db_plans;
 
-		// Normalize: Ensure all plans have critical keys
+		// Normalize: Ensure all plans have critical keys.
 		foreach ( $plans as $key => &$plan ) {
 			$default = isset( self::PLANS[ $key ] ) ? self::PLANS[ $key ] : array();
 
@@ -333,7 +333,7 @@ class CPT_Miembro {
 		}
 		$clean = ltrim( $clean, '+' );
 
-		$url = 'https://wa.me/' . $clean;
+		$url = 'https://wa.me/' . $clean; .
 		if ( $message ) {
 			$nombre = get_post_meta( $post_id, '_bdv_nombre', true ) ?: get_the_title( $post_id );
 			$msg    = str_replace( '{nombre}', $nombre, $message );
@@ -354,12 +354,12 @@ class CPT_Miembro {
 		} catch ( \Throwable $e ) {
 			\Convoca\Core\Logger::error( 'Error al generar número de socio (secuencia): ' . $e->getMessage(), 'Members' );
 
-			// Fallback: atomic increment using MySQL's LAST_INSERT_ID
+			// Fallback: atomic increment using MySQL's LAST_INSERT_ID.
 			global $wpdb;
 			$option_name = 'bdv_last_member_number_fallback';
 			$wpdb->query( 'START TRANSACTION' );
 			try {
-				// Atomic increment with row-level lock to prevent duplicates
+				// Atomic increment with row-level lock to prevent duplicates.
 				$wpdb->query( "SELECT option_value FROM {$wpdb->options} WHERE option_name = '{$option_name}' FOR UPDATE" );
 				$wpdb->query(
 					"UPDATE {$wpdb->options} SET option_value = CAST(option_value AS UNSIGNED) + 1 
@@ -392,9 +392,9 @@ class CPT_Miembro {
 		global $wpdb;
 		$table = $wpdb->prefix . 'bdv_member_sequence';
 
-		// Verify table exists before using it (handles incomplete upgrades)
+		// Verify table exists before using it (handles incomplete upgrades).
 		if ( $wpdb->get_var( "SHOW TABLES LIKE '$table'" ) !== $table ) {
-			// Try to create the table safely
+			// Try to create the table safely.
 			$charset = $wpdb->get_charset_collate();
 			$wpdb->query(
 				"CREATE TABLE IF NOT EXISTS $table (
@@ -404,13 +404,13 @@ class CPT_Miembro {
                 INDEX member_id (member_id)
             ) $charset"
 			);
-			// If still doesn't exist, fallback will handle it
+			// If still doesn't exist, fallback will handle it.
 			if ( $wpdb->get_var( "SHOW TABLES LIKE '$table'" ) !== $table ) {
 				throw new \Exception( 'Sequence table not available.' );
 			}
 		}
 
-		// Atomic insert to get the next sequential ID
+		// Atomic insert to get the next sequential ID.
 		$wpdb->insert( $table, array( 'member_id' => $post_id ), array( '%d' ) );
 		$next_number = (int) $wpdb->insert_id;
 
@@ -418,7 +418,7 @@ class CPT_Miembro {
 			throw new \Exception( 'No se pudo obtener el ID de secuencia.' );
 		}
 
-		// Update legacy option for compatibility - use SELECT MAX to ensure consistency under concurrency
+		// Update legacy option for compatibility - use SELECT MAX to ensure consistency under concurrency.
 		$max_from_db = (int) $wpdb->get_var( "SELECT MAX(member_number) FROM $table" );
 		if ( $max_from_db > 0 ) {
 			update_option( 'bdv_last_member_number', $max_from_db, false );

@@ -3,7 +3,7 @@
  * Certificate Generator - Generates PDF certificates for volunteers.
  *
  * Requires Dompdf library ( LGPL license ).
- * Download: https://github.com/dompdf/dompdf/releases
+ * Download: https://github.com/dompdf/dompdf/releases.
  * Place dompdf folder in: biodevas-members/vendor/dompdf/
  *
  * @package Convoca\Members
@@ -71,7 +71,7 @@ class Certificate_Generator {
 			return $pdf_content;
 		}
 
-		// Update meta only if PDF generated successfully
+		// Update meta only if PDF generated successfully.
 		update_post_meta( $miembro_id, '_bdv_certificado_id', $cert_id );
 		update_post_meta( $miembro_id, '_bdv_certificado_emitido', current_time( 'mysql' ) );
 
@@ -93,7 +93,7 @@ class Certificate_Generator {
 
 		$signature = new \Convoca\Core\BDV_Signature();
 
-		// Since generate_pdf usually saves to file, but Certificate_Generator::generate() wants binary content,
+		// Since generate_pdf usually saves to file, but Certificate_Generator::generate() wants binary content,.
 		// we use a temporary file.
 		$tmp_file = tempnam( sys_get_temp_dir(), 'bdv_cert_' );
 

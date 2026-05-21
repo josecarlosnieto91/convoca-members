@@ -323,7 +323,7 @@ class Admin_Settings {
 
 		// Ensure at least one empty plan slot for adding new ones is hard to handle in simple options.php form.
 		// We will use JS to clone a template or just save what we have.
-		// For simplicity in this first iteration: we iterate existing + provide a "Add New" block at the bottom
+		// For simplicity in this first iteration: we iterate existing + provide a "Add New" block at the bottom.
 		// that serves to create a new key.
 		?>
 		<form method="post" action="options.php">
@@ -401,7 +401,7 @@ class Admin_Settings {
 	}
 
 	private function render_single_plan_card( $key, $plan ): void {
-		$active = isset( $plan['active'] ) ? (bool) $plan['active'] : true; // Default active if not set
+		$active = isset( $plan['active'] ) ? (bool) $plan['active'] : true; // Default active if not set.
 		?>
 		<div class="bdv-plan-card postbox" style="margin-bottom: 20px;">
 			<div class="postbox-header"
@@ -507,7 +507,7 @@ class Admin_Settings {
 	}
 
 	private function render_emails_tab(): void {
-		// Save email templates logic specifically for this tab if needed differently,
+		// Save email templates logic specifically for this tab if needed differently,.
 		// but since we want to leverage options.php, we might need to register a setting for templates too?
 		// THE PREVIOUS CODE handled this manually via POST check.
 		// We will keep that manual saving logic but integrate it into the flow.
@@ -518,7 +518,7 @@ class Admin_Settings {
 			foreach ( Email_Manager::TEMPLATES as $slug ) {
 				$templates[ $slug ] = array(
 					'subject' => sanitize_text_field( $data[ 'tpl_' . $slug . '_subject' ] ?? '' ),
-					'body'    => wp_kses_post( $data[ 'tpl_' . $slug . '_body' ] ?? '' ), // Allow HTML
+					'body'    => wp_kses_post( $data[ 'tpl_' . $slug . '_body' ] ?? '' ), // Allow HTML.
 				);
 			}
 			Email_Manager::save_templates( $templates );
@@ -637,7 +637,7 @@ class Admin_Settings {
 					tempDiv.innerHTML = html;
 					var newCard = tempDiv.firstElementChild;
 					
-					// Update input names and values
+					// Update input names and values.
 					var inputs = newCard.querySelectorAll('[name*="__INDEX__"]');
 					inputs.forEach(input => {
 						input.name = input.name.replace('__INDEX__', name);
@@ -727,13 +727,13 @@ class Admin_Settings {
 	public function render_gamification_tab(): void {
 		$tracks = \Convoca\Members\Voluntariado_Gamification::get_tracks_config();
 
-		// Handle POST save
+		// Handle POST save.
 		if ( isset( $_POST['bdv_save_gamification'] ) && check_admin_referer( 'bdv_gamification_nonce' ) ) {
 			$raw       = wp_unslash( $_POST['bdv_gamification_tracks'] ?? array() );
 			$sanitized = $this->sanitize_gamification_tracks( $raw );
 			update_option( \Convoca\Members\Voluntariado_Gamification::OPTION_KEY, $sanitized );
 			echo '<div class="updated"><p>' . esc_html__( 'Badges guardados correctamente.', 'convoca-members' ) . '</p></div>';
-			// Reload tracks after save
+			// Reload tracks after save.
 			$tracks = \Convoca\Members\Voluntariado_Gamification::get_tracks_config();
 		}
 

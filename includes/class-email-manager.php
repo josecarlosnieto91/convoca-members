@@ -28,7 +28,7 @@ class Email_Manager {
 	public const TEMPLATES = array(
 		'solicitud_recibida',
 		'bienvenida',
-		'credenciales_acceso', // Enviado tras aprobación con usuario/contraseña
+		'credenciales_acceso', // Enviado tras aprobación con usuario/contraseña.
 		'recordatorio_pago',
 		'pago_pendiente_2',
 		'pago_pendiente_ultimo',
@@ -69,7 +69,7 @@ class Email_Manager {
 	);
 
 	public function __construct() {
-		// New standard hooks
+		// New standard hooks.
 		add_action( 'convoca_members_email_solicitud', array( $this, 'send_solicitud' ) );
 		add_action( 'convoca_members_email_bienvenida', array( $this, 'send_bienvenida' ) );
 		add_action( 'convoca_members_email_recordatorio_pago', array( $this, 'send_recordatorio_pago' ), 10, 2 );
@@ -78,13 +78,13 @@ class Email_Manager {
 		add_action( 'convoca_members_email_renovacion_completada', array( $this, 'send_renovacion_completada' ) );
 		add_action( 'convoca_members_email_objetivo_voluntariado', array( $this, 'send_objetivo_voluntariado' ) );
 
-		// Legacy hooks removed. The do_action() call in Process_Member and
+		// Legacy hooks removed. The do_action() call in Process_Member and.
 		// other dispatchers fires both old and new hooks via Utils::do_action().
 		// Keeping both add_action() and do_action() would trigger deprecation notices.
 		// Use the new hook names (biodevas_members_*) going forward.
 		add_action( 'convoca_email_objetivo_voluntariado', array( $this, 'send_objetivo_voluntariado' ) );
 
-		// Credentials hook (called by Process_Member::handle_approved)
+		// Credentials hook (called by Process_Member::handle_approved).
 		add_action( 'convoca_members_email_credenciales', array( $this, 'send_credenciales' ), 10, 2 );
 	}
 
@@ -400,7 +400,7 @@ class Email_Manager {
 			return;
 		}
 
-		// Dedup: prevent sending the same email template to the same member within 5 minutes
+		// Dedup: prevent sending the same email template to the same member within 5 minutes.
 		$dedup_key = '_bdv_last_email_sent_' . $template_slug;
 		$last_sent = (int) get_post_meta( $post_id, $dedup_key, true );
 		if ( $last_sent && ( time() - $last_sent ) < 300 ) {
@@ -416,14 +416,14 @@ class Email_Manager {
 		// Wrap in premium Biodevas HTML layout (always HTML now).
 		$headers = array( 'Content-Type: text/html; charset=UTF-8' );
 
-		// Get Sender Name from settings
+		// Get Sender Name from settings.
 		$settings     = get_option( 'bdv_members_settings', array() );
 		$sender_name  = $settings['sender_name'] ?? get_bloginfo( 'name' );
 		$system_email = $settings['system_email'] ?? get_option( 'admin_email' );
 
 		$headers[] = 'From: ' . $sender_name . ' <' . $system_email . '>';
 
-		// Add Reply-To with user email if available for better deliverability
+		// Add Reply-To with user email if available for better deliverability.
 		if ( ! empty( $vars['{email}'] ) && filter_var( $vars['{email}'], FILTER_VALIDATE_EMAIL ) ) {
 			$headers[] = 'Reply-To: ' . $vars['{email}'];
 		}
@@ -443,7 +443,7 @@ class Email_Manager {
 		$sent = wp_mail( $email, $subject, $body, $headers );
 
 		if ( $sent ) {
-			// Update tracking and Audit Log
+			// Update tracking and Audit Log.
 			$now = current_time( 'mysql' );
 			update_post_meta( $post_id, '_bdv_ultimo_contacto_email', $now );
 			update_post_meta( $post_id, '_bdv_ultimo_contacto', $now );
@@ -499,7 +499,7 @@ class Email_Manager {
 			$importe = ( $plan_data ? $plan_data['price'] : 0 );
 		}
 
-		// Override if custom amount is set and different (legacy)
+		// Override if custom amount is set and different (legacy).
 		if ( $importe_custom && $importe_custom != $importe ) {
 			$importe = $importe_custom;
 			$cuota   = $importe . '€/año';
@@ -560,8 +560,8 @@ class Email_Manager {
 			'{fecha_alta}'                   => get_the_date( 'd/m/Y', $post_id ),
 			'{fecha_renovacion}'             => $meta( 'fecha_renovacion' ) ?: '—',
 			'{fecha_baja}'                   => $meta( 'fecha_baja' ) ?: '—',
-			'{link_pago}'                    => '', // Default empty, usually injected via extra_vars
-			// Voluntariado variables
+			'{link_pago}'                    => '', // Default empty, usually injected via extra_vars.
+			// Voluntariado variables.
 			'{horas_actuales}'               => $horas_aprobadas,
 			'{horas_objetivo}'               => $horas_objetivo,
 			'{porcentaje_cumplimiento}'      => $porcentaje,
@@ -572,7 +572,7 @@ class Email_Manager {
 			'{certificado_url_verificacion}' => $certificado_id !== '—'
 				? rest_url( 'convoca-members/v1/me/certificate' )
 				: '—',
-			// Credentials (usually injected via extra_vars, not from meta)
+			// Credentials (usually injected via extra_vars, not from meta).
 			'{usuario}'                      => $extra_vars['{usuario}'] ?? '—',
 			'{password}'                     => $extra_vars['{password}'] ?? '—',
 			'{login_url}'                    => $extra_vars['{login_url}'] ?? home_url( '/mi-area/' ),

@@ -15,12 +15,12 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Audit_Logger {
 
 	public function __construct() {
-		// Track logical deletions (trash)
+		// Track logical deletions (trash).
 		add_action( 'wp_trash_post', array( $this, 'log_trash' ), 10, 1 );
 		add_action( 'untrash_post', array( $this, 'log_untrash' ), 10, 1 );
 		add_action( 'before_delete_post', array( $this, 'log_permanent_delete' ), 10, 1 );
 
-		// Track metadata changes if needed
+		// Track metadata changes if needed.
 		add_action( 'updated_post_meta', array( $this, 'log_meta_change' ), 10, 4 );
 	}
 

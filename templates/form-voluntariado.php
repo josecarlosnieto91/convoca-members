@@ -198,15 +198,15 @@ $areas = \Convoca\Members\Form_Voluntariado::INTEREST_AREAS;
 		<div class="biodevas-check-group">
 			<input type="checkbox" id="bdv-vol-codigo" name="acepto_codigo" required>
 			<label for="bdv-vol-codigo">He leído y acepto el <a
-					href="https://drive.google.com/file/d/1MmUSP9hVygjpJi1ACAILLWajzTeqEqlA/view" target="_blank"
+					href="https://drive.google.com/file/d/1MmUSP9hVygjpJi1ACAILLWajzTeqEqlA/view" target="_blank".
 					rel="noopener">Código Ético</a> y el <a
-					href="https://drive.google.com/file/d/1Qps5ghQjNOPH4B55JEmlkQARJrpPN9jK/view" target="_blank"
+					href="https://drive.google.com/file/d/1Qps5ghQjNOPH4B55JEmlkQARJrpPN9jK/view" target="_blank".
 					rel="noopener">Programa de Voluntariado</a>. *</label>
 		</div>
 		<div class="biodevas-check-group">
 			<input type="checkbox" id="bdv-vol-protocolo" name="acepto_protocolo" required>
 			<label for="bdv-vol-protocolo">He leído el <a
-					href="https://drive.google.com/file/d/1g0-466CC7vutS3xkag42tY5vsiSDqHXA/view" target="_blank"
+					href="https://drive.google.com/file/d/1g0-466CC7vutS3xkag42tY5vsiSDqHXA/view" target="_blank".
 					rel="noopener">Protocolo para la prevención del acoso</a>. *</label>
 		</div>
 		<div class="biodevas-check-group">

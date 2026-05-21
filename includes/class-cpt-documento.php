@@ -56,7 +56,7 @@ class CPT_Documento {
 			'labels'              => $labels,
 			'supports'            => array( 'title', 'author', 'custom-fields' ),
 			'hierarchical'        => false,
-			'public'              => false, // Only accessible via code/admin
+			'public'              => false, // Only accessible via code/admin.
 			'show_ui'             => false,
 			'show_in_menu'        => false,
 			'show_in_admin_bar'   => false,

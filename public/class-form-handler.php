@@ -23,7 +23,7 @@ class Form_Handler {
 		add_action( 'wp_ajax_bdv_get_nonce', array( $this, 'ajax_get_nonce' ) );
 		add_action( 'wp_ajax_nopriv_bdv_get_nonce', array( $this, 'ajax_get_nonce' ) );
 
-		// Register REST route for form submission
+		// Register REST route for form submission.
 		add_action(
 			'rest_api_init',
 			function () {
@@ -73,7 +73,7 @@ class Form_Handler {
 		include BDV_MEMBERS_DIR . 'templates/form-alta.php';
 		$html = ob_get_clean();
 
-		// Inject data-config into the wrapper
+		// Inject data-config into the wrapper.
 		$html = str_replace(
 			'id="biodevas-form-alta"',
 			'id="biodevas-form-alta" data-config=\'' . esc_attr( wp_json_encode( $config ) ) . '\'',
@@ -113,7 +113,7 @@ class Form_Handler {
 
 		// 2. Process via Central Logic
 		$params = $request->get_params();
-		$files  = $_FILES; // WP REST doesn't handle $_FILES naturally in all cases, but for this multipart it should be populated
+		$files  = $_FILES; // WP REST doesn't handle $_FILES naturally in all cases, but for this multipart it should be populated.
 
 		$result = Process_Member::register( $params, $files );
 
@@ -162,12 +162,12 @@ class Form_Handler {
 	 * Bypasses page cache and ensures frontend has latest config.
 	 */
 	public function ajax_get_nonce(): void {
-		// Rate limit: max 30 requests per hour per IP
+		// Rate limit: max 30 requests per hour per IP.
 		if ( ! \Convoca\Core\Utils::check_rate_limit( 'bdv_get_nonce', 30, 3600 ) ) {
 			wp_send_json_error( array( 'message' => __( 'Demasiadas peticiones. Inténtalo de nuevo más tarde.', 'convoca-members' ) ), 429 );
 		}
 
-		// Add headers to prevent caching of this response
+		// Add headers to prevent caching of this response.
 		header( 'Cache-Control: no-store, no-cache, must-revalidate, max-age=0' );
 		header( 'Pragma: no-cache' );
 

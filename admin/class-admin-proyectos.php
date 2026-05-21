@@ -93,7 +93,7 @@ class Admin_Proyectos extends \WP_List_Table {
 		);
 
 		add_submenu_page(
-			null, // Hidden from menu
+			null, // Hidden from menu.
 			__( 'Editor de Proyecto', 'convoca-members' ),
 			__( 'Editor de Proyecto', 'convoca-members' ),
 			'gestionar_miembros',
@@ -162,7 +162,7 @@ class Admin_Proyectos extends \WP_List_Table {
 		header( 'Pragma: no-cache' );
 		header( 'Expires: 0' );
 
-		$out = fopen( 'php://output', 'w' );
+		$out = fopen( 'php://output', 'w' ); .
 		fprintf( $out, chr( 0xEF ) . chr( 0xBB ) . chr( 0xBF ) );
 
 		fputcsv(
@@ -422,7 +422,7 @@ class Admin_Proyectos extends \WP_List_Table {
 			wp_die( $result->get_error_message() );
 		}
 
-		// Save Meta
+		// Save Meta.
 		update_post_meta( $post_id, '_bdv_fecha_inicio', sanitize_text_field( $_POST['fecha_inicio'] ) );
 		update_post_meta( $post_id, '_bdv_fecha_fin', sanitize_text_field( $_POST['fecha_fin'] ) );
 		update_post_meta( $post_id, '_bdv_responsable', (int) $_POST['responsable'] );

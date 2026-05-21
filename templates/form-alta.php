@@ -292,9 +292,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 			<div id="bdv-volunteer-agreement" style="display:none">
 				<div class="biodevas-field">
 					<p class="biodevas-small">Al elegir horas de voluntariado, aceptas el
-						<a href="https://drive.google.com/file/d/1MmUSP9hVygjpJi1ACAILLWajzTeqEqlA/view" target="_blank"
+						<a href="https://drive.google.com/file/d/1MmUSP9hVygjpJi1ACAILLWajzTeqEqlA/view" target="_blank".
 							rel="noopener">Código Ético</a> y el <a
-							href="https://drive.google.com/file/d/1Qps5ghQjNOPH4B55JEmlkQARJrpPN9jK/view"
+							href="https://drive.google.com/file/d/1Qps5ghQjNOPH4B55JEmlkQARJrpPN9jK/view".
 							target="_blank" rel="noopener">Programa de Voluntariado</a>.
 					</p>
 					<div class="biodevas-check-group">

@@ -48,7 +48,7 @@ class Admin_Dashboard {
 
 		echo '<div class="bdv-dashboard-widget">';
 
-		// Quick stats row
+		// Quick stats row.
 		echo '<div class="bdv-dash-stats">';
 		$this->render_stat( '👥', $stats['total_active'], 'Activos' );
 		$this->render_stat( '⏳', $stats['pending_payment'], 'Pend. pago' );
@@ -56,7 +56,7 @@ class Admin_Dashboard {
 		$this->render_stat( '🕐', $stats['hours_month'] . 'h', 'Voluntariado (mes)' );
 		echo '</div>';
 
-		// Alerts section
+		// Alerts section.
 		if ( ! empty( $alerts ) ) {
 			echo '<div class="bdv-dash-alerts">';
 			echo '<h4>⚡ Requiere atención</h4>';
@@ -76,7 +76,7 @@ class Admin_Dashboard {
 			echo '<div class="bdv-dash-ok"><span>✅</span> Todo en orden. No hay alertas pendientes.</div>';
 		}
 
-		// Recent events
+		// Recent events.
 		if ( ! empty( $recent ) ) {
 			echo '<div class="bdv-dash-recent">';
 			echo '<h4>📋 Actividad reciente</h4>';
@@ -92,7 +92,7 @@ class Admin_Dashboard {
 			echo '</div>';
 		}
 
-		// Quick links
+		// Quick links.
 		echo '<div class="bdv-dash-links">';
 		echo '<a href="' . esc_url( admin_url( 'admin.php?page=bdv-members' ) ) . '" class="button">Gestionar socios</a> ';
 		echo '<a href="' . esc_url( admin_url( 'admin.php?page=bdv-members-settings' ) ) . '" class="button">Ajustes</a> ';
@@ -135,7 +135,7 @@ class Admin_Dashboard {
 			$week_later = wp_date( 'Y-m-d', strtotime( '+7 days' ) );
 			$month_ago  = wp_date( 'Y-m-d', strtotime( '-30 days' ) );
 
-			// Active members
+			// Active members.
 			$total_active = (int) $wpdb->get_var(
 				"SELECT COUNT(*) FROM {$wpdb->posts} p
                  JOIN {$wpdb->postmeta} pm ON p.ID = pm.post_id
@@ -143,7 +143,7 @@ class Admin_Dashboard {
                  AND pm.meta_key = '_bdv_estado_miembro' AND pm.meta_value = 'activo'"
 			);
 
-			// Pending payment
+			// Pending payment.
 			$pending_payment = (int) $wpdb->get_var(
 				"SELECT COUNT(*) FROM {$wpdb->posts} p
                  JOIN {$wpdb->postmeta} pm ON p.ID = pm.post_id
@@ -151,7 +151,7 @@ class Admin_Dashboard {
                  AND pm.meta_key = '_bdv_estado_miembro' AND pm.meta_value = 'pendiente_pago'"
 			);
 
-			// Expiring within 7 days
+			// Expiring within 7 days.
 			$expiring_soon = (int) $wpdb->get_var(
 				$wpdb->prepare(
 					"SELECT COUNT(*) FROM {$wpdb->posts} p
@@ -164,7 +164,7 @@ class Admin_Dashboard {
 				)
 			);
 
-			// Volunteer hours this month
+			// Volunteer hours this month.
 			$hours_month = (float) $wpdb->get_var(
 				$wpdb->prepare(
 					"SELECT COALESCE(SUM(pm.meta_value), 0) FROM {$wpdb->posts} p
@@ -175,7 +175,7 @@ class Admin_Dashboard {
 				)
 			);
 
-			// New members this month
+			// New members this month.
 			$new_month = (int) $wpdb->get_var(
 				$wpdb->prepare(
 					"SELECT COUNT(*) FROM {$wpdb->posts} 
@@ -185,7 +185,7 @@ class Admin_Dashboard {
 				)
 			);
 
-			// Pending documentation
+			// Pending documentation.
 			$pending_docs = (int) $wpdb->get_var(
 				"SELECT COUNT(*) FROM {$wpdb->posts} p
                  JOIN {$wpdb->postmeta} pm ON p.ID = pm.post_id
@@ -193,10 +193,10 @@ class Admin_Dashboard {
                  AND pm.meta_key = '_bdv_estado_miembro' AND pm.meta_value = 'pendiente_documentacion'"
 			);
 
-			// System errors (last 24h)
+			// System errors (last 24h).
 			$table_logs    = $wpdb->prefix . 'biodevas_logs';
 			$recent_errors = 0;
-			// Basic check if table exists
+			// Basic check if table exists.
 			$table_exists = $wpdb->get_var( $wpdb->prepare( 'SHOW TABLES LIKE %s', $table_logs ) ) === $table_logs;
 
 			if ( $table_exists ) {

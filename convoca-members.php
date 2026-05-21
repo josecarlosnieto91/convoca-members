@@ -1,15 +1,15 @@
 <?php
 /**
  * Plugin Name:       Convoca Members
- * Plugin URI:        https://convoca.org
+ * Plugin URI:        https://convoca.org.
  * Description:       Members, volunteers and communications management.
  * Version: 2.6.1
  * Requires at least: 6.4
  * Requires PHP:      8.1
  * Author:            Jose Carlos Nieto Ramos
- * Author URI:        https://josecarlosnietoramos.wordpress.com
+ * Author URI:        https://josecarlosnietoramos.wordpress.com.
  * License:           GPL-2.0-or-later
- * License URI:       https://www.gnu.org/licenses/gpl-2.0.html
+ * License URI:       https://www.gnu.org/licenses/gpl-2.0.html.
  * Text Domain:       convoca-members
  * Domain Path:       /languages
  * Requires Plugins:  convoca-core
@@ -83,18 +83,18 @@ spl_autoload_register(
 register_activation_hook(
 	__FILE__,
 	function (): void {
-		// Autoloader is already registered, no need to require these manually
+		// Autoloader is already registered, no need to require these manually.
 		Convoca\Members\CPT_Miembro::register();
 		\Convoca\Core\Installer::db_init();
 
-		// Schedule Daily Cron
+		// Schedule Daily Cron.
 		if ( ! wp_next_scheduled( 'bdv_daily_event' ) ) {
 			wp_schedule_event( time(), 'daily', 'bdv_daily_event' );
 		}
 
-		// Schedule Weekly Cron (admin digest)
+		// Schedule Weekly Cron (admin digest).
 		if ( ! wp_next_scheduled( 'bdv_weekly_event' ) ) {
-			// Next Monday at 08:00
+			// Next Monday at 08:00.
 			$next_monday = strtotime( 'next monday 08:00:00' );
 			wp_schedule_event( $next_monday, 'weekly', 'bdv_weekly_event' );
 		}
@@ -137,7 +137,7 @@ register_activation_hook(
 			$role->add_cap( 'common_manage_backup' );
 		}
 
-		// Ensure monitor_actividad role exists (also created by convoca-enroll)
+		// Ensure monitor_actividad role exists (also created by convoca-enroll).
 		if ( ! get_role( 'monitor_actividad' ) ) {
 			add_role(
 				'monitor_actividad',
@@ -157,7 +157,7 @@ register_activation_hook(
 				$r->add_cap( 'view_reports' );
 				$r->add_cap( 'manage_inscripciones' );
 
-				// New granular caps for monitor_actividad
+				// New granular caps for monitor_actividad.
 				if ( $role_name === 'monitor_actividad' ) {
 					$r->add_cap( 'cst_manage_turnos' );
 					$r->add_cap( 'cst_view_stats' );
@@ -170,7 +170,7 @@ register_activation_hook(
 			}
 		}
 
-		// Centro turno editing capabilities for monitors
+		// Centro turno editing capabilities for monitors.
 		$monitor_role = get_role( 'monitor_actividad' );
 		if ( $monitor_role ) {
 			$monitor_role->add_cap( 'edit_posts' );
@@ -183,7 +183,7 @@ register_activation_hook(
 			$monitor_role->add_cap( 'read_private_posts' );
 		}
 
-		// Register Volunteer Approved Role (Used by Turnos)
+		// Register Volunteer Approved Role (Used by Turnos).
 		if ( ! get_role( 'voluntario_aprobado' ) ) {
 			add_role(
 				'voluntario_aprobado',
@@ -236,7 +236,7 @@ add_action(
 		// GDPR compliance: data export/erasure via WordPress Privacy Tools.
 		Convoca\Members\GDPR_Tools::init();
 		// Automation handled via state hooks.
-		// Load Cron Jobs
+		// Load Cron Jobs.
 		new Convoca\Members\Cron_Manager();
 		new Convoca\Members\Audit_Logger();
 
@@ -284,7 +284,7 @@ add_action(
 		check_admin_referer( 'bdv_approve_member_' . $id );
 
 		if ( $id && \Convoca\Members\CPT_Miembro::approve_member( $id ) ) {
-			// Generate WP user + send credentials
+			// Generate WP user + send credentials.
 			\Convoca\Members\Process_Member::handle_approved( $id );
 			// Redirect back.
 			wp_redirect( admin_url( 'admin.php?page=bdv-members&msg=approved' ) );
@@ -341,7 +341,7 @@ add_action(
  * Verification shortcode: [convoca_verificar_socio]
  * Accessible publicly. Shows member name + plan if token is valid.
  */
-// Activar miembro del voluntario cuando se aprueba desde Centro Social
+// Activar miembro del voluntario cuando se aprueba desde Centro Social.
 add_action(
 	'bdv_voluntario_aprobado',
 	function ( int $user_id ): void {
@@ -352,9 +352,9 @@ add_action(
 				\Convoca\Members\CPT_Miembro::approve_member( $member_id );
 				\Convoca\Core\Logger::info( "Voluntario #$user_id aprobado -> miembro #$member_id activado", 'Members/Admin' );
 			}
-			// Generate WP user + send credentials (for volunteers who registered without being linked yet)
+			// Generate WP user + send credentials (for volunteers who registered without being linked yet).
 			\Convoca\Members\Process_Member::handle_approved( $member_id );
-			// Ensure the WP user has the volunteer role
+			// Ensure the WP user has the volunteer role.
 			$user = get_userdata( $user_id );
 			if ( $user && ! in_array( 'voluntario_aprobado', (array) $user->roles, true ) ) {
 				$user->set_role( 'voluntario_aprobado' );

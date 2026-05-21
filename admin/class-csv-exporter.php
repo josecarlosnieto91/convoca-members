@@ -131,7 +131,7 @@ class CSV_Exporter {
 			$requested = array_map( 'trim', explode( ',', $raw_columns ) );
 			$columns   = array_values( array_intersect( $requested, $all_keys ) );
 		} else {
-			$columns = $all_keys; // all columns
+			$columns = $all_keys; // all columns.
 		}
 
 		if ( empty( $columns ) ) {
@@ -166,7 +166,7 @@ class CSV_Exporter {
 		header( 'Pragma: no-cache' );
 		header( 'Expires: 0' );
 
-		$out = fopen( 'php://output', 'w' );
+		$out = fopen( 'php://output', 'w' ); .
 
 		// Write BOM for Excel.
 		fprintf( $out, chr( 0xEF ) . chr( 0xBB ) . chr( 0xBF ) );
