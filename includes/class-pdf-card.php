@@ -2,46 +2,45 @@
 /**
  * Generates Member Card (PDF/Printable).
  * Currently implements a high-fidelity HTML print view.
- * 
+ *
  * @package Convoca\Members
  */
 
 namespace Convoca\Members;
 
-if (!defined('ABSPATH')) {
-    exit;
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
 }
 
-class PDF_Card
-{
+class PDF_Card {
 
-    /**
-     * Generate HTML for the member card.
-     */
-    public static function get_html(int $post_id): string
-    {
-        $nombre = get_the_title($post_id);
-        $num_socio = get_post_meta($post_id, '_bdv_numero_socio', true);
-        $num_socio_display = $num_socio ? str_pad($num_socio, 4, '0', STR_PAD_LEFT) : esc_html__('PENDIENTE', 'convoca-members');
-        
-        $plan_key = get_post_meta($post_id, '_bdv_plan', true);
-        $plan_data = CPT_Miembro::get_plan($plan_key ?: '');
-        $plan = ($plan_data && isset($plan_data['label'])) ? $plan_data['label'] : esc_html__('Socio/a', 'convoca-members');
-        
-        $fecha = get_post_meta($post_id, '_bdv_fecha_alta', true);
-        $fecha_fmt = $fecha ? wp_date('d/m/Y', strtotime($fecha)) : wp_date('d/m/Y', strtotime(get_the_date('Y-m-d', $post_id)));
 
-        $logo_html = \Convoca\Core\Utils::get_branding_html('members', '', 'height: 45px; width: auto; color: #fff; margin: 0; font-size: 24px;');
+	/**
+	 * Generate HTML for the member card.
+	 */
+	public static function get_html( int $post_id ): string {
+		$nombre            = get_the_title( $post_id );
+		$num_socio         = get_post_meta( $post_id, '_bdv_numero_socio', true );
+		$num_socio_display = $num_socio ? str_pad( $num_socio, 4, '0', STR_PAD_LEFT ) : esc_html__( 'PENDIENTE', 'convoca-members' );
 
-        $verification_hash = hash_hmac('sha256', 'member_' . $post_id, \Convoca\Core\Utils::get_persistent_salt());
-        $qr_url = "https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=" . urlencode(home_url('/verificar-socio/?id=' . $post_id . '&token=' . $verification_hash));
+		$plan_key  = get_post_meta( $post_id, '_bdv_plan', true );
+		$plan_data = CPT_Miembro::get_plan( $plan_key ?: '' );
+		$plan      = ( $plan_data && isset( $plan_data['label'] ) ) ? $plan_data['label'] : esc_html__( 'Socio/a', 'convoca-members' );
 
-        return '
+		$fecha     = get_post_meta( $post_id, '_bdv_fecha_alta', true );
+		$fecha_fmt = $fecha ? wp_date( 'd/m/Y', strtotime( $fecha ) ) : wp_date( 'd/m/Y', strtotime( get_the_date( 'Y-m-d', $post_id ) ) );
+
+		$logo_html = \Convoca\Core\Utils::get_branding_html( 'members', '', 'height: 45px; width: auto; color: #fff; margin: 0; font-size: 24px;' );
+
+		$verification_hash = hash_hmac( 'sha256', 'member_' . $post_id, \Convoca\Core\Utils::get_persistent_salt() );
+		$qr_url            = 'https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=' . urlencode( home_url( '/verificar-socio/?id=' . $post_id . '&token=' . $verification_hash ) );
+
+		return '
         <!DOCTYPE html>
         <html lang="es">
         <head>
             <meta charset="UTF-8">
-            <title>' . esc_html__('Tarjeta Socio', 'convoca-members') . ' #' . esc_html($num_socio_display) . '</title>
+            <title>' . esc_html__( 'Tarjeta Socio', 'convoca-members' ) . ' #' . esc_html( $num_socio_display ) . '</title>
             <style>
                 @media print {
                     body { margin: 0; padding: 0; }
@@ -149,86 +148,90 @@ class PDF_Card
             <div class="card">
                 <div class="header">
                     ' . $logo_html . '
-                    <div class="plan-badge">' . esc_html($plan) . '</div>
+                    <div class="plan-badge">' . esc_html( $plan ) . '</div>
                 </div>
                 
                 <div class="body">
-                    <div class="member-number">' . esc_html__('NO.', 'convoca-members') . ' ' . esc_html($num_socio_display) . '</div>
-                    <div class="member-name">' . esc_html($nombre) . '</div>
+                    <div class="member-number">' . esc_html__( 'NO.', 'convoca-members' ) . ' ' . esc_html( $num_socio_display ) . '</div>
+                    <div class="member-name">' . esc_html( $nombre ) . '</div>
                 </div>
                 
                 <div class="footer">
                     <div class="info">
-                        <div>' . esc_html__('FECHA DE ALTA:', 'convoca-members') . ' ' . esc_html($fecha_fmt) . '</div>
+                        <div>' . esc_html__( 'FECHA DE ALTA:', 'convoca-members' ) . ' ' . esc_html( $fecha_fmt ) . '</div>
                         <div style="margin-top:4px;">WWW.BIODEVAS.ORG</div>
                     </div>
                     <div class="qr-code">
-                        <img src="' . esc_url($qr_url) . '" alt="' . esc_attr__('QR Verification', 'convoca-members') . '">
+                        <img src="' . esc_url( $qr_url ) . '" alt="' . esc_attr__( 'QR Verification', 'convoca-members' ) . '">
                     </div>
                 </div>
             </div>
             
             <button class="btn-print no-print" onclick="window.print()">
-                📄 ' . esc_html__('Imprimir / Guardar como PDF', 'convoca-members') . '
+                📄 ' . esc_html__( 'Imprimir / Guardar como PDF', 'convoca-members' ) . '
             </button>
             <p class="no-print" style="margin-top:15px; color:#666; font-size:13px;">
-                ' . esc_html__('Se abrirá el diálogo de impresión. Elige "Guardar como PDF" como destino.', 'convoca-members') . '
+                ' . esc_html__( 'Se abrirá el diálogo de impresión. Elige "Guardar como PDF" como destino.', 'convoca-members' ) . '
             </p>
         </body>
         </html>
         ';
-    }
+	}
 
-    /**
-     * Get the dynamic URL for the reservation panel.
-     */
-    private static function get_panel_url(): string
-    {
-        $panel_page_id = (int) get_option('bde_panel_reservas_page_id');
-        if ($panel_page_id) {
-            return get_permalink($panel_page_id);
-        }
+	/**
+	 * Get the dynamic URL for the reservation panel.
+	 */
+	private static function get_panel_url(): string {
+		$panel_page_id = (int) get_option( 'bde_panel_reservas_page_id' );
+		if ( $panel_page_id ) {
+			return get_permalink( $panel_page_id );
+		}
 
-        global $wpdb;
-        $page_id = $wpdb->get_var("
+		global $wpdb;
+		$page_id = $wpdb->get_var(
+			"
             SELECT ID FROM {$wpdb->posts} 
             WHERE post_content LIKE '%[biodevas_panel_reservas]%' 
             AND post_status = 'publish' 
             AND post_type = 'page'
             LIMIT 1
-        ");
-        
-        if ($page_id) {
-            update_option('bde_panel_reservas_page_id', $page_id);
-            return get_permalink($page_id);
-        }
+        "
+		);
 
-        return home_url('/');
-    }
+		if ( $page_id ) {
+			update_option( 'bde_panel_reservas_page_id', $page_id );
+			return get_permalink( $page_id );
+		}
 
-    /**
-     * Generate a PDF for the member card using BDV_Signature (Dompdf).
-     *
-     * @param int $post_id Member post ID.
-     * @return string PDF binary content.
-     */
-    public static function generate_pdf(int $post_id): string
-    {
-        $html = self::get_html($post_id);
-        $tmp_path = wp_tempnam('member-card-') . '.pdf';
+		return home_url( '/' );
+	}
 
-        $signature = new \Convoca\Core\BDV_Signature();
-        $result = $signature->generate_pdf($html, [], $tmp_path, [
-            'isRemoteEnabled' => true,
-        ]);
+	/**
+	 * Generate a PDF for the member card using BDV_Signature (Dompdf).
+	 *
+	 * @param int $post_id Member post ID.
+	 * @return string PDF binary content.
+	 */
+	public static function generate_pdf( int $post_id ): string {
+		$html     = self::get_html( $post_id );
+		$tmp_path = wp_tempnam( 'member-card-' ) . '.pdf';
 
-        if (!$result || !file_exists($result)) {
-            throw new \RuntimeException($signature->get_last_error() ?: 'Error al generar el PDF.');
-        }
+		$signature = new \Convoca\Core\BDV_Signature();
+		$result    = $signature->generate_pdf(
+			$html,
+			array(),
+			$tmp_path,
+			array(
+				'isRemoteEnabled' => true,
+			)
+		);
 
-        $pdf_content = file_get_contents($result);
-        unlink($result);
-        return $pdf_content;
-    }
+		if ( ! $result || ! file_exists( $result ) ) {
+			throw new \RuntimeException( $signature->get_last_error() ?: 'Error al generar el PDF.' );
+		}
+
+		$pdf_content = file_get_contents( $result );
+		unlink( $result );
+		return $pdf_content;
+	}
 }
-

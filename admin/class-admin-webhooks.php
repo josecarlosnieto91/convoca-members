@@ -12,362 +12,360 @@ namespace Convoca\Members;
 
 use Convoca\Core\Webhook_Manager;
 
-if (!defined('ABSPATH')) {
-    exit;
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
 }
 
-class Admin_Webhooks
-{
-    public function __construct()
-    {
-        add_action('admin_menu', [$this, 'add_menu'], 30);
-        add_action('admin_init', [$this, 'handle_actions']);
-    }
+class Admin_Webhooks {
 
-    /**
-     * Register submenu under Biodevas Members.
-     */
-    public function add_menu(): void
-    {
-        add_submenu_page(
-            'bdv-members',
-            __('Webhooks', 'convoca-members'),
-            '🔗 Webhooks',
-            'bdv_manage_webhooks',
-            'bdv-webhooks',
-            [$this, 'render_page']
-        );
-    }
+	public function __construct() {
+		add_action( 'admin_menu', array( $this, 'add_menu' ), 30 );
+		add_action( 'admin_init', array( $this, 'handle_actions' ) );
+	}
 
-    /**
-     * Handle form submissions and actions.
-     */
-    public function handle_actions(): void
-    {
-        if (!isset($_POST['bdv_webhook_action']) && !isset($_GET['bdv_wh_action'])) {
-            return;
-        }
+	/**
+	 * Register submenu under Biodevas Members.
+	 */
+	public function add_menu(): void {
+		add_submenu_page(
+			'bdv-members',
+			__( 'Webhooks', 'convoca-members' ),
+			'🔗 Webhooks',
+			'bdv_manage_webhooks',
+			'bdv-webhooks',
+			array( $this, 'render_page' )
+		);
+	}
 
-        if (!current_user_can('bdv_manage_webhooks')) {
-            return;
-        }
+	/**
+	 * Handle form submissions and actions.
+	 */
+	public function handle_actions(): void {
+		if ( ! isset( $_POST['bdv_webhook_action'] ) && ! isset( $_GET['bdv_wh_action'] ) ) {
+			return;
+		}
 
-        // Handle POST actions (create/update)
-        if (isset($_POST['bdv_webhook_action'])) {
-            check_admin_referer('bdv_webhook_nonce');
+		if ( ! current_user_can( 'bdv_manage_webhooks' ) ) {
+			return;
+		}
 
-            $post_data = wp_unslash($_POST);
-            $action = sanitize_text_field($post_data['bdv_webhook_action']);
+		// Handle POST actions (create/update)
+		if ( isset( $_POST['bdv_webhook_action'] ) ) {
+			check_admin_referer( 'bdv_webhook_nonce' );
 
-            if ($action === 'create') {
-                $events = isset($post_data['webhook_events']) ? array_map('sanitize_text_field', $post_data['webhook_events']) : [];
+			$post_data = wp_unslash( $_POST );
+			$action    = sanitize_text_field( $post_data['bdv_webhook_action'] );
 
-                Webhook_Manager::add_webhook([
-                    'url'    => sanitize_url($post_data['webhook_url'] ?? ''),
-                    'secret' => sanitize_text_field($post_data['webhook_secret'] ?? ''),
-                    'events' => $events,
-                    'label'  => sanitize_text_field($post_data['webhook_label'] ?? ''),
-                ]);
+			if ( $action === 'create' ) {
+				$events = isset( $post_data['webhook_events'] ) ? array_map( 'sanitize_text_field', $post_data['webhook_events'] ) : array();
 
-                wp_redirect(admin_url('admin.php?page=bdv-webhooks&msg=created'));
-                exit;
-            }
+				Webhook_Manager::add_webhook(
+					array(
+						'url'    => sanitize_url( $post_data['webhook_url'] ?? '' ),
+						'secret' => sanitize_text_field( $post_data['webhook_secret'] ?? '' ),
+						'events' => $events,
+						'label'  => sanitize_text_field( $post_data['webhook_label'] ?? '' ),
+					)
+				);
 
-            if ($action === 'update') {
-                $id     = sanitize_text_field($post_data['webhook_id'] ?? '');
-                $events = isset($post_data['webhook_events']) ? array_map('sanitize_text_field', $post_data['webhook_events']) : [];
+				wp_redirect( admin_url( 'admin.php?page=bdv-webhooks&msg=created' ) );
+				exit;
+			}
 
-                Webhook_Manager::update_webhook($id, [
-                    'url'    => sanitize_url($post_data['webhook_url'] ?? ''),
-                    'secret' => sanitize_text_field($post_data['webhook_secret'] ?? ''),
-                    'events' => $events,
-                    'label'  => sanitize_text_field($post_data['webhook_label'] ?? ''),
-                    'active' => isset($post_data['webhook_active']),
-                ]);
+			if ( $action === 'update' ) {
+				$id     = sanitize_text_field( $post_data['webhook_id'] ?? '' );
+				$events = isset( $post_data['webhook_events'] ) ? array_map( 'sanitize_text_field', $post_data['webhook_events'] ) : array();
 
-                wp_redirect(admin_url('admin.php?page=bdv-webhooks&msg=updated'));
-                exit;
-            }
-        }
+				Webhook_Manager::update_webhook(
+					$id,
+					array(
+						'url'    => sanitize_url( $post_data['webhook_url'] ?? '' ),
+						'secret' => sanitize_text_field( $post_data['webhook_secret'] ?? '' ),
+						'events' => $events,
+						'label'  => sanitize_text_field( $post_data['webhook_label'] ?? '' ),
+						'active' => isset( $post_data['webhook_active'] ),
+					)
+				);
 
-        // Handle GET actions (delete, test, toggle)
-        if (isset($_GET['bdv_wh_action'])) {
-            $get_data = wp_unslash($_GET);
-            $action = sanitize_text_field($get_data['bdv_wh_action']);
-            $id     = sanitize_text_field($get_data['webhook_id'] ?? '');
+				wp_redirect( admin_url( 'admin.php?page=bdv-webhooks&msg=updated' ) );
+				exit;
+			}
+		}
 
-            check_admin_referer('bdv_wh_action_' . $id);
+		// Handle GET actions (delete, test, toggle)
+		if ( isset( $_GET['bdv_wh_action'] ) ) {
+			$get_data = wp_unslash( $_GET );
+			$action   = sanitize_text_field( $get_data['bdv_wh_action'] );
+			$id       = sanitize_text_field( $get_data['webhook_id'] ?? '' );
 
-            if ($action === 'delete') {
-                Webhook_Manager::delete_webhook($id);
-                wp_redirect(admin_url('admin.php?page=bdv-webhooks&msg=deleted'));
-                exit;
-            }
+			check_admin_referer( 'bdv_wh_action_' . $id );
 
-            if ($action === 'test') {
-                Webhook_Manager::test_webhook($id);
-                wp_redirect(admin_url('admin.php?page=bdv-webhooks&msg=tested'));
-                exit;
-            }
+			if ( $action === 'delete' ) {
+				Webhook_Manager::delete_webhook( $id );
+				wp_redirect( admin_url( 'admin.php?page=bdv-webhooks&msg=deleted' ) );
+				exit;
+			}
 
-            if ($action === 'toggle') {
-                $webhook = Webhook_Manager::get_webhook($id);
-                if ($webhook) {
-                    Webhook_Manager::update_webhook($id, ['active' => !$webhook['active']]);
-                }
-                wp_redirect(admin_url('admin.php?page=bdv-webhooks&msg=toggled'));
-                exit;
-            }
+			if ( $action === 'test' ) {
+				Webhook_Manager::test_webhook( $id );
+				wp_redirect( admin_url( 'admin.php?page=bdv-webhooks&msg=tested' ) );
+				exit;
+			}
 
-            if ($action === 'clear_logs') {
-                Webhook_Manager::clear_delivery_logs($id);
-                wp_redirect(admin_url('admin.php?page=bdv-webhooks&view=logs&webhook_id=' . $id . '&msg=logs_cleared'));
-                exit;
-            }
-        }
-    }
+			if ( $action === 'toggle' ) {
+				$webhook = Webhook_Manager::get_webhook( $id );
+				if ( $webhook ) {
+					Webhook_Manager::update_webhook( $id, array( 'active' => ! $webhook['active'] ) );
+				}
+				wp_redirect( admin_url( 'admin.php?page=bdv-webhooks&msg=toggled' ) );
+				exit;
+			}
 
-    /**
-     * Render the webhooks admin page.
-     */
-    public function render_page(): void
-    {
-        $view = sanitize_text_field($_GET['view'] ?? 'list');
-        $msg  = sanitize_text_field($_GET['msg'] ?? '');
+			if ( $action === 'clear_logs' ) {
+				Webhook_Manager::clear_delivery_logs( $id );
+				wp_redirect( admin_url( 'admin.php?page=bdv-webhooks&view=logs&webhook_id=' . $id . '&msg=logs_cleared' ) );
+				exit;
+			}
+		}
+	}
 
-        echo '<div class="wrap">';
-        echo '<h1>🔗 Webhooks — Biodevas</h1>';
+	/**
+	 * Render the webhooks admin page.
+	 */
+	public function render_page(): void {
+		$view = sanitize_text_field( $_GET['view'] ?? 'list' );
+		$msg  = sanitize_text_field( $_GET['msg'] ?? '' );
 
-        // Flash messages
-        $messages = [
-            'created'      => ['success', 'Webhook creado correctamente.'],
-            'updated'      => ['success', 'Webhook actualizado.'],
-            'deleted'      => ['warning', 'Webhook eliminado.'],
-            'tested'       => ['info', 'Ping de prueba enviado.'],
-            'toggled'      => ['info', 'Estado del webhook actualizado.'],
-            'logs_cleared' => ['info', 'Registro de entregas limpiado.'],
-        ];
+		echo '<div class="wrap">';
+		echo '<h1>🔗 Webhooks — Biodevas</h1>';
 
-        if (!empty($msg) && isset($messages[$msg])) {
-            \Convoca\Core\Utils::admin_notice(
-                $messages[$msg][1],
-                $messages[$msg][0] === 'success' ? 'success' : ($messages[$msg][0] === 'error' ? 'danger' : 'warning')
-            );
-        }
+		// Flash messages
+		$messages = array(
+			'created'      => array( 'success', 'Webhook creado correctamente.' ),
+			'updated'      => array( 'success', 'Webhook actualizado.' ),
+			'deleted'      => array( 'warning', 'Webhook eliminado.' ),
+			'tested'       => array( 'info', 'Ping de prueba enviado.' ),
+			'toggled'      => array( 'info', 'Estado del webhook actualizado.' ),
+			'logs_cleared' => array( 'info', 'Registro de entregas limpiado.' ),
+		);
 
-        switch ($view) {
-            case 'create':
-                $this->render_form();
-                break;
-            case 'edit':
-                $id = sanitize_text_field($_GET['webhook_id'] ?? '');
-                $this->render_form($id);
-                break;
-            case 'logs':
-                $id = sanitize_text_field($_GET['webhook_id'] ?? '');
-                $this->render_logs($id);
-                break;
-            default:
-                $this->render_list();
-                break;
-        }
+		if ( ! empty( $msg ) && isset( $messages[ $msg ] ) ) {
+			\Convoca\Core\Utils::admin_notice(
+				$messages[ $msg ][1],
+				$messages[ $msg ][0] === 'success' ? 'success' : ( $messages[ $msg ][0] === 'error' ? 'danger' : 'warning' )
+			);
+		}
 
-        echo '</div>';
-    }
+		switch ( $view ) {
+			case 'create':
+				$this->render_form();
+				break;
+			case 'edit':
+				$id = sanitize_text_field( $_GET['webhook_id'] ?? '' );
+				$this->render_form( $id );
+				break;
+			case 'logs':
+				$id = sanitize_text_field( $_GET['webhook_id'] ?? '' );
+				$this->render_logs( $id );
+				break;
+			default:
+				$this->render_list();
+				break;
+		}
 
-    /**
-     * Render the list of webhooks.
-     */
-    private function render_list(): void
-    {
-        $webhooks = Webhook_Manager::get_webhooks();
+		echo '</div>';
+	}
 
-        echo '<div style="margin-bottom:15px;">';
-        echo '<a href="' . esc_url(admin_url('admin.php?page=bdv-webhooks&view=create')) . '" class="button button-primary">+ Añadir Webhook</a>';
-        echo '</div>';
+	/**
+	 * Render the list of webhooks.
+	 */
+	private function render_list(): void {
+		$webhooks = Webhook_Manager::get_webhooks();
 
-        if (empty($webhooks)) {
-            echo '<div class="biodevas-alert biodevas-alert--info" style="display:block;margin-bottom:20px;"><p>No hay webhooks configurados. Los webhooks permiten notificar a sistemas externos cuando ocurren eventos en Biodevas.</p></div>';
-            return;
-        }
+		echo '<div style="margin-bottom:15px;">';
+		echo '<a href="' . esc_url( admin_url( 'admin.php?page=bdv-webhooks&view=create' ) ) . '" class="button button-primary">+ Añadir Webhook</a>';
+		echo '</div>';
 
-        echo '<table class="wp-list-table widefat fixed striped">';
-        echo '<thead><tr>';
-        echo '<th>Nombre</th><th>URL</th><th>Eventos</th><th>Estado</th><th>Creado</th><th>Acciones</th>';
-        echo '</tr></thead><tbody>';
+		if ( empty( $webhooks ) ) {
+			echo '<div class="biodevas-alert biodevas-alert--info" style="display:block;margin-bottom:20px;"><p>No hay webhooks configurados. Los webhooks permiten notificar a sistemas externos cuando ocurren eventos en Biodevas.</p></div>';
+			return;
+		}
 
-        foreach ($webhooks as $wh) {
-            $id       = $wh['id'] ?? '';
-            $active   = $wh['active'] ?? true;
-            $events   = $wh['events'] ?? [];
-            $label    = $wh['label'] ?? 'Sin nombre';
-            $url      = $wh['url'] ?? '';
-            $created  = $wh['created_at'] ?? '';
+		echo '<table class="wp-list-table widefat fixed striped">';
+		echo '<thead><tr>';
+		echo '<th>Nombre</th><th>URL</th><th>Eventos</th><th>Estado</th><th>Creado</th><th>Acciones</th>';
+		echo '</tr></thead><tbody>';
 
-            $event_count = empty($events) ? 'Todos' : count($events) . ' evento(s)';
-            $status_badge = $active
-                ? '<span style="color:#155724;background:#d4edda;padding:2px 8px;border-radius:4px;font-size:12px;">Activo</span>'
-                : '<span style="color:#856404;background:#fff3cd;padding:2px 8px;border-radius:4px;font-size:12px;">Inactivo</span>';
+		foreach ( $webhooks as $wh ) {
+			$id      = $wh['id'] ?? '';
+			$active  = $wh['active'] ?? true;
+			$events  = $wh['events'] ?? array();
+			$label   = $wh['label'] ?? 'Sin nombre';
+			$url     = $wh['url'] ?? '';
+			$created = $wh['created_at'] ?? '';
 
-            echo '<tr>';
-            echo '<td><strong>' . esc_html($label) . '</strong></td>';
-            echo '<td><code style="font-size:12px;">' . esc_html(mb_substr($url, 0, 50)) . '</code></td>';
-            echo '<td>' . esc_html($event_count) . '</td>';
-            echo '<td>' . $status_badge . '</td>';
-            echo '<td>' . esc_html($created ? \Convoca\Core\Utils::format_date($created, 'd/m/Y') : '—') . '</td>';
-            echo '<td>';
-            
-            // Edit
-            echo '<a href="' . esc_url(admin_url('admin.php?page=bdv-webhooks&view=edit&webhook_id=' . $id)) . '" class="button button-small">Editar</a> ';
-            
-            // Test
-            $test_url = wp_nonce_url(
-                admin_url('admin.php?page=bdv-webhooks&bdv_wh_action=test&webhook_id=' . $id),
-                'bdv_wh_action_' . $id
-            );
-            echo '<a href="' . esc_url($test_url) . '" class="button button-small">🔔 Test</a> ';
-            
-            // Logs
-            echo '<a href="' . esc_url(admin_url('admin.php?page=bdv-webhooks&view=logs&webhook_id=' . $id)) . '" class="button button-small">📋 Logs</a> ';
-            
-            // Toggle
-            $toggle_url = wp_nonce_url(
-                admin_url('admin.php?page=bdv-webhooks&bdv_wh_action=toggle&webhook_id=' . $id),
-                'bdv_wh_action_' . $id
-            );
-            echo '<a href="' . esc_url($toggle_url) . '" class="button button-small">' . ($active ? '⏸ Pausar' : '▶ Activar') . '</a> ';
-            
-            // Delete
-            $delete_url = wp_nonce_url(
-                admin_url('admin.php?page=bdv-webhooks&bdv_wh_action=delete&webhook_id=' . $id),
-                'bdv_wh_action_' . $id
-            );
-            echo '<a href="' . esc_url($delete_url) . '" class="button button-small" onclick="return confirm(\'¿Eliminar este webhook?\')">🗑</a>';
-            
-            echo '</td>';
-            echo '</tr>';
-        }
+			$event_count  = empty( $events ) ? 'Todos' : count( $events ) . ' evento(s)';
+			$status_badge = $active
+				? '<span style="color:#155724;background:#d4edda;padding:2px 8px;border-radius:4px;font-size:12px;">Activo</span>'
+				: '<span style="color:#856404;background:#fff3cd;padding:2px 8px;border-radius:4px;font-size:12px;">Inactivo</span>';
 
-        echo '</tbody></table>';
-    }
+			echo '<tr>';
+			echo '<td><strong>' . esc_html( $label ) . '</strong></td>';
+			echo '<td><code style="font-size:12px;">' . esc_html( mb_substr( $url, 0, 50 ) ) . '</code></td>';
+			echo '<td>' . esc_html( $event_count ) . '</td>';
+			echo '<td>' . $status_badge . '</td>';
+			echo '<td>' . esc_html( $created ? \Convoca\Core\Utils::format_date( $created, 'd/m/Y' ) : '—' ) . '</td>';
+			echo '<td>';
 
-    /**
-     * Render create/edit form for a webhook.
-     */
-    private function render_form(?string $edit_id = null): void
-    {
-        $webhook = null;
-        $is_edit = false;
+			// Edit
+			echo '<a href="' . esc_url( admin_url( 'admin.php?page=bdv-webhooks&view=edit&webhook_id=' . $id ) ) . '" class="button button-small">Editar</a> ';
 
-        if ($edit_id) {
-            $webhook = Webhook_Manager::get_webhook($edit_id);
-            $is_edit = (bool) $webhook;
-        }
+			// Test
+			$test_url = wp_nonce_url(
+				admin_url( 'admin.php?page=bdv-webhooks&bdv_wh_action=test&webhook_id=' . $id ),
+				'bdv_wh_action_' . $id
+			);
+			echo '<a href="' . esc_url( $test_url ) . '" class="button button-small">🔔 Test</a> ';
 
-        $action = $is_edit ? 'update' : 'create';
-        $title  = $is_edit ? 'Editar Webhook' : 'Nuevo Webhook';
+			// Logs
+			echo '<a href="' . esc_url( admin_url( 'admin.php?page=bdv-webhooks&view=logs&webhook_id=' . $id ) ) . '" class="button button-small">📋 Logs</a> ';
 
-        echo '<h2>' . esc_html($title) . '</h2>';
-        echo '<a href="' . esc_url(admin_url('admin.php?page=bdv-webhooks')) . '" class="button" style="margin-bottom:15px;">← Volver a la lista</a>';
+			// Toggle
+			$toggle_url = wp_nonce_url(
+				admin_url( 'admin.php?page=bdv-webhooks&bdv_wh_action=toggle&webhook_id=' . $id ),
+				'bdv_wh_action_' . $id
+			);
+			echo '<a href="' . esc_url( $toggle_url ) . '" class="button button-small">' . ( $active ? '⏸ Pausar' : '▶ Activar' ) . '</a> ';
 
-        echo '<form method="post" action="">';
-        wp_nonce_field('bdv_webhook_nonce');
-        echo '<input type="hidden" name="bdv_webhook_action" value="' . esc_attr($action) . '">';
+			// Delete
+			$delete_url = wp_nonce_url(
+				admin_url( 'admin.php?page=bdv-webhooks&bdv_wh_action=delete&webhook_id=' . $id ),
+				'bdv_wh_action_' . $id
+			);
+			echo '<a href="' . esc_url( $delete_url ) . '" class="button button-small" onclick="return confirm(\'¿Eliminar este webhook?\')">🗑</a>';
 
-        if ($is_edit) {
-            echo '<input type="hidden" name="webhook_id" value="' . esc_attr($edit_id) . '">';
-        }
+			echo '</td>';
+			echo '</tr>';
+		}
 
-        echo '<table class="form-table">';
+		echo '</tbody></table>';
+	}
 
-        // Label
-        echo '<tr><th><label for="webhook_label">Nombre / Etiqueta</label></th>';
-        echo '<td><input type="text" id="webhook_label" name="webhook_label" value="' . esc_attr($webhook['label'] ?? '') . '" class="regular-text" placeholder="Ej: Slack Notifications"></td></tr>';
+	/**
+	 * Render create/edit form for a webhook.
+	 */
+	private function render_form( ?string $edit_id = null ): void {
+		$webhook = null;
+		$is_edit = false;
 
-        // URL
-        echo '<tr><th><label for="webhook_url">URL del Webhook</label></th>';
-        echo '<td><input type="url" id="webhook_url" name="webhook_url" value="' . esc_attr($webhook['url'] ?? '') . '" class="regular-text" required placeholder="https://ejemplo.com/webhook"></td></tr>';
+		if ( $edit_id ) {
+			$webhook = Webhook_Manager::get_webhook( $edit_id );
+			$is_edit = (bool) $webhook;
+		}
 
-        // Secret
-        echo '<tr><th><label for="webhook_secret">Secreto HMAC (opcional)</label></th>';
-        echo '<td><input type="text" id="webhook_secret" name="webhook_secret" value="' . esc_attr($webhook['secret'] ?? '') . '" class="regular-text" placeholder="Se usa para firmar los payloads">';
-        echo '<p class="description">Si se configura, cada entrega incluirá un header <code>X-Assoc-Signature</code> con el HMAC-SHA256.</p></td></tr>';
+		$action = $is_edit ? 'update' : 'create';
+		$title  = $is_edit ? 'Editar Webhook' : 'Nuevo Webhook';
 
-        // Active (only for edit)
-        if ($is_edit) {
-            echo '<tr><th>Estado</th>';
-            echo '<td><label><input type="checkbox" name="webhook_active" value="1" ' . checked($webhook['active'] ?? true, true, false) . '> Activo</label></td></tr>';
-        }
+		echo '<h2>' . esc_html( $title ) . '</h2>';
+		echo '<a href="' . esc_url( admin_url( 'admin.php?page=bdv-webhooks' ) ) . '" class="button" style="margin-bottom:15px;">← Volver a la lista</a>';
 
-        // Events
-        echo '<tr><th>Eventos suscritos</th>';
-        echo '<td><fieldset>';
-        echo '<p class="description" style="margin-bottom:10px;">Selecciona los eventos. Si no seleccionas ninguno, recibirá <strong>todos</strong> los eventos.</p>';
+		echo '<form method="post" action="">';
+		wp_nonce_field( 'bdv_webhook_nonce' );
+		echo '<input type="hidden" name="bdv_webhook_action" value="' . esc_attr( $action ) . '">';
 
-        $subscribed = $webhook['events'] ?? [];
+		if ( $is_edit ) {
+			echo '<input type="hidden" name="webhook_id" value="' . esc_attr( $edit_id ) . '">';
+		}
 
-        foreach (Webhook_Manager::EVENTS as $key => $label) {
-            $checked = empty($subscribed) || in_array($key, $subscribed, true);
-            printf(
-                '<label style="display:block;margin-bottom:4px;"><input type="checkbox" name="webhook_events[]" value="%s" %s> <code>%s</code> — %s</label>',
-                esc_attr($key),
-                checked($checked, true, false),
-                esc_html($key),
-                esc_html($label)
-            );
-        }
+		echo '<table class="form-table">';
 
-        echo '</fieldset></td></tr>';
+		// Label
+		echo '<tr><th><label for="webhook_label">Nombre / Etiqueta</label></th>';
+		echo '<td><input type="text" id="webhook_label" name="webhook_label" value="' . esc_attr( $webhook['label'] ?? '' ) . '" class="regular-text" placeholder="Ej: Slack Notifications"></td></tr>';
 
-        echo '</table>';
+		// URL
+		echo '<tr><th><label for="webhook_url">URL del Webhook</label></th>';
+		echo '<td><input type="url" id="webhook_url" name="webhook_url" value="' . esc_attr( $webhook['url'] ?? '' ) . '" class="regular-text" required placeholder="https://ejemplo.com/webhook"></td></tr>';
 
-        echo '<p class="submit"><button type="submit" class="button button-primary">' . ($is_edit ? 'Guardar cambios' : 'Crear Webhook') . '</button></p>';
-        echo '</form>';
-    }
+		// Secret
+		echo '<tr><th><label for="webhook_secret">Secreto HMAC (opcional)</label></th>';
+		echo '<td><input type="text" id="webhook_secret" name="webhook_secret" value="' . esc_attr( $webhook['secret'] ?? '' ) . '" class="regular-text" placeholder="Se usa para firmar los payloads">';
+		echo '<p class="description">Si se configura, cada entrega incluirá un header <code>X-Assoc-Signature</code> con el HMAC-SHA256.</p></td></tr>';
 
-    /**
-     * Render delivery logs for a webhook.
-     */
-    private function render_logs(string $webhook_id): void
-    {
-        $webhook = Webhook_Manager::get_webhook($webhook_id);
-        if (!$webhook) {
-            echo '<div class="biodevas-alert biodevas-alert--danger" style="display:block;margin-bottom:20px;"><p>Webhook no encontrado.</p></div>';
-            return;
-        }
+		// Active (only for edit)
+		if ( $is_edit ) {
+			echo '<tr><th>Estado</th>';
+			echo '<td><label><input type="checkbox" name="webhook_active" value="1" ' . checked( $webhook['active'] ?? true, true, false ) . '> Activo</label></td></tr>';
+		}
 
-        echo '<h2>📋 Registro de entregas — ' . esc_html($webhook['label'] ?? 'Sin nombre') . '</h2>';
-        echo '<a href="' . esc_url(admin_url('admin.php?page=bdv-webhooks')) . '" class="button">← Volver</a> ';
+		// Events
+		echo '<tr><th>Eventos suscritos</th>';
+		echo '<td><fieldset>';
+		echo '<p class="description" style="margin-bottom:10px;">Selecciona los eventos. Si no seleccionas ninguno, recibirá <strong>todos</strong> los eventos.</p>';
 
-        $clear_url = wp_nonce_url(
-            admin_url('admin.php?page=bdv-webhooks&bdv_wh_action=clear_logs&webhook_id=' . $webhook_id),
-            'bdv_wh_action_' . $webhook_id
-        );
-        echo '<a href="' . esc_url($clear_url) . '" class="button" onclick="return confirm(\'¿Limpiar todos los registros?\')">🗑 Limpiar logs</a>';
+		$subscribed = $webhook['events'] ?? array();
 
-        $logs = Webhook_Manager::get_delivery_logs($webhook_id, 30);
+		foreach ( Webhook_Manager::EVENTS as $key => $label ) {
+			$checked = empty( $subscribed ) || in_array( $key, $subscribed, true );
+			printf(
+				'<label style="display:block;margin-bottom:4px;"><input type="checkbox" name="webhook_events[]" value="%s" %s> <code>%s</code> — %s</label>',
+				esc_attr( $key ),
+				checked( $checked, true, false ),
+				esc_html( $key ),
+				esc_html( $label )
+			);
+		}
 
-        if (empty($logs)) {
-            echo '<div class="biodevas-alert biodevas-alert--info" style="display:block;margin-bottom:20px;margin-top:15px;"><p>No hay registros de entregas para este webhook.</p></div>';
-            return;
-        }
+		echo '</fieldset></td></tr>';
 
-        echo '<table class="wp-list-table widefat fixed striped" style="margin-top:15px;">';
-        echo '<thead><tr><th width="160">Fecha</th><th width="180">Evento</th><th width="80">Estado</th><th>Detalle</th></tr></thead><tbody>';
+		echo '</table>';
 
-        foreach ($logs as $log) {
-            $status = ($log['success'] ?? false)
-                ? '<span style="color:#155724;background:#d4edda;padding:2px 8px;border-radius:4px;font-size:11px;">✓ OK</span>'
-                : '<span style="color:#721c24;background:#f8d7da;padding:2px 8px;border-radius:4px;font-size:11px;">✗ Error</span>';
+		echo '<p class="submit"><button type="submit" class="button button-primary">' . ( $is_edit ? 'Guardar cambios' : 'Crear Webhook' ) . '</button></p>';
+		echo '</form>';
+	}
 
-            echo '<tr>';
-            echo '<td>' . esc_html($log['time'] ?? '') . '</td>';
-            echo '<td><code style="font-size:11px;">' . esc_html($log['event'] ?? '') . '</code></td>';
-            echo '<td>' . $status . '</td>';
-            echo '<td style="font-size:12px;">' . esc_html(mb_substr($log['message'] ?? '', 0, 100)) . '</td>';
-            echo '</tr>';
-        }
+	/**
+	 * Render delivery logs for a webhook.
+	 */
+	private function render_logs( string $webhook_id ): void {
+		$webhook = Webhook_Manager::get_webhook( $webhook_id );
+		if ( ! $webhook ) {
+			echo '<div class="biodevas-alert biodevas-alert--danger" style="display:block;margin-bottom:20px;"><p>Webhook no encontrado.</p></div>';
+			return;
+		}
 
-        echo '</tbody></table>';
-    }
+		echo '<h2>📋 Registro de entregas — ' . esc_html( $webhook['label'] ?? 'Sin nombre' ) . '</h2>';
+		echo '<a href="' . esc_url( admin_url( 'admin.php?page=bdv-webhooks' ) ) . '" class="button">← Volver</a> ';
+
+		$clear_url = wp_nonce_url(
+			admin_url( 'admin.php?page=bdv-webhooks&bdv_wh_action=clear_logs&webhook_id=' . $webhook_id ),
+			'bdv_wh_action_' . $webhook_id
+		);
+		echo '<a href="' . esc_url( $clear_url ) . '" class="button" onclick="return confirm(\'¿Limpiar todos los registros?\')">🗑 Limpiar logs</a>';
+
+		$logs = Webhook_Manager::get_delivery_logs( $webhook_id, 30 );
+
+		if ( empty( $logs ) ) {
+			echo '<div class="biodevas-alert biodevas-alert--info" style="display:block;margin-bottom:20px;margin-top:15px;"><p>No hay registros de entregas para este webhook.</p></div>';
+			return;
+		}
+
+		echo '<table class="wp-list-table widefat fixed striped" style="margin-top:15px;">';
+		echo '<thead><tr><th width="160">Fecha</th><th width="180">Evento</th><th width="80">Estado</th><th>Detalle</th></tr></thead><tbody>';
+
+		foreach ( $logs as $log ) {
+			$status = ( $log['success'] ?? false )
+				? '<span style="color:#155724;background:#d4edda;padding:2px 8px;border-radius:4px;font-size:11px;">✓ OK</span>'
+				: '<span style="color:#721c24;background:#f8d7da;padding:2px 8px;border-radius:4px;font-size:11px;">✗ Error</span>';
+
+			echo '<tr>';
+			echo '<td>' . esc_html( $log['time'] ?? '' ) . '</td>';
+			echo '<td><code style="font-size:11px;">' . esc_html( $log['event'] ?? '' ) . '</code></td>';
+			echo '<td>' . $status . '</td>';
+			echo '<td style="font-size:12px;">' . esc_html( mb_substr( $log['message'] ?? '', 0, 100 ) ) . '</td>';
+			echo '</tr>';
+		}
+
+		echo '</tbody></table>';
+	}
 }

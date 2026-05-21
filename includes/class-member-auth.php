@@ -13,238 +13,251 @@ namespace Convoca\Members;
 use Convoca\Core\Logger;
 use Convoca\Core\Utils;
 
-if (!defined('ABSPATH')) {
-    exit;
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
 }
 
-class Member_Auth
-{
-    private const SESSION_COOKIE = 'bdv_member_session';
-    private const TRANSIENT_PREFIX = 'bdv_member_session_';
-    private const SESSION_EXPIRATION = 6 * HOUR_IN_SECONDS;
-    private const MAX_LOGIN_ATTEMPTS = 5;
-    private const LOGIN_LOCKOUT_SECONDS = 15 * MINUTE_IN_SECONDS;
+class Member_Auth {
 
-    /**
-     * Authenticate a member using WordPress credentials.
-     *
-     * @param string $username WP username or email.
-     * @param string $password WP password.
-     * @return string|\WP_Error Token on success, WP_Error on failure.
-     */
-    public static function login(string $username, string $password): string|\WP_Error
-    {
-        $username = sanitize_user($username);
+	private const SESSION_COOKIE        = 'bdv_member_session';
+	private const TRANSIENT_PREFIX      = 'bdv_member_session_';
+	private const SESSION_EXPIRATION    = 6 * HOUR_IN_SECONDS;
+	private const MAX_LOGIN_ATTEMPTS    = 5;
+	private const LOGIN_LOCKOUT_SECONDS = 15 * MINUTE_IN_SECONDS;
 
-        if (!$username || !$password) {
-            return new \WP_Error('missing_params', 'Usuario y contraseña son obligatorios.');
-        }
+	/**
+	 * Authenticate a member using WordPress credentials.
+	 *
+	 * @param string $username WP username or email.
+	 * @param string $password WP password.
+	 * @return string|\WP_Error Token on success, WP_Error on failure.
+	 */
+	public static function login( string $username, string $password ): string|\WP_Error {
+		$username = sanitize_user( $username );
 
-        // Rate limiting: prevent brute-force attacks.
-        if (!Utils::check_rate_limit('login', self::MAX_LOGIN_ATTEMPTS, self::LOGIN_LOCKOUT_SECONDS)) {
-            return new \WP_Error(
-                'rate_limited',
-                'Demasiados intentos de acceso. Por favor, espera 15 minutos e inténtalo de nuevo.'
-            );
-        }
+		if ( ! $username || ! $password ) {
+			return new \WP_Error( 'missing_params', 'Usuario y contraseña son obligatorios.' );
+		}
 
-        // Authenticate via WordPress.
-        $user = wp_authenticate($username, $password);
+		// Rate limiting: prevent brute-force attacks.
+		if ( ! Utils::check_rate_limit( 'login', self::MAX_LOGIN_ATTEMPTS, self::LOGIN_LOCKOUT_SECONDS ) ) {
+			return new \WP_Error(
+				'rate_limited',
+				'Demasiados intentos de acceso. Por favor, espera 15 minutos e inténtalo de nuevo.'
+			);
+		}
 
-        if (is_wp_error($user)) {
-            Logger::warning("Intento de inicio de sesión fallido: {$username}", 'Members/Members');
-            return new \WP_Error(
-                'login_failed',
-                'Usuario o contraseña incorrectos.'
-            );
-        }
+		// Authenticate via WordPress.
+		$user = wp_authenticate( $username, $password );
 
-        // Verify the user has a linked member (miembro CPT).
-        $member_id = (int) get_user_meta($user->ID, '_bdv_member_id', true);
-        if (!$member_id) {
-            Logger::warning("Usuario {$username} no tiene un perfil de socio vinculado.", 'Members/Members');
-            return new \WP_Error(
-                'not_found',
-                'Tu usuario no está vinculado a un perfil de socio. Contacta con coordinación.'
-            );
-        }
+		if ( is_wp_error( $user ) ) {
+			Logger::warning( "Intento de inicio de sesión fallido: {$username}", 'Members/Members' );
+			return new \WP_Error(
+				'login_failed',
+				'Usuario o contraseña incorrectos.'
+			);
+		}
 
-        $member = get_post($member_id);
-        if (!$member || $member->post_type !== 'miembro') {
-            return new \WP_Error(
-                'not_found',
-                'No se encontró tu perfil de socio. Contacta con coordinación.'
-            );
-        }
+		// Verify the user has a linked member (miembro CPT).
+		$member_id = (int) get_user_meta( $user->ID, '_bdv_member_id', true );
+		if ( ! $member_id ) {
+			Logger::warning( "Usuario {$username} no tiene un perfil de socio vinculado.", 'Members/Members' );
+			return new \WP_Error(
+				'not_found',
+				'Tu usuario no está vinculado a un perfil de socio. Contacta con coordinación.'
+			);
+		}
 
-        // Generate session token.
-        $token = wp_generate_password(32, false);
+		$member = get_post( $member_id );
+		if ( ! $member || $member->post_type !== 'miembro' ) {
+			return new \WP_Error(
+				'not_found',
+				'No se encontró tu perfil de socio. Contacta con coordinación.'
+			);
+		}
 
-        set_transient(self::TRANSIENT_PREFIX . $token, [
-            'id' => $member_id,
-            'wp_user_id' => $user->ID,
-            'last_renewal' => time(),
-            'pending_cookie' => false,
-        ], self::SESSION_EXPIRATION);
+		// Generate session token.
+		$token = wp_generate_password( 32, false );
 
-        // Set cookie.
-        setcookie(self::SESSION_COOKIE, $token, [
-            'expires' => time() + self::SESSION_EXPIRATION,
-            'path' => COOKIEPATH,
-            'domain' => COOKIE_DOMAIN,
-            'secure' => is_ssl(),
-            'httponly' => true,
-            'samesite' => 'Lax',
-        ]);
+		set_transient(
+			self::TRANSIENT_PREFIX . $token,
+			array(
+				'id'             => $member_id,
+				'wp_user_id'     => $user->ID,
+				'last_renewal'   => time(),
+				'pending_cookie' => false,
+			),
+			self::SESSION_EXPIRATION
+		);
 
-        Logger::info("Socio ha iniciado sesión: {$member->post_title} (ID: {$member_id})", 'Members/Members', $member_id);
+		// Set cookie.
+		setcookie(
+			self::SESSION_COOKIE,
+			$token,
+			array(
+				'expires'  => time() + self::SESSION_EXPIRATION,
+				'path'     => COOKIEPATH,
+				'domain'   => COOKIE_DOMAIN,
+				'secure'   => is_ssl(),
+				'httponly' => true,
+				'samesite' => 'Lax',
+			)
+		);
 
-        return $token;
-    }
+		Logger::info( "Socio ha iniciado sesión: {$member->post_title} (ID: {$member_id})", 'Members/Members', $member_id );
 
-    /**
-     * End member session.
-     */
-    public static function logout(): void
-    {
-        $token = self::get_current_token();
-        if ($token) {
-            delete_transient(self::TRANSIENT_PREFIX . $token);
-        }
+		return $token;
+	}
 
-        setcookie(self::SESSION_COOKIE, '', [
-            'expires' => time() - HOUR_IN_SECONDS,
-            'path' => COOKIEPATH,
-            'domain' => COOKIE_DOMAIN,
-            'secure' => is_ssl(),
-            'httponly' => true,
-            'samesite' => 'Lax',
-        ]);
-    }
+	/**
+	 * End member session.
+	 */
+	public static function logout(): void {
+		$token = self::get_current_token();
+		if ( $token ) {
+			delete_transient( self::TRANSIENT_PREFIX . $token );
+		}
 
-    /**
-     * Get the ID of the currently logged-in member.
-     *
-     * @return int Member ID or 0 if not logged in.
-     */
-    public static function get_current_member_id(): int
-    {
-        $token = self::get_current_token();
-        if (!$token) {
-            return 0;
-        }
+		setcookie(
+			self::SESSION_COOKIE,
+			'',
+			array(
+				'expires'  => time() - HOUR_IN_SECONDS,
+				'path'     => COOKIEPATH,
+				'domain'   => COOKIE_DOMAIN,
+				'secure'   => is_ssl(),
+				'httponly' => true,
+				'samesite' => 'Lax',
+			)
+		);
+	}
 
-        $session = get_transient(self::TRANSIENT_PREFIX . $token);
-        if (!$session || !is_array($session)) {
-            return 0;
-        }
+	/**
+	 * Get the ID of the currently logged-in member.
+	 *
+	 * @return int Member ID or 0 if not logged in.
+	 */
+	public static function get_current_member_id(): int {
+		$token = self::get_current_token();
+		if ( ! $token ) {
+			return 0;
+		}
 
-        $member_id = (int) ($session['id'] ?? 0);
-        $last_renewal = (int) ($session['last_renewal'] ?? 0);
-        $pending_cookie = !empty($session['pending_cookie']);
+		$session = get_transient( self::TRANSIENT_PREFIX . $token );
+		if ( ! $session || ! is_array( $session ) ) {
+			return 0;
+		}
 
-        if (!$member_id) {
-            return 0;
-        }
+		$member_id      = (int) ( $session['id'] ?? 0 );
+		$last_renewal   = (int) ( $session['last_renewal'] ?? 0 );
+		$pending_cookie = ! empty( $session['pending_cookie'] );
 
-        $now = time();
-        $needs_cookie_update = ($now - $last_renewal) > HOUR_IN_SECONDS || $pending_cookie;
-        $needs_transient_update = ($now - $last_renewal) > (15 * MINUTE_IN_SECONDS);
+		if ( ! $member_id ) {
+			return 0;
+		}
 
-        if ($needs_cookie_update) {
-            if (!headers_sent()) {
-                setcookie(self::SESSION_COOKIE, $token, [
-                    'expires' => $now + self::SESSION_EXPIRATION,
-                    'path' => COOKIEPATH,
-                    'domain' => COOKIE_DOMAIN,
-                    'secure' => is_ssl(),
-                    'httponly' => true,
-                    'samesite' => 'Lax',
-                ]);
-                $pending_cookie = false;
-                $needs_transient_update = true;
-            } else {
-                $pending_cookie = true;
-            }
-        }
+		$now                    = time();
+		$needs_cookie_update    = ( $now - $last_renewal ) > HOUR_IN_SECONDS || $pending_cookie;
+		$needs_transient_update = ( $now - $last_renewal ) > ( 15 * MINUTE_IN_SECONDS );
 
-        if ($needs_transient_update) {
-            set_transient(self::TRANSIENT_PREFIX . $token, [
-                'id' => $member_id,
-                'wp_user_id' => $session['wp_user_id'] ?? 0,
-                'last_renewal' => $now,
-                'pending_cookie' => $pending_cookie,
-            ], self::SESSION_EXPIRATION);
-        }
+		if ( $needs_cookie_update ) {
+			if ( ! headers_sent() ) {
+				setcookie(
+					self::SESSION_COOKIE,
+					$token,
+					array(
+						'expires'  => $now + self::SESSION_EXPIRATION,
+						'path'     => COOKIEPATH,
+						'domain'   => COOKIE_DOMAIN,
+						'secure'   => is_ssl(),
+						'httponly' => true,
+						'samesite' => 'Lax',
+					)
+				);
+				$pending_cookie         = false;
+				$needs_transient_update = true;
+			} else {
+				$pending_cookie = true;
+			}
+		}
 
-        return $member_id;
-    }
+		if ( $needs_transient_update ) {
+			set_transient(
+				self::TRANSIENT_PREFIX . $token,
+				array(
+					'id'             => $member_id,
+					'wp_user_id'     => $session['wp_user_id'] ?? 0,
+					'last_renewal'   => $now,
+					'pending_cookie' => $pending_cookie,
+				),
+				self::SESSION_EXPIRATION
+			);
+		}
 
-    /**
-     * Get the data of the currently logged-in member securely.
-     *
-     * @return array|null Array or null if not logged in.
-     */
-    public static function get_current_member_data(): ?array
-    {
-        $member_id = self::get_current_member_id();
-        if (!$member_id) {
-            return null;
-        }
+		return $member_id;
+	}
 
-        $post = get_post($member_id);
-        if (!$post) {
-            return null;
-        }
+	/**
+	 * Get the data of the currently logged-in member securely.
+	 *
+	 * @return array|null Array or null if not logged in.
+	 */
+	public static function get_current_member_data(): ?array {
+		$member_id = self::get_current_member_id();
+		if ( ! $member_id ) {
+			return null;
+		}
 
-        return [
-            'id' => $member_id,
-            'name' => $post->post_title,
-            'email' => get_post_meta($member_id, '_bdv_email', true),
-            'phone' => get_post_meta($member_id, '_bdv_telefono', true),
-            'dni' => get_post_meta($member_id, '_bdv_dni', true),
-            'member_status' => get_post_meta($member_id, '_bdv_estado_miembro', true),
-        ];
-    }
+		$post = get_post( $member_id );
+		if ( ! $post ) {
+			return null;
+		}
 
-    /**
-     * Check if the current request is authenticated.
-     *
-     * @return bool
-     */
-    public static function is_authenticated(): bool
-    {
-        return self::get_current_member_id() > 0;
-    }
+		return array(
+			'id'            => $member_id,
+			'name'          => $post->post_title,
+			'email'         => get_post_meta( $member_id, '_bdv_email', true ),
+			'phone'         => get_post_meta( $member_id, '_bdv_telefono', true ),
+			'dni'           => get_post_meta( $member_id, '_bdv_dni', true ),
+			'member_status' => get_post_meta( $member_id, '_bdv_estado_miembro', true ),
+		);
+	}
 
-    /**
-     * Check if the current member is active.
-     *
-     * @return bool
-     */
-    public static function is_active(): bool
-    {
-        $member_id = self::get_current_member_id();
-        if (!$member_id) {
-            return false;
-        }
-        $status = get_post_meta($member_id, '_bdv_estado_miembro', true);
-        return $status === 'activo';
-    }
+	/**
+	 * Check if the current request is authenticated.
+	 *
+	 * @return bool
+	 */
+	public static function is_authenticated(): bool {
+		return self::get_current_member_id() > 0;
+	}
 
-    /**
-     * Get the current session token from cookie or header.
-     *
-     * @return string
-     */
-    public static function get_current_token(): string
-    {
-        $token = sanitize_text_field($_COOKIE[self::SESSION_COOKIE] ?? '');
+	/**
+	 * Check if the current member is active.
+	 *
+	 * @return bool
+	 */
+	public static function is_active(): bool {
+		$member_id = self::get_current_member_id();
+		if ( ! $member_id ) {
+			return false;
+		}
+		$status = get_post_meta( $member_id, '_bdv_estado_miembro', true );
+		return $status === 'activo';
+	}
 
-        if (!$token && isset($_SERVER['HTTP_X_BDV_AUTH'])) {
-            $token = sanitize_text_field($_SERVER['HTTP_X_BDV_AUTH']);
-        }
+	/**
+	 * Get the current session token from cookie or header.
+	 *
+	 * @return string
+	 */
+	public static function get_current_token(): string {
+		$token = sanitize_text_field( $_COOKIE[ self::SESSION_COOKIE ] ?? '' );
 
-        return (string) $token;
-    }
+		if ( ! $token && isset( $_SERVER['HTTP_X_BDV_AUTH'] ) ) {
+			$token = sanitize_text_field( $_SERVER['HTTP_X_BDV_AUTH'] );
+		}
+
+		return (string) $token;
+	}
 }

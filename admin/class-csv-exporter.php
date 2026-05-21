@@ -7,270 +7,266 @@
 
 namespace Convoca\Members;
 
-if (!defined('ABSPATH')) {
-    exit;
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
 }
 
-class CSV_Exporter
-{
+class CSV_Exporter {
 
-    /**
-     * All available export columns.
-     *
-     * key => label for display in the modal.
-     *
-     * @return array<string, string>
-     */
-    public static function get_available_columns(): array
-    {
-        return [
-            'ID'                 => 'ID',
-            'Nombre'             => __('Nombre', 'convoca-members'),
-            'Email'              => __('Email', 'convoca-members'),
-            'DNI'                => __('DNI', 'convoca-members'),
-            'Teléfono'           => __('Teléfono', 'convoca-members'),
-            'WhatsApp'           => __('WhatsApp', 'convoca-members'),
-            'Dirección'          => __('Dirección', 'convoca-members'),
-            'Municipio'          => __('Municipio', 'convoca-members'),
-            'Código Postal'      => __('Código Postal', 'convoca-members'),
-            'Provincia'          => __('Provincia', 'convoca-members'),
-            'Tipo'               => __('Tipo', 'convoca-members'),
-            'Estado'             => __('Estado', 'convoca-members'),
-            'Plan'               => __('Plan', 'convoca-members'),
-            'Sub Plan'           => __('Sub Plan', 'convoca-members'),
-            'Forma pago'         => __('Forma pago', 'convoca-members'),
-            'Menor'              => __('Menor edad', 'convoca-members'),
-            'RGPD versión'       => __('RGPD versión', 'convoca-members'),
-            'RGPD fecha'         => __('RGPD fecha', 'convoca-members'),
-            'Comunicaciones'     => __('Comunicaciones', 'convoca-members'),
-            'Fecha alta'         => __('Fecha alta', 'convoca-members'),
-            'Fecha renovación'   => __('Fecha renovación', 'convoca-members'),
-            'Recurrente'         => __('Recurrente', 'convoca-members'),
-            'Número socio'       => __('Número socio', 'convoca-members'),
-            'Código acceso'      => __('Código acceso', 'convoca-members'),
-            'Voluntario'         => __('Voluntario', 'convoca-members'),
-            'Horas voluntariado' => __('Horas voluntariado', 'convoca-members'),
-            'Notas'              => __('Notas', 'convoca-members'),
-            'Intereses'          => __('Intereses', 'convoca-members'),
-            'Disponibilidad'     => __('Disponibilidad', 'convoca-members'),
-            'Tipo voluntariado'  => __('Tipo voluntariado', 'convoca-members'),
-        ];
-    }
 
-    /**
-     * Default columns (the original 19).
-     *
-     * @return array<string>
-     */
-    public static function get_default_columns(): array
-    {
-        return [
-            'ID',
-            'Nombre',
-            'Email',
-            'DNI',
-            'Teléfono',
-            'WhatsApp',
-            'Dirección',
-            'Municipio',
-            'Tipo',
-            'Estado',
-            'Plan',
-            'Forma pago',
-            'Menor',
-            'RGPD versión',
-            'RGPD fecha',
-            'Comunicaciones',
-            'Fecha alta',
-            'Fecha renovación',
-            'Recurrente',
-        ];
-    }
+	/**
+	 * All available export columns.
+	 *
+	 * key => label for display in the modal.
+	 *
+	 * @return array<string, string>
+	 */
+	public static function get_available_columns(): array {
+		return array(
+			'ID'                 => 'ID',
+			'Nombre'             => __( 'Nombre', 'convoca-members' ),
+			'Email'              => __( 'Email', 'convoca-members' ),
+			'DNI'                => __( 'DNI', 'convoca-members' ),
+			'Teléfono'          => __( 'Teléfono', 'convoca-members' ),
+			'WhatsApp'           => __( 'WhatsApp', 'convoca-members' ),
+			'Dirección'         => __( 'Dirección', 'convoca-members' ),
+			'Municipio'          => __( 'Municipio', 'convoca-members' ),
+			'Código Postal'     => __( 'Código Postal', 'convoca-members' ),
+			'Provincia'          => __( 'Provincia', 'convoca-members' ),
+			'Tipo'               => __( 'Tipo', 'convoca-members' ),
+			'Estado'             => __( 'Estado', 'convoca-members' ),
+			'Plan'               => __( 'Plan', 'convoca-members' ),
+			'Sub Plan'           => __( 'Sub Plan', 'convoca-members' ),
+			'Forma pago'         => __( 'Forma pago', 'convoca-members' ),
+			'Menor'              => __( 'Menor edad', 'convoca-members' ),
+			'RGPD versión'      => __( 'RGPD versión', 'convoca-members' ),
+			'RGPD fecha'         => __( 'RGPD fecha', 'convoca-members' ),
+			'Comunicaciones'     => __( 'Comunicaciones', 'convoca-members' ),
+			'Fecha alta'         => __( 'Fecha alta', 'convoca-members' ),
+			'Fecha renovación'  => __( 'Fecha renovación', 'convoca-members' ),
+			'Recurrente'         => __( 'Recurrente', 'convoca-members' ),
+			'Número socio'      => __( 'Número socio', 'convoca-members' ),
+			'Código acceso'     => __( 'Código acceso', 'convoca-members' ),
+			'Voluntario'         => __( 'Voluntario', 'convoca-members' ),
+			'Horas voluntariado' => __( 'Horas voluntariado', 'convoca-members' ),
+			'Notas'              => __( 'Notas', 'convoca-members' ),
+			'Intereses'          => __( 'Intereses', 'convoca-members' ),
+			'Disponibilidad'     => __( 'Disponibilidad', 'convoca-members' ),
+			'Tipo voluntariado'  => __( 'Tipo voluntariado', 'convoca-members' ),
+		);
+	}
 
-    /**
-     * Get the last used column selection for the current user.
-     *
-     * @return array<string>|null  Null means "never saved" (show all).
-     */
-    public static function get_user_columns(): ?array
-    {
-        $saved = get_user_meta(get_current_user_id(), '_bdv_csv_columns', true);
-        if (!is_array($saved) || empty($saved)) {
-            return null;
-        }
-        return $saved;
-    }
+	/**
+	 * Default columns (the original 19).
+	 *
+	 * @return array<string>
+	 */
+	public static function get_default_columns(): array {
+		return array(
+			'ID',
+			'Nombre',
+			'Email',
+			'DNI',
+			'Teléfono',
+			'WhatsApp',
+			'Dirección',
+			'Municipio',
+			'Tipo',
+			'Estado',
+			'Plan',
+			'Forma pago',
+			'Menor',
+			'RGPD versión',
+			'RGPD fecha',
+			'Comunicaciones',
+			'Fecha alta',
+			'Fecha renovación',
+			'Recurrente',
+		);
+	}
 
-    public function __construct()
-    {
-        add_action('wp_ajax_bdv_export_csv', [$this, 'export']);
-        add_action('wp_ajax_bdv_save_csv_columns', [$this, 'ajax_save_columns']);
-    }
+	/**
+	 * Get the last used column selection for the current user.
+	 *
+	 * @return array<string>|null  Null means "never saved" (show all).
+	 */
+	public static function get_user_columns(): ?array {
+		$saved = get_user_meta( get_current_user_id(), '_bdv_csv_columns', true );
+		if ( ! is_array( $saved ) || empty( $saved ) ) {
+			return null;
+		}
+		return $saved;
+	}
 
-    /**
-     * AJAX handler: export CSV with optional column selection.
-     *
-     * Expects GET params:
-     *   nonce          – security nonce
-     *   columns        – (optional) comma-separated column keys
-     *   estado         – (optional) filter by member state
-     */
-    public function export(): void
-    {
-        check_ajax_referer('bdv_export_csv', 'nonce');
+	public function __construct() {
+		add_action( 'wp_ajax_bdv_export_csv', array( $this, 'export' ) );
+		add_action( 'wp_ajax_bdv_save_csv_columns', array( $this, 'ajax_save_columns' ) );
+	}
 
-        if (!current_user_can('bdv_export_members')) {
-            wp_die(
-                esc_html__('No tienes permisos suficientes para exportar la lista de miembros.', 'convoca-members'),
-                esc_html__('Acceso Denegado', 'convoca-members'),
-                ['back_link' => true]
-            );
-        }
+	/**
+	 * AJAX handler: export CSV with optional column selection.
+	 *
+	 * Expects GET params:
+	 *   nonce          – security nonce
+	 *   columns        – (optional) comma-separated column keys
+	 *   estado         – (optional) filter by member state
+	 */
+	public function export(): void {
+		check_ajax_referer( 'bdv_export_csv', 'nonce' );
 
-        $all_columns = self::get_available_columns();
-        $all_keys = array_keys($all_columns);
+		if ( ! current_user_can( 'bdv_export_members' ) ) {
+			wp_die(
+				esc_html__( 'No tienes permisos suficientes para exportar la lista de miembros.', 'convoca-members' ),
+				esc_html__( 'Acceso Denegado', 'convoca-members' ),
+				array( 'back_link' => true )
+			);
+		}
 
-        // Determine which columns to export.
-        $raw_columns = sanitize_text_field($_GET['columns'] ?? '');
-        if ($raw_columns) {
-            $requested = array_map('trim', explode(',', $raw_columns));
-            $columns = array_values(array_intersect($requested, $all_keys));
-        } else {
-            $columns = $all_keys; // all columns
-        }
+		$all_columns = self::get_available_columns();
+		$all_keys    = array_keys( $all_columns );
 
-        if (empty($columns)) {
-            $columns = $all_keys;
-        }
+		// Determine which columns to export.
+		$raw_columns = sanitize_text_field( $_GET['columns'] ?? '' );
+		if ( $raw_columns ) {
+			$requested = array_map( 'trim', explode( ',', $raw_columns ) );
+			$columns   = array_values( array_intersect( $requested, $all_keys ) );
+		} else {
+			$columns = $all_keys; // all columns
+		}
 
-        $args = [
-            'post_type' => 'miembro',
-            'posts_per_page' => -1,
-            'post_status' => 'publish',
-            'orderby' => 'date',
-            'order' => 'DESC',
-        ];
+		if ( empty( $columns ) ) {
+			$columns = $all_keys;
+		}
 
-        // Optional estado filter.
-        $estado = sanitize_text_field($_GET['estado'] ?? '');
-        if ($estado) {
-            $args['meta_query'] = [
-                ['key' => '_bdv_estado_miembro', 'value' => $estado],
-            ];
-        }
+		$args = array(
+			'post_type'      => 'miembro',
+			'posts_per_page' => -1,
+			'post_status'    => 'publish',
+			'orderby'        => 'date',
+			'order'          => 'DESC',
+		);
 
-        $query = new \WP_Query($args);
+		// Optional estado filter.
+		$estado = sanitize_text_field( $_GET['estado'] ?? '' );
+		if ( $estado ) {
+			$args['meta_query'] = array(
+				array(
+					'key'   => '_bdv_estado_miembro',
+					'value' => $estado,
+				),
+			);
+		}
 
-        $filename = 'biodevas-miembros-' . wp_date('Y-m-d') . '.csv';
+		$query = new \WP_Query( $args );
 
-        header('Content-Type: text/csv; charset=utf-8');
-        header('Content-Disposition: attachment; filename="' . $filename . '"');
-        header('Pragma: no-cache');
-        header('Expires: 0');
+		$filename = 'biodevas-miembros-' . wp_date( 'Y-m-d' ) . '.csv';
 
-        $out = fopen('php://output', 'w');
+		header( 'Content-Type: text/csv; charset=utf-8' );
+		header( 'Content-Disposition: attachment; filename="' . $filename . '"' );
+		header( 'Pragma: no-cache' );
+		header( 'Expires: 0' );
 
-        // Write BOM for Excel.
-        fprintf($out, chr(0xEF) . chr(0xBB) . chr(0xBF));
+		$out = fopen( 'php://output', 'w' );
 
-        // Write header row.
-        $header_labels = [];
-        foreach ($columns as $key) {
-            $header_labels[] = $all_columns[$key];
-        }
-        fputcsv($out, $header_labels, ';');
+		// Write BOM for Excel.
+		fprintf( $out, chr( 0xEF ) . chr( 0xBB ) . chr( 0xBF ) );
 
-        foreach ($query->posts as $post) {
-            $row = $this->build_row($post, $columns);
-            fputcsv($out, $row, ';');
-        }
+		// Write header row.
+		$header_labels = array();
+		foreach ( $columns as $key ) {
+			$header_labels[] = $all_columns[ $key ];
+		}
+		fputcsv( $out, $header_labels, ';' );
 
-        fclose($out);
-        exit;
-    }
+		foreach ( $query->posts as $post ) {
+			$row = $this->build_row( $post, $columns );
+			fputcsv( $out, $row, ';' );
+		}
 
-    /**
-     * Build a single CSV row for the given set of columns.
-     *
-     * @param \WP_Post     $post
-     * @param array<string> $columns
-     * @return array<string>
-     */
-    private function build_row(\WP_Post $post, array $columns): array
-    {
-        $meta  = fn(string $key) => get_post_meta($post->ID, '_bdv_' . $key, true);
-        $esc   = fn($v) => \Convoca\Core\Utils::escape_csv_field($v);
-        $terms = wp_get_object_terms($post->ID, 'tipo_miembro', ['fields' => 'names']);
-        $tipo  = is_wp_error($terms) ? '' : implode(', ', $terms);
+		fclose( $out );
+		exit;
+	}
 
-        $row = [];
+	/**
+	 * Build a single CSV row for the given set of columns.
+	 *
+	 * @param \WP_Post      $post
+	 * @param array<string> $columns
+	 * @return array<string>
+	 */
+	private function build_row( \WP_Post $post, array $columns ): array {
+		$meta  = fn( string $key ) => get_post_meta( $post->ID, '_bdv_' . $key, true );
+		$esc   = fn( $v ) => \Convoca\Core\Utils::escape_csv_field( $v );
+		$terms = wp_get_object_terms( $post->ID, 'tipo_miembro', array( 'fields' => 'names' ) );
+		$tipo  = is_wp_error( $terms ) ? '' : implode( ', ', $terms );
 
-        foreach ($columns as $col) {
-            $row[] = match ($col) {
-                'ID'                 => (string) $post->ID,
-                'Nombre'             => $esc($post->post_title),
-                'Email'              => $esc($meta('email')),
-                'DNI'                => $esc($meta('dni')),
-                'Teléfono'           => $esc($meta('telefono')),
-                'WhatsApp'           => $esc($meta('whatsapp')),
-                'Dirección'          => $esc($meta('direccion')),
-                'Municipio'          => $esc($meta('municipio')),
-                'Código Postal'      => $esc($meta('c_postal')),
-                'Provincia'          => $esc($meta('provincia')),
-                'Tipo'               => $esc($tipo),
-                'Estado'             => Estados::LABELS[$meta('estado_miembro')] ?? $meta('estado_miembro'),
-                'Plan'               => $esc($meta('plan')),
-                'Sub Plan'           => $esc($meta('sub_plan')),
-                'Forma pago'         => $esc($meta('forma_pago')),
-                'Menor'              => $meta('menor_edad') === '1' ? 'Sí' : 'No',
-                'RGPD versión'       => $esc($meta('rgpd_version')),
-                'RGPD fecha'         => $esc($meta('rgpd_timestamp')),
-                'Comunicaciones'     => $meta('comunicaciones_ok') === '1' ? 'Sí' : 'No',
-                'Fecha alta'         => get_the_date('d/m/Y', $post),
-                'Fecha renovación'   => $esc($meta('fecha_renovacion')),
-                'Recurrente'         => $meta('pago_recurrente') === '1' ? 'Sí' : 'No',
-                'Número socio'       => $esc($meta('numero_socio')),
-                'Código acceso'      => $esc($meta('access_code')),
-                'Voluntario'         => $meta('voluntario') === '1' ? 'Sí' : 'No',
-                'Horas voluntariado' => $esc($meta('horas_voluntariado')),
-                'Notas'              => $esc($meta('notas')),
-                'Intereses'          => $esc($meta('intereses')),
-                'Disponibilidad'     => $esc($meta('disponibilidad')),
-                'Tipo voluntariado'  => $esc($meta('tipo_voluntariado')),
-                default              => '',
-            };
-        }
+		$row = array();
 
-        return $row;
-    }
+		foreach ( $columns as $col ) {
+			$row[] = match ( $col ) {
+				'ID'                 => (string) $post->ID,
+				'Nombre'             => $esc( $post->post_title ),
+				'Email'              => $esc( $meta( 'email' ) ),
+				'DNI'                => $esc( $meta( 'dni' ) ),
+				'Teléfono'           => $esc( $meta( 'telefono' ) ),
+				'WhatsApp'           => $esc( $meta( 'whatsapp' ) ),
+				'Dirección'          => $esc( $meta( 'direccion' ) ),
+				'Municipio'          => $esc( $meta( 'municipio' ) ),
+				'Código Postal'      => $esc( $meta( 'c_postal' ) ),
+				'Provincia'          => $esc( $meta( 'provincia' ) ),
+				'Tipo'               => $esc( $tipo ),
+				'Estado'             => Estados::LABELS[ $meta( 'estado_miembro' ) ] ?? $meta( 'estado_miembro' ),
+				'Plan'               => $esc( $meta( 'plan' ) ),
+				'Sub Plan'           => $esc( $meta( 'sub_plan' ) ),
+				'Forma pago'         => $esc( $meta( 'forma_pago' ) ),
+				'Menor'              => $meta( 'menor_edad' ) === '1' ? 'Sí' : 'No',
+				'RGPD versión'       => $esc( $meta( 'rgpd_version' ) ),
+				'RGPD fecha'         => $esc( $meta( 'rgpd_timestamp' ) ),
+				'Comunicaciones'     => $meta( 'comunicaciones_ok' ) === '1' ? 'Sí' : 'No',
+				'Fecha alta'         => get_the_date( 'd/m/Y', $post ),
+				'Fecha renovación'   => $esc( $meta( 'fecha_renovacion' ) ),
+				'Recurrente'         => $meta( 'pago_recurrente' ) === '1' ? 'Sí' : 'No',
+				'Número socio'       => $esc( $meta( 'numero_socio' ) ),
+				'Código acceso'      => $esc( $meta( 'access_code' ) ),
+				'Voluntario'         => $meta( 'voluntario' ) === '1' ? 'Sí' : 'No',
+				'Horas voluntariado' => $esc( $meta( 'horas_voluntariado' ) ),
+				'Notas'              => $esc( $meta( 'notas' ) ),
+				'Intereses'          => $esc( $meta( 'intereses' ) ),
+				'Disponibilidad'     => $esc( $meta( 'disponibilidad' ) ),
+				'Tipo voluntariado'  => $esc( $meta( 'tipo_voluntariado' ) ),
+				default              => '',
+			};
+		}
 
-    /**
-     * AJAX handler: save selected columns as user preference.
-     *
-     * POST params:
-     *   nonce   – security nonce
-     *   columns – JSON array of column key strings
-     */
-    public function ajax_save_columns(): void
-    {
-        check_ajax_referer('bdv_export_csv', 'nonce');
+		return $row;
+	}
 
-        if (!current_user_can('bdv_export_members')) {
-            wp_send_json_error(__('Sin permisos.', 'convoca-members'));
-        }
+	/**
+	 * AJAX handler: save selected columns as user preference.
+	 *
+	 * POST params:
+	 *   nonce   – security nonce
+	 *   columns – JSON array of column key strings
+	 */
+	public function ajax_save_columns(): void {
+		check_ajax_referer( 'bdv_export_csv', 'nonce' );
 
-        $raw = isset($_POST['columns']) ? wp_unslash($_POST['columns']) : '';
-        $columns = json_decode($raw, true);
+		if ( ! current_user_can( 'bdv_export_members' ) ) {
+			wp_send_json_error( __( 'Sin permisos.', 'convoca-members' ) );
+		}
 
-        if (!is_array($columns)) {
-            wp_send_json_error(__('Formato inválido.', 'convoca-members'));
-        }
+		$raw     = isset( $_POST['columns'] ) ? wp_unslash( $_POST['columns'] ) : '';
+		$columns = json_decode( $raw, true );
 
-        $all_keys = array_keys(self::get_available_columns());
-        $valid = array_values(array_intersect($columns, $all_keys));
+		if ( ! is_array( $columns ) ) {
+			wp_send_json_error( __( 'Formato inválido.', 'convoca-members' ) );
+		}
 
-        update_user_meta(get_current_user_id(), '_bdv_csv_columns', $valid);
+		$all_keys = array_keys( self::get_available_columns() );
+		$valid    = array_values( array_intersect( $columns, $all_keys ) );
 
-        wp_send_json_success(['columns' => $valid]);
-    }
+		update_user_meta( get_current_user_id(), '_bdv_csv_columns', $valid );
+
+		wp_send_json_success( array( 'columns' => $valid ) );
+	}
 }
