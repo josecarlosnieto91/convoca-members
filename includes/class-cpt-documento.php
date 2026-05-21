@@ -22,7 +22,7 @@ class CPT_Documento {
 
 	public function redirect_default_editor(): void {
 		global $typenow;
-		if ( $typenow === 'bdv_documento' ) {
+		if ( $typenow === 'conv_documento' ) {
 			wp_safe_redirect( admin_url( 'admin.php?page=bdv-members' ) );
 			exit;
 		}
@@ -65,11 +65,11 @@ class CPT_Documento {
 			'has_archive'         => false,
 			'exclude_from_search' => true,
 			'publicly_queryable'  => false,
-			'capability_type'     => 'bdv_documento',
+			'capability_type'     => 'conv_documento',
 			'map_meta_cap'        => true,
 		);
 
-		register_post_type( 'bdv_documento', $args );
+		register_post_type( 'conv_documento', $args );
 	}
 
 	/**
@@ -77,13 +77,13 @@ class CPT_Documento {
 	 */
 	public function map_documento_caps( $caps, $cap, $user_id, $args ) {
 		$documento_caps = array(
-			'edit_bdv_documento',
-			'read_bdv_documento',
-			'delete_bdv_documento',
-			'edit_bdv_documentos',
-			'edit_others_bdv_documentos',
-			'publish_bdv_documentos',
-			'read_private_bdv_documentos',
+			'edit_conv_documento',
+			'read_conv_documento',
+			'delete_conv_documento',
+			'edit_conv_documentos',
+			'edit_others_conv_documentos',
+			'publish_conv_documentos',
+			'read_private_conv_documentos',
 		);
 
 		if ( in_array( $cap, $documento_caps ) ) {

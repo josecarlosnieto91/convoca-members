@@ -42,9 +42,9 @@ class Admin_Status {
 			return self::result(
 				'page_mi_area',
 				'Página Mi Área',
-				$has ? 'Existe con shortcode [biodevas_mi_area]' : 'Existe pero sin el shortcode',
+				$has ? 'Existe con shortcode [convoca_mi_area]' : 'Existe pero sin el shortcode',
 				$has ? self::SEVERITY_OK : self::SEVERITY_WARNING,
-				'Añade el shortcode [biodevas_mi_area] a la página.'
+				'Añade el shortcode [convoca_mi_area] a la página.'
 			);
 		}
 		return self::result(
@@ -52,16 +52,16 @@ class Admin_Status {
 			'Página Mi Área',
 			'No encontrada',
 			self::SEVERITY_ERROR,
-			'Crea una página con el shortcode [biodevas_mi_area]'
+			'Crea una página con el shortcode [convoca_mi_area]'
 		);
 	}
 
 	public static function check_tables(): array {
 		global $wpdb;
 		$tables  = array(
-			"{$wpdb->prefix}biodevas_logs",
-			"{$wpdb->prefix}biodevas_locks",
-			"{$wpdb->prefix}bdv_member_sequence",
+			"{$wpdb->prefix}convoca_logs",
+			"{$wpdb->prefix}convoca_locks",
+			"{$wpdb->prefix}conv_member_sequence",
 		);
 		$missing = array();
 		foreach ( $tables as $t ) {
@@ -82,7 +82,7 @@ class Admin_Status {
 	}
 
 	public static function check_cron(): array {
-		$hooks   = array( 'bdv_daily_event', 'bdv_weekly_event' );
+		$hooks   = array( 'conv_daily_event', 'conv_weekly_event' );
 		$missing = array();
 		foreach ( $hooks as $h ) {
 			$ts = wp_next_scheduled( $h );
@@ -117,27 +117,27 @@ class Admin_Status {
 		?>
 		<div class="wrap">
 			<h1><?php esc_html_e( 'Estado del Sistema - Miembros', 'convoca-members' ); ?></h1>
-			<div class="biodevas-diagnostic">
-				<div class="biodevas-diagnostic-header biodevas-diagnostic-header--<?php echo $has_errors ? 'error' : ( $has_warnings ? 'warning' : 'success' ); ?>">
-					<div class="biodevas-diagnostic-icon">
+			<div class="convoca-diagnostic">
+				<div class="convoca-diagnostic-header convoca-diagnostic-header--<?php echo $has_errors ? 'error' : ( $has_warnings ? 'warning' : 'success' ); ?>">
+					<div class="convoca-diagnostic-icon">
 						<?php echo $has_errors ? '✗' : ( $has_warnings ? '⚠' : '✓' ); ?>
 					</div>
-					<div class="biodevas-diagnostic-summary">
+					<div class="convoca-diagnostic-summary">
 						<h3><?php echo $has_errors ? __( 'Se encontraron errores', 'convoca-members' ) : ( $has_warnings ? __( 'Atención: algunas comprobaciones requieren revisión', 'convoca-members' ) : __( 'Todo correcto', 'convoca-members' ) ); ?></h3>
 						<p><?php printf( __( '%d comprobaciones realizadas.', 'convoca-members' ), count( $results ) ); ?></p>
 					</div>
 				</div>
-				<div class="biodevas-diagnostic-results">
+				<div class="convoca-diagnostic-results">
 					<?php foreach ( $results as $r ) : ?>
-						<div class="biodevas-diagnostic-row">
-							<div class="biodevas-diagnostic-severity biodevas-badge--<?php echo esc_attr( $r['severity'] === self::SEVERITY_OK ? 'success' : ( $r['severity'] === self::SEVERITY_WARNING ? 'warning' : 'error' ) ); ?>">
+						<div class="convoca-diagnostic-row">
+							<div class="convoca-diagnostic-severity convoca-badge--<?php echo esc_attr( $r['severity'] === self::SEVERITY_OK ? 'success' : ( $r['severity'] === self::SEVERITY_WARNING ? 'warning' : 'error' ) ); ?>">
 								<?php echo $r['severity'] === self::SEVERITY_OK ? '✓' : ( $r['severity'] === self::SEVERITY_WARNING ? '⚠' : '✗' ); ?>
 							</div>
-							<div class="biodevas-diagnostic-content">
+							<div class="convoca-diagnostic-content">
 								<strong><?php echo esc_html( $r['label'] ); ?></strong>
-								<div class="biodevas-diagnostic-message"><?php echo esc_html( $r['message'] ); ?></div>
+								<div class="convoca-diagnostic-message"><?php echo esc_html( $r['message'] ); ?></div>
 								<?php if ( ! empty( $r['fix'] ) ) : ?>
-									<div class="biodevas-diagnostic-fix"><?php echo esc_html( $r['fix'] ); ?></div>
+									<div class="convoca-diagnostic-fix"><?php echo esc_html( $r['fix'] ); ?></div>
 								<?php endif; ?>
 							</div>
 						</div>

@@ -280,7 +280,7 @@ class CPT_Miembro {
 	 * Get all membership plans (merged with DB settings).
 	 */
 	public static function get_plans(): array {
-		$db_plans = get_option( 'bdv_members_plans', array() );
+		$db_plans = get_option( 'conv_members_plans', array() );
 
 		// If DB is empty, use defaults (legacy mode).
 		$plans = empty( $db_plans ) ? self::PLANS : $db_plans;
@@ -319,8 +319,8 @@ class CPT_Miembro {
 	 * @return string|null     Full wa.me URL or null if no phone.
 	 */
 	public static function whatsapp_link( int $post_id, string $message = '' ): ?string {
-		$phone  = get_post_meta( $post_id, '_bdv_telefono', true );
-		$has_wa = get_post_meta( $post_id, '_bdv_whatsapp', true );
+		$phone  = get_post_meta( $post_id, '_conv_telefono', true );
+		$has_wa = get_post_meta( $post_id, '_conv_whatsapp', true );
 
 		if ( ! $phone || $has_wa === 'no' ) {
 			return null;
@@ -335,7 +335,7 @@ class CPT_Miembro {
 
 		$url = 'https://wa.me/' . $clean; .
 		if ( $message ) {
-			$nombre = get_post_meta( $post_id, '_bdv_nombre', true ) ?: get_the_title( $post_id );
+			$nombre = get_post_meta( $post_id, '_conv_nombre', true ) ?: get_the_title( $post_id );
 			$msg    = str_replace( '{nombre}', $nombre, $message );
 			$url   .= '?text=' . rawurlencode( $msg );
 		}
@@ -356,7 +356,7 @@ class CPT_Miembro {
 
 			// Fallback: atomic increment using MySQL's LAST_INSERT_ID.
 			global $wpdb;
-			$option_name = 'bdv_last_member_number_fallback';
+			$option_name = 'conv_last_member_number_fallback';
 			$wpdb->query( 'START TRANSACTION' );
 			try {
 				// Atomic increment with row-level lock to prevent duplicates.
@@ -390,7 +390,7 @@ class CPT_Miembro {
 	 */
 	private static function get_next_member_number_internal( int $post_id = 0 ): int {
 		global $wpdb;
-		$table = $wpdb->prefix . 'bdv_member_sequence';
+		$table = $wpdb->prefix . 'conv_member_sequence';
 
 		// Verify table exists before using it (handles incomplete upgrades).
 		if ( $wpdb->get_var( "SHOW TABLES LIKE '$table'" ) !== $table ) {
@@ -421,7 +421,7 @@ class CPT_Miembro {
 		// Update legacy option for compatibility - use SELECT MAX to ensure consistency under concurrency.
 		$max_from_db = (int) $wpdb->get_var( "SELECT MAX(member_number) FROM $table" );
 		if ( $max_from_db > 0 ) {
-			update_option( 'bdv_last_member_number', $max_from_db, false );
+			update_option( 'conv_last_member_number', $max_from_db, false );
 		}
 
 		return $next_number;
@@ -433,8 +433,8 @@ class CPT_Miembro {
 	public static function approve_member( int $post_id ): bool {
 		global $wpdb;
 
-		$status = get_post_meta( $post_id, '_bdv_estado_miembro', true );
-		$num    = get_post_meta( $post_id, '_bdv_numero_socio', true );
+		$status = get_post_meta( $post_id, '_conv_estado_miembro', true );
+		$num    = get_post_meta( $post_id, '_conv_numero_socio', true );
 
 		// If already active AND already has a number, nothing to do.
 		if ( $status === 'activo' && ! empty( $num ) ) {
@@ -447,14 +447,14 @@ class CPT_Miembro {
 			// Assign number if missing.
 			if ( empty( $num ) ) {
 				$num = self::get_next_member_number_internal( $post_id );
-				update_post_meta( $post_id, '_bdv_numero_socio', $num );
+				update_post_meta( $post_id, '_conv_numero_socio', $num );
 			}
-			update_post_meta( $post_id, '_bdv_estado_cuota', 'activa' );
+			update_post_meta( $post_id, '_conv_estado_cuota', 'activa' );
 
 			// Set dates.
 			$now = current_time( 'Y-m-d' );
-			update_post_meta( $post_id, '_bdv_fecha_alta', $now );
-			update_post_meta( $post_id, '_bdv_fecha_renovacion', \Convoca\Core\Utils::format_date( '+1 year', 'Y-m-d' ) );
+			update_post_meta( $post_id, '_conv_fecha_alta', $now );
+			update_post_meta( $post_id, '_conv_fecha_renovacion', \Convoca\Core\Utils::format_date( '+1 year', 'Y-m-d' ) );
 
 			// Activate via state machine (triggers audit log + hooks).
 			Estados::change( $post_id, 'activo', "Aprobado manualmente. Socio #$num" );
@@ -462,7 +462,7 @@ class CPT_Miembro {
 			$wpdb->query( 'COMMIT' );
 
 			// Clear cache to ensure subsequent get_option calls see the new value.
-			wp_cache_delete( 'bdv_last_member_number', 'options' );
+			wp_cache_delete( 'conv_last_member_number', 'options' );
 
 			return true;
 		} catch ( \Throwable $e ) {
@@ -478,8 +478,8 @@ class CPT_Miembro {
 	 * @param int $post_id Member ID.
 	 */
 	public static function check_member_status( int $post_id ): void {
-		$status       = get_post_meta( $post_id, '_bdv_estado_miembro', true );
-		$renewal_date = get_post_meta( $post_id, '_bdv_fecha_renovacion', true );
+		$status       = get_post_meta( $post_id, '_conv_estado_miembro', true );
+		$renewal_date = get_post_meta( $post_id, '_conv_fecha_renovacion', true );
 		$today        = current_time( 'Y-m-d' );
 
 		if ( $status === 'baja' || empty( $renewal_date ) ) {
@@ -487,7 +487,7 @@ class CPT_Miembro {
 		}
 
 		// Skip volunteers — their renewal is handled by Voluntariado_Manager, not by payment.
-		$forma_pago = get_post_meta( $post_id, '_bdv_forma_pago', true );
+		$forma_pago = get_post_meta( $post_id, '_conv_forma_pago', true );
 		if ( $forma_pago === 'voluntariado' ) {
 			return;
 		}
@@ -496,8 +496,8 @@ class CPT_Miembro {
 		$baja_date = \Convoca\Core\Utils::format_date( $renewal_date . ' +30 days', 'Y-m-d' );
 		if ( $today > $baja_date ) {
 			Estados::change( $post_id, 'baja', 'Baja automática por falta de pago (30 días tras vencimiento).' );
-			update_post_meta( $post_id, '_bdv_estado_cuota', 'vencida' );
-			update_post_meta( $post_id, '_bdv_fecha_baja', $today );
+			update_post_meta( $post_id, '_conv_estado_cuota', 'vencida' );
+			update_post_meta( $post_id, '_conv_fecha_baja', $today );
 			return;
 		}
 
@@ -505,7 +505,7 @@ class CPT_Miembro {
 		$suspension_date = \Convoca\Core\Utils::format_date( $renewal_date . ' +15 days', 'Y-m-d' );
 		if ( $today > $suspension_date && $status !== 'suspendido' ) {
 			Estados::change( $post_id, 'suspendido', 'Suspendido automáticamente por falta de pago (15 días tras vencimiento).' );
-			update_post_meta( $post_id, '_bdv_estado_cuota', 'vencida' );
+			update_post_meta( $post_id, '_conv_estado_cuota', 'vencida' );
 			return;
 		}
 	}

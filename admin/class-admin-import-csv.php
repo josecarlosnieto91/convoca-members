@@ -15,10 +15,10 @@ class Admin_Import_CSV {
 
 	public function __construct() {
 		add_action( 'admin_menu', array( $this, 'register_page' ) );
-		add_action( 'admin_post_bdv_import_csv_preview', array( $this, 'handle_preview' ) );
-		add_action( 'admin_post_bdv_import_csv_run', array( $this, 'handle_import' ) );
-		add_action( 'admin_post_bdv_import_csv_template', array( $this, 'handle_template_download' ) );
-		add_action( 'admin_post_bdv_import_csv_continue', array( $this, 'handle_batch_continue' ) );
+		add_action( 'admin_post_conv_import_csv_preview', array( $this, 'handle_preview' ) );
+		add_action( 'admin_post_conv_import_csv_run', array( $this, 'handle_import' ) );
+		add_action( 'admin_post_conv_import_csv_template', array( $this, 'handle_template_download' ) );
+		add_action( 'admin_post_conv_import_csv_continue', array( $this, 'handle_batch_continue' ) );
 	}
 
 	public function register_page(): void {
@@ -36,54 +36,54 @@ class Admin_Import_CSV {
 		if ( ! current_user_can( 'manage_options' ) ) {
 			wp_die( __( 'No tienes permisos.', 'convoca-members' ) );
 		}
-		$preview = get_transient( 'bdv_csv_preview_' . get_current_user_id() );
+		$preview = get_transient( 'conv_csv_preview_' . get_current_user_id() );
 		?>
 		<div class="wrap" style="max-width:900px;">
 			<h1><?php esc_html_e( 'Importar Socios desde CSV', 'convoca-members' ); ?></h1>
 
 			<?php if ( isset( $_GET['import_result'] ) ) : ?>
-				<div class="biodevas-alert biodevas-alert--success" style="display:block;margin-bottom:20px;">
+				<div class="convoca-alert convoca-alert--success" style="display:block;margin-bottom:20px;">
 					<p><?php echo esc_html( sanitize_text_field( $_GET['import_result'] ) ); ?></p>
 				</div>
 			<?php endif; ?>
 
 			<?php
-			$done_key = 'bdv_import_batch_' . get_current_user_id() . '_done';
+			$done_key = 'conv_import_batch_' . get_current_user_id() . '_done';
 			$done_msg = get_transient( $done_key );
 			if ( $done_msg ) :
 				delete_transient( $done_key );
 				?>
-				<div class="biodevas-alert biodevas-alert--success" style="display:block;margin-bottom:20px;">
+				<div class="convoca-alert convoca-alert--success" style="display:block;margin-bottom:20px;">
 					<p><?php echo esc_html( $done_msg ); ?></p>
 				</div>
 			<?php endif; ?>
 
-			<div class="biodevas-box" style="background:#fff;border-radius:12px;padding:30px;margin-top:20px;">
+			<div class="convoca-box" style="background:#fff;border-radius:12px;padding:30px;margin-top:20px;">
 				<h2><?php esc_html_e( '1. Sube el archivo CSV', 'convoca-members' ); ?></h2>
 				<p><?php esc_html_e( 'El archivo debe incluir una fila de cabeceras. Columnas esperadas: nombre, email, dni, plan, teléfono, dirección, municipio.', 'convoca-members' ); ?></p>
 				<form method="post" enctype="multipart/form-data" action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>" style="margin-bottom:16px;">
-					<?php wp_nonce_field( 'bdv_import_csv' ); ?>
-					<input type="hidden" name="action" value="bdv_import_csv_preview">
-					<div class="biodevas-field">
+					<?php wp_nonce_field( 'conv_import_csv' ); ?>
+					<input type="hidden" name="action" value="conv_import_csv_preview">
+					<div class="convoca-field">
 						<input type="file" name="csv_file" accept=".csv" required>
 					</div>
-					<button type="submit" class="biodevas-btn biodevas-btn-primary"><?php esc_html_e( 'Previsualizar', 'convoca-members' ); ?></button>
+					<button type="submit" class="convoca-btn convoca-btn-primary"><?php esc_html_e( 'Previsualizar', 'convoca-members' ); ?></button>
 				</form>
 				<form method="post" action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>">
-					<?php wp_nonce_field( 'bdv_import_csv_template' ); ?>
-					<input type="hidden" name="action" value="bdv_import_csv_template">
-					<button type="submit" class="biodevas-btn biodevas-btn-secondary"><?php esc_html_e( '📄 Descargar plantilla CSV', 'convoca-members' ); ?></button>
+					<?php wp_nonce_field( 'conv_import_csv_template' ); ?>
+					<input type="hidden" name="action" value="conv_import_csv_template">
+					<button type="submit" class="convoca-btn convoca-btn-secondary"><?php esc_html_e( '📄 Descargar plantilla CSV', 'convoca-members' ); ?></button>
 				</form>
 			</div>
 
 			<?php
 			// Check for batch import progress.
-			$batch_key      = 'bdv_import_batch_' . get_current_user_id();
+			$batch_key      = 'conv_import_batch_' . get_current_user_id();
 			$batch_progress = get_transient( $batch_key );
 			?>
 
 			<?php if ( $batch_progress ) : ?>
-				<div class="biodevas-box" style="background:#fff;border-radius:12px;padding:30px;margin-top:20px;">
+				<div class="convoca-box" style="background:#fff;border-radius:12px;padding:30px;margin-top:20px;">
 					<h2><?php esc_html_e( '⏳ Importación en curso', 'convoca-members' ); ?></h2>
 					<p style="font-size:1.2em;">
 						<?php
@@ -99,9 +99,9 @@ class Admin_Import_CSV {
 						<div style="background:#4CAF50;height:100%;width:<?php echo $pct; ?>%;transition:width 0.3s;"></div>
 					</div>
 					<form method="post" action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>">
-						<?php wp_nonce_field( 'bdv_import_csv_continue' ); ?>
-						<input type="hidden" name="action" value="bdv_import_csv_continue">
-						<button type="submit" class="biodevas-btn biodevas-btn-primary">
+						<?php wp_nonce_field( 'conv_import_csv_continue' ); ?>
+						<input type="hidden" name="action" value="conv_import_csv_continue">
+						<button type="submit" class="convoca-btn convoca-btn-primary">
 							<?php esc_html_e( '▶ Continuar importación', 'convoca-members' ); ?>
 						</button>
 					</form>
@@ -109,15 +109,15 @@ class Admin_Import_CSV {
 			<?php endif; ?>
 
 			<?php if ( $preview ) : ?>
-				<div class="biodevas-box" style="background:#fff;border-radius:12px;padding:30px;margin-top:20px;">
+				<div class="convoca-box" style="background:#fff;border-radius:12px;padding:30px;margin-top:20px;">
 					<h2><?php printf( __( '2. Vista previa (%d filas detectadas)', 'convoca-members' ), $preview['total'] ); ?></h2>
 					<form method="post" action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>">
-						<?php wp_nonce_field( 'bdv_import_csv_run' ); ?>
-						<input type="hidden" name="action" value="bdv_import_csv_run">
+						<?php wp_nonce_field( 'conv_import_csv_run' ); ?>
+						<input type="hidden" name="action" value="conv_import_csv_run">
 						<input type="hidden" name="filename" value="<?php echo esc_attr( $preview['filename'] ); ?>">
 						<input type="hidden" name="total_rows" value="<?php echo esc_attr( $preview['total'] ); ?>">
 
-						<div class="biodevas-field">
+						<div class="convoca-field">
 							<label><?php esc_html_e( 'Mapeo de columnas', 'convoca-members' ); ?></label>
 							<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
 								<?php
@@ -176,7 +176,7 @@ class Admin_Import_CSV {
 						</div>
 
 						<div style="margin-top:20px;">
-							<button type="submit" class="biodevas-btn biodevas-btn-primary" onclick="return confirm('<?php esc_attr_e( '¿Importar todos los socios? Esta acción no se puede deshacer.', 'convoca-members' ); ?>');">
+							<button type="submit" class="convoca-btn convoca-btn-primary" onclick="return confirm('<?php esc_attr_e( '¿Importar todos los socios? Esta acción no se puede deshacer.', 'convoca-members' ); ?>');">
 								🚀 <?php printf( __( 'Importar %d socios', 'convoca-members' ), $preview['total'] ); ?>
 							</button>
 						</div>
@@ -188,7 +188,7 @@ class Admin_Import_CSV {
 	}
 
 	public function handle_preview(): void {
-		check_admin_referer( 'bdv_import_csv' );
+		check_admin_referer( 'conv_import_csv' );
 		if ( ! current_user_can( 'manage_options' ) ) {
 			wp_die( __( 'No tienes permisos.', 'convoca-members' ) );
 		}
@@ -221,11 +221,11 @@ class Admin_Import_CSV {
 		}
 		fclose( $handle );
 
-		$target_filename = 'bdv_import_' . uniqid() . '.csv';
+		$target_filename = 'conv_import_' . uniqid() . '.csv';
 		copy( $filename, sys_get_temp_dir() . '/' . $target_filename );
 
 		set_transient(
-			'bdv_csv_preview_' . get_current_user_id(),
+			'conv_csv_preview_' . get_current_user_id(),
 			array(
 				'headers'  => $headers,
 				'rows'     => $rows,
@@ -264,7 +264,7 @@ class Admin_Import_CSV {
 	}
 
 	public function handle_import(): void {
-		check_admin_referer( 'bdv_import_csv_run' );
+		check_admin_referer( 'conv_import_csv_run' );
 		if ( ! current_user_can( 'manage_options' ) ) {
 			wp_die( __( 'No tienes permisos.', 'convoca-members' ) );
 		}
@@ -309,7 +309,7 @@ class Admin_Import_CSV {
 		// For large imports, use batch processing.
 		if ( $total > 50 ) {
 			// Store import state in transient for batch processing.
-			$batch_key = 'bdv_import_batch_' . get_current_user_id();
+			$batch_key = 'conv_import_batch_' . get_current_user_id();
 			set_transient(
 				$batch_key,
 				array(
@@ -325,7 +325,7 @@ class Admin_Import_CSV {
 				3600
 			);
 
-			delete_transient( 'bdv_csv_preview_' . get_current_user_id() );
+			delete_transient( 'conv_csv_preview_' . get_current_user_id() );
 
 			// Process first batch synchronously within this request.
 			$this->process_batch( $batch_key, $batch_size );
@@ -353,7 +353,7 @@ class Admin_Import_CSV {
 		}
 
 		unlink( $filepath );
-		delete_transient( 'bdv_csv_preview_' . get_current_user_id() );
+		delete_transient( 'conv_csv_preview_' . get_current_user_id() );
 
 		\Convoca\Core\Logger::info(
 			sprintf( 'Importación CSV: %d importados, %d errores.', $imported, count( $errors ) ),
@@ -373,12 +373,12 @@ class Admin_Import_CSV {
 	 * Continue a batch import.
 	 */
 	public function handle_batch_continue(): void {
-		check_admin_referer( 'bdv_import_csv_continue' );
+		check_admin_referer( 'conv_import_csv_continue' );
 		if ( ! current_user_can( 'manage_options' ) ) {
 			wp_die( __( 'No tienes permisos.', 'convoca-members' ) );
 		}
 
-		$batch_key = 'bdv_import_batch_' . get_current_user_id();
+		$batch_key = 'conv_import_batch_' . get_current_user_id();
 		$state     = get_transient( $batch_key );
 
 		if ( ! $state || empty( $state['rows'] ) ) {
@@ -441,7 +441,7 @@ class Admin_Import_CSV {
 			}
 
 			// Store result message and redirect.
-			set_transient( 'bdv_import_batch_' . get_current_user_id() . '_done', $message, 60 );
+			set_transient( 'conv_import_batch_' . get_current_user_id() . '_done', $message, 60 );
 		} else {
 			set_transient( $batch_key, $state, 3600 );
 		}
@@ -517,24 +517,24 @@ class Admin_Import_CSV {
 
 			// Generate access code for new members.
 			$access_code = \Convoca\Core\Utils::generate_access_code();
-			update_post_meta( $post_id, '_bdv_access_code', $access_code );
+			update_post_meta( $post_id, '_conv_access_code', $access_code );
 
 			// Assign member number only to new members.
 			$num = CPT_Miembro::get_next_member_number( $post_id );
-			update_post_meta( $post_id, '_bdv_numero_socio', $num );
+			update_post_meta( $post_id, '_conv_numero_socio', $num );
 		}
 
 		// Save meta (for both new and updated members).
 		$meta_map = array( 'email', 'dni', 'telefono', 'direccion', 'municipio', 'plan' );
 		foreach ( $meta_map as $m ) {
 			if ( ! empty( $row[ $m ] ) ) {
-				update_post_meta( $post_id, '_bdv_' . $m, sanitize_text_field( $row[ $m ] ) );
+				update_post_meta( $post_id, '_conv_' . $m, sanitize_text_field( $row[ $m ] ) );
 			}
 		}
-		update_post_meta( $post_id, '_bdv_estado_miembro', 'activo' );
+		update_post_meta( $post_id, '_conv_estado_miembro', 'activo' );
 
 		if ( $send_welcome ) {
-			do_action( 'bdv_member_created', $post_id, array( 'nombre' => $nombre ) );
+			do_action( 'conv_member_created', $post_id, array( 'nombre' => $nombre ) );
 		}
 
 		return $post_id;
@@ -559,7 +559,7 @@ class Admin_Import_CSV {
 			array(
 				'post_type'      => 'miembro',
 				'posts_per_page' => 1,
-				'meta_key'       => '_bdv_email',
+				'meta_key'       => '_conv_email',
 				'meta_value'     => $email,
 				'fields'         => 'ids',
 			)
@@ -574,7 +574,7 @@ class Admin_Import_CSV {
 				array(
 					'post_type'      => 'miembro',
 					'posts_per_page' => 1,
-					'meta_key'       => '_bdv_dni',
+					'meta_key'       => '_conv_dni',
 					'meta_value'     => $dni,
 					'fields'         => 'ids',
 				)

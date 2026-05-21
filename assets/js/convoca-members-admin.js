@@ -22,7 +22,7 @@
             const fd = new FormData(stateForm);
             const nonce = window.bdvAdmin?.nonce || '';
 
-            bdvAdmin.ajaxPost('bdv_change_state', fd, nonce,
+            bdvAdmin.ajaxPost('conv_change_state', fd, nonce,
                 (res) => { location.reload(); },
                 (res) => {
                     alert(res.data?.message || res.data || 'Error al cambiar el estado.');
@@ -114,7 +114,7 @@
         }
 
         function downloadCsv(columns) {
-            var baseUrl = bdvAdmin.columnsUrl || (bdvAdmin.ajaxUrl + '?action=bdv_export_csv&nonce=' + bdvAdmin.csvNonce);
+            var baseUrl = bdvAdmin.columnsUrl || (bdvAdmin.ajaxUrl + '?action=conv_export_csv&nonce=' + bdvAdmin.csvNonce);
             if (columns && columns.length > 0) {
                 baseUrl += '&columns=' + encodeURIComponent(columns.join(','));
             }
@@ -128,7 +128,7 @@
             fd.append('columns', JSON.stringify(columns));
 
             var xhr = new XMLHttpRequest();
-            xhr.open('POST', bdvAdmin.ajaxUrl + '?action=bdv_save_csv_columns&nonce=' + bdvAdmin.csvNonce, true);
+            xhr.open('POST', bdvAdmin.ajaxUrl + '?action=conv_save_csv_columns&nonce=' + bdvAdmin.csvNonce, true);
             xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded; charset=UTF-8');
 
             xhr.onload = function () {
@@ -196,7 +196,7 @@
                 if (postId) {
                     // Silent ping to log the contact
                     const fd = new FormData();
-                    fd.append('action', 'bdv_log_whatsapp');
+                    fd.append('action', 'conv_log_whatsapp');
                     fd.append('post_id', postId);
                     fd.append('nonce', bdvAdmin.nonce);
                     
@@ -225,7 +225,7 @@
             var term = this.value.trim();
             if (term.length < 2) { dropdown.style.display = 'none'; return; }
             timer = setTimeout(function () {
-                fetch('/wp-json/biodevas/v1/admin/members/search?term=' + encodeURIComponent(term))
+                fetch('/wp-json/convoca/v1/admin/members/search?term=' + encodeURIComponent(term))
                     .then(function (r) { return r.json(); })
                     .then(function (data) {
                         if (!data || !data.length) { dropdown.style.display = 'none'; return; }
@@ -254,4 +254,4 @@
         });
     }
 
-})(window.biodevasAdmin);
+})(window.convocaAdmin);

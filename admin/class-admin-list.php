@@ -108,37 +108,37 @@ class Admin_List extends \WP_List_Table {
 			$args['meta_query'] = array(
 				'relation' => 'OR',
 				array(
-					'key'     => '_bdv_email',
+					'key'     => '_conv_email',
 					'value'   => $search,
 					'compare' => 'LIKE',
 				),
 				array(
-					'key'     => '_bdv_dni',
+					'key'     => '_conv_dni',
 					'value'   => $search,
 					'compare' => 'LIKE',
 				),
 				array(
-					'key'     => '_bdv_dni',
+					'key'     => '_conv_dni',
 					'value'   => $cleaned_search,
 					'compare' => 'LIKE',
 				),
 				array(
-					'key'     => '_bdv_telefono',
+					'key'     => '_conv_telefono',
 					'value'   => $search,
 					'compare' => 'LIKE',
 				),
 				array(
-					'key'     => '_bdv_numero_socio',
+					'key'     => '_conv_numero_socio',
 					'value'   => $search,
 					'compare' => 'LIKE',
 				),
 				array(
-					'key'     => '_bdv_access_code',
+					'key'     => '_conv_access_code',
 					'value'   => $search,
 					'compare' => 'LIKE',
 				),
 				array(
-					'key'     => '_bdv_nombre',
+					'key'     => '_conv_nombre',
 					'value'   => $search,
 					'compare' => 'LIKE',
 				),
@@ -154,7 +154,7 @@ class Admin_List extends \WP_List_Table {
 				$args['meta_query'] ?? array(),
 				array(
 					array(
-						'key'   => '_bdv_estado_miembro',
+						'key'   => '_conv_estado_miembro',
 						'value' => $estado_filter,
 					),
 				)
@@ -179,7 +179,7 @@ class Admin_List extends \WP_List_Table {
 				$args['meta_query'] ?? array(),
 				array(
 					array(
-						'key'   => '_bdv_es_voluntario',
+						'key'   => '_conv_es_voluntario',
 						'value' => '1',
 					),
 				)
@@ -193,7 +193,7 @@ class Admin_List extends \WP_List_Table {
 				$args['meta_query'] ?? array(),
 				array(
 					array(
-						'key'   => '_bdv_plan',
+						'key'   => '_conv_plan',
 						'value' => $plan_filter,
 					),
 				)
@@ -207,7 +207,7 @@ class Admin_List extends \WP_List_Table {
 				$args['meta_query'] ?? array(),
 				array(
 					array(
-						'key'   => '_bdv_estado_cuota',
+						'key'   => '_conv_estado_cuota',
 						'value' => $cuota_filter,
 					),
 				)
@@ -227,7 +227,7 @@ class Admin_List extends \WP_List_Table {
 		);
 
 		// Cache for 5 minutes if no search/filter active, to reduce DB load on paginated views.
-		$cache_key = 'bdv_list_members_' . md5( serialize( $args ) );
+		$cache_key = 'conv_list_members_' . md5( serialize( $args ) );
 		$cached    = ! $search && ! $estado_filter && ! $tipo_filter && ! $plan_filter && ! $cuota_filter ? get_transient( $cache_key ) : false;
 
 		if ( $cached ) {
@@ -315,7 +315,7 @@ class Admin_List extends \WP_List_Table {
 	/* ── Column renderers ──────────────────────── */
 
 	public function column_default( $item, $column_name ): string {
-		return get_post_meta( $item->ID, '_bdv_' . $column_name, true ) ?: '—';
+		return get_post_meta( $item->ID, '_conv_' . $column_name, true ) ?: '—';
 	}
 
 	public function column_cb( $item ): string {
@@ -323,18 +323,18 @@ class Admin_List extends \WP_List_Table {
 	}
 
 	public function column_numero( $item ): string {
-		$num = get_post_meta( $item->ID, '_bdv_numero_socio', true );
+		$num = get_post_meta( $item->ID, '_conv_numero_socio', true );
 		if ( $num ) {
 			return '<strong>' . str_pad( $num, 4, '0', STR_PAD_LEFT ) . '</strong>';
 		}
 
-		$status = get_post_meta( $item->ID, '_bdv_estado_miembro', true );
+		$status = get_post_meta( $item->ID, '_conv_estado_miembro', true );
 		$html   = '<span style="color:#999;font-style:italic">' . __( 'Sin asignar', 'convoca-members' ) . '</span>';
 
-		if ( $status === 'activo' && current_user_can( 'bdv_export_members' ) ) {
+		if ( $status === 'activo' && current_user_can( 'conv_export_members' ) ) {
 			$repair_url = wp_nonce_url(
-				admin_url( 'admin-post.php?action=bdv_approve_member&member_id=' . $item->ID ),
-				'bdv_approve_member_' . $item->ID
+				admin_url( 'admin-post.php?action=conv_approve_member&member_id=' . $item->ID ),
+				'conv_approve_member_' . $item->ID
 			);
 			$html      .= ' <a href="' . esc_url( $repair_url ) . '" style="font-size:10px;text-decoration:none" title="' . esc_attr__( 'Asignar número ahora', 'convoca-members' ) . '">🔧</a>';
 		}
@@ -352,22 +352,22 @@ class Admin_List extends \WP_List_Table {
 		);
 
 		// Approval action.
-		$status = get_post_meta( $item->ID, '_bdv_estado_miembro', true );
+		$status = get_post_meta( $item->ID, '_conv_estado_miembro', true );
 		if ( $status !== 'activo' ) {
 			$approve_url        = wp_nonce_url(
-				admin_url( 'admin-post.php?action=bdv_approve_member&member_id=' . $item->ID ),
-				'bdv_approve_member_' . $item->ID
+				admin_url( 'admin-post.php?action=conv_approve_member&member_id=' . $item->ID ),
+				'conv_approve_member_' . $item->ID
 			);
 			$actions['approve'] = '<a href="' . esc_url( $approve_url ) . '" style="color:#00a32a" aria-label="' . esc_attr( sprintf( __( 'Aprobar alta de %s', 'convoca-members' ), $item->post_title ) ) . '">' . __( 'Aprobar alta', 'convoca-members' ) . '</a>';
 		}
 
 		// PDF Card action.
-		$actions['card'] = '<a href="' . esc_url( wp_nonce_url( admin_url( 'admin-post.php?action=bdv_pdf_card&member_id=' . $item->ID ), 'bdv_pdf_card_' . $item->ID ) ) . '" target="_blank" aria-label="' . esc_attr( sprintf( __( 'Ver tarjeta de %s', 'convoca-members' ), $item->post_title ) ) . '">🪪 ' . __( 'Tarjeta', 'convoca-members' ) . '</a>';
+		$actions['card'] = '<a href="' . esc_url( wp_nonce_url( admin_url( 'admin-post.php?action=conv_pdf_card&member_id=' . $item->ID ), 'conv_pdf_card_' . $item->ID ) ) . '" target="_blank" aria-label="' . esc_attr( sprintf( __( 'Ver tarjeta de %s', 'convoca-members' ), $item->post_title ) ) . '">🪪 ' . __( 'Tarjeta', 'convoca-members' ) . '</a>';
 
 		// Delete action.
 		$delete_url        = wp_nonce_url(
-			admin_url( 'admin-post.php?action=bdv_delete_member&member_id=' . $item->ID ),
-			'bdv_delete_member_' . $item->ID
+			admin_url( 'admin-post.php?action=conv_delete_member&member_id=' . $item->ID ),
+			'conv_delete_member_' . $item->ID
 		);
 		$actions['delete'] = '<a href="' . esc_url( $delete_url ) . '" style="color:#a00" onclick="return confirm(\'¿Estás seguro de que quieres enviar este miembro a la papelera?\')" aria-label="' . esc_attr( sprintf( __( 'Eliminar a %s', 'convoca-members' ), $item->post_title ) ) . '">' . __( 'Eliminar', 'convoca-members' ) . '</a>';
 
@@ -375,7 +375,7 @@ class Admin_List extends \WP_List_Table {
 	}
 
 	public function column_email( $item ): string {
-		$email = get_post_meta( $item->ID, '_bdv_email', true );
+		$email = get_post_meta( $item->ID, '_conv_email', true );
 		if ( ! $email ) {
 			return '—';
 		}
@@ -383,7 +383,7 @@ class Admin_List extends \WP_List_Table {
 	}
 
 	public function column_telefono( $item ): string {
-		$tel = get_post_meta( $item->ID, '_bdv_telefono', true );
+		$tel = get_post_meta( $item->ID, '_conv_telefono', true );
 		if ( ! $tel ) {
 			return '—';
 		}
@@ -391,7 +391,7 @@ class Admin_List extends \WP_List_Table {
 	}
 
 	public function column_whatsapp( $item ): string {
-		$has_wa = get_post_meta( $item->ID, '_bdv_whatsapp', true );
+		$has_wa = get_post_meta( $item->ID, '_conv_whatsapp', true );
 		if ( $has_wa === 'no' ) {
 			return '<span style="color:#999">No</span>';
 		}
@@ -414,30 +414,30 @@ class Admin_List extends \WP_List_Table {
 	}
 
 	public function column_estado( $item ): string {
-		$estado = get_post_meta( $item->ID, '_bdv_estado_miembro', true ) ?: 'pendiente_documentacion';
+		$estado = get_post_meta( $item->ID, '_conv_estado_miembro', true ) ?: 'pendiente_documentacion';
 		return Estados::badge_html( $estado );
 	}
 
 	public function column_plan( $item ): string {
-		$plan = get_post_meta( $item->ID, '_bdv_plan', true );
-		$sub  = get_post_meta( $item->ID, '_bdv_sub_plan', true );
+		$plan = get_post_meta( $item->ID, '_conv_plan', true );
+		$sub  = get_post_meta( $item->ID, '_conv_sub_plan', true );
 		$key  = $sub ?: $plan;
 		$data = CPT_Miembro::get_plan( $key );
 		return esc_html( ( $data && isset( $data['label'] ) ) ? $data['label'] : ucfirst( $key ?: '—' ) );
 	}
 
 	public function column_cuota( $item ): string {
-		$importe = get_post_meta( $item->ID, '_bdv_importe_cuota', true );
-		$estado  = get_post_meta( $item->ID, '_bdv_estado_cuota', true );
+		$importe = get_post_meta( $item->ID, '_conv_importe_cuota', true );
+		$estado  = get_post_meta( $item->ID, '_conv_estado_cuota', true );
 		$label   = CPT_Miembro::ESTADO_CUOTA[ $estado ] ?? '—';
 		$amount  = $importe ? number_format( (float) $importe, 0 ) . '€' : '—';
 
 		if ( $estado === 'activa' ) {
-			$badge = '<span class="biodevas-badge biodevas-badge--confirmed">' . esc_html( $label ) . '</span>';
+			$badge = '<span class="convoca-badge convoca-badge--confirmed">' . esc_html( $label ) . '</span>';
 		} elseif ( $estado === 'pendiente' ) {
-			$badge = '<span class="biodevas-badge biodevas-badge--pending">' . esc_html( $label ) . '</span>';
+			$badge = '<span class="convoca-badge convoca-badge--pending">' . esc_html( $label ) . '</span>';
 		} elseif ( $estado === 'vencida' ) {
-			$badge = '<span class="biodevas-badge biodevas-badge--cancelled">' . esc_html( $label ) . '</span>';
+			$badge = '<span class="convoca-badge convoca-badge--cancelled">' . esc_html( $label ) . '</span>';
 		} else {
 			$badge = '—';
 		}
@@ -446,7 +446,7 @@ class Admin_List extends \WP_List_Table {
 	}
 
 	public function column_recurrente( $item ): string {
-		$recurrente = get_post_meta( $item->ID, '_bdv_pago_recurrente', true );
+		$recurrente = get_post_meta( $item->ID, '_conv_pago_recurrente', true );
 		if ( $recurrente === '1' ) {
 			return '<span class="dashicons dashicons-yes" style="color:#2271b1"></span> ' . __( 'Sí', 'convoca-members' );
 		}

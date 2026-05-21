@@ -91,7 +91,7 @@ class CSV_Exporter {
 	 * @return array<string>|null  Null means "never saved" (show all).
 	 */
 	public static function get_user_columns(): ?array {
-		$saved = get_user_meta( get_current_user_id(), '_bdv_csv_columns', true );
+		$saved = get_user_meta( get_current_user_id(), '_conv_csv_columns', true );
 		if ( ! is_array( $saved ) || empty( $saved ) ) {
 			return null;
 		}
@@ -99,8 +99,8 @@ class CSV_Exporter {
 	}
 
 	public function __construct() {
-		add_action( 'wp_ajax_bdv_export_csv', array( $this, 'export' ) );
-		add_action( 'wp_ajax_bdv_save_csv_columns', array( $this, 'ajax_save_columns' ) );
+		add_action( 'wp_ajax_conv_export_csv', array( $this, 'export' ) );
+		add_action( 'wp_ajax_conv_save_csv_columns', array( $this, 'ajax_save_columns' ) );
 	}
 
 	/**
@@ -112,9 +112,9 @@ class CSV_Exporter {
 	 *   estado         – (optional) filter by member state
 	 */
 	public function export(): void {
-		check_ajax_referer( 'bdv_export_csv', 'nonce' );
+		check_ajax_referer( 'conv_export_csv', 'nonce' );
 
-		if ( ! current_user_can( 'bdv_export_members' ) ) {
+		if ( ! current_user_can( 'conv_export_members' ) ) {
 			wp_die(
 				esc_html__( 'No tienes permisos suficientes para exportar la lista de miembros.', 'convoca-members' ),
 				esc_html__( 'Acceso Denegado', 'convoca-members' ),
@@ -151,7 +151,7 @@ class CSV_Exporter {
 		if ( $estado ) {
 			$args['meta_query'] = array(
 				array(
-					'key'   => '_bdv_estado_miembro',
+					'key'   => '_conv_estado_miembro',
 					'value' => $estado,
 				),
 			);
@@ -159,7 +159,7 @@ class CSV_Exporter {
 
 		$query = new \WP_Query( $args );
 
-		$filename = 'biodevas-miembros-' . wp_date( 'Y-m-d' ) . '.csv';
+		$filename = 'convoca-miembros-' . wp_date( 'Y-m-d' ) . '.csv';
 
 		header( 'Content-Type: text/csv; charset=utf-8' );
 		header( 'Content-Disposition: attachment; filename="' . $filename . '"' );
@@ -195,7 +195,7 @@ class CSV_Exporter {
 	 * @return array<string>
 	 */
 	private function build_row( \WP_Post $post, array $columns ): array {
-		$meta  = fn( string $key ) => get_post_meta( $post->ID, '_bdv_' . $key, true );
+		$meta  = fn( string $key ) => get_post_meta( $post->ID, '_conv_' . $key, true );
 		$esc   = fn( $v ) => \Convoca\Core\Utils::escape_csv_field( $v );
 		$terms = wp_get_object_terms( $post->ID, 'tipo_miembro', array( 'fields' => 'names' ) );
 		$tipo  = is_wp_error( $terms ) ? '' : implode( ', ', $terms );
@@ -249,9 +249,9 @@ class CSV_Exporter {
 	 *   columns – JSON array of column key strings
 	 */
 	public function ajax_save_columns(): void {
-		check_ajax_referer( 'bdv_export_csv', 'nonce' );
+		check_ajax_referer( 'conv_export_csv', 'nonce' );
 
-		if ( ! current_user_can( 'bdv_export_members' ) ) {
+		if ( ! current_user_can( 'conv_export_members' ) ) {
 			wp_send_json_error( __( 'Sin permisos.', 'convoca-members' ) );
 		}
 
@@ -265,7 +265,7 @@ class CSV_Exporter {
 		$all_keys = array_keys( self::get_available_columns() );
 		$valid    = array_values( array_intersect( $columns, $all_keys ) );
 
-		update_user_meta( get_current_user_id(), '_bdv_csv_columns', $valid );
+		update_user_meta( get_current_user_id(), '_conv_csv_columns', $valid );
 
 		wp_send_json_success( array( 'columns' => $valid ) );
 	}

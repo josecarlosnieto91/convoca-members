@@ -135,7 +135,7 @@
     },
 
     handleLogout: function() {
-      document.cookie = 'bdv_member_session=; Path=/; Expires=Thu, 01 Jan 1970 00:00:01 GMT;';
+      document.cookie = 'conv_member_session=; Path=/; Expires=Thu, 01 Jan 1970 00:00:01 GMT;';
       location.reload();
     },
 
@@ -160,9 +160,9 @@
     renderSearch: function() {
       var self = this;
       var html = '' +
-        '<h2>🔍 ' + (window.bdvTrans ? bdvTrans('Buscar actividades', 'biodevas-members') : 'Buscar actividades') + '</h2>' +
+        '<h2>🔍 ' + (window.bdvTrans ? bdvTrans('Buscar actividades', 'convoca-members') : 'Buscar actividades') + '</h2>' +
         '<div class="bdv-search-wrap">' +
-          '<input type="text" id="bdv-search-input" class="bdv-search-input" placeholder="' + (window.bdvTrans ? bdvTrans('Buscar por nombre, ubicación…', 'biodevas-members') : 'Buscar por nombre, ubicación…') + '" />' +
+          '<input type="text" id="bdv-search-input" class="bdv-search-input" placeholder="' + (window.bdvTrans ? bdvTrans('Buscar por nombre, ubicación…', 'convoca-members') : 'Buscar por nombre, ubicación…') + '" />' +
           '<button id="bdv-search-btn" class="bdv-search-btn">🔍</button>' +
         '</div>' +
         '<div id="bdv-search-results" class="bdv-search-results"></div>';
@@ -177,7 +177,7 @@
       function doSearch() {
         var q = input.value.trim();
         if (q.length < 2) {
-          results.innerHTML = '<p class="text-muted">' + (window.bdvTrans ? bdvTrans('Escribe al menos 2 caracteres.', 'biodevas-members') : 'Escribe al menos 2 caracteres.') + '</p>';
+          results.innerHTML = '<p class="text-muted">' + (window.bdvTrans ? bdvTrans('Escribe al menos 2 caracteres.', 'convoca-members') : 'Escribe al menos 2 caracteres.') + '</p>';
           return;
         }
         results.innerHTML = '<div class="bdv-spinner"></div>';
@@ -185,7 +185,7 @@
           .then(function(r) { return r.json(); })
           .then(function(data) {
             if (!data.results || data.results.length === 0) {
-              results.innerHTML = '<p class="text-muted">' + (window.bdvTrans ? bdvTrans('No se encontraron resultados.', 'biodevas-members') : 'No se encontraron resultados.') + '</p>';
+              results.innerHTML = '<p class="text-muted">' + (window.bdvTrans ? bdvTrans('No se encontraron resultados.', 'convoca-members') : 'No se encontraron resultados.') + '</p>';
               return;
             }
             var rows = '';
@@ -200,7 +200,7 @@
             results.innerHTML = rows;
           })
           .catch(function() {
-            results.innerHTML = '<p class="text-danger">' + (window.bdvTrans ? bdvTrans('Error al buscar.', 'biodevas-members') : 'Error al buscar.') + '</p>';
+            results.innerHTML = '<p class="text-danger">' + (window.bdvTrans ? bdvTrans('Error al buscar.', 'convoca-members') : 'Error al buscar.') + '</p>';
           });
       }
 
@@ -263,7 +263,7 @@
                   <td>${this.formatEstadoBadge(item.estado)}</td>
                   <td>
                     ${(['confirmada', 'pagada'].includes(item.estado)) && item.token ? `
-                      <a href="/wp-json/biodevas-enroll/v1/ics?id=${item.id}&token=${item.token}" class="btn-primary-mini" title="Añadir a mi calendario">📅</a>
+                      <a href="/wp-json/convoca-enroll/v1/ics?id=${item.id}&token=${item.token}" class="btn-primary-mini" title="Añadir a mi calendario">📅</a>
                     ` : ''}
                     ${item.fotos_url ? `
                       <a href="${item.fotos_url}" target="_blank" class="btn-primary-mini" title="Ver fotos de la actividad">${googleIcon}</a>
@@ -684,4 +684,4 @@
 
   document.addEventListener('DOMContentLoaded', () => MiArea.init());
 
-})(window.biodevas || {});
+})(window.convoca || {});

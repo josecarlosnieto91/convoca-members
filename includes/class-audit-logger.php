@@ -70,7 +70,7 @@ class Audit_Logger {
 		}
 
 		// 1. WhatsApp exception: log specifically
-		if ( $meta_key === '_bdv_ultimo_contacto_whatsapp' ) {
+		if ( $meta_key === '_conv_ultimo_contacto_whatsapp' ) {
 			\Convoca\Core\Logger::info(
 				__( 'Contacto por WhatsApp registrado.', 'convoca-members' ),
 				'Members/Audit',
@@ -83,11 +83,11 @@ class Audit_Logger {
 		$sensitive_fields = apply_filters(
 			'convoca_members_sensitive_meta',
 			array(
-				'_bdv_dni',
-				'_bdv_email',
-				'_bdv_telefono',
-				'_bdv_password',
-				'_bdv_iban',
+				'_conv_dni',
+				'_conv_email',
+				'_conv_telefono',
+				'_conv_password',
+				'_conv_iban',
 			)
 		);
 
@@ -96,7 +96,7 @@ class Audit_Logger {
 		}
 
 		// 3. Generic log for other Biodevas fields (only track that it changed, not the value)
-		if ( str_starts_with( $meta_key, '_bdv_' ) ) {
+		if ( str_starts_with( $meta_key, '_conv_' ) ) {
 			\Convoca\Core\Logger::info(
 				sprintf( __( 'Metadato "%s" actualizado.', 'convoca-members' ), $meta_key ),
 				'Members/Audit',

@@ -41,10 +41,10 @@ class GDPR_Tools {
 	 * @param string $consent_version Version identifier (e.g. '1.0').
 	 */
 	public static function log_consent( int $member_id, string $consent_text = '', string $consent_version = '1.0' ): void {
-		update_post_meta( $member_id, '_bdv_consent_timestamp', current_time( 'mysql' ) );
-		update_post_meta( $member_id, '_bdv_consent_version', sanitize_text_field( $consent_version ) );
-		update_post_meta( $member_id, '_bdv_consent_text', sanitize_textarea_field( $consent_text ) );
-		update_post_meta( $member_id, '_bdv_consent_ip', sanitize_text_field( $_SERVER['REMOTE_ADDR'] ?? '' ) );
+		update_post_meta( $member_id, '_conv_consent_timestamp', current_time( 'mysql' ) );
+		update_post_meta( $member_id, '_conv_consent_version', sanitize_text_field( $consent_version ) );
+		update_post_meta( $member_id, '_conv_consent_text', sanitize_textarea_field( $consent_text ) );
+		update_post_meta( $member_id, '_conv_consent_ip', sanitize_text_field( $_SERVER['REMOTE_ADDR'] ?? '' ) );
 
 		Logger::info( "Consentimiento registrado para socio ID: {$member_id} (v{$consent_version})", 'Members/GDPR', $member_id );
 	}
@@ -86,7 +86,7 @@ class GDPR_Tools {
 				'post_status'    => 'any',
 				'meta_query'     => array(
 					array(
-						'key'   => '_bdv_email',
+						'key'   => '_conv_email',
 						'value' => sanitize_email( $email_address ),
 					),
 				),
@@ -99,17 +99,17 @@ class GDPR_Tools {
 			// ── Member profile data ──
 			$profile_data = array();
 			$meta_map     = array(
-				'_bdv_nombre'           => 'Nombre',
-				'_bdv_apellidos'        => 'Apellidos',
-				'_bdv_email'            => 'Email',
-				'_bdv_telefono'         => 'Teléfono',
-				'_bdv_dni'              => 'DNI/NIE',
-				'_bdv_direccion'        => 'Dirección',
-				'_bdv_fecha_nacimiento' => 'Fecha de nacimiento',
-				'_bdv_plan'             => 'Plan de membresía',
-				'_bdv_estado'           => 'Estado',
-				'_bdv_numero_socio'     => 'Número de socio',
-				'_bdv_fecha_alta'       => 'Fecha de alta',
+				'_conv_nombre'           => 'Nombre',
+				'_conv_apellidos'        => 'Apellidos',
+				'_conv_email'            => 'Email',
+				'_conv_telefono'         => 'Teléfono',
+				'_conv_dni'              => 'DNI/NIE',
+				'_conv_direccion'        => 'Dirección',
+				'_conv_fecha_nacimiento' => 'Fecha de nacimiento',
+				'_conv_plan'             => 'Plan de membresía',
+				'_conv_estado'           => 'Estado',
+				'_conv_numero_socio'     => 'Número de socio',
+				'_conv_fecha_alta'       => 'Fecha de alta',
 			);
 
 			foreach ( $meta_map as $meta_key => $label ) {
@@ -123,7 +123,7 @@ class GDPR_Tools {
 			}
 
 			// Add consent info.
-			$consent_ts = get_post_meta( $member_id, '_bdv_consent_timestamp', true );
+			$consent_ts = get_post_meta( $member_id, '_conv_consent_timestamp', true );
 			if ( $consent_ts ) {
 				$profile_data[] = array(
 					'name'  => 'Consentimiento registrado',
@@ -131,13 +131,13 @@ class GDPR_Tools {
 				);
 				$profile_data[] = array(
 					'name'  => 'Versión de consentimiento',
-					'value' => get_post_meta( $member_id, '_bdv_consent_version', true ),
+					'value' => get_post_meta( $member_id, '_conv_consent_version', true ),
 				);
 			}
 
 			if ( ! empty( $profile_data ) ) {
 				$export_items[] = array(
-					'group_id'          => 'biodevas-member-profile',
+					'group_id'          => 'convoca-member-profile',
 					'group_label'       => 'Datos de socio Biodevas',
 					'group_description' => 'Datos personales almacenados como socio de la asociación.',
 					'item_id'           => "member-{$member_id}",
@@ -191,7 +191,7 @@ class GDPR_Tools {
 				);
 
 				$export_items[] = array(
-					'group_id'          => 'biodevas-payments',
+					'group_id'          => 'convoca-payments',
 					'group_label'       => 'Pagos Biodevas',
 					'group_description' => 'Historial de pagos realizados.',
 					'item_id'           => "payment-{$pago->ID}",
@@ -200,7 +200,7 @@ class GDPR_Tools {
 			}
 
 			// ── Inscriptions (search by member email) ──
-			$member_email  = get_post_meta( $member_id, '_bdv_email', true );
+			$member_email  = get_post_meta( $member_id, '_conv_email', true );
 			$inscripciones = get_posts(
 				array(
 					'post_type'      => 'inscripcion',
@@ -235,7 +235,7 @@ class GDPR_Tools {
 				);
 
 				$export_items[] = array(
-					'group_id'          => 'biodevas-inscriptions',
+					'group_id'          => 'convoca-inscriptions',
 					'group_label'       => 'Inscripciones Biodevas',
 					'group_description' => 'Inscripciones a actividades.',
 					'item_id'           => "inscription-{$inscripcion->ID}",
@@ -251,7 +251,7 @@ class GDPR_Tools {
 					'post_status'    => 'any',
 					'meta_query'     => array(
 						array(
-							'key'   => '_bdv_miembro_id',
+							'key'   => ' _conv_miembro_id',
 							'value' => $member_id,
 						),
 					),
@@ -259,15 +259,15 @@ class GDPR_Tools {
 			);
 
 			foreach ( $horas as $hora ) {
-				$proyecto_id = get_post_meta( $hora->ID, '_bdv_proyecto_id', true );
+				$proyecto_id = get_post_meta( $hora->ID, '_conv_proyecto_id', true );
 				$hora_data   = array(
 					array(
 						'name'  => 'Fecha',
-						'value' => get_post_meta( $hora->ID, '_bdv_fecha', true ),
+						'value' => get_post_meta( $hora->ID, '_conv_fecha', true ),
 					),
 					array(
 						'name'  => 'Horas',
-						'value' => get_post_meta( $hora->ID, '_bdv_horas', true ),
+						'value' => get_post_meta( $hora->ID, '_conv_horas', true ),
 					),
 					array(
 						'name'  => 'Proyecto',
@@ -279,12 +279,12 @@ class GDPR_Tools {
 					),
 					array(
 						'name'  => 'Estado',
-						'value' => get_post_meta( $hora->ID, '_bdv_estado', true ),
+						'value' => get_post_meta( $hora->ID, '_conv_estado', true ),
 					),
 				);
 
 				$export_items[] = array(
-					'group_id'          => 'biodevas-volunteering',
+					'group_id'          => 'convoca-volunteering',
 					'group_label'       => 'Horas de voluntariado Biodevas',
 					'group_description' => 'Registros de horas de voluntariado.',
 					'item_id'           => "volunteer-hour-{$hora->ID}",
@@ -344,7 +344,7 @@ class GDPR_Tools {
 				'post_status'    => 'any',
 				'meta_query'     => array(
 					array(
-						'key'   => '_bdv_email',
+						'key'   => '_conv_email',
 						'value' => sanitize_email( $email_address ),
 					),
 				),
@@ -353,21 +353,21 @@ class GDPR_Tools {
 
 		foreach ( $members as $member ) {
 			$member_id    = $member->ID;
-			$member_email = get_post_meta( $member_id, '_bdv_email', true );
+			$member_email = get_post_meta( $member_id, '_conv_email', true );
 
 			Logger::info( "GDPR: Inicio de borrado de datos para socio ID: {$member_id}", 'Members/GDPR', $member_id );
 
 			// ── Anonymize member profile ──
 			$pii_fields = array(
-				'_bdv_nombre',
-				'_bdv_apellidos',
-				'_bdv_email',
-				'_bdv_telefono',
-				'_bdv_dni',
-				'_bdv_direccion',
-				'_bdv_fecha_nacimiento',
-				'_bdv_access_code',
-				'_bdv_consent_ip',
+				'_conv_nombre',
+				'_conv_apellidos',
+				'_conv_email',
+				'_conv_telefono',
+				'_conv_dni',
+				'_conv_direccion',
+				'_conv_fecha_nacimiento',
+				'_conv_access_code',
+				'_conv_consent_ip',
 			);
 
 			foreach ( $pii_fields as $field ) {
@@ -383,8 +383,8 @@ class GDPR_Tools {
 			);
 
 			// Mark as erased.
-			update_post_meta( $member_id, '_bdv_estado', 'baja' );
-			update_post_meta( $member_id, '_bdv_gdpr_erased', current_time( 'mysql' ) );
+			update_post_meta( $member_id, '_conv_estado', 'baja' );
+			update_post_meta( $member_id, '_conv_gdpr_erased', current_time( 'mysql' ) );
 
 			++$items_removed;
 			$messages[] = "Datos personales de socio #{$member_id} anonimizados.";
@@ -453,7 +453,7 @@ class GDPR_Tools {
 					'post_status'    => 'any',
 					'meta_query'     => array(
 						array(
-							'key'   => '_bdv_miembro_id',
+							'key'   => ' _conv_miembro_id',
 							'value' => $member_id,
 						),
 					),

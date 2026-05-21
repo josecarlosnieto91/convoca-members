@@ -1,7 +1,7 @@
 <?php
 /**
  * Public verification page for certificates.
- * Shortcode: [biodevas_verificar_certificado]
+ * Shortcode: [convoca_verificar_certificado]
  *
  * @package Convoca\Members
  */
@@ -31,7 +31,7 @@ class Verificar_Certificado {
 
 			if ( $result ) {
 				?>
-				<div class="biodevas-alert biodevas-alert--ok biodevas-card bdv-cert-result">
+				<div class="convoca-alert convoca-alert--ok convoca-card bdv-cert-result">
 					<div class="bdv-cert-header">
 						<span class="bdv-cert-icon">✅</span>
 						<h2 class="text-gradient"><?php _e( 'Certificado Válido', 'convoca-members' ); ?></h2>
@@ -58,7 +58,7 @@ class Verificar_Certificado {
 				<?php
 			} else {
 				?>
-				<div class="biodevas-alert biodevas-alert--danger biodevas-card">
+				<div class="convoca-alert convoca-alert--danger convoca-card">
 					<div class="bdv-cert-header">
 						<span class="bdv-cert-icon">❌</span>
 						<h2><?php _e( 'Certificado No Encontrado', 'convoca-members' ); ?></h2>
@@ -70,7 +70,7 @@ class Verificar_Certificado {
 		}
 
 		?>
-		<div class="biodevas-card biodevas-form bdv-verify-card">
+		<div class="convoca-card convoca-form bdv-verify-card">
 			<h2 class="text-gradient">🔍 <?php _e( 'Verificar Certificado', 'convoca-members' ); ?></h2>
 			<p class="subtitle"><?php _e( 'Introduce el ID del certificado para verificar su autenticidad y validez oficial.', 'convoca-members' ); ?></p>
 			

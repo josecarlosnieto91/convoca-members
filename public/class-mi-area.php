@@ -1,6 +1,6 @@
 <?php
 /**
- * Public member panel: shortcode [biodevas_mi_area].
+ * Public member panel: shortcode [convoca_mi_area].
  *
  * @package Convoca\Members
  */
@@ -22,15 +22,15 @@ class Mi_Area {
 	 * Enqueue CSS/JS.
 	 */
 	public function enqueue_assets(): void {
-		wp_enqueue_style( 'biodevas-mi-area', BDV_MEMBERS_URL . 'public/assets/mi-area.css', array(), BDV_MEMBERS_VERSION );
-		wp_enqueue_script( 'biodevas-mi-area', BDV_MEMBERS_URL . 'public/assets/mi-area.js', array( 'convoca-common-js' ), BDV_MEMBERS_VERSION, true );
+		wp_enqueue_style( 'convoca-mi-area', CONV_MEMBERS_URL . 'public/assets/mi-area.css', array(), CONV_MEMBERS_VERSION );
+		wp_enqueue_script( 'convoca-mi-area', CONV_MEMBERS_URL . 'public/assets/mi-area.js', array( 'convoca-common-js' ), CONV_MEMBERS_VERSION, true );
 
 		$member_id = Member_Auth::get_current_member_id();
 		wp_localize_script(
-			'biodevas-mi-area',
+			'convoca-mi-area',
 			'bdvMiArea',
 			array(
-				'apiUrl'     => rest_url( 'biodevas/v1' ),
+				'apiUrl'     => rest_url( 'convoca/v1' ),
 				'nonce'      => wp_create_nonce( 'wp_rest' ),
 				'isLoggedIn' => $member_id > 0,
 				'memberId'   => $member_id,
@@ -75,13 +75,13 @@ class Mi_Area {
 			<form id="bdv-login-form" class="bdv-login-form">
 				<div class="form-group">
 					<label for="username"><?php _e( 'Usuario o Email', 'convoca-members' ); ?></label>
-					<input type="text" id="username" name="username" required placeholder="ejemplo@biodevas.org">
+					<input type="text" id="username" name="username" required placeholder="ejemplo@getconvoca.app">
 				</div>
 				<div class="form-group">
 					<label for="password"><?php _e( 'Contraseña', 'convoca-members' ); ?></label>
 					<input type="password" id="password" name="password" required minlength="4">
 					<small><?php _e( 'Las credenciales las recibiste por email al ser aprobado.', 'convoca-members' ); ?></small>
-					<br><small><a href="mailto:coordinacion@biodevas.org"><?php _e( '¿No tienes acceso? Escribe a coordinación.', 'convoca-members' ); ?></a></small>
+					<br><small><a href="mailto:coordinacion@getconvoca.app"><?php _e( '¿No tienes acceso? Escribe a coordinación.', 'convoca-members' ); ?></a></small>
 				</div>
 				<button type="submit" class="btn-primary"><?php _e( 'Entrar', 'convoca-members' ); ?></button>
 				<div class="form-result"></div>

@@ -2,7 +2,7 @@
 /**
  * Template: Multi-step member registration form v2.
  *
- * Rendered by [biodevas_alta] shortcode.
+ * Rendered by [convoca_alta] shortcode.
  * Aligned with Biodevas Theme v2 and static alta-socios.html.
  *
  * @package Convoca\Members
@@ -13,7 +13,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 ?>
 
-<div id="biodevas-form-alta" class="biodevas-form" role="region" aria-label="Formulario de alta de socio/a">
+<div id="convoca-form-alta" class="convoca-form" role="region" aria-label="Formulario de alta de socio/a">
 
 	<!-- Step indicator -->
 	<div class="bdv-step-indicator" role="progressbar" aria-label="Progreso del formulario" aria-valuenow="1"
@@ -25,7 +25,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	</div>
 
 	<!-- Alert container -->
-	<div id="bdv-alert" class="biodevas-alert" style="display:none" role="alert" aria-live="assertive"></div>
+	<div id="bdv-alert" class="convoca-alert" style="display:none" role="alert" aria-live="assertive"></div>
 
 	<form id="bdv-alta-form" novalidate>
 
@@ -113,44 +113,44 @@ if ( ! defined( 'ABSPATH' ) ) {
 		<div class="bdv-form-step" data-step="2">
 			<h2>Paso 2 — Tus datos personales</h2>
 
-			<div class="biodevas-grid-2">
-				<div class="biodevas-field">
+			<div class="convoca-grid-2">
+				<div class="convoca-field">
 					<label for="bdv-nombre">Nombre completo *</label>
 					<input type="text" id="bdv-nombre" name="nombre" placeholder="Nombre y apellidos" required
 						autocomplete="name">
-					<span class="biodevas-error-msg">Este campo es obligatorio.</span>
+					<span class="convoca-error-msg">Este campo es obligatorio.</span>
 				</div>
-				<div class="biodevas-field">
+				<div class="convoca-field">
 					<label for="bdv-dni">DNI / NIE *</label>
 					<input type="text" id="bdv-dni" name="dni" placeholder="12345678A" required
 						pattern="([0-9]{8}[A-Za-z]|[XYZxyz][0-9]{7}[A-Za-z])">
-					<span class="biodevas-error-msg">Introduce un DNI o NIE válido.</span>
+					<span class="convoca-error-msg">Introduce un DNI o NIE válido.</span>
 				</div>
 			</div>
 
-			<div class="biodevas-grid-2">
-				<div class="biodevas-field">
+			<div class="convoca-grid-2">
+				<div class="convoca-field">
 					<label for="bdv-fechanac">Fecha de nacimiento *</label>
 					<input type="date" id="bdv-fechanac" name="fecha_nacimiento" required>
-					<span class="biodevas-error-msg">Introduce tu fecha de nacimiento.</span>
+					<span class="convoca-error-msg">Introduce tu fecha de nacimiento.</span>
 					<span id="bdv-age-badge" class="bdv-age-badge" style="display:none"></span>
 				</div>
-				<div class="biodevas-field">
+				<div class="convoca-field">
 					<label for="bdv-email">Correo electrónico *</label>
 					<input type="email" id="bdv-email" name="email" placeholder="tu@correo.com" required
 						autocomplete="email">
-					<span class="biodevas-error-msg">Introduce un email válido.</span>
+					<span class="convoca-error-msg">Introduce un email válido.</span>
 				</div>
 			</div>
 
-			<div class="biodevas-grid-2">
-				<div class="biodevas-field">
+			<div class="convoca-grid-2">
+				<div class="convoca-field">
 					<label for="bdv-telefono">Teléfono *</label>
 					<input type="tel" id="bdv-telefono" name="telefono" placeholder="600 000 000" required
 						autocomplete="tel">
-					<span class="biodevas-error-msg">Introduce tu número de teléfono.</span>
+					<span class="convoca-error-msg">Introduce tu número de teléfono.</span>
 				</div>
-				<div class="biodevas-field">
+				<div class="convoca-field">
 					<label for="bdv-whatsapp">¿Tu teléfono tiene WhatsApp?</label>
 					<select id="bdv-whatsapp" name="whatsapp">
 						<option value="si">Sí</option>
@@ -159,20 +159,20 @@ if ( ! defined( 'ABSPATH' ) ) {
 				</div>
 			</div>
 
-			<div class="biodevas-field">
+			<div class="convoca-field">
 				<label for="bdv-direccion">Dirección postal *</label>
 				<input type="text" id="bdv-direccion" name="direccion" placeholder="Calle, número, piso" required
 					autocomplete="street-address">
-				<span class="biodevas-error-msg">Introduce tu dirección.</span>
+				<span class="convoca-error-msg">Introduce tu dirección.</span>
 			</div>
 
-			<div class="biodevas-grid-2">
-				<div class="biodevas-field">
+			<div class="convoca-grid-2">
+				<div class="convoca-field">
 					<label for="bdv-municipio">Municipio / Localidad *</label>
 					<input type="text" id="bdv-municipio" name="municipio" placeholder="Ej: Oviedo" required>
-					<span class="biodevas-error-msg">Introduce tu municipio.</span>
+					<span class="convoca-error-msg">Introduce tu municipio.</span>
 				</div>
-				<div class="biodevas-field">
+				<div class="convoca-field">
 					<label for="bdv-canal">Canal de contacto preferente</label>
 					<select id="bdv-canal" name="canal_contacto">
 						<option value="whatsapp">WhatsApp</option>
@@ -183,14 +183,14 @@ if ( ! defined( 'ABSPATH' ) ) {
 			</div>
 
 			<!-- Minor notice (hidden until age < 18) -->
-			<div id="bdv-minor" class="biodevas-box-warning" style="display:none">
+			<div id="bdv-minor" class="convoca-box-warning" style="display:none">
 				<strong>⚠️ Al ser menor de edad, necesitas autorización de tu tutor/a legal.</strong>
-				<div class="biodevas-grid-2 biodevas-mt-small">
-					<div class="biodevas-field">
+				<div class="convoca-grid-2 convoca-mt-small">
+					<div class="convoca-field">
 						<label for="bdv-tutor-nombre">Nombre del tutor/a legal *</label>
 						<input type="text" id="bdv-tutor-nombre" name="tutor_nombre">
 					</div>
-					<div class="biodevas-field">
+					<div class="convoca-field">
 						<label for="bdv-tutor-dni">DNI del tutor/a *</label>
 						<input type="text" id="bdv-tutor-dni" name="tutor_dni">
 					</div>
@@ -198,8 +198,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 			</div>
 
 			<div class="bdv-form-nav">
-				<button type="button" class="biodevas-btn biodevas-btn-outline bdv-prev" data-prev="1">← Atrás</button>
-				<button type="button" class="biodevas-btn biodevas-btn-primary bdv-next" data-next="3">Siguiente →</button>
+				<button type="button" class="convoca-btn convoca-btn-outline bdv-prev" data-prev="1">← Atrás</button>
+				<button type="button" class="convoca-btn convoca-btn-primary bdv-next" data-next="3">Siguiente →</button>
 			</div>
 		</div>
 
@@ -209,27 +209,27 @@ if ( ! defined( 'ABSPATH' ) ) {
 			<p>Puedes cubrir tu cuota con horas de voluntariado o con un pago económico anual.</p>
 
 			<!-- High-level Payment Type Selector -->
-			<div class="bdv-payment-type-group biodevas-grid-2 biodevas-mt-medium">
+			<div class="bdv-payment-type-group convoca-grid-2 convoca-mt-medium">
 				<label class="bdv-plan-option bdv-card-selector" id="bdv-type-economic">
 					<input type="radio" name="payment_mode_ui" value="economic">
 					<div class="bdv-plan-label">
 						<h4>💳 Pago económico</h4>
-						<p class="biodevas-small">Transferencia, Bizum o Tarjeta</p>
+						<p class="convoca-small">Transferencia, Bizum o Tarjeta</p>
 					</div>
 				</label>
 				<label class="bdv-plan-option bdv-card-selector" id="bdv-type-volunteer">
 					<input type="radio" name="payment_mode_ui" value="volunteer"> <!-- Acts as vol selector -->
 					<div class="bdv-plan-label">
 						<h4>🤝 Horas de voluntariado</h4>
-						<p class="biodevas-small">Firma tu acuerdo de voluntariado</p>
+						<p class="convoca-small">Firma tu acuerdo de voluntariado</p>
 					</div>
 				</label>
 			</div>
 
 			<!-- Specific Economic Methods (Hidden by default) -->
-			<div id="bdv-economic-options" style="display:none;" class="biodevas-mt-medium">
+			<div id="bdv-economic-options" style="display:none;" class="convoca-mt-medium">
 				<p><strong>Selecciona el método de pago:</strong></p>
-				<div class="biodevas-grid-3" role="radiogroup" aria-label="Método de pago">
+				<div class="convoca-grid-3" role="radiogroup" aria-label="Método de pago">
 					<!-- Tarjeta -->
 					<label class="bdv-plan-option bdv-radio-card" data-method="tarjeta">
 						<input type="radio" name="forma_pago" value="tarjeta">
@@ -254,12 +254,12 @@ if ( ! defined( 'ABSPATH' ) ) {
 				</div>
 
 				<!-- Recursive Payment Option -->
-				<div id="bdv-recurring-option" class="biodevas-mt-medium">
-					<label class="biodevas-checkbox-box">
+				<div id="bdv-recurring-option" class="convoca-mt-medium">
+					<label class="convoca-checkbox-box">
 						<input type="checkbox" name="pago_recurrente" value="1">
 						<span>
 							<strong>¿Deseas activar la renovación automática anual?</strong><br>
-							<small class="biodevas-small">Te enviaremos el enlace de pago directo cuando tu cuota esté cerca de caducar para que no tengas que preocuparte.</small>
+							<small class="convoca-small">Te enviaremos el enlace de pago directo cuando tu cuota esté cerca de caducar para que no tengas que preocuparte.</small>
 						</span>
 					</label>
 				</div>
@@ -271,7 +271,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 			</div>
 
 			<!-- Transfer Details (IBAN) -->
-			<div id="bdv-transfer-details" class="biodevas-box" style="display:none;">
+			<div id="bdv-transfer-details" class="convoca-box" style="display:none;">
 				<h4 style="margin-top:0">Pago por transferencia bancaria</h4>
 				<p>Al confirmar tu alta, te mostraremos los datos bancarios (IBAN) y el concepto que debes indicar.</p>
 				<p>Podrás adjuntar el justificante directamente en esa página para que validemos tu alta lo antes posible.</p>
@@ -279,7 +279,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 			<!-- Payment info (TPV redirect) -->
 			<div id="bdv-payment-upload" style="display:none">
-				<div class="biodevas-box biodevas-text-center">
+				<div class="convoca-box convoca-text-center">
 					<p style="font-size:1rem;margin-bottom:.5rem">🔒 <strong>Pago seguro por pasarela bancaria</strong>
 					</p>
 					<p style="font-size:.9rem;color:#555;margin:0">Al confirmar tu alta serás redirigido/a a la pasarela
@@ -290,14 +290,14 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 			<!-- Volunteer agreement (from static web) -->
 			<div id="bdv-volunteer-agreement" style="display:none">
-				<div class="biodevas-field">
-					<p class="biodevas-small">Al elegir horas de voluntariado, aceptas el
+				<div class="convoca-field">
+					<p class="convoca-small">Al elegir horas de voluntariado, aceptas el
 						<a href="https://drive.google.com/file/d/1MmUSP9hVygjpJi1ACAILLWajzTeqEqlA/view" target="_blank".
 							rel="noopener">Código Ético</a> y el <a
 							href="https://drive.google.com/file/d/1Qps5ghQjNOPH4B55JEmlkQARJrpPN9jK/view".
 							target="_blank" rel="noopener">Programa de Voluntariado</a>.
 					</p>
-					<div class="biodevas-check-group">
+					<div class="convoca-check-group">
 						<input type="checkbox" id="bdv-acuerdo-vol" name="acuerdo_voluntariado">
 						<label for="bdv-acuerdo-vol">Acepto y firmo digitalmente el acuerdo de voluntariado con
 							Biodevas, comprometiéndome a cumplir las horas correspondientes a mi plan.</label>
@@ -305,16 +305,16 @@ if ( ! defined( 'ABSPATH' ) ) {
 				</div>
 			</div>
 
-			<div class="biodevas-margin-y">
+			<div class="convoca-margin-y">
 				<h3>Protección de datos</h3>
-				<div class="biodevas-check-group">
+				<div class="convoca-check-group">
 					<input type="checkbox" id="bdv-rgpd" name="rgpd" required>
 					<label for="bdv-rgpd">He leído y acepto la <a
 							href="<?php echo esc_url( home_url( '/politica-de-privacidad/' ) ); ?>" target="_blank"
 							rel="noopener">Política de Privacidad</a> y el tratamiento de mis datos personales conforme
 						al RGPD. Mis datos serán incluidos en el libro de socios de la Asociación Biodevas. *</label>
 				</div>
-				<div class="biodevas-check-group">
+				<div class="convoca-check-group">
 					<input type="checkbox" id="bdv-comunicaciones" name="comunicaciones">
 					<label for="bdv-comunicaciones">Autorizo a Biodevas a enviarme comunicaciones sobre actividades,
 						proyectos y noticias relevantes.</label>
@@ -322,8 +322,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 			</div>
 
 			<div class="bdv-form-nav">
-				<button type="button" class="biodevas-btn biodevas-btn-outline bdv-prev" data-prev="2">← Atrás</button>
-				<button type="button" class="biodevas-btn biodevas-btn-primary bdv-next" data-next="4">Revisar y confirmar →</button>
+				<button type="button" class="convoca-btn convoca-btn-outline bdv-prev" data-prev="2">← Atrás</button>
+				<button type="button" class="convoca-btn convoca-btn-primary bdv-next" data-next="4">Revisar y confirmar →</button>
 			</div>
 		</div>
 
@@ -386,16 +386,16 @@ if ( ! defined( 'ABSPATH' ) ) {
 			</div>
 
 			<div class="bdv-form-nav">
-				<button type="button" class="biodevas-btn biodevas-btn-outline bdv-prev" data-prev="3">← Atrás</button>
-				<button type="submit" class="biodevas-btn biodevas-btn-primary">✔ Confirmar alta</button>
+				<button type="button" class="convoca-btn convoca-btn-outline bdv-prev" data-prev="3">← Atrás</button>
+				<button type="submit" class="convoca-btn convoca-btn-primary">✔ Confirmar alta</button>
 			</div>
 		</div>
 
 	</form>
 
 	<!-- Success screen -->
-	<div id="bdv-success" class="biodevas-success-screen" style="display:none" role="status" aria-live="polite">
-		<div class="biodevas-success-icon">🎉</div>
+	<div id="bdv-success" class="convoca-success-screen" style="display:none" role="status" aria-live="polite">
+		<div class="convoca-success-icon">🎉</div>
 		<h2>¡Bienvenido/a a Biodevas!</h2>
 		<p>Tu alta se ha registrado correctamente. Hemos enviado un email de confirmación a tu correo.</p>
 		<div class="bdv-card-preview" id="bdv-card-final">
@@ -405,7 +405,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 			<div class="bdv-card-type" id="bdv-final-type">—</div>
 			<div class="bdv-card-date" id="bdv-final-date">Alta: —</div>
 		</div>
-		<p><a href="<?php echo esc_url( home_url( '/' ) ); ?>" class="biodevas-btn biodevas-btn-outline">← Volver al inicio</a></p>
+		<p><a href="<?php echo esc_url( home_url( '/' ) ); ?>" class="convoca-btn convoca-btn-outline">← Volver al inicio</a></p>
 	</div>
 
 </div>

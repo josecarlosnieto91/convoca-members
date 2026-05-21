@@ -46,12 +46,12 @@ class Estados {
 
 	/** Badge CSS classes (matching theme). */
 	public const BADGE_CLASSES = array(
-		'pendiente_documentacion' => 'biodevas-badge biodevas-badge--pending',
-		'pendiente_pago'          => 'biodevas-badge biodevas-badge--pending',
-		'activo'                  => 'biodevas-badge biodevas-badge--confirmed',
-		'suspendido'              => 'biodevas-badge biodevas-badge--waitlist',
-		'baja_solicitada'         => 'biodevas-badge biodevas-badge--warning',
-		'baja'                    => 'biodevas-badge biodevas-badge--pending',
+		'pendiente_documentacion' => 'convoca-badge convoca-badge--pending',
+		'pendiente_pago'          => 'convoca-badge convoca-badge--pending',
+		'activo'                  => 'convoca-badge convoca-badge--confirmed',
+		'suspendido'              => 'convoca-badge convoca-badge--waitlist',
+		'baja_solicitada'         => 'convoca-badge convoca-badge--warning',
+		'baja'                    => 'convoca-badge convoca-badge--pending',
 	);
 
 	public function __construct() {
@@ -69,7 +69,7 @@ class Estados {
 	 */
 	public static function change( int $post_id, string $new, string $note = '' ): bool|\WP_Error {
 		// Prevent concurrent state changes with transient lock.
-		$lock_key = "bdv_state_change_{$post_id}";
+		$lock_key = "conv_state_change_{$post_id}";
 		if ( get_transient( $lock_key ) ) {
 			\Convoca\Core\Logger::warning(
 				"Intento de cambio de estado concurrente bloqueado para miembro #$post_id",
@@ -94,7 +94,7 @@ class Estados {
 			return new \WP_Error( 'invalid_state', __( 'Estado no válido.', 'convoca-members' ) );
 		}
 
-		$old = get_post_meta( $post_id, '_bdv_estado_miembro', true );
+		$old = get_post_meta( $post_id, '_conv_estado_miembro', true );
 
 		if ( $old === $new && ! empty( $old ) ) {
 			delete_transient( $lock_key );
@@ -121,11 +121,11 @@ class Estados {
 		$old_log = ! empty( $old ) ? $old : 'NUEVO';
 
 		// Save new state.
-		update_post_meta( $post_id, '_bdv_estado_miembro', $new );
+		update_post_meta( $post_id, '_conv_estado_miembro', $new );
 
 		// Record timestamp for pending payment state (for cron reminders).
 		if ( $new === 'pendiente_pago' ) {
-			update_post_meta( $post_id, '_bdv_fecha_pendiente_pago', current_time( 'mysql' ) );
+			update_post_meta( $post_id, '_conv_fecha_pendiente_pago', current_time( 'mysql' ) );
 		}
 
 		// Audit log.
@@ -141,13 +141,13 @@ class Estados {
 		 * @param string $new      New state.
 		 * @param string $old      Previous state.
 		 */
-		\Convoca\Core\Utils::do_action( 'convoca_members_estado_changed', 'biodevas_estado_changed', $post_id, $new, $old );
+		\Convoca\Core\Utils::do_action( 'convoca_members_estado_changed', 'convoca_estado_changed', $post_id, $new, $old );
 
 		return true;
 	}
 
 	private static function log( int $post_id, string $old, string $new, string $note ): void {
-		$history   = get_post_meta( $post_id, '_bdv_historial', true );
+		$history   = get_post_meta( $post_id, '_conv_historial', true );
 		$history   = is_array( $history ) ? $history : array();
 		$history[] = array(
 			'de'      => $old,
@@ -156,7 +156,7 @@ class Estados {
 			'usuario' => get_current_user_id(),
 			'nota'    => $note,
 		);
-		update_post_meta( $post_id, '_bdv_historial', $history );
+		update_post_meta( $post_id, '_conv_historial', $history );
 
 		// Also write to the members audit log table.
 		\Convoca\Core\Logger::info(
@@ -177,10 +177,10 @@ class Estados {
 	public function on_state_change( int $post_id, string $new, string $old ): void {
 		switch ( $new ) {
 			case 'activo':
-				\Convoca\Core\Utils::do_action( 'convoca_members_email_bienvenida', 'biodevas_email_bienvenida', $post_id );
+				\Convoca\Core\Utils::do_action( 'convoca_members_email_bienvenida', 'convoca_email_bienvenida', $post_id );
 				break;
 			case 'pendiente_pago':
-				\Convoca\Core\Utils::do_action( 'convoca_members_email_recordatorio_pago', 'biodevas_email_recordatorio_pago', $post_id );
+				\Convoca\Core\Utils::do_action( 'convoca_members_email_recordatorio_pago', 'convoca_email_recordatorio_pago', $post_id );
 				break;
 		}
 	}
@@ -191,7 +191,7 @@ class Estados {
 	 * @return array<array{de:string, a:string, fecha:string, usuario:int, nota:string}>
 	 */
 	public static function get_history( int $post_id ): array {
-		$history = get_post_meta( $post_id, '_bdv_historial', true );
+		$history = get_post_meta( $post_id, '_conv_historial', true );
 		return is_array( $history ) ? $history : array();
 	}
 
@@ -199,7 +199,7 @@ class Estados {
 	 * Get badge HTML for a state.
 	 */
 	public static function badge_html( string $state ): string {
-		$class = self::BADGE_CLASSES[ $state ] ?? 'biodevas-badge';
+		$class = self::BADGE_CLASSES[ $state ] ?? 'convoca-badge';
 		$label = self::LABELS[ $state ] ?? $state;
 		return '<span class="' . esc_attr( $class ) . '">' . esc_html( $label ) . '</span>';
 	}

@@ -19,12 +19,12 @@ class Admin_Proyectos extends \WP_List_Table {
 
 	public function __construct() {
 		add_action( 'admin_menu', array( $this, 'add_menu' ) );
-		add_action( 'admin_post_bdv_save_proyecto_admin', array( $this, 'handle_save_admin' ) );
+		add_action( 'admin_post_conv_save_proyecto_admin', array( $this, 'handle_save_admin' ) );
 		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_assets' ) );
 		add_action( 'load-post-new.php', array( $this, 'redirect_to_custom_editor' ) );
 		add_action( 'load-post.php', array( $this, 'redirect_to_custom_editor' ) );
 		add_action( 'admin_bar_menu', array( $this, 'customize_admin_bar' ), 80 );
-		add_action( 'admin_post_bdv_export_proyectos_csv', array( $this, 'handle_export_csv' ) );
+		add_action( 'admin_post_conv_export_proyectos_csv', array( $this, 'handle_export_csv' ) );
 	}
 
 	/**
@@ -32,7 +32,7 @@ class Admin_Proyectos extends \WP_List_Table {
 	 */
 	public function enqueue_assets( $hook ) {
 		if ( strpos( $hook, 'bdv-proyecto-editor' ) !== false ) {
-			wp_enqueue_style( 'convoca-core', BDV_COMMON_URL . 'assets/css/biodevas-common.css', array(), BDV_COMMON_VERSION );
+			wp_enqueue_style( 'convoca-core', CONV_COMMON_URL . 'assets/css/convoca-common.css', array(), CONV_COMMON_VERSION );
 		}
 	}
 
@@ -111,7 +111,7 @@ class Admin_Proyectos extends \WP_List_Table {
 			<a href="<?php echo admin_url( 'post-new.php?post_type=proyecto' ); ?>" class="page-title-action">
 				<?php _e( 'Añadir nuevo', 'convoca-members' ); ?>
 			</a>
-			<a href="<?php echo esc_url( wp_nonce_url( admin_url( 'admin-post.php?action=bdv_export_proyectos_csv' ), 'bdv_export_proyectos' ) ); ?>" class="biodevas-btn biodevas-btn-outline" style="margin-left:10px;">
+			<a href="<?php echo esc_url( wp_nonce_url( admin_url( 'admin-post.php?action=conv_export_proyectos_csv' ), 'conv_export_proyectos' ) ); ?>" class="convoca-btn convoca-btn-outline" style="margin-left:10px;">
 				📥 <?php _e( 'Exportar CSV', 'convoca-members' ); ?>
 			</a>
 			<hr class="wp-header-end">
@@ -134,7 +134,7 @@ class Admin_Proyectos extends \WP_List_Table {
 	}
 
 	public function handle_export_csv(): void {
-		if ( ! wp_verify_nonce( $_GET['_wpnonce'] ?? '', 'bdv_export_proyectos' ) ) {
+		if ( ! wp_verify_nonce( $_GET['_wpnonce'] ?? '', 'conv_export_proyectos' ) ) {
 			wp_die( __( 'Nonce inválido.', 'convoca-members' ) );
 		}
 		if ( ! current_user_can( 'gestionar_miembros' ) ) {
@@ -155,7 +155,7 @@ class Admin_Proyectos extends \WP_List_Table {
 		}
 
 		$query    = new \WP_Query( $args );
-		$filename = 'biodevas-proyectos-' . wp_date( 'Y-m-d' ) . '.csv';
+		$filename = 'convoca-proyectos-' . wp_date( 'Y-m-d' ) . '.csv';
 
 		header( 'Content-Type: text/csv; charset=utf-8' );
 		header( 'Content-Disposition: attachment; filename="' . $filename . '"' );
@@ -178,16 +178,16 @@ class Admin_Proyectos extends \WP_List_Table {
 		);
 
 		foreach ( $query->posts as $post ) {
-			$responsable_id = (int) get_post_meta( $post->ID, '_bdv_responsable', true );
+			$responsable_id = (int) get_post_meta( $post->ID, '_conv_responsable', true );
 			$responsable    = $responsable_id ? ( get_userdata( $responsable_id )?->display_name ?? '' ) : '';
 			fputcsv(
 				$out,
 				array(
 					\Convoca\Core\Utils::escape_csv_field( $post->post_title ),
-					get_post_meta( $post->ID, '_bdv_fecha_inicio', true ),
-					get_post_meta( $post->ID, '_bdv_fecha_fin', true ),
+					get_post_meta( $post->ID, '_conv_fecha_inicio', true ),
+					get_post_meta( $post->ID, '_conv_fecha_fin', true ),
 					$responsable,
-					get_post_meta( $post->ID, '_bdv_activo', true ) === '1' ? __( 'Sí', 'convoca-members' ) : __( 'No', 'convoca-members' ),
+					get_post_meta( $post->ID, '_conv_activo', true ) === '1' ? __( 'Sí', 'convoca-members' ) : __( 'No', 'convoca-members' ),
 					\Convoca\Core\Utils::escape_csv_field( wp_trim_words( $post->post_content, 30 ) ),
 				)
 			);
@@ -318,13 +318,13 @@ class Admin_Proyectos extends \WP_List_Table {
 		$users = get_users( array( 'role__in' => array( 'administrator', 'shop_manager', 'monitor' ) ) );
 
 		?>
-		<div class="wrap biodevas-admin">
+		<div class="wrap convoca-admin">
 			<h1><?php echo esc_html( $title ); ?></h1>
 
 			<form method="post" action="<?php echo admin_url( 'admin-post.php' ); ?>" class="bdv-form-custom">
-				<input type="hidden" name="action" value="bdv_save_proyecto_admin">
+				<input type="hidden" name="action" value="conv_save_proyecto_admin">
 				<input type="hidden" name="id" value="<?php echo $post_id; ?>">
-				<?php wp_nonce_field( 'bdv_save_proyecto_nonce' ); ?>
+				<?php wp_nonce_field( 'conv_save_proyecto_nonce' ); ?>
 
 				<div class="bdv-grid bdv-grid--2">
 					<div class="bdv-card">
@@ -337,7 +337,7 @@ class Admin_Proyectos extends \WP_List_Table {
 								<input type="text" name="post_title" id="title" value="<?php echo $proyecto ? esc_attr( $proyecto->post_title ) : ''; ?>" required class="widefat">
 							</div>
 
-							<div class="biodevas-field">
+							<div class="convoca-field">
 								<label for="description"><?php _e( 'Descripción / Objetivos', 'convoca-members' ); ?></label>
 								<textarea name="post_content" id="description" rows="10"><?php echo $proyecto ? esc_textarea( $proyecto->post_content ) : ''; ?></textarea>
 							</div>
@@ -393,7 +393,7 @@ class Admin_Proyectos extends \WP_List_Table {
 	 * Handle save from admin form.
 	 */
 	public function handle_save_admin() {
-		check_admin_referer( 'bdv_save_proyecto_nonce' );
+		check_admin_referer( 'conv_save_proyecto_nonce' );
 
 		if ( ! current_user_can( 'gestionar_miembros' ) ) {
 			wp_die( __( 'No tienes permisos para realizar esta acción.', 'convoca-members' ) );
@@ -423,10 +423,10 @@ class Admin_Proyectos extends \WP_List_Table {
 		}
 
 		// Save Meta.
-		update_post_meta( $post_id, '_bdv_fecha_inicio', sanitize_text_field( $_POST['fecha_inicio'] ) );
-		update_post_meta( $post_id, '_bdv_fecha_fin', sanitize_text_field( $_POST['fecha_fin'] ) );
-		update_post_meta( $post_id, '_bdv_responsable', (int) $_POST['responsable'] );
-		update_post_meta( $post_id, '_bdv_activo', isset( $_POST['activo'] ) ? '1' : '0' );
+		update_post_meta( $post_id, '_conv_fecha_inicio', sanitize_text_field( $_POST['fecha_inicio'] ) );
+		update_post_meta( $post_id, '_conv_fecha_fin', sanitize_text_field( $_POST['fecha_fin'] ) );
+		update_post_meta( $post_id, '_conv_responsable', (int) $_POST['responsable'] );
+		update_post_meta( $post_id, '_conv_activo', isset( $_POST['activo'] ) ? '1' : '0' );
 
 		wp_redirect( admin_url( 'admin.php?page=bdv-proyectos&message=saved' ) );
 		exit;

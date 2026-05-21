@@ -87,7 +87,7 @@ class CPT_Proyecto {
 	public static function get_meta( int $post_id ): array {
 		$data = array();
 		foreach ( self::META_KEYS as $key ) {
-			$data[ $key ] = get_post_meta( $post_id, '_bdv_' . $key, true );
+			$data[ $key ] = get_post_meta( $post_id, '_conv_' . $key, true );
 		}
 		return $data;
 	}
@@ -134,8 +134,8 @@ class CPT_Proyecto {
 				"SELECT DISTINCT pm.post_id as proyecto_id, p.post_title, p.post_content
              FROM {$wpdb->postmeta} pm
              INNER JOIN {$wpdb->posts} p ON p.ID = pm.post_id
-             INNER JOIN {$wpdb->postmeta} ph ON ph.post_id = pm.post_id AND ph.meta_key = '_bdv_miembro_id' AND ph.meta_value = %d
-             WHERE pm.meta_key = '_bdv_proyecto_id'
+             INNER JOIN {$wpdb->postmeta} ph ON ph.post_id = pm.post_id AND ph.meta_key = ' _conv_miembro_id' AND ph.meta_value = %d
+             WHERE pm.meta_key = '_conv_proyecto_id'
              AND pm.meta_value = p.ID
              AND p.post_type = %s
              AND p.post_status = 'publish'
@@ -167,26 +167,26 @@ class CPT_Proyecto {
 		$meta    = self::get_meta( $post_id );
 		?>
 		<div class="bdv-proyecto-metabox">
-			<?php wp_nonce_field( 'bdv_save_proyecto', 'bdv_proyecto_nonce' ); ?>
+			<?php wp_nonce_field( 'conv_save_proyecto', 'conv_proyecto_nonce' ); ?>
 			<p>
-				<label for="bdv_fecha_inicio"><?php esc_html_e( 'Fecha de inicio:', 'convoca-members' ); ?></label>
-				<input type="date" id="bdv_fecha_inicio" name="bdv_fecha_inicio" 
+				<label for="conv_fecha_inicio"><?php esc_html_e( 'Fecha de inicio:', 'convoca-members' ); ?></label>
+				<input type="date" id="conv_fecha_inicio" name="conv_fecha_inicio" 
 						value="<?php echo esc_attr( $meta['fecha_inicio'] ?? '' ); ?>" class="widefat">
 			</p>
 			<p>
-				<label for="bdv_fecha_fin"><?php esc_html_e( 'Fecha de fin:', 'convoca-members' ); ?></label>
-				<input type="date" id="bdv_fecha_fin" name="bdv_fecha_fin" 
+				<label for="conv_fecha_fin"><?php esc_html_e( 'Fecha de fin:', 'convoca-members' ); ?></label>
+				<input type="date" id="conv_fecha_fin" name="conv_fecha_fin" 
 						value="<?php echo esc_attr( $meta['fecha_fin'] ?? '' ); ?>" class="widefat">
 			</p>
 			<p>
-				<label for="bdv_fecha_baja"><?php esc_html_e( 'Fecha de baja (archivo):', 'convoca-members' ); ?></label>
-				<input type="date" id="bdv_fecha_baja" name="bdv_fecha_baja" 
+				<label for="conv_fecha_baja"><?php esc_html_e( 'Fecha de baja (archivo):', 'convoca-members' ); ?></label>
+				<input type="date" id="conv_fecha_baja" name="conv_fecha_baja" 
 						value="<?php echo esc_attr( $meta['fecha_baja'] ?? '' ); ?>" class="widefat">
 				<small><?php esc_html_e( 'Fecha en la que el proyecto se considera archivado definitivamente.', 'convoca-members' ); ?></small>
 			</p>
 			<p>
-				<label for="bdv_responsable"><?php esc_html_e( 'Responsable:', 'convoca-members' ); ?></label>
-				<select id="bdv_responsable" name="bdv_responsable" class="widefat">
+				<label for="conv_responsable"><?php esc_html_e( 'Responsable:', 'convoca-members' ); ?></label>
+				<select id="conv_responsable" name="conv_responsable" class="widefat">
 					<option value=""><?php esc_html_e( '— Seleccionar —', 'convoca-members' ); ?></option>
 					<?php
 					$users = get_users( array( 'role__in' => array( 'administrator', 'editor' ) ) );
@@ -200,7 +200,7 @@ class CPT_Proyecto {
 			</p>
 			<p>
 				<label>
-					<input type="checkbox" name="bdv_activo" value="1" 
+					<input type="checkbox" name="conv_activo" value="1" 
 							<?php checked( $meta['activo'] ?? '', '1' ); ?>>
 					<?php esc_html_e( 'Proyecto activo (visible para voluntarios)', 'convoca-members' ); ?>
 				</label>
@@ -217,7 +217,7 @@ class CPT_Proyecto {
 			return;
 		}
 
-		if ( ! isset( $_POST['bdv_proyecto_nonce'] ) || ! wp_verify_nonce( $_POST['bdv_proyecto_nonce'], 'bdv_save_proyecto' ) ) {
+		if ( ! isset( $_POST['conv_proyecto_nonce'] ) || ! wp_verify_nonce( $_POST['conv_proyecto_nonce'], 'conv_save_proyecto' ) ) {
 			return;
 		}
 
@@ -229,10 +229,10 @@ class CPT_Proyecto {
 			return;
 		}
 
-		update_post_meta( $post_id, '_bdv_fecha_inicio', sanitize_text_field( $_POST['bdv_fecha_inicio'] ?? '' ) );
-		update_post_meta( $post_id, '_bdv_fecha_fin', sanitize_text_field( $_POST['bdv_fecha_fin'] ?? '' ) );
-		update_post_meta( $post_id, '_bdv_fecha_baja', sanitize_text_field( $_POST['bdv_fecha_baja'] ?? '' ) );
-		update_post_meta( $post_id, '_bdv_responsable', sanitize_text_field( $_POST['bdv_responsable'] ?? '' ) );
-		update_post_meta( $post_id, '_bdv_activo', ! empty( $_POST['bdv_activo'] ) ? '1' : '0' );
+		update_post_meta( $post_id, '_conv_fecha_inicio', sanitize_text_field( $_POST['conv_fecha_inicio'] ?? '' ) );
+		update_post_meta( $post_id, '_conv_fecha_fin', sanitize_text_field( $_POST['conv_fecha_fin'] ?? '' ) );
+		update_post_meta( $post_id, '_conv_fecha_baja', sanitize_text_field( $_POST['conv_fecha_baja'] ?? '' ) );
+		update_post_meta( $post_id, '_conv_responsable', sanitize_text_field( $_POST['conv_responsable'] ?? '' ) );
+		update_post_meta( $post_id, '_conv_activo', ! empty( $_POST['conv_activo'] ) ? '1' : '0' );
 	}
 }

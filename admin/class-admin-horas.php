@@ -19,12 +19,12 @@ class Admin_Horas extends \WP_List_Table {
 
 	public function __construct() {
 		add_action( 'admin_menu', array( $this, 'add_menu' ) );
-		add_action( 'admin_post_bdv_process_horas', array( $this, 'process_action' ) );
-		add_action( 'admin_post_bdv_save_hours_admin', array( $this, 'handle_save_admin' ) );
+		add_action( 'admin_post_conv_process_horas', array( $this, 'process_action' ) );
+		add_action( 'admin_post_conv_save_hours_admin', array( $this, 'handle_save_admin' ) );
 		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_assets' ) );
 		add_action( 'load-post-new.php', array( $this, 'redirect_to_custom_editor' ) );
 		add_action( 'load-post.php', array( $this, 'redirect_to_custom_editor' ) );
-		add_action( 'admin_post_bdv_export_horas_csv', array( $this, 'handle_export_csv' ) );
+		add_action( 'admin_post_conv_export_horas_csv', array( $this, 'handle_export_csv' ) );
 	}
 
 	/**
@@ -45,7 +45,7 @@ class Admin_Horas extends \WP_List_Table {
 	 */
 	public function enqueue_assets( $hook ) {
 		if ( strpos( $hook, 'bdv-horas-editor' ) !== false ) {
-			wp_enqueue_style( 'convoca-core', BDV_COMMON_URL . 'assets/css/biodevas-common.css', array(), BDV_COMMON_VERSION );
+			wp_enqueue_style( 'convoca-core', CONV_COMMON_URL . 'assets/css/convoca-common.css', array(), CONV_COMMON_VERSION );
 		}
 	}
 
@@ -72,7 +72,7 @@ class Admin_Horas extends \WP_List_Table {
 	 * Handle save from admin form.
 	 */
 	public function handle_save_admin() {
-		check_admin_referer( 'bdv_save_hours_nonce' );
+		check_admin_referer( 'conv_save_hours_nonce' );
 
 		if ( ! current_user_can( 'gestionar_miembros' ) ) {
 			wp_die( __( 'No tienes permisos para realizar esta acción.', 'convoca-members' ) );
@@ -104,11 +104,11 @@ class Admin_Horas extends \WP_List_Table {
 			$record_user_id = 0;
 			$record_id      = $data['id'];
 			if ( $record_id ) {
-				$record_user_id = (int) get_post_meta( $record_id, '_bdv_usuario_id', true );
+				$record_user_id = (int) get_post_meta( $record_id, '_conv_usuario_id', true );
 			}
 			if ( ! $record_user_id ) {
 				// Nuevo registro — buscar el user_id a partir del miembro_id.
-				$member_email = get_post_meta( $data['miembro_id'], '_bdv_email', true );
+				$member_email = get_post_meta( $data['miembro_id'], '_conv_email', true );
 				if ( $member_email ) {
 					$user = get_user_by( 'email', $member_email );
 					if ( $user ) {
@@ -146,15 +146,15 @@ class Admin_Horas extends \WP_List_Table {
 		$record_id = isset( $_GET['id'] ) ? (int) $_GET['id'] : 0;
 		$record    = $record_id ? get_post( $record_id ) : null;
 
-		$miembro_id   = $record ? (int) get_post_meta( $record_id, '_bdv_miembro_id', true ) : 0;
-		$fecha        = $record ? get_post_meta( $record_id, '_bdv_fecha', true ) : current_time( 'Y-m-d' );
-		$horas        = $record ? get_post_meta( $record_id, '_bdv_horas', true ) : '';
-		$proyecto_id  = $record ? (int) get_post_meta( $record_id, '_bdv_proyecto_id', true ) : 0;
-		$actividad_id = $record ? (int) get_post_meta( $record_id, '_bdv_actividad_id', true ) : 0;
-		$tareas       = $record ? get_post_meta( $record_id, '_bdv_tareas', true ) : '';
+		$miembro_id   = $record ? (int) get_post_meta( $record_id, ' _conv_miembro_id', true ) : 0;
+		$fecha        = $record ? get_post_meta( $record_id, '_conv_fecha', true ) : current_time( 'Y-m-d' );
+		$horas        = $record ? get_post_meta( $record_id, '_conv_horas', true ) : '';
+		$proyecto_id  = $record ? (int) get_post_meta( $record_id, '_conv_proyecto_id', true ) : 0;
+		$actividad_id = $record ? (int) get_post_meta( $record_id, '_conv_actividad_id', true ) : 0;
+		$tareas       = $record ? get_post_meta( $record_id, '_conv_tareas', true ) : '';
 		$descripcion  = $record ? $record->post_content : '';
-		$estado       = $record ? get_post_meta( $record_id, '_bdv_estado', true ) : 'pendiente';
-		$nota_admin   = $record ? get_post_meta( $record_id, '_bdv_nota_admin', true ) : '';
+		$estado       = $record ? get_post_meta( $record_id, '_conv_estado', true ) : 'pendiente';
+		$nota_admin   = $record ? get_post_meta( $record_id, '_conv_nota_admin', true ) : '';
 
 		// Fetch options.
 		$members  = get_posts(
@@ -193,22 +193,22 @@ class Admin_Horas extends \WP_List_Table {
 			<h1><?php echo $record_id ? __( 'Editar Registro de Horas', 'convoca-members' ) : __( 'Añadir Registro de Horas', 'convoca-members' ); ?></h1>
 			<hr class="wp-header-end">
 
-			<div class="biodevas-diagnostic" style="max-width: 800px; margin-top: 20px;">
-				<div class="biodevas-diagnostic-header">
-					<div class="biodevas-diagnostic-summary">
+			<div class="convoca-diagnostic" style="max-width: 800px; margin-top: 20px;">
+				<div class="convoca-diagnostic-header">
+					<div class="convoca-diagnostic-summary">
 						<h3><?php esc_html_e( 'Datos del Registro', 'convoca-members' ); ?></h3>
 						<p><?php esc_html_e( 'Introduce la información del voluntariado realizado.', 'convoca-members' ); ?></p>
 					</div>
 				</div>
 
-				<div class="biodevas-diagnostic-results" style="padding: 20px;">
+				<div class="convoca-diagnostic-results" style="padding: 20px;">
 					<form action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>" method="post">
-						<input type="hidden" name="action" value="bdv_save_hours_admin">
+						<input type="hidden" name="action" value="conv_save_hours_admin">
 						<input type="hidden" name="id" value="<?php echo (int) $record_id; ?>">
-						<?php wp_nonce_field( 'bdv_save_hours_nonce' ); ?>
+						<?php wp_nonce_field( 'conv_save_hours_nonce' ); ?>
 
-						<div class="biodevas-grid-2">
-							<div class="biodevas-field">
+						<div class="convoca-grid-2">
+							<div class="convoca-field">
 								<label for="miembro_id"><?php esc_html_e( 'Socio', 'convoca-members' ); ?></label>
 								<select name="miembro_id" id="miembro_id" required>
 									<option value=""><?php esc_html_e( '— Seleccionar socio —', 'convoca-members' ); ?></option>
@@ -219,14 +219,14 @@ class Admin_Horas extends \WP_List_Table {
 									<?php endforeach; ?>
 								</select>
 							</div>
-							<div class="biodevas-field">
+							<div class="convoca-field">
 								<label for="fecha"><?php esc_html_e( 'Fecha', 'convoca-members' ); ?></label>
 								<input type="date" name="fecha" id="fecha" value="<?php echo esc_attr( $fecha ); ?>" required>
 							</div>
 						</div>
 
-						<div class="biodevas-grid-2">
-							<div class="biodevas-field">
+						<div class="convoca-grid-2">
+							<div class="convoca-field">
 								<label for="proyecto_id"><?php esc_html_e( 'Proyecto', 'convoca-members' ); ?></label>
 								<select name="proyecto_id" id="proyecto_id" required>
 									<option value=""><?php esc_html_e( '— Seleccionar proyecto —', 'convoca-members' ); ?></option>
@@ -237,13 +237,13 @@ class Admin_Horas extends \WP_List_Table {
 									<?php endforeach; ?>
 								</select>
 							</div>
-							<div class="biodevas-field">
+							<div class="convoca-field">
 								<label for="horas"><?php esc_html_e( 'Horas', 'convoca-members' ); ?></label>
 								<input type="number" name="horas" id="horas" step="0.25" min="0.25" value="<?php echo esc_attr( $horas ); ?>" required>
 							</div>
 						</div>
 
-						<div class="biodevas-field">
+						<div class="convoca-field">
 							<label for="actividad_id"><?php esc_html_e( 'Actividad (Opcional)', 'convoca-members' ); ?></label>
 							<select name="actividad_id" id="actividad_id">
 								<option value="0"><?php esc_html_e( '— Ninguna actividad específica —', 'convoca-members' ); ?></option>
@@ -255,18 +255,18 @@ class Admin_Horas extends \WP_List_Table {
 							</select>
 						</div>
 
-						<div class="biodevas-field">
+						<div class="convoca-field">
 							<label for="tareas"><?php esc_html_e( 'Tareas realizadas', 'convoca-members' ); ?></label>
 							<textarea name="tareas" id="tareas" rows="2" placeholder="<?php esc_attr_e( 'Ej: Limpieza de sendero, Atención en mesa...', 'convoca-members' ); ?>" required><?php echo esc_textarea( $tareas ); ?></textarea>
 						</div>
 
-						<div class="biodevas-field">
+						<div class="convoca-field">
 							<label for="descripcion"><?php esc_html_e( 'Descripción detallada', 'convoca-members' ); ?></label>
 							<textarea name="descripcion" id="descripcion" rows="4"><?php echo esc_textarea( $descripcion ); ?></textarea>
 						</div>
 
-						<div class="biodevas-grid-2">
-							<div class="biodevas-field">
+						<div class="convoca-grid-2">
+							<div class="convoca-field">
 								<label for="estado"><?php esc_html_e( 'Estado', 'convoca-members' ); ?></label>
 								<select name="estado" id="estado">
 									<option value="pendiente" <?php selected( $estado, 'pendiente' ); ?>><?php esc_html_e( 'Pendiente', 'convoca-members' ); ?></option>
@@ -274,17 +274,17 @@ class Admin_Horas extends \WP_List_Table {
 									<option value="rechazada" <?php selected( $estado, 'rechazada' ); ?>><?php esc_html_e( 'Rechazada', 'convoca-members' ); ?></option>
 								</select>
 							</div>
-							<div class="biodevas-field">
+							<div class="convoca-field">
 								<label for="nota_admin"><?php esc_html_e( 'Nota interna (Admin)', 'convoca-members' ); ?></label>
 								<input type="text" name="nota_admin" id="nota_admin" value="<?php echo esc_attr( $nota_admin ); ?>">
 							</div>
 						</div>
 
 						<div style="margin-top: 20px; display: flex; gap: 10px;">
-							<button type="submit" class="biodevas-btn biodevas-btn-primary">
+							<button type="submit" class="convoca-btn convoca-btn-primary">
 								<?php echo $record_id ? __( 'Guardar Cambios', 'convoca-members' ) : __( 'Crear Registro', 'convoca-members' ); ?>
 							</button>
-							<a href="<?php echo esc_url( admin_url( 'admin.php?page=bdv-volunteer-hours' ) ); ?>" class="biodevas-btn biodevas-btn-outline">
+							<a href="<?php echo esc_url( admin_url( 'admin.php?page=bdv-volunteer-hours' ) ); ?>" class="convoca-btn convoca-btn-outline">
 								<?php esc_html_e( 'Cancelar', 'convoca-members' ); ?>
 							</a>
 						</div>
@@ -308,7 +308,7 @@ class Admin_Horas extends \WP_List_Table {
 			<a href="<?php echo admin_url( 'post-new.php?post_type=registro_hora' ); ?>" class="page-title-action">
 				<?php _e( 'Añadir Registro', 'convoca-members' ); ?>
 			</a>
-			<a href="<?php echo esc_url( wp_nonce_url( admin_url( 'admin-post.php?action=bdv_export_horas_csv&filter_proyecto=' . ( $filter_proyecto ?: '' ) ), 'bdv_export_horas' ) ); ?>" class="biodevas-btn biodevas-btn-outline" style="margin-left:10px;">
+			<a href="<?php echo esc_url( wp_nonce_url( admin_url( 'admin-post.php?action=conv_export_horas_csv&filter_proyecto=' . ( $filter_proyecto ?: '' ) ), 'conv_export_horas' ) ); ?>" class="convoca-btn convoca-btn-outline" style="margin-left:10px;">
 				📥 <?php _e( 'Exportar CSV', 'convoca-members' ); ?>
 			</a>
 			<hr class="wp-header-end">
@@ -327,7 +327,7 @@ class Admin_Horas extends \WP_List_Table {
 								</option>
 							<?php endforeach; ?>
 						</select>
-						<input type="submit" class="biodevas-btn biodevas-btn-outline" value="<?php _e( 'Filtrar', 'convoca-members' ); ?>">
+						<input type="submit" class="convoca-btn convoca-btn-outline" value="<?php _e( 'Filtrar', 'convoca-members' ); ?>">
 					</div>
 					<?php $this->search_box( __( 'Buscar registros', 'convoca-members' ), 'horas' ); ?>
 				</div>
@@ -348,7 +348,7 @@ class Admin_Horas extends \WP_List_Table {
 	}
 
 	public function handle_export_csv(): void {
-		if ( ! wp_verify_nonce( $_GET['_wpnonce'] ?? '', 'bdv_export_horas' ) ) {
+		if ( ! wp_verify_nonce( $_GET['_wpnonce'] ?? '', 'conv_export_horas' ) ) {
 			wp_die( __( 'Nonce inválido.', 'convoca-members' ) );
 		}
 		if ( ! current_user_can( 'gestionar_miembros' ) ) {
@@ -371,14 +371,14 @@ class Admin_Horas extends \WP_List_Table {
 		if ( $filter_proyecto > 0 ) {
 			$args['meta_query'] = array(
 				array(
-					'key'   => '_bdv_proyecto_id',
+					'key'   => '_conv_proyecto_id',
 					'value' => $filter_proyecto,
 				),
 			);
 		}
 
 		$query    = new \WP_Query( $args );
-		$filename = 'biodevas-horas-' . wp_date( 'Y-m-d' ) . '.csv';
+		$filename = 'convoca-horas-' . wp_date( 'Y-m-d' ) . '.csv';
 
 		header( 'Content-Type: text/csv; charset=utf-8' );
 		header( 'Content-Disposition: attachment; filename="' . $filename . '"' );
@@ -403,26 +403,26 @@ class Admin_Horas extends \WP_List_Table {
 		);
 
 		foreach ( $query->posts as $post ) {
-			$socio_id = get_post_meta( $post->ID, '_bdv_miembro_id', true );
+			$socio_id = get_post_meta( $post->ID, ' _conv_miembro_id', true );
 			$socio    = $socio_id ? ( get_post( $socio_id )?->post_title ?? '' ) : '';
 
-			$proyecto_id = get_post_meta( $post->ID, '_bdv_proyecto_id', true );
+			$proyecto_id = get_post_meta( $post->ID, '_conv_proyecto_id', true );
 			$proyecto    = $proyecto_id ? ( get_post( $proyecto_id )?->post_title ?? '' ) : '';
 
-			$act_id    = get_post_meta( $post->ID, '_bdv_actividad_id', true );
+			$act_id    = get_post_meta( $post->ID, '_conv_actividad_id', true );
 			$actividad = $act_id ? ( get_post( $act_id )?->post_title ?? '' ) : '';
 
 			fputcsv(
 				$out,
 				array(
-					get_post_meta( $post->ID, '_bdv_fecha', true ) ?: get_the_date( 'Y-m-d', $post->ID ),
+					get_post_meta( $post->ID, '_conv_fecha', true ) ?: get_the_date( 'Y-m-d', $post->ID ),
 					\Convoca\Core\Utils::escape_csv_field( $socio ),
 					\Convoca\Core\Utils::escape_csv_field( $proyecto ),
-					\Convoca\Core\Utils::escape_csv_field( get_post_meta( $post->ID, '_bdv_tareas', true ) ),
+					\Convoca\Core\Utils::escape_csv_field( get_post_meta( $post->ID, '_conv_tareas', true ) ),
 					\Convoca\Core\Utils::escape_csv_field( $actividad ),
-					get_post_meta( $post->ID, '_bdv_horas', true ),
+					get_post_meta( $post->ID, '_conv_horas', true ),
 					\Convoca\Core\Utils::escape_csv_field( $post->post_content ),
-					get_post_meta( $post->ID, '_bdv_estado', true ) ?: 'pendiente',
+					get_post_meta( $post->ID, '_conv_estado', true ) ?: 'pendiente',
 				)
 			);
 		}
@@ -476,7 +476,7 @@ class Admin_Horas extends \WP_List_Table {
 		if ( $filter_proyecto > 0 ) {
 			$args['meta_query'] = array(
 				array(
-					'key'   => '_bdv_proyecto_id',
+					'key'   => '_conv_proyecto_id',
 					'value' => $filter_proyecto,
 				),
 			);
@@ -499,12 +499,12 @@ class Admin_Horas extends \WP_List_Table {
 	}
 
 	public function column_fecha( $item ) {
-		$fecha = get_post_meta( $item->ID, '_bdv_fecha', true );
+		$fecha = get_post_meta( $item->ID, '_conv_fecha', true );
 		return $fecha ?: get_the_date( '', $item->ID );
 	}
 
 	public function column_socio( $item ) {
-		$socio_id = get_post_meta( $item->ID, '_bdv_miembro_id', true );
+		$socio_id = get_post_meta( $item->ID, ' _conv_miembro_id', true );
 		if ( ! $socio_id ) {
 			return '—';
 		}
@@ -521,7 +521,7 @@ class Admin_Horas extends \WP_List_Table {
 	}
 
 	public function column_actividad( $item ) {
-		$act_id = get_post_meta( $item->ID, '_bdv_actividad_id', true );
+		$act_id = get_post_meta( $item->ID, '_conv_actividad_id', true );
 		if ( ! $act_id ) {
 			return 'General/Otros';
 		}
@@ -538,7 +538,7 @@ class Admin_Horas extends \WP_List_Table {
 	}
 
 	public function column_proyecto( $item ) {
-		$proyecto_id = get_post_meta( $item->ID, '_bdv_proyecto_id', true );
+		$proyecto_id = get_post_meta( $item->ID, '_conv_proyecto_id', true );
 		if ( ! $proyecto_id ) {
 			return '—';
 		}
@@ -551,7 +551,7 @@ class Admin_Horas extends \WP_List_Table {
 	}
 
 	public function column_tareas( $item ) {
-		$tareas = get_post_meta( $item->ID, '_bdv_tareas', true );
+		$tareas = get_post_meta( $item->ID, '_conv_tareas', true );
 		if ( ! $tareas ) {
 			return '—';
 		}
@@ -559,7 +559,7 @@ class Admin_Horas extends \WP_List_Table {
 	}
 
 	public function column_horas( $item ) {
-		return get_post_meta( $item->ID, '_bdv_horas', true ) . 'h';
+		return get_post_meta( $item->ID, '_conv_horas', true ) . 'h';
 	}
 
 	public function column_descripcion( $item ) {
@@ -567,7 +567,7 @@ class Admin_Horas extends \WP_List_Table {
 	}
 
 	public function column_estado( $item ) {
-		$estado = get_post_meta( $item->ID, '_bdv_estado', true ) ?: 'pendiente';
+		$estado = get_post_meta( $item->ID, '_conv_estado', true ) ?: 'pendiente';
 		$class  = 'status-' . $estado;
 		$label  = ucfirst( $estado );
 
@@ -575,17 +575,17 @@ class Admin_Horas extends \WP_List_Table {
 	}
 
 	public function column_acciones( $item ) {
-		$estado  = get_post_meta( $item->ID, '_bdv_estado', true ) ?: 'pendiente';
+		$estado  = get_post_meta( $item->ID, '_conv_estado', true ) ?: 'pendiente';
 		$actions = array();
 
 		if ( $estado !== 'aprobada' ) {
-			$url       = admin_url( 'admin-post.php?action=bdv_process_horas&record_id=' . $item->ID . '&new_status=aprobada' );
+			$url       = admin_url( 'admin-post.php?action=conv_process_horas&record_id=' . $item->ID . '&new_status=aprobada' );
 			$url       = wp_nonce_url( $url, 'process_horas_' . $item->ID );
 			$actions[] = sprintf( '<a href="%s" style="color: green;">%s</a>', esc_url( $url ), esc_html__( 'Aprobar', 'convoca-members' ) );
 		}
 
 		if ( $estado !== 'rechazada' ) {
-			$url       = admin_url( 'admin-post.php?action=bdv_process_horas&record_id=' . $item->ID . '&new_status=rechazada' );
+			$url       = admin_url( 'admin-post.php?action=conv_process_horas&record_id=' . $item->ID . '&new_status=rechazada' );
 			$url       = wp_nonce_url( $url, 'process_horas_' . $item->ID );
 			$actions[] = sprintf( '<a href="%s" style="color: red;">%s</a>', esc_url( $url ), esc_html__( 'Rechazar', 'convoca-members' ) );
 		}
@@ -605,15 +605,15 @@ class Admin_Horas extends \WP_List_Table {
 		check_admin_referer( 'process_horas_' . $record_id );
 
 		if ( $record_id && in_array( $new_status, array( 'aprobada', 'rechazada' ) ) ) {
-			$miembro_id      = (int) get_post_meta( $record_id, '_bdv_miembro_id', true );
+			$miembro_id      = (int) get_post_meta( $record_id, ' _conv_miembro_id', true );
 			$current_user_id = get_current_user_id();
 
 			// Robust identification of the volunteer user ID.
-			$volunteer_user_id = (int) get_post_meta( $record_id, '_bdv_usuario_id', true );
+			$volunteer_user_id = (int) get_post_meta( $record_id, '_conv_usuario_id', true );
 
 			// Fallback: Check linked member profile for an email/user.
 			if ( ! $volunteer_user_id && $miembro_id ) {
-				$member_email = get_post_meta( $miembro_id, '_bdv_email', true );
+				$member_email = get_post_meta( $miembro_id, '_conv_email', true );
 				if ( $member_email ) {
 					$user = get_user_by( 'email', $member_email );
 					if ( $user ) {
@@ -673,8 +673,8 @@ class Admin_Horas extends \WP_List_Table {
 				}
 			}
 
-			update_post_meta( $record_id, '_bdv_estado', $new_status );
-			update_post_meta( $record_id, '_bdv_aprobada_por', get_current_user_id() );
+			update_post_meta( $record_id, '_conv_estado', $new_status );
+			update_post_meta( $record_id, '_conv_aprobada_por', get_current_user_id() );
 
 			if ( $new_status === 'aprobada' ) {
 				do_action( 'convoca_members_hora_aprobada', $record_id, $miembro_id );
@@ -683,7 +683,7 @@ class Admin_Horas extends \WP_List_Table {
 			}
 
 			// Log activity.
-			$socio_id = get_post_meta( $record_id, '_bdv_miembro_id', true );
+			$socio_id = get_post_meta( $record_id, ' _conv_miembro_id', true );
 			\Convoca\Core\Logger::log( "Registro de horas $record_id marcado como $new_status por admin " . get_current_user_id(), 'Members/Hours', $socio_id );
 		}
 

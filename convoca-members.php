@@ -35,20 +35,20 @@ if ( ! class_exists( '\\Convoca\\Core\\Utils' ) ) {
 }
 
 /* ── Constants ────────────────────────────────────────────── */
-if ( ! defined( 'BDV_MEMBERS_VERSION' ) ) {
-	define( 'BDV_MEMBERS_VERSION', '2.6.1' );
+if ( ! defined( 'CONV_MEMBERS_VERSION' ) ) {
+	define( 'CONV_MEMBERS_VERSION', '2.6.1' );
 }
-if ( ! defined( 'BDV_MEMBERS_DB_VERSION' ) ) {
-	define( 'BDV_MEMBERS_DB_VERSION', '1.0.3' );
+if ( ! defined( 'CONV_MEMBERS_DB_VERSION' ) ) {
+	define( 'CONV_MEMBERS_DB_VERSION', '1.0.3' );
 }
-if ( ! defined( 'BDV_MEMBERS_FILE' ) ) {
-	define( 'BDV_MEMBERS_FILE', __FILE__ );
+if ( ! defined( 'CONV_MEMBERS_FILE' ) ) {
+	define( 'CONV_MEMBERS_FILE', __FILE__ );
 }
-if ( ! defined( 'BDV_MEMBERS_DIR' ) ) {
-	define( 'BDV_MEMBERS_DIR', plugin_dir_path( __FILE__ ) );
+if ( ! defined( 'CONV_MEMBERS_DIR' ) ) {
+	define( 'CONV_MEMBERS_DIR', plugin_dir_path( __FILE__ ) );
 }
-if ( ! defined( 'BDV_MEMBERS_URL' ) ) {
-	define( 'BDV_MEMBERS_URL', plugin_dir_url( __FILE__ ) );
+if ( ! defined( 'CONV_MEMBERS_URL' ) ) {
+	define( 'CONV_MEMBERS_URL', plugin_dir_url( __FILE__ ) );
 }
 
 /* ── Autoloader ───────────────────────────────────────────── */
@@ -68,7 +68,7 @@ spl_autoload_register(
 		);
 
 		foreach ( $maps as $dir ) {
-			$file = BDV_MEMBERS_DIR . $dir . 'class-' . $relative . '.php';
+			$file = CONV_MEMBERS_DIR . $dir . 'class-' . $relative . '.php';
 			if ( file_exists( $file ) ) {
 				require_once $file;
 				return;
@@ -88,15 +88,15 @@ register_activation_hook(
 		\Convoca\Core\Installer::db_init();
 
 		// Schedule Daily Cron.
-		if ( ! wp_next_scheduled( 'bdv_daily_event' ) ) {
-			wp_schedule_event( time(), 'daily', 'bdv_daily_event' );
+		if ( ! wp_next_scheduled( 'conv_daily_event' ) ) {
+			wp_schedule_event( time(), 'daily', 'conv_daily_event' );
 		}
 
 		// Schedule Weekly Cron (admin digest).
-		if ( ! wp_next_scheduled( 'bdv_weekly_event' ) ) {
+		if ( ! wp_next_scheduled( 'conv_weekly_event' ) ) {
 			// Next Monday at 08:00.
 			$next_monday = strtotime( 'next monday 08:00:00' );
-			wp_schedule_event( $next_monday, 'weekly', 'bdv_weekly_event' );
+			wp_schedule_event( $next_monday, 'weekly', 'conv_weekly_event' );
 		}
 
 		flush_rewrite_rules();
@@ -105,9 +105,9 @@ register_activation_hook(
 		Convoca\Members\Email_Manager::install_defaults();
 
 		// Default settings.
-		if ( false === get_option( 'bdv_members_settings' ) ) {
+		if ( false === get_option( 'conv_members_settings' ) ) {
 			update_option(
-				'bdv_members_settings',
+				'conv_members_settings',
 				array(
 					'admin_email'  => get_option( 'admin_email' ),
 					'iban'         => '',
@@ -128,9 +128,9 @@ register_activation_hook(
 			$role->add_cap( 'bde_manage_checkin' );
 			$role->add_cap( 'bde_manage_evaluations' );
 			$role->add_cap( 'bde_view_reports' );
-			$role->add_cap( 'bdv_manage_hours' );
-			$role->add_cap( 'bdv_export_members' );
-			$role->add_cap( 'bdv_manage_webhooks' );
+			$role->add_cap( 'conv_manage_hours' );
+			$role->add_cap( 'conv_export_members' );
+			$role->add_cap( 'conv_manage_webhooks' );
 			$role->add_cap( 'bdg_view_payments' );
 			$role->add_cap( 'bdg_manage_payments' );
 			$role->add_cap( 'common_view_logs' );
@@ -165,7 +165,7 @@ register_activation_hook(
 					$r->add_cap( 'bde_manage_checkin' );
 					$r->add_cap( 'bde_manage_evaluations' );
 					$r->add_cap( 'bde_view_reports' );
-					$r->add_cap( 'bdv_manage_hours' );
+					$r->add_cap( 'conv_manage_hours' );
 				}
 			}
 		}
@@ -201,7 +201,7 @@ register_activation_hook(
 		}
 
 		// Save initial DB version.
-		add_option( 'bdv_members_db_version', BDV_MEMBERS_DB_VERSION, '', false );
+		add_option( 'conv_members_db_version', CONV_MEMBERS_DB_VERSION, '', false );
 	}
 );
 
@@ -209,8 +209,8 @@ register_activation_hook(
 register_deactivation_hook(
 	__FILE__,
 	function () {
-		wp_clear_scheduled_hook( 'bdv_daily_event' );
-		wp_clear_scheduled_hook( 'bdv_weekly_event' );
+		wp_clear_scheduled_hook( 'conv_daily_event' );
+		wp_clear_scheduled_hook( 'conv_weekly_event' );
 		flush_rewrite_rules();
 	}
 );
@@ -274,14 +274,14 @@ add_action( 'save_post_proyecto', array( \Convoca\Members\CPT_Proyecto::class, '
 
 /* ── Admin Actions ────────────────────────────────────────── */
 add_action(
-	'admin_post_bdv_approve_member',
+	'admin_post_conv_approve_member',
 	function () {
 		if ( ! current_user_can( 'edit_users' ) ) {
 			wp_die( 'No tienes permisos.' );
 		}
 
 		$id = (int) ( $_GET['member_id'] ?? 0 );
-		check_admin_referer( 'bdv_approve_member_' . $id );
+		check_admin_referer( 'conv_approve_member_' . $id );
 
 		if ( $id && \Convoca\Members\CPT_Miembro::approve_member( $id ) ) {
 			// Generate WP user + send credentials.
@@ -297,14 +297,14 @@ add_action(
 );
 
 add_action(
-	'admin_post_bdv_delete_member',
+	'admin_post_conv_delete_member',
 	function () {
 		if ( ! current_user_can( 'delete_posts' ) ) {
 			wp_die( 'No tienes permisos.' );
 		}
 
 		$id = (int) ( $_GET['member_id'] ?? 0 );
-		check_admin_referer( 'bdv_delete_member_' . $id );
+		check_admin_referer( 'conv_delete_member_' . $id );
 
 		if ( $id && wp_trash_post( $id ) ) {
 			wp_redirect( admin_url( 'admin.php?page=bdv-members&msg=deleted' ) );
@@ -317,7 +317,7 @@ add_action(
 );
 
 add_action(
-	'admin_post_bdv_pdf_card',
+	'admin_post_conv_pdf_card',
 	function () {
 		$id = (int) ( $_GET['member_id'] ?? 0 );
 
@@ -326,7 +326,7 @@ add_action(
 			wp_die( esc_html__( 'ID de miembro no válido.', 'convoca-members' ) );
 		}
 
-		check_admin_referer( 'bdv_pdf_card_' . $id );
+		check_admin_referer( 'conv_pdf_card_' . $id );
 
 		if ( ! current_user_can( 'edit_post', $id ) ) {
 			wp_die( esc_html__( 'No tienes permisos para ver la tarjeta de este miembro.', 'convoca-members' ) );
@@ -343,11 +343,11 @@ add_action(
  */
 // Activar miembro del voluntario cuando se aprueba desde Centro Social.
 add_action(
-	'bdv_voluntario_aprobado',
+	'conv_voluntario_aprobado',
 	function ( int $user_id ): void {
-		$member_id = (int) get_user_meta( $user_id, '_bdv_member_id', true );
+		$member_id = (int) get_user_meta( $user_id, '_conv_member_id', true );
 		if ( $member_id ) {
-			$estado = get_post_meta( $member_id, '_bdv_estado_miembro', true );
+			$estado = get_post_meta( $member_id, '_conv_estado_miembro', true );
 			if ( $estado !== 'activo' ) {
 				\Convoca\Members\CPT_Miembro::approve_member( $member_id );
 				\Convoca\Core\Logger::info( "Voluntario #$user_id aprobado -> miembro #$member_id activado", 'Members/Admin' );
@@ -389,7 +389,7 @@ add_shortcode(
         </div>';
 		}
 
-		$estado = get_post_meta( $member_id, '_bdv_estado_miembro', true );
+		$estado = get_post_meta( $member_id, '_conv_estado_miembro', true );
 		if ( $estado !== 'activo' ) {
 			return '<div class="convoca-alert convoca-alert--warning" style="display:block;max-width:500px;margin:40px auto;text-align:center;">
             <p><strong>' . __( 'Membresía no activa', 'convoca-members' ) . '</strong></p>
@@ -397,13 +397,13 @@ add_shortcode(
         </div>';
 		}
 
-		$plan       = get_post_meta( $member_id, '_bdv_plan', true );
+		$plan       = get_post_meta( $member_id, '_conv_plan', true );
 		$plan_label = '';
 		if ( class_exists( '\\Convoca\\Members\\CPT_Miembro' ) ) {
 			$plans      = \Convoca\Members\CPT_Miembro::get_plans();
 			$plan_label = $plans[ $plan ]['label'] ?? $plan;
 		}
-		$num = get_post_meta( $member_id, '_bdv_numero_socio', true );
+		$num = get_post_meta( $member_id, '_conv_numero_socio', true );
 
 		return '<div style="max-width:500px;margin:40px auto;text-align:center;background:#fff;border-radius:16px;padding:40px;box-shadow:0 10px 25px rgba(0,0,0,0.05);">
         <div style="font-size:64px;margin-bottom:20px;">✅</div>

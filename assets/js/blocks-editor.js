@@ -2,11 +2,11 @@
     var el = element.createElement;
 
     function registerMembersBlock( name, title, icon, desc, color ) {
-        blocks.registerBlockType( 'biodevas-members/' + name, {
+        blocks.registerBlockType( 'convoca-members/' + name, {
             apiVersion: 3,
             title: title,
             icon: icon,
-            category: 'biodevas-members',
+            category: 'convoca-members',
             edit: function() {
                 return el( 'div', {
                     style: {

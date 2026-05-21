@@ -10,8 +10,8 @@ if ( ! defined( 'WP_UNINSTALL_PLUGIN' ) ) {
 }
 
 // Delete options.
-delete_option( 'bdv_members_settings' );
-delete_option( 'bdv_email_templates' );
+delete_option( 'conv_members_settings' );
+delete_option( 'conv_email_templates' );
 
 // Delete all miembro posts and their meta.
 $posts = get_posts(

@@ -19,8 +19,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Member_Auth {
 
-	private const SESSION_COOKIE        = 'bdv_member_session';
-	private const TRANSIENT_PREFIX      = 'bdv_member_session_';
+	private const SESSION_COOKIE        = 'conv_member_session';
+	private const TRANSIENT_PREFIX      = 'conv_member_session_';
 	private const SESSION_EXPIRATION    = 6 * HOUR_IN_SECONDS;
 	private const MAX_LOGIN_ATTEMPTS    = 5;
 	private const LOGIN_LOCKOUT_SECONDS = 15 * MINUTE_IN_SECONDS;
@@ -59,7 +59,7 @@ class Member_Auth {
 		}
 
 		// Verify the user has a linked member (miembro CPT).
-		$member_id = (int) get_user_meta( $user->ID, '_bdv_member_id', true );
+		$member_id = (int) get_user_meta( $user->ID, '_conv_member_id', true );
 		if ( ! $member_id ) {
 			Logger::warning( "Usuario {$username} no tiene un perfil de socio vinculado.", 'Members/Members' );
 			return new \WP_Error(
@@ -216,10 +216,10 @@ class Member_Auth {
 		return array(
 			'id'            => $member_id,
 			'name'          => $post->post_title,
-			'email'         => get_post_meta( $member_id, '_bdv_email', true ),
-			'phone'         => get_post_meta( $member_id, '_bdv_telefono', true ),
-			'dni'           => get_post_meta( $member_id, '_bdv_dni', true ),
-			'member_status' => get_post_meta( $member_id, '_bdv_estado_miembro', true ),
+			'email'         => get_post_meta( $member_id, '_conv_email', true ),
+			'phone'         => get_post_meta( $member_id, '_conv_telefono', true ),
+			'dni'           => get_post_meta( $member_id, '_conv_dni', true ),
+			'member_status' => get_post_meta( $member_id, '_conv_estado_miembro', true ),
 		);
 	}
 
@@ -242,7 +242,7 @@ class Member_Auth {
 		if ( ! $member_id ) {
 			return false;
 		}
-		$status = get_post_meta( $member_id, '_bdv_estado_miembro', true );
+		$status = get_post_meta( $member_id, '_conv_estado_miembro', true );
 		return $status === 'activo';
 	}
 
@@ -254,8 +254,8 @@ class Member_Auth {
 	public static function get_current_token(): string {
 		$token = sanitize_text_field( $_COOKIE[ self::SESSION_COOKIE ] ?? '' );
 
-		if ( ! $token && isset( $_SERVER['HTTP_X_BDV_AUTH'] ) ) {
-			$token = sanitize_text_field( $_SERVER['HTTP_X_BDV_AUTH'] );
+		if ( ! $token && isset( $_SERVER['HTTP_X_CONV_AUTH'] ) ) {
+			$token = sanitize_text_field( $_SERVER['HTTP_X_CONV_AUTH'] );
 		}
 
 		return (string) $token;

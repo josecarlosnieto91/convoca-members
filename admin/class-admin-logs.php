@@ -18,7 +18,7 @@ class Admin_Logs {
 	 */
 	public static function render(): void {
 		global $wpdb;
-		$table_name = $wpdb->prefix . 'biodevas_logs';
+		$table_name = $wpdb->prefix . 'convoca_logs';
 
 		// Check if table exists.
 		if ( $wpdb->get_var( "SHOW TABLES LIKE '$table_name'" ) != $table_name ) {
@@ -29,7 +29,7 @@ class Admin_Logs {
 		// Handle delete action.
 		$get_data = wp_unslash( $_GET );
 		if ( isset( $get_data['action'] ) && $get_data['action'] === 'clear' && current_user_can( 'common_view_logs' ) ) {
-			check_admin_referer( 'bdv_clear_members_logs' );
+			check_admin_referer( 'conv_clear_members_logs' );
 			$wpdb->query( $wpdb->prepare( "DELETE FROM $table_name WHERE context LIKE %s", '%Members%' ) );
 			echo '<div class="updated"><p>Logs de Members borrados.</p></div>';
 		}
@@ -66,7 +66,7 @@ class Admin_Logs {
 			<h1>Registros de Auditoría</h1>
 
 			<p>
-				<a href="<?php echo wp_nonce_url( admin_url( 'admin.php?page=bdv-members-logs&action=clear' ), 'bdv_clear_members_logs' ); ?>" 
+				<a href="<?php echo wp_nonce_url( admin_url( 'admin.php?page=bdv-members-logs&action=clear' ), 'conv_clear_members_logs' ); ?>" 
 					class="button button-secondary"
 					onclick="return confirm('¿Estás seguro de que quieres borrar todos los logs de Members?');">
 					Borrar logs de Members

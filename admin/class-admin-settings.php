@@ -13,7 +13,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Admin_Settings {
 
-	private const CACHE_KEY = 'bdv_members_diagnostic_cache';
+	private const CACHE_KEY = 'conv_members_diagnostic_cache';
 
 	public function __construct() {
 		add_action( 'admin_init', array( $this, 'register_settings' ) );
@@ -21,23 +21,23 @@ class Admin_Settings {
 	}
 
 	public function handle_custom_save(): void {
-		if ( ! isset( $_POST['_bdv_settings_nonce'] ) ) {
+		if ( ! isset( $_POST['_conv_settings_nonce'] ) ) {
 			return;
 		}
-		if ( ! wp_verify_nonce( $_POST['_bdv_settings_nonce'], 'bdv_members_settings_save' ) ) {
+		if ( ! wp_verify_nonce( $_POST['_conv_settings_nonce'], 'conv_members_settings_save' ) ) {
 			return;
 		}
 		if ( ! current_user_can( 'manage_options' ) ) {
 			wp_die( __( 'No tienes permisos.', 'convoca-members' ) );
 		}
 
-		if ( isset( $_POST['bdv_save_settings'] ) && $_POST['bdv_save_settings'] === 'general' ) {
-			$raw      = wp_unslash( $_POST['bdv_members_settings'] ?? array() );
-			$settings = get_option( 'bdv_members_settings', array() );
+		if ( isset( $_POST['conv_save_settings'] ) && $_POST['conv_save_settings'] === 'general' ) {
+			$raw      = wp_unslash( $_POST['conv_members_settings'] ?? array() );
+			$settings = get_option( 'conv_members_settings', array() );
 			foreach ( $raw as $key => $val ) {
 				$settings[ $key ] = sanitize_text_field( $val );
 			}
-			update_option( 'bdv_members_settings', $settings );
+			update_option( 'conv_members_settings', $settings );
 			wp_safe_redirect( add_query_arg( 'updated', '1', wp_get_referer() ) );
 			exit;
 		}
@@ -45,36 +45,36 @@ class Admin_Settings {
 
 	public function register_settings(): void {
 		register_setting(
-			'bdv_members_settings_group',
-			'bdv_members_settings',
+			'conv_members_settings_group',
+			'conv_members_settings',
 			array(
 				'sanitize_callback' => array( $this, 'sanitize_settings' ),
 			)
 		);
 		register_setting(
-			'bdv_members_plans_group',
-			'bdv_members_plans',
+			'conv_members_plans_group',
+			'conv_members_plans',
 			array(
 				'sanitize_callback' => array( $this, 'sanitize_plans' ),
 			)
 		);
 		register_setting(
-			'bdv_members_volunteers_group',
-			'bdv_volunteer_fields',
+			'conv_members_volunteers_group',
+			'conv_volunteer_fields',
 			array(
 				'sanitize_callback' => array( $this, 'sanitize_volunteer_fields' ),
 			)
 		);
 		register_setting(
-			'bdv_members_volunteers_group',
-			'bdv_volunteer_legal_text',
+			'conv_members_volunteers_group',
+			'conv_volunteer_legal_text',
 			array(
 				'sanitize_callback' => 'wp_kses_post',
 			)
 		);
 		register_setting(
-			'bdv_members_gamification_group',
-			'bdv_gamification_tracks',
+			'conv_members_gamification_group',
+			'conv_gamification_tracks',
 			array(
 				'sanitize_callback' => array( $this, 'sanitize_gamification_tracks' ),
 			)
@@ -273,46 +273,46 @@ class Admin_Settings {
 	}
 
 	public function render_general_tab(): void {
-		$settings = get_option( 'bdv_members_settings', array() );
+		$settings = get_option( 'conv_members_settings', array() );
 		?>
 		<form method="post">
-			<?php wp_nonce_field( 'bdv_members_settings_save', '_bdv_settings_nonce' ); ?>
-			<input type="hidden" name="bdv_save_settings" value="general">
+			<?php wp_nonce_field( 'conv_members_settings_save', '_conv_settings_nonce' ); ?>
+			<input type="hidden" name="conv_save_settings" value="general">
 
-			<div class="biodevas-field">
+			<div class="convoca-field">
 				<label for="admin_email"><?php esc_html_e( 'Email administrador', 'convoca-members' ); ?></label>
-				<input type="email" id="admin_email" name="bdv_members_settings[admin_email]"
+				<input type="email" id="admin_email" name="conv_members_settings[admin_email]"
 					value="<?php echo esc_attr( $settings['admin_email'] ?? '' ); ?>">
-				<small class="biodevas-small"><?php esc_html_e( 'Recibe notificaciones de nuevas altas.', 'convoca-members' ); ?></small>
+				<small class="convoca-small"><?php esc_html_e( 'Recibe notificaciones de nuevas altas.', 'convoca-members' ); ?></small>
 			</div>
 
-			<div class="biodevas-field">
+			<div class="convoca-field">
 				<label for="sender_name"><?php esc_html_e( 'Nombre remitente emails', 'convoca-members' ); ?></label>
-				<input type="text" id="sender_name" name="bdv_members_settings[sender_name]"
+				<input type="text" id="sender_name" name="conv_members_settings[sender_name]"
 					value="<?php echo esc_attr( $settings['sender_name'] ?? get_bloginfo( 'name' ) ); ?>">
 			</div>
 
-			<div class="biodevas-field">
+			<div class="convoca-field">
 				<label for="iban"><?php esc_html_e( 'IBAN para transferencias', 'convoca-members' ); ?></label>
-				<input type="text" id="iban" name="bdv_members_settings[iban]"
+				<input type="text" id="iban" name="conv_members_settings[iban]"
 					value="<?php echo esc_attr( $settings['iban'] ?? '' ); ?>" placeholder="ES00 0000 0000 0000 0000 0000">
 			</div>
 
-			<div class="biodevas-field">
+			<div class="convoca-field">
 				<label for="rgpd_version"><?php esc_html_e( 'Versión texto legal RGPD', 'convoca-members' ); ?></label>
-				<input type="text" id="rgpd_version" name="bdv_members_settings[rgpd_version]"
+				<input type="text" id="rgpd_version" name="conv_members_settings[rgpd_version]"
 					value="<?php echo esc_attr( $settings['rgpd_version'] ?? '1.0' ); ?>">
 			</div>
 
-			<div class="biodevas-field">
+			<div class="convoca-field">
 				<label for="min_age"><?php esc_html_e( 'Edad mínima de registro', 'convoca-members' ); ?></label>
-				<input type="number" id="min_age" name="bdv_members_settings[min_age]"
+				<input type="number" id="min_age" name="conv_members_settings[min_age]"
 					value="<?php echo esc_attr( $settings['min_age'] ?? '0' ); ?>" min="0">
-				<small class="biodevas-small"><?php esc_html_e( 'Edad mínima permitida para el alta de socios (0 para desactivar).', 'convoca-members' ); ?></small>
+				<small class="convoca-small"><?php esc_html_e( 'Edad mínima permitida para el alta de socios (0 para desactivar).', 'convoca-members' ); ?></small>
 			</div>
 
 			<div style="margin-top:30px;">
-				<button type="submit" class="biodevas-btn biodevas-btn-primary"><?php esc_html_e( 'Guardar ajustes', 'convoca-members' ); ?></button>
+				<button type="submit" class="convoca-btn convoca-btn-primary"><?php esc_html_e( 'Guardar ajustes', 'convoca-members' ); ?></button>
 			</div>
 		</form>
 		<?php
@@ -327,7 +327,7 @@ class Admin_Settings {
 		// that serves to create a new key.
 		?>
 		<form method="post" action="options.php">
-			<?php settings_fields( 'bdv_members_plans_group' ); ?>
+			<?php settings_fields( 'conv_members_plans_group' ); ?>
 
 			<div id="bdv-plans-container">
 				<?php foreach ( $plans as $key => $plan ) : ?>
@@ -378,7 +378,7 @@ class Admin_Settings {
 					key = key.toLowerCase().replace(/[^a-z0-9-]/g, '-');
 
 					var container = document.getElementById('bdv-plans-container');
-					if (document.querySelector('input[name="bdv_members_plans[' + key + '][label]"]')) {
+					if (document.querySelector('input[name="conv_members_plans[' + key + '][label]"]')) {
 						alert('<?php echo esc_js( __( 'Este ID ya existe.', 'convoca-members' ) ); ?>');
 						return;
 					}
@@ -413,7 +413,7 @@ class Admin_Settings {
 				</h2>
 				<div>
 					<label>
-						<input type="checkbox" name="bdv_members_plans[<?php echo esc_attr( $key ); ?>][active]" value="1" <?php checked( $active ); ?>>
+						<input type="checkbox" name="conv_members_plans[<?php echo esc_attr( $key ); ?>][active]" value="1" <?php checked( $active ); ?>>
 						<?php esc_html_e( 'Activo', 'convoca-members' ); ?>
 					</label>
 					<button type="button" class="button-link-delete" style="color: #b32d2e; margin-left: 15px;"
@@ -427,24 +427,24 @@ class Admin_Settings {
 					<div>
 						<p>
 							<label><strong><?php esc_html_e( 'Nombre visible:', 'convoca-members' ); ?></strong></label>
-							<input type="text" name="bdv_members_plans[<?php echo esc_attr( $key ); ?>][label]"
+							<input type="text" name="conv_members_plans[<?php echo esc_attr( $key ); ?>][label]"
 								value="<?php echo esc_attr( $plan['label'] ); ?>" class="large-text">
 						</p>
 						<div style="display: flex; gap: 10px;">
 							<p style="flex:1;">
 								<label><strong><?php esc_html_e( 'Emoji:', 'convoca-members' ); ?></strong></label>
-								<input type="text" name="bdv_members_plans[<?php echo esc_attr( $key ); ?>][emoji]"
+								<input type="text" name="conv_members_plans[<?php echo esc_attr( $key ); ?>][emoji]"
 									value="<?php echo esc_attr( $plan['emoji'] ?? '' ); ?>" class="small-text">
 							</p>
 							<p style="flex:1;">
 								<label><strong><?php esc_html_e( 'Orden:', 'convoca-members' ); ?></strong></label>
-								<input type="number" name="bdv_members_plans[<?php echo esc_attr( $key ); ?>][order]"
+								<input type="number" name="conv_members_plans[<?php echo esc_attr( $key ); ?>][order]"
 									value="<?php echo esc_attr( $plan['order'] ?? 0 ); ?>" class="small-text">
 							</p>
 						</div>
 						<p>
 							<label><strong><?php esc_html_e( 'Descripción:', 'convoca-members' ); ?></strong></label>
-							<textarea name="bdv_members_plans[<?php echo esc_attr( $key ); ?>][description]" rows="2"
+							<textarea name="conv_members_plans[<?php echo esc_attr( $key ); ?>][description]" rows="2"
 								class="large-text"><?php echo esc_textarea( $plan['description'] ?? '' ); ?></textarea>
 						</p>
 					</div>
@@ -452,17 +452,17 @@ class Admin_Settings {
 						<div style="display: flex; gap: 10px;">
 							<p style="flex:1;">
 								<label><strong><?php esc_html_e( 'Precio (€):', 'convoca-members' ); ?></strong></label>
-								<input type="number" step="0.01" name="bdv_members_plans[<?php echo esc_attr( $key ); ?>][price]"
+								<input type="number" step="0.01" name="conv_members_plans[<?php echo esc_attr( $key ); ?>][price]"
 									value="<?php echo esc_attr( $plan['price'] ); ?>" class="small-text">
 							</p>
 							<p style="flex:1;">
 								<label><strong><?php esc_html_e( 'Horas Voluntariado:', 'convoca-members' ); ?></strong></label>
-								<input type="number" step="0.5" name="bdv_members_plans[<?php echo esc_attr( $key ); ?>][hours]"
+								<input type="number" step="0.5" name="conv_members_plans[<?php echo esc_attr( $key ); ?>][hours]"
 									value="<?php echo esc_attr( $plan['hours'] ); ?>" class="small-text">
 							</p>
 							<p style="flex:1;">
 								<label><strong><?php esc_html_e( 'Modalidad:', 'convoca-members' ); ?></strong></label><br>
-								<select name="bdv_members_plans[<?php echo esc_attr( $key ); ?>][modalidad]">
+								<select name="conv_members_plans[<?php echo esc_attr( $key ); ?>][modalidad]">
 									<?php foreach ( array( 'Numerario', 'Familiar', 'Juvenil' ) as $m ) : ?>
 										<option value="<?php echo esc_attr( $m ); ?>" <?php selected( $plan['modalidad'], $m ); ?>>
 											<?php echo esc_html( $m ); ?>
@@ -476,13 +476,13 @@ class Admin_Settings {
 							<p style="margin-top:0;"><strong><?php esc_html_e( 'Pagos:', 'convoca-members' ); ?></strong></p>
 							<?php $methods = $plan['payment_methods'] ?? array(); ?>
 							<label><input type="checkbox"
-									name="bdv_members_plans[<?php echo esc_attr( $key ); ?>][payment_methods][]" value="bizum"
+									name="conv_members_plans[<?php echo esc_attr( $key ); ?>][payment_methods][]" value="bizum"
 									<?php checked( in_array( 'bizum', $methods ) ); ?>> Bizum</label>
 							<label><input type="checkbox"
-									name="bdv_members_plans[<?php echo esc_attr( $key ); ?>][payment_methods][]" value="tarjeta"
+									name="conv_members_plans[<?php echo esc_attr( $key ); ?>][payment_methods][]" value="tarjeta"
 									<?php checked( in_array( 'tarjeta', $methods ) ); ?>> Tarjeta</label>
 							<label><input type="checkbox"
-									name="bdv_members_plans[<?php echo esc_attr( $key ); ?>][payment_methods][]"
+									name="conv_members_plans[<?php echo esc_attr( $key ); ?>][payment_methods][]"
 									value="transferencia" <?php checked( in_array( 'transferencia', $methods ) ); ?>>
 								<?php esc_html_e( 'Transferencia', 'convoca-members' ); ?></label>
 						</div>
@@ -491,7 +491,7 @@ class Admin_Settings {
 
 				<p>
 					<label><strong><?php esc_html_e( 'Ventajas (una por línea):', 'convoca-members' ); ?></strong></label>
-					<textarea name="bdv_members_plans[<?php echo esc_attr( $key ); ?>][advantages_raw]" rows="4"
+					<textarea name="conv_members_plans[<?php echo esc_attr( $key ); ?>][advantages_raw]" rows="4"
 						class="large-text">
 						<?php
 						$adv = $plan['advantages'] ?? array();
@@ -512,7 +512,7 @@ class Admin_Settings {
 		// THE PREVIOUS CODE handled this manually via POST check.
 		// We will keep that manual saving logic but integrate it into the flow.
 
-		if ( isset( $_POST['bdv_save_templates'] ) && check_admin_referer( 'bdv_templates_nonce' ) ) {
+		if ( isset( $_POST['conv_save_templates'] ) && check_admin_referer( 'conv_templates_nonce' ) ) {
 			$data      = wp_unslash( $_POST );
 			$templates = array();
 			foreach ( Email_Manager::TEMPLATES as $slug ) {
@@ -538,7 +538,7 @@ class Admin_Settings {
 
 		?>
 		<form method="post">
-			<?php wp_nonce_field( 'bdv_templates_nonce' ); ?>
+			<?php wp_nonce_field( 'conv_templates_nonce' ); ?>
 			<p class="description">
 				<?php esc_html_e( 'Variables disponibles:', 'convoca-members' ); ?>
 				<code>{nombre}</code>, <code>{plan}</code>, <code>{importe}</code>, <code>{link_pago}</code>,
@@ -570,21 +570,21 @@ class Admin_Settings {
 				</div>
 			<?php endforeach; ?>
 
-			<input type="hidden" name="bdv_save_templates" value="1">
+			<input type="hidden" name="conv_save_templates" value="1">
 			<?php submit_button( __( 'Guardar Plantillas', 'convoca-members' ) ); ?>
 		</form>
 		<?php
 	}
 	private function render_volunteers_tab(): void {
-		$fields     = get_option( 'bdv_volunteer_fields', array() );
-		$legal_text = get_option( 'bdv_volunteer_legal_text', '' );
+		$fields     = get_option( 'conv_volunteer_fields', array() );
+		$legal_text = get_option( 'conv_volunteer_legal_text', '' );
 		?>
 		<form method="post" action="options.php">
-			<?php settings_fields( 'bdv_members_volunteers_group' ); ?>
+			<?php settings_fields( 'conv_members_volunteers_group' ); ?>
 
 			<h2><?php esc_html_e( 'Texto Legal (Declaración Responsable)', 'convoca-members' ); ?></h2>
 			<p class="description"><?php esc_html_e( 'Este texto se mostrará junto a un checkbox obligatorio al final del formulario de voluntariado.', 'convoca-members' ); ?></p>
-			<textarea name="bdv_volunteer_legal_text" rows="10"><?php echo esc_textarea( $legal_text ); ?></textarea>
+			<textarea name="conv_volunteer_legal_text" rows="10"><?php echo esc_textarea( $legal_text ); ?></textarea>
 
 			<h2 style="margin-top: 40px;"><?php esc_html_e( 'Campos Personalizados', 'convoca-members' ); ?></h2>
 			<p class="description"><?php esc_html_e( 'Estos campos se solicitarán en el formulario de registro de voluntarios. Los campos base (Nombre, DNI, Email, Teléfono) ya están incluidos y no necesitan añadirse aquí.', 'convoca-members' ); ?></p>
@@ -624,7 +624,7 @@ class Admin_Settings {
 					name = name.toLowerCase().replace(/[^a-z0-9-]/g, '-');
 
 					var container = document.getElementById('bdv-fields-container');
-					if (document.querySelector('input[name="bdv_volunteer_fields[' + name + '][label]"]')) {
+					if (document.querySelector('input[name="conv_volunteer_fields[' + name + '][label]"]')) {
 						alert('Este ID ya existe.');
 						return;
 					}
@@ -673,17 +673,17 @@ class Admin_Settings {
 				</button>
 			</div>
 			<div class="inside" style="padding: 10px;">
-				<input type="hidden" class="field-name-input" name="bdv_volunteer_fields[<?php echo $index; ?>][name]" value="<?php echo $name; ?>">
+				<input type="hidden" class="field-name-input" name="conv_volunteer_fields[<?php echo $index; ?>][name]" value="<?php echo $name; ?>">
 				
 				<div style="display: flex; gap: 20px; align-items: flex-start;">
 					<div style="flex: 1;">
 						<p>
 							<label><strong><?php esc_html_e( 'Etiqueta (Label):', 'convoca-members' ); ?></strong></label><br>
-							<input type="text" name="bdv_volunteer_fields[<?php echo $index; ?>][label]" value="<?php echo esc_attr( $field['label'] ?? '' ); ?>" class="large-text">
+							<input type="text" name="conv_volunteer_fields[<?php echo $index; ?>][label]" value="<?php echo esc_attr( $field['label'] ?? '' ); ?>" class="large-text">
 						</p>
 						<p>
 							<label><strong><?php esc_html_e( 'Tipo de campo:', 'convoca-members' ); ?></strong></label><br>
-							<select name="bdv_volunteer_fields[<?php echo $index; ?>][type]">
+							<select name="conv_volunteer_fields[<?php echo $index; ?>][type]">
 								<?php
 								$types = array(
 									'text'     => 'Texto corto',
@@ -703,7 +703,7 @@ class Admin_Settings {
 						</p>
 						<p>
 							<label>
-								<input type="checkbox" name="bdv_volunteer_fields[<?php echo $index; ?>][required]" value="1" <?php checked( ! empty( $field['required'] ) ); ?>>
+								<input type="checkbox" name="conv_volunteer_fields[<?php echo $index; ?>][required]" value="1" <?php checked( ! empty( $field['required'] ) ); ?>>
 								<strong><?php esc_html_e( 'Campo obligatorio', 'convoca-members' ); ?></strong>
 							</label>
 						</p>
@@ -712,7 +712,7 @@ class Admin_Settings {
 						<p>
 							<label><strong><?php esc_html_e( 'Opciones (solo para Select):', 'convoca-members' ); ?></strong></label><br>
 							<span class="description">Una opción por línea. Ej: Sí \n No \n Tal vez</span><br>
-							<textarea name="bdv_volunteer_fields[<?php echo $index; ?>][options]" rows="4" class="large-text"><?php echo esc_textarea( $field['options'] ?? '' ); ?></textarea>
+							<textarea name="conv_volunteer_fields[<?php echo $index; ?>][options]" rows="4" class="large-text"><?php echo esc_textarea( $field['options'] ?? '' ); ?></textarea>
 						</p>
 					</div>
 				</div>
@@ -728,8 +728,8 @@ class Admin_Settings {
 		$tracks = \Convoca\Members\Voluntariado_Gamification::get_tracks_config();
 
 		// Handle POST save.
-		if ( isset( $_POST['bdv_save_gamification'] ) && check_admin_referer( 'bdv_gamification_nonce' ) ) {
-			$raw       = wp_unslash( $_POST['bdv_gamification_tracks'] ?? array() );
+		if ( isset( $_POST['conv_save_gamification'] ) && check_admin_referer( 'conv_gamification_nonce' ) ) {
+			$raw       = wp_unslash( $_POST['conv_gamification_tracks'] ?? array() );
 			$sanitized = $this->sanitize_gamification_tracks( $raw );
 			update_option( \Convoca\Members\Voluntariado_Gamification::OPTION_KEY, $sanitized );
 			echo '<div class="updated"><p>' . esc_html__( 'Badges guardados correctamente.', 'convoca-members' ) . '</p></div>';
@@ -756,8 +756,8 @@ class Admin_Settings {
 			</div>
 
 			<form method="post">
-				<?php wp_nonce_field( 'bdv_gamification_nonce' ); ?>
-				<input type="hidden" name="bdv_save_gamification" value="1">
+				<?php wp_nonce_field( 'conv_gamification_nonce' ); ?>
+				<input type="hidden" name="conv_save_gamification" value="1">
 
 				<?php foreach ( $tracks as $track_key => $track ) : ?>
 					<div class="bdv-gami-track-panel" id="bdv-gami-track-<?php echo esc_attr( $track_key ); ?>"
@@ -771,7 +771,7 @@ class Admin_Settings {
 								<p>
 									<label><strong><?php esc_html_e( 'Nombre visible del track:', 'convoca-members' ); ?></strong></label>
 									<input type="text"
-											name="bdv_gamification_tracks[<?php echo esc_attr( $track_key ); ?>][label]"
+											name="conv_gamification_tracks[<?php echo esc_attr( $track_key ); ?>][label]"
 											value="<?php echo esc_attr( $track['label'] ); ?>"
 											class="regular-text">
 								</p>
@@ -795,32 +795,32 @@ class Admin_Settings {
 												<td><?php echo $i + 1; ?></td>
 												<td>
 													<input type="text"
-															name="bdv_gamification_tracks[<?php echo esc_attr( $track_key ); ?>][levels][<?php echo $i; ?>][name]"
+															name="conv_gamification_tracks[<?php echo esc_attr( $track_key ); ?>][levels][<?php echo $i; ?>][name]"
 															value="<?php echo esc_attr( $level['name'] ); ?>"
 															class="regular-text" style="width:100%;">
 												</td>
 												<td>
 													<input type="text"
-															name="bdv_gamification_tracks[<?php echo esc_attr( $track_key ); ?>][levels][<?php echo $i; ?>][emoji]"
+															name="conv_gamification_tracks[<?php echo esc_attr( $track_key ); ?>][levels][<?php echo $i; ?>][emoji]"
 															value="<?php echo esc_attr( $level['emoji'] ); ?>"
 															style="width:60px; text-align:center; font-size:1.2em;"
 															class="bdv-emoji-input">
 												</td>
 												<td>
 													<input type="number" step="0.5" min="0"
-															name="bdv_gamification_tracks[<?php echo esc_attr( $track_key ); ?>][levels][<?php echo $i; ?>][hours]"
+															name="conv_gamification_tracks[<?php echo esc_attr( $track_key ); ?>][levels][<?php echo $i; ?>][hours]"
 															value="<?php echo esc_attr( $level['hours'] ); ?>"
 															style="width:80px;">
 												</td>
 												<td>
 													<input type="color"
-															name="bdv_gamification_tracks[<?php echo esc_attr( $track_key ); ?>][levels][<?php echo $i; ?>][color]"
+															name="conv_gamification_tracks[<?php echo esc_attr( $track_key ); ?>][levels][<?php echo $i; ?>][color]"
 															value="<?php echo esc_attr( $level['color'] ); ?>"
 															style="width:60px; height:30px; padding:0; border:none; cursor:pointer;">
 												</td>
 												<td>
 													<input type="text"
-															name="bdv_gamification_tracks[<?php echo esc_attr( $track_key ); ?>][levels][<?php echo $i; ?>][desc]"
+															name="conv_gamification_tracks[<?php echo esc_attr( $track_key ); ?>][levels][<?php echo $i; ?>][desc]"
 															value="<?php echo esc_attr( $level['desc'] ?? '' ); ?>"
 															class="regular-text" style="width:100%;">
 												</td>
@@ -907,28 +907,28 @@ class Admin_Settings {
 		$required_pages = array(
 			'convoca_alta_socio'            => array(
 				'title'     => __( 'Página: Alta de Socio', 'convoca-members' ),
-				'shortcode' => '[biodevas_alta]',
-				'fix'       => __( 'Crea una página con el shortcode [biodevas_alta].', 'convoca-members' ),
+				'shortcode' => '[convoca_alta]',
+				'fix'       => __( 'Crea una página con el shortcode [convoca_alta].', 'convoca-members' ),
 			),
 			'convoca_voluntariado'          => array(
 				'title'     => __( 'Página: Registro Voluntariado', 'convoca-members' ),
-				'shortcode' => '[biodevas_voluntariado]',
-				'fix'       => __( 'Crea una página con el shortcode [biodevas_voluntariado].', 'convoca-members' ),
+				'shortcode' => '[convoca_voluntariado]',
+				'fix'       => __( 'Crea una página con el shortcode [convoca_voluntariado].', 'convoca-members' ),
 			),
 			'convoca_mi_area'               => array(
 				'title'     => __( 'Página: Área de Miembro', 'convoca-members' ),
-				'shortcode' => '[biodevas_mi_area]',
-				'fix'       => __( 'Crea una página con el shortcode [biodevas_mi_area].', 'convoca-members' ),
+				'shortcode' => '[convoca_mi_area]',
+				'fix'       => __( 'Crea una página con el shortcode [convoca_mi_area].', 'convoca-members' ),
 			),
 			'convoca_verificar_certificado' => array(
 				'title'     => __( 'Página: Verificación de Certificados', 'convoca-members' ),
-				'shortcode' => '[biodevas_verificar_certificado]',
-				'fix'       => __( 'Crea una página con el shortcode [biodevas_verificar_certificado].', 'convoca-members' ),
+				'shortcode' => '[convoca_verificar_certificado]',
+				'fix'       => __( 'Crea una página con el shortcode [convoca_verificar_certificado].', 'convoca-members' ),
 			),
 			'convoca_panel_reservas'        => array(
 				'title'     => __( 'Página: Panel de Reservas', 'convoca-members' ),
-				'shortcode' => '[biodevas_panel_reservas]',
-				'fix'       => __( 'Esta página es necesaria para el enlace QR de la tarjeta. Créala con el shortcode [biodevas_panel_reservas].', 'convoca-members' ),
+				'shortcode' => '[convoca_panel_reservas]',
+				'fix'       => __( 'Esta página es necesaria para el enlace QR de la tarjeta. Créala con el shortcode [convoca_panel_reservas].', 'convoca-members' ),
 			),
 		);
 
@@ -943,8 +943,8 @@ class Admin_Settings {
 		}
 
 		// 3. Database
-		$db_version = get_option( 'bdv_members_db_version', '0' );
-		$is_db_ok   = version_compare( $db_version, BDV_MEMBERS_DB_VERSION, '>=' );
+		$db_version = get_option( 'conv_members_db_version', '0' );
+		$is_db_ok   = version_compare( $db_version, CONV_MEMBERS_DB_VERSION, '>=' );
 		$checks[]   = array(
 			'title'   => __( 'Base de Datos', 'convoca-members' ),
 			'status'  => $is_db_ok ? 'ok' : 'warning',

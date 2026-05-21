@@ -25,11 +25,11 @@ class Process_Member {
 	 */
 	public static function ensure_wp_user( int $member_id ): array {
 		$member = get_post( $member_id );
-		$email  = get_post_meta( $member_id, '_bdv_email', true );
+		$email  = get_post_meta( $member_id, '_conv_email', true );
 		$nombre = $member ? $member->post_title : 'Miembro';
 
 		// Check if WP user already exists via meta link.
-		$existing_user_id = (int) get_post_meta( $member_id, '_bdv_user_id', true );
+		$existing_user_id = (int) get_post_meta( $member_id, '_conv_user_id', true );
 		if ( $existing_user_id && get_userdata( $existing_user_id ) ) {
 			// User exists — generate new password and send.
 			$new_password = wp_generate_password( 12, false );
@@ -80,13 +80,13 @@ class Process_Member {
 		);
 
 		// Link WP user to member.
-		update_post_meta( $member_id, '_bdv_user_id', $user_id );
-		update_user_meta( $user_id, '_bdv_member_id', $member_id );
+		update_post_meta( $member_id, '_conv_user_id', $user_id );
+		update_user_meta( $user_id, '_conv_member_id', $member_id );
 
 		// Copy member data to user meta.
-		update_user_meta( $user_id, '_bdv_email', $email );
-		update_user_meta( $user_id, '_bdv_dni', get_post_meta( $member_id, '_bdv_dni', true ) );
-		update_user_meta( $user_id, '_bdv_telefono', get_post_meta( $member_id, '_bdv_telefono', true ) );
+		update_user_meta( $user_id, '_conv_email', $email );
+		update_user_meta( $user_id, '_conv_dni', get_post_meta( $member_id, '_conv_dni', true ) );
+		update_user_meta( $user_id, '_conv_telefono', get_post_meta( $member_id, '_conv_telefono', true ) );
 
 		Logger::info( "Usuario WP creado para miembro #{$member_id}: {$username}", 'Members', $member_id );
 
@@ -106,7 +106,7 @@ class Process_Member {
 	 * @param string $password  Plain-text password.
 	 */
 	public static function send_credentials_email( int $member_id, string $username, string $password ): void {
-		$email = get_post_meta( $member_id, '_bdv_email', true );
+		$email = get_post_meta( $member_id, '_conv_email', true );
 
 		if ( ! $email || ! is_email( $email ) ) {
 			Logger::warning( "No se pueden enviar credenciales: email inválido para miembro #{$member_id}", 'Members' );
@@ -124,7 +124,7 @@ class Process_Member {
 			)
 		);
 
-		update_post_meta( $member_id, '_bdv_credenciales_enviadas', current_time( 'mysql' ) );
+		update_post_meta( $member_id, '_conv_credenciales_enviadas', current_time( 'mysql' ) );
 		Logger::info( "Credenciales enviadas a {$email} para miembro #{$member_id}", 'Members', $member_id );
 	}
 
@@ -200,8 +200,8 @@ class Process_Member {
                  JOIN {$wpdb->posts} p ON p.ID = pm.post_id
                  WHERE p.post_type = 'miembro' 
                    AND p.post_status = 'publish'
-                   AND ((pm.meta_key = '_bdv_dni' AND pm.meta_value = %s)
-                        OR (pm.meta_key = '_bdv_email' AND pm.meta_value = %s))
+                   AND ((pm.meta_key = '_conv_dni' AND pm.meta_value = %s)
+                        OR (pm.meta_key = '_conv_email' AND pm.meta_value = %s))
                   FOR UPDATE",
 					$dni,
 					$email
@@ -229,7 +229,7 @@ class Process_Member {
 			}
 
 			// 8. Save Meta
-			$settings = get_option( 'bdv_members_settings', array() );
+			$settings = get_option( 'conv_members_settings', array() );
 
 			$meta = array(
 				'estado_miembro'    => $estado,
@@ -267,7 +267,7 @@ class Process_Member {
 			}
 
 			foreach ( $meta as $key => $value ) {
-				update_post_meta( $post_id, '_bdv_' . $key, $value );
+				update_post_meta( $post_id, '_conv_' . $key, $value );
 			}
 
 			// Log GDPR consent.
@@ -289,15 +289,15 @@ class Process_Member {
 		}
 
 		// 9. Notifications
-		\Convoca\Core\Utils::do_action( 'convoca_members_email_solicitud', 'biodevas_email_solicitud', $post_id );
-		\Convoca\Core\Utils::do_action( 'convoca_members_created', 'biodevas_miembro_creado', $post_id );
+		\Convoca\Core\Utils::do_action( 'convoca_members_email_solicitud', 'convoca_email_solicitud', $post_id );
+		\Convoca\Core\Utils::do_action( 'convoca_members_created', 'convoca_miembro_creado', $post_id );
 
 		// 10. Handle Gateway Redirection
 		$importe = (float) ( $plan_data['price'] ?? 0 );
-		if ( in_array( $forma_pago, array( 'tarjeta', 'bizum', 'transferencia' ), true ) && $importe > 0 && \Convoca\Core\Features::is_gateway_active() && function_exists( 'Convoca\Gateway\bdv_gateway_create_payment' ) ) {
+		if ( in_array( $forma_pago, array( 'tarjeta', 'bizum', 'transferencia' ), true ) && $importe > 0 && \Convoca\Core\Features::is_gateway_active() && function_exists( 'Convoca\Gateway\conv_gateway_create_payment' ) ) {
 			$amount_cents = (int) round( $importe * 100 );
 
-			$payment = \Convoca\Gateway\bdv_gateway_create_payment(
+			$payment = \Convoca\Gateway\conv_gateway_create_payment(
 				array(
 					'amount_cents' => $amount_cents,
 					'method'       => $forma_pago,
@@ -308,7 +308,7 @@ class Process_Member {
 			);
 
 			if ( ! is_wp_error( $payment ) ) {
-				update_post_meta( $post_id, '_bdv_pago_id', $payment['pago_id'] );
+				update_post_meta( $post_id, '_conv_pago_id', $payment['pago_id'] );
 				return array(
 					'id'       => $post_id,
 					'nombre'   => $nombre,
@@ -319,8 +319,8 @@ class Process_Member {
 				\Convoca\Core\Logger::error( 'Error al crear pago en pasarela: ' . $payment->get_error_message(), 'Members', $post_id );
 
 				// Flag for manual review since payment failed.
-				update_post_meta( $post_id, '_bdv_needs_manual_review', '1' );
-				update_post_meta( $post_id, '_bdv_review_note', 'Error pasarela: ' . $payment->get_error_message() );
+				update_post_meta( $post_id, '_conv_needs_manual_review', '1' );
+				update_post_meta( $post_id, '_conv_review_note', 'Error pasarela: ' . $payment->get_error_message() );
 
 				return array(
 					'id'            => $post_id,
@@ -375,7 +375,7 @@ class Process_Member {
 				// Minimum age validation (Task 45).
 				$today    = new \DateTime();
 				$age      = $today->diff( $dob )->y;
-				$settings = get_option( 'bdv_members_settings', array() );
+				$settings = get_option( 'conv_members_settings', array() );
 				$min_age  = (int) ( $settings['min_age'] ?? 0 );
 
 				if ( $age < $min_age ) {

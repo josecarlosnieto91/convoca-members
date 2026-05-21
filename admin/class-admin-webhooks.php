@@ -31,7 +31,7 @@ class Admin_Webhooks {
 			'bdv-members',
 			__( 'Webhooks', 'convoca-members' ),
 			'🔗 Webhooks',
-			'bdv_manage_webhooks',
+			'conv_manage_webhooks',
 			'bdv-webhooks',
 			array( $this, 'render_page' )
 		);
@@ -41,20 +41,20 @@ class Admin_Webhooks {
 	 * Handle form submissions and actions.
 	 */
 	public function handle_actions(): void {
-		if ( ! isset( $_POST['bdv_webhook_action'] ) && ! isset( $_GET['bdv_wh_action'] ) ) {
+		if ( ! isset( $_POST['conv_webhook_action'] ) && ! isset( $_GET['conv_wh_action'] ) ) {
 			return;
 		}
 
-		if ( ! current_user_can( 'bdv_manage_webhooks' ) ) {
+		if ( ! current_user_can( 'conv_manage_webhooks' ) ) {
 			return;
 		}
 
 		// Handle POST actions (create/update).
-		if ( isset( $_POST['bdv_webhook_action'] ) ) {
-			check_admin_referer( 'bdv_webhook_nonce' );
+		if ( isset( $_POST['conv_webhook_action'] ) ) {
+			check_admin_referer( 'conv_webhook_nonce' );
 
 			$post_data = wp_unslash( $_POST );
-			$action    = sanitize_text_field( $post_data['bdv_webhook_action'] );
+			$action    = sanitize_text_field( $post_data['conv_webhook_action'] );
 
 			if ( $action === 'create' ) {
 				$events = isset( $post_data['webhook_events'] ) ? array_map( 'sanitize_text_field', $post_data['webhook_events'] ) : array();
@@ -93,12 +93,12 @@ class Admin_Webhooks {
 		}
 
 		// Handle GET actions (delete, test, toggle).
-		if ( isset( $_GET['bdv_wh_action'] ) ) {
+		if ( isset( $_GET['conv_wh_action'] ) ) {
 			$get_data = wp_unslash( $_GET );
-			$action   = sanitize_text_field( $get_data['bdv_wh_action'] );
+			$action   = sanitize_text_field( $get_data['conv_wh_action'] );
 			$id       = sanitize_text_field( $get_data['webhook_id'] ?? '' );
 
-			check_admin_referer( 'bdv_wh_action_' . $id );
+			check_admin_referer( 'conv_wh_action_' . $id );
 
 			if ( $action === 'delete' ) {
 				Webhook_Manager::delete_webhook( $id );
@@ -187,7 +187,7 @@ class Admin_Webhooks {
 		echo '</div>';
 
 		if ( empty( $webhooks ) ) {
-			echo '<div class="biodevas-alert biodevas-alert--info" style="display:block;margin-bottom:20px;"><p>No hay webhooks configurados. Los webhooks permiten notificar a sistemas externos cuando ocurren eventos en Biodevas.</p></div>';
+			echo '<div class="convoca-alert convoca-alert--info" style="display:block;margin-bottom:20px;"><p>No hay webhooks configurados. Los webhooks permiten notificar a sistemas externos cuando ocurren eventos en Biodevas.</p></div>';
 			return;
 		}
 
@@ -222,8 +222,8 @@ class Admin_Webhooks {
 
 			// Test.
 			$test_url = wp_nonce_url(
-				admin_url( 'admin.php?page=bdv-webhooks&bdv_wh_action=test&webhook_id=' . $id ),
-				'bdv_wh_action_' . $id
+				admin_url( 'admin.php?page=bdv-webhooks&conv_wh_action=test&webhook_id=' . $id ),
+				'conv_wh_action_' . $id
 			);
 			echo '<a href="' . esc_url( $test_url ) . '" class="button button-small">🔔 Test</a> ';
 
@@ -232,15 +232,15 @@ class Admin_Webhooks {
 
 			// Toggle.
 			$toggle_url = wp_nonce_url(
-				admin_url( 'admin.php?page=bdv-webhooks&bdv_wh_action=toggle&webhook_id=' . $id ),
-				'bdv_wh_action_' . $id
+				admin_url( 'admin.php?page=bdv-webhooks&conv_wh_action=toggle&webhook_id=' . $id ),
+				'conv_wh_action_' . $id
 			);
 			echo '<a href="' . esc_url( $toggle_url ) . '" class="button button-small">' . ( $active ? '⏸ Pausar' : '▶ Activar' ) . '</a> ';
 
 			// Delete.
 			$delete_url = wp_nonce_url(
-				admin_url( 'admin.php?page=bdv-webhooks&bdv_wh_action=delete&webhook_id=' . $id ),
-				'bdv_wh_action_' . $id
+				admin_url( 'admin.php?page=bdv-webhooks&conv_wh_action=delete&webhook_id=' . $id ),
+				'conv_wh_action_' . $id
 			);
 			echo '<a href="' . esc_url( $delete_url ) . '" class="button button-small" onclick="return confirm(\'¿Eliminar este webhook?\')">🗑</a>';
 
@@ -270,8 +270,8 @@ class Admin_Webhooks {
 		echo '<a href="' . esc_url( admin_url( 'admin.php?page=bdv-webhooks' ) ) . '" class="button" style="margin-bottom:15px;">← Volver a la lista</a>';
 
 		echo '<form method="post" action="">';
-		wp_nonce_field( 'bdv_webhook_nonce' );
-		echo '<input type="hidden" name="bdv_webhook_action" value="' . esc_attr( $action ) . '">';
+		wp_nonce_field( 'conv_webhook_nonce' );
+		echo '<input type="hidden" name="conv_webhook_action" value="' . esc_attr( $action ) . '">';
 
 		if ( $is_edit ) {
 			echo '<input type="hidden" name="webhook_id" value="' . esc_attr( $edit_id ) . '">';
@@ -330,7 +330,7 @@ class Admin_Webhooks {
 	private function render_logs( string $webhook_id ): void {
 		$webhook = Webhook_Manager::get_webhook( $webhook_id );
 		if ( ! $webhook ) {
-			echo '<div class="biodevas-alert biodevas-alert--danger" style="display:block;margin-bottom:20px;"><p>Webhook no encontrado.</p></div>';
+			echo '<div class="convoca-alert convoca-alert--danger" style="display:block;margin-bottom:20px;"><p>Webhook no encontrado.</p></div>';
 			return;
 		}
 
@@ -338,15 +338,15 @@ class Admin_Webhooks {
 		echo '<a href="' . esc_url( admin_url( 'admin.php?page=bdv-webhooks' ) ) . '" class="button">← Volver</a> ';
 
 		$clear_url = wp_nonce_url(
-			admin_url( 'admin.php?page=bdv-webhooks&bdv_wh_action=clear_logs&webhook_id=' . $webhook_id ),
-			'bdv_wh_action_' . $webhook_id
+			admin_url( 'admin.php?page=bdv-webhooks&conv_wh_action=clear_logs&webhook_id=' . $webhook_id ),
+			'conv_wh_action_' . $webhook_id
 		);
 		echo '<a href="' . esc_url( $clear_url ) . '" class="button" onclick="return confirm(\'¿Limpiar todos los registros?\')">🗑 Limpiar logs</a>';
 
 		$logs = Webhook_Manager::get_delivery_logs( $webhook_id, 30 );
 
 		if ( empty( $logs ) ) {
-			echo '<div class="biodevas-alert biodevas-alert--info" style="display:block;margin-bottom:20px;margin-top:15px;"><p>No hay registros de entregas para este webhook.</p></div>';
+			echo '<div class="convoca-alert convoca-alert--info" style="display:block;margin-bottom:20px;margin-top:15px;"><p>No hay registros de entregas para este webhook.</p></div>';
 			return;
 		}
 

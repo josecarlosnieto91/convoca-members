@@ -22,7 +22,7 @@ class Email_Manager {
 
 
 	/** Option key for templates. */
-	private const OPTION = 'bdv_email_templates';
+	private const OPTION = 'conv_email_templates';
 
 	/** Available template slugs. */
 	public const TEMPLATES = array(
@@ -81,7 +81,7 @@ class Email_Manager {
 		// Legacy hooks removed. The do_action() call in Process_Member and.
 		// other dispatchers fires both old and new hooks via Utils::do_action().
 		// Keeping both add_action() and do_action() would trigger deprecation notices.
-		// Use the new hook names (biodevas_members_*) going forward.
+		// Use the new hook names (convoca_members_*) going forward.
 		add_action( 'convoca_email_objetivo_voluntariado', array( $this, 'send_objetivo_voluntariado' ) );
 
 		// Credentials hook (called by Process_Member::handle_approved).
@@ -114,7 +114,7 @@ class Email_Manager {
 					)
 					. '<p style="color:#dc2626;font-size:0.9rem;">⚠️ Por seguridad, cambia tu contraseña después del primer inicio de sesión.</p>'
 					. Email_Layout::button_html( '{login_url}', 'Acceder a Mi Área' )
-					. '<p>Si tienes cualquier problema, responde a este email o escribe a coordinacion@biodevas.org.</p>',
+					. '<p>Si tienes cualquier problema, responde a este email o escribe a coordinacion@getconvoca.app.</p>',
 			),
 			'solicitud_recibida'               => array(
 				'subject' => 'Hemos recibido tu solicitud — Biodevas',
@@ -160,7 +160,7 @@ class Email_Manager {
 						)
 					)
 					. '<p>Ya formas parte de la comunidad Biodevas. Puedes participar en todas nuestras actividades y proyectos.</p>'
-					. '<p>Si tienes cualquier duda, escríbenos a <a href="mailto:coordinacion@biodevas.org">coordinacion@biodevas.org</a>.</p>'
+					. '<p>Si tienes cualquier duda, escríbenos a <a href="mailto:coordinacion@getconvoca.app">coordinacion@getconvoca.app</a>.</p>'
 					. '<p>¡Nos vemos en el campo! 🌿</p>',
 			),
 			'recordatorio_pago'                => array(
@@ -390,7 +390,7 @@ class Email_Manager {
 			return;
 		}
 
-		$email = get_post_meta( $post_id, '_bdv_email', true ) ?: get_the_author_meta( 'user_email', get_post_field( 'post_author', $post_id ) );
+		$email = get_post_meta( $post_id, '_conv_email', true ) ?: get_the_author_meta( 'user_email', get_post_field( 'post_author', $post_id ) );
 		if ( empty( $email ) ) {
 			\Convoca\Core\Logger::warning( "Email vacío para miembro #{$post_id}, no se envía {$template_slug}.", 'Members/Emails' );
 			return;
@@ -401,7 +401,7 @@ class Email_Manager {
 		}
 
 		// Dedup: prevent sending the same email template to the same member within 5 minutes.
-		$dedup_key = '_bdv_last_email_sent_' . $template_slug;
+		$dedup_key = '_conv_last_email_sent_' . $template_slug;
 		$last_sent = (int) get_post_meta( $post_id, $dedup_key, true );
 		if ( $last_sent && ( time() - $last_sent ) < 300 ) {
 			\Convoca\Core\Logger::info( "Email $template_slug ya enviado recientemente a miembro #$post_id, omitiendo.", 'Members/Emails' );
@@ -417,7 +417,7 @@ class Email_Manager {
 		$headers = array( 'Content-Type: text/html; charset=UTF-8' );
 
 		// Get Sender Name from settings.
-		$settings     = get_option( 'bdv_members_settings', array() );
+		$settings     = get_option( 'conv_members_settings', array() );
 		$sender_name  = $settings['sender_name'] ?? get_bloginfo( 'name' );
 		$system_email = $settings['system_email'] ?? get_option( 'admin_email' );
 
@@ -445,8 +445,8 @@ class Email_Manager {
 		if ( $sent ) {
 			// Update tracking and Audit Log.
 			$now = current_time( 'mysql' );
-			update_post_meta( $post_id, '_bdv_ultimo_contacto_email', $now );
-			update_post_meta( $post_id, '_bdv_ultimo_contacto', $now );
+			update_post_meta( $post_id, '_conv_ultimo_contacto_email', $now );
+			update_post_meta( $post_id, '_conv_ultimo_contacto', $now );
 			update_post_meta( $post_id, $dedup_key, time() );
 
 			\Convoca\Core\Logger::info(
@@ -480,7 +480,7 @@ class Email_Manager {
 	 * Build variable replacements from post meta.
 	 */
 	private function build_variables( int $post_id ): array {
-		$meta = fn( string $key ) => get_post_meta( $post_id, '_bdv_' . $key, true );
+		$meta = fn( string $key ) => get_post_meta( $post_id, '_conv_' . $key, true );
 
 		$plan_key  = $meta( 'plan' ) ?: $meta( 'sub_plan' );
 		$plan_data = CPT_Miembro::get_plan( $plan_key );
@@ -525,11 +525,11 @@ class Email_Manager {
 				'fields'         => 'ids',
 				'meta_query'     => array(
 					array(
-						'key'   => '_bdv_miembro_id',
+						'key'   => ' _conv_miembro_id',
 						'value' => $post_id,
 					),
 					array(
-						'key'   => '_bdv_estado',
+						'key'   => '_conv_estado',
 						'value' => 'aprobada',
 					),
 				),
@@ -538,7 +538,7 @@ class Email_Manager {
 		if ( ! empty( $proyecto_ids ) ) {
 			$nombres_proyecto = array();
 			foreach ( $proyecto_ids as $pid ) {
-				$proy_id = get_post_meta( $pid, '_bdv_proyecto_id', true );
+				$proy_id = get_post_meta( $pid, '_conv_proyecto_id', true );
 				if ( $proy_id && ( $titulo = get_the_title( $proy_id ) ) ) {
 					$nombres_proyecto[ $proy_id ] = $titulo;
 				}

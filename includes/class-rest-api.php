@@ -321,28 +321,28 @@ class Rest_API {
 			return new \WP_REST_Response( array( 'error' => 'Miembro no encontrado.' ), 404 );
 		}
 
-		$access_code = get_post_meta( $member_id, '_bdv_access_code', true );
+		$access_code = get_post_meta( $member_id, '_conv_access_code', true );
 		$masked_code = ! empty( $access_code ) ? substr( $access_code, 0, 4 ) . '****' : '';
 
 		return new \WP_REST_Response(
 			array(
 				'id'     => $member_id,
 				'nombre' => $post->post_title,
-				'email'  => get_post_meta( $member_id, '_bdv_email', true ),
+				'email'  => get_post_meta( $member_id, '_conv_email', true ),
 				'codigo' => $masked_code,
-				'estado' => get_post_meta( $member_id, '_bdv_estado_miembro', true ),
-				'tipo'   => (array) get_post_meta( $member_id, '_bdv_modalidad', true ) ?: array( 'Socio/a' ),
+				'estado' => get_post_meta( $member_id, '_conv_estado_miembro', true ),
+				'tipo'   => (array) get_post_meta( $member_id, '_conv_modalidad', true ) ?: array( 'Socio/a' ),
 			)
 		);
 	}
 
 	/**
-	 * Get inscriptions from biodevas-enroll.
+	 * Get inscriptions from convoca-enroll.
 	 */
 	public function get_inscriptions( \WP_REST_Request $request ): \WP_REST_Response {
 		$member_id = Member_Auth::get_current_member_id();
-		$email     = get_post_meta( $member_id, '_bdv_email', true );
-		$dni       = get_post_meta( $member_id, '_bdv_dni', true );
+		$email     = get_post_meta( $member_id, '_conv_email', true );
+		$dni       = get_post_meta( $member_id, '_conv_dni', true );
 
 		// Query inscriptions by email or DNI.
 		$args = array(
@@ -399,7 +399,7 @@ class Rest_API {
 	}
 
 	/**
-	 * Get payments from biodevas-gateway.
+	 * Get payments from convoca-gateway.
 	 */
 	public function get_payments( \WP_REST_Request $request ): \WP_REST_Response {
 		$member_id = Member_Auth::get_current_member_id();
@@ -453,7 +453,7 @@ class Rest_API {
 			'posts_per_page' => -1,
 			'meta_query'     => array(
 				array(
-					'key'   => '_bdv_miembro_id',
+					'key'   => ' _conv_miembro_id',
 					'value' => $member_id,
 				),
 			),
@@ -467,11 +467,11 @@ class Rest_API {
 
 		if ( $query->have_posts() ) {
 			foreach ( $query->posts as $post ) {
-				$horas        = (float) get_post_meta( $post->ID, '_bdv_horas', true );
-				$estado       = get_post_meta( $post->ID, '_bdv_estado', true ) ?: 'pendiente';
-				$actividad_id = get_post_meta( $post->ID, '_bdv_actividad_id', true );
-				$proyecto_id  = get_post_meta( $post->ID, '_bdv_proyecto_id', true );
-				$tareas       = get_post_meta( $post->ID, '_bdv_tareas', true );
+				$horas        = (float) get_post_meta( $post->ID, '_conv_horas', true );
+				$estado       = get_post_meta( $post->ID, '_conv_estado', true ) ?: 'pendiente';
+				$actividad_id = get_post_meta( $post->ID, '_conv_actividad_id', true );
+				$proyecto_id  = get_post_meta( $post->ID, '_conv_proyecto_id', true );
+				$tareas       = get_post_meta( $post->ID, '_conv_tareas', true );
 
 				if ( $estado === 'aprobada' ) {
 					$total_horas += $horas;
@@ -479,7 +479,7 @@ class Rest_API {
 
 				$items[] = array(
 					'id'           => $post->ID,
-					'fecha'        => get_post_meta( $post->ID, '_bdv_fecha', true ) ?: get_the_date( 'd/m/Y', $post->ID ),
+					'fecha'        => get_post_meta( $post->ID, '_conv_fecha', true ) ?: get_the_date( 'd/m/Y', $post->ID ),
 					'descripcion'  => $post->post_content,
 					'horas'        => $horas,
 					'estado'       => $estado,
@@ -488,7 +488,7 @@ class Rest_API {
 					'proyecto'     => $proyecto_id ? get_the_title( $proyecto_id ) : '',
 					'proyecto_id'  => $proyecto_id,
 					'tareas'       => $tareas,
-					'nota_admin'   => get_post_meta( $post->ID, '_bdv_nota_admin', true ) ?: '',
+					'nota_admin'   => get_post_meta( $post->ID, '_conv_nota_admin', true ) ?: '',
 				);
 			}
 		}
@@ -529,7 +529,7 @@ class Rest_API {
 		}
 
 		// Notification to admin via action.
-		\Convoca\Core\Utils::do_action( 'convoca_members_hours_submitted', 'biodevas_hours_submitted', $post_id, $member_id );
+		\Convoca\Core\Utils::do_action( 'convoca_members_hours_submitted', 'convoca_hours_submitted', $post_id, $member_id );
 
 		return new \WP_REST_Response(
 			array(
@@ -543,7 +543,7 @@ class Rest_API {
 	 * Get active projects for dropdown.
 	 */
 	public function get_proyectos(): \WP_REST_Response {
-		if ( ! \Convoca\Core\Utils::check_rate_limit( 'bdv_get_proyectos', 30, 60 ) ) {
+		if ( ! \Convoca\Core\Utils::check_rate_limit( 'conv_get_proyectos', 30, 60 ) ) {
 			return new \WP_REST_Response( array( 'error' => __( 'Demasiadas peticiones.', 'convoca-members' ) ), 429 );
 		}
 
@@ -605,32 +605,32 @@ class Rest_API {
 				'meta_query'     => array(
 					'relation' => 'OR',
 					array(
-						'key'     => '_bdv_email',
+						'key'     => '_conv_email',
 						'value'   => $q,
 						'compare' => 'LIKE',
 					),
 					array(
-						'key'     => '_bdv_dni',
+						'key'     => '_conv_dni',
 						'value'   => $q,
 						'compare' => 'LIKE',
 					),
 					array(
-						'key'     => '_bdv_telefono',
+						'key'     => '_conv_telefono',
 						'value'   => $q,
 						'compare' => 'LIKE',
 					),
 					array(
-						'key'     => '_bdv_numero_socio',
+						'key'     => '_conv_numero_socio',
 						'value'   => $q,
 						'compare' => 'LIKE',
 					),
 					array(
-						'key'     => '_bdv_access_code',
+						'key'     => '_conv_access_code',
 						'value'   => $q,
 						'compare' => 'LIKE',
 					),
 					array(
-						'key'     => '_bdv_nombre',
+						'key'     => '_conv_nombre',
 						'value'   => $q,
 						'compare' => 'LIKE',
 					),
@@ -642,8 +642,8 @@ class Rest_API {
 					'type'   => 'member',
 					'id'     => $p->ID,
 					'title'  => $p->post_title,
-					'email'  => get_post_meta( $p->ID, '_bdv_email', true ),
-					'estado' => get_post_meta( $p->ID, '_bdv_estado_miembro', true ),
+					'email'  => get_post_meta( $p->ID, '_conv_email', true ),
+					'estado' => get_post_meta( $p->ID, '_conv_estado_miembro', true ),
 					'url'    => rest_url( 'convoca-members/v1/me' ),
 				);
 			}
@@ -717,7 +717,7 @@ class Rest_API {
 			$results[] = array(
 				'id'    => $p->ID,
 				'title' => $p->post_title,
-				'email' => get_post_meta( $p->ID, '_bdv_email', true ),
+				'email' => get_post_meta( $p->ID, '_conv_email', true ),
 			);
 		}
 		return new \WP_REST_Response( $results, 200 );
@@ -755,7 +755,7 @@ class Rest_API {
 			);
 		}
 
-		$cert_id = get_post_meta( $member_id, '_bdv_certificado_id', true );
+		$cert_id = get_post_meta( $member_id, '_conv_certificado_id', true );
 
 		return new \WP_REST_Response(
 			array(
@@ -793,7 +793,7 @@ class Rest_API {
 		Estados::change( $member_id, 'baja_solicitada', 'Solicitud de baja desde el panel de socio.' );
 
 		// Action for Email Manager to hook into.
-		\Convoca\Core\Utils::do_action( 'convoca_members_unsubscribe_request', 'biodevas_member_unsubscribe_request', $member_id );
+		\Convoca\Core\Utils::do_action( 'convoca_members_unsubscribe_request', 'convoca_member_unsubscribe_request', $member_id );
 
 		return new \WP_REST_Response( array( 'success' => true ) );
 	}
@@ -816,7 +816,7 @@ class Rest_API {
 
 		$notifications = \Convoca\Core\Notifications::get_member( $member_id, $limit );
 		$unread_count  = \Convoca\Core\Notifications::count_member_unread( $member_id );
-		$all           = get_post_meta( $member_id, '_bdv_notifications', true ) ?: array();
+		$all           = get_post_meta( $member_id, '_conv_notifications', true ) ?: array();
 
 		return new \WP_REST_Response(
 			array(
@@ -865,11 +865,11 @@ class Rest_API {
 		$id   = (int) $request['id'];
 		$post = get_post( $id );
 
-		if ( ! $post || $post->post_type !== 'bdv_documento' ) {
+		if ( ! $post || $post->post_type !== 'conv_documento' ) {
 			wp_die( 'Documento no encontrado.', 'Error', array( 'response' => 404 ) );
 		}
 
-		$user_id         = (int) get_post_meta( $id, '_bdv_usuario_id', true );
+		$user_id         = (int) get_post_meta( $id, '_conv_usuario_id', true );
 		$current_user_id = get_current_user_id();
 
 		// Security check: Admin OR Owner.
@@ -877,7 +877,7 @@ class Rest_API {
 			wp_die( 'No tienes permiso para ver este documento.', 'Acceso Denegado', array( 'response' => 403 ) );
 		}
 
-		$filepath = get_post_meta( $id, '_bdv_documento_path', true );
+		$filepath = get_post_meta( $id, '_conv_documento_path', true );
 
 		if ( ! $filepath || ! file_exists( $filepath ) ) {
 			wp_die( 'El archivo físico no existe en el servidor.', 'Error', array( 'response' => 404 ) );
@@ -885,7 +885,7 @@ class Rest_API {
 
 		// Path traversal protection: ensure file is within the safe documents directory.
 		$real_path = realpath( $filepath );
-		$safe_base = realpath( wp_upload_dir()['basedir'] . '/biodevas-documentos' );
+		$safe_base = realpath( wp_upload_dir()['basedir'] . '/convoca-documentos' );
 		if ( $real_path === false || $safe_base === false || ! str_starts_with( $real_path, $safe_base ) ) {
 			\Convoca\Core\Logger::warning( "Intento de path traversal detectado: $filepath", 'Members/Security' );
 			wp_die( 'Archivo no válido.', 'Acceso Denegado', array( 'response' => 403 ) );

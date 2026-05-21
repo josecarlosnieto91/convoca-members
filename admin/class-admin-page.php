@@ -20,9 +20,9 @@ class Admin_Page {
 		add_action( 'wp_dashboard_setup', array( $this, 'dashboard_widget' ) );
 
 		// Quick state-change AJAX.
-		add_action( 'wp_ajax_bdv_change_state', array( $this, 'ajax_change_state' ) );
-		add_action( 'wp_ajax_bdv_log_whatsapp', array( $this, 'ajax_log_whatsapp' ) );
-		add_action( 'admin_post_bdv_export_members_pdf', array( $this, 'handle_export_members_pdf' ) );
+		add_action( 'wp_ajax_conv_change_state', array( $this, 'ajax_change_state' ) );
+		add_action( 'wp_ajax_conv_log_whatsapp', array( $this, 'ajax_log_whatsapp' ) );
+		add_action( 'admin_post_conv_export_members_pdf', array( $this, 'handle_export_members_pdf' ) );
 	}
 
 	/* ── Menu ──────────────────────────────────── */
@@ -100,7 +100,7 @@ class Admin_Page {
 			'bdv-members-status',
 			function () {
 				if ( ! class_exists( '\\Convoca\\Members\\Admin_Status' ) ) {
-					require_once BDV_MEMBERS_DIR . 'includes/class-admin-status.php';
+					require_once CONV_MEMBERS_DIR . 'includes/class-admin-status.php';
 				}
 				\Convoca\Members\Admin_Status::render_page();
 			}
@@ -115,15 +115,15 @@ class Admin_Page {
 		}
 		wp_enqueue_style(
 			'bdv-members-admin',
-			BDV_MEMBERS_URL . 'assets/css/biodevas-members-admin.css',
+			CONV_MEMBERS_URL . 'assets/css/convoca-members-admin.css',
 			array(),
-			BDV_MEMBERS_VERSION
+			CONV_MEMBERS_VERSION
 		);
 		wp_enqueue_script(
 			'bdv-members-admin',
-			BDV_MEMBERS_URL . 'assets/js/biodevas-members-admin.js',
-			array( 'biodevas-common-admin-js' ),
-			BDV_MEMBERS_VERSION,
+			CONV_MEMBERS_URL . 'assets/js/convoca-members-admin.js',
+			array( 'convoca-common-admin-js' ),
+			CONV_MEMBERS_VERSION,
 			true
 		);
 		wp_localize_script(
@@ -131,12 +131,12 @@ class Admin_Page {
 			'bdvAdmin',
 			array(
 				'ajaxUrl'        => admin_url( 'admin-ajax.php' ),
-				'nonce'          => wp_create_nonce( 'bdv_admin_nonce' ),
-				'csvNonce'       => wp_create_nonce( 'bdv_export_csv' ),
+				'nonce'          => wp_create_nonce( 'conv_admin_nonce' ),
+				'csvNonce'       => wp_create_nonce( 'conv_export_csv' ),
 				'allColumns'     => CSV_Exporter::get_available_columns(),
 				'defaultColumns' => CSV_Exporter::get_default_columns(),
 				'userColumns'    => CSV_Exporter::get_user_columns(),
-				'columnsUrl'     => admin_url( 'admin-ajax.php?action=bdv_export_csv&nonce=' . wp_create_nonce( 'bdv_export_csv' ) ),
+				'columnsUrl'     => admin_url( 'admin-ajax.php?action=conv_export_csv&nonce=' . wp_create_nonce( 'conv_export_csv' ) ),
 			)
 		);
 	}
@@ -179,7 +179,7 @@ class Admin_Page {
 			<!-- Filters -->
 			<form method="get">
 				<input type="hidden" name="page" value="bdv-members">
-				<?php wp_nonce_field( 'bulk-members', '_bdv_nonce', true, false ); ?>
+				<?php wp_nonce_field( 'bulk-members', '_conv_nonce', true, false ); ?>
 				<?php $list->search_box( __( 'Buscar', 'convoca-members' ), 'bdv-search' ); ?>
 				<?php $list->display(); ?>
 			</form>
@@ -187,11 +187,11 @@ class Admin_Page {
 			<!-- CSV / PDF export -->
 			<p style="margin-top:1rem">
 				<button type="button" id="bdv-csv-export-btn"
-					class="biodevas-btn biodevas-btn-outline">📥
+					class="convoca-btn convoca-btn-outline">📥
 					<?php esc_html_e( 'Exportar CSV', 'convoca-members' ); ?>
 				</button>
-				<a href="<?php echo esc_url( wp_nonce_url( admin_url( 'admin-post.php?action=bdv_export_members_pdf' ), 'bdv_export_members_pdf' ) ); ?>"
-					class="biodevas-btn biodevas-btn-outline" style="margin-left:5px;">📄
+				<a href="<?php echo esc_url( wp_nonce_url( admin_url( 'admin-post.php?action=conv_export_members_pdf' ), 'conv_export_members_pdf' ) ); ?>"
+					class="convoca-btn convoca-btn-outline" style="margin-left:5px;">📄
 					<?php esc_html_e( 'Exportar PDF', 'convoca-members' ); ?>
 				</a>
 			</p>
@@ -212,7 +212,7 @@ class Admin_Page {
 				$wpdb->prepare(
 					"SELECT COUNT(*) FROM {$wpdb->postmeta} pm
 				 JOIN {$wpdb->posts} p ON p.ID = pm.post_id
-				 WHERE pm.meta_key = '_bdv_estado_miembro' AND pm.meta_value = %s
+				 WHERE pm.meta_key = '_conv_estado_miembro' AND pm.meta_value = %s
 				   AND p.post_type = 'miembro' AND p.post_status = 'publish'",
 					$state
 				)
@@ -245,7 +245,7 @@ class Admin_Page {
 			return;
 		}
 
-		$meta         = fn( string $key ) => get_post_meta( $post_id, '_bdv_' . $key, true );
+		$meta         = fn( string $key ) => get_post_meta( $post_id, '_conv_' . $key, true );
 		$estado       = $meta( 'estado_miembro' ) ?: 'pendiente_documentacion';
 		$history      = Estados::get_history( $post_id );
 		$terms        = wp_get_object_terms( $post_id, 'tipo_miembro', array( 'fields' => 'names' ) );
@@ -258,10 +258,10 @@ class Admin_Page {
 				<?php echo esc_html( $post->post_title ); ?>
 				<?php echo Estados::badge_html( $estado ); ?>
 				&nbsp;
-				<a href="<?php echo esc_url( wp_nonce_url( admin_url( 'admin-post.php?action=bdv_pdf_card&member_id=' . $post_id ), 'bdv_pdf_card_' . $post_id ) ); ?>" 
-					class="biodevas-btn biodevas-btn-outline" target="_blank">🪪 <?php esc_html_e( 'Ver Tarjeta', 'convoca-members' ); ?></a>
+				<a href="<?php echo esc_url( wp_nonce_url( admin_url( 'admin-post.php?action=conv_pdf_card&member_id=' . $post_id ), 'conv_pdf_card_' . $post_id ) ); ?>" 
+					class="convoca-btn convoca-btn-outline" target="_blank">🪪 <?php esc_html_e( 'Ver Tarjeta', 'convoca-members' ); ?></a>
 				<a href="<?php echo esc_url( admin_url( 'admin.php?page=' . Admin_Member_Editor::SLUG . '&id=' . $post_id ) ); ?>" 
-					class="biodevas-btn biodevas-btn-primary"><?php esc_html_e( '✏️ Editar', 'convoca-members' ); ?></a>
+					class="convoca-btn convoca-btn-primary"><?php esc_html_e( '✏️ Editar', 'convoca-members' ); ?></a>
 			</h1>
 			<hr class="wp-header-end">
 
@@ -401,7 +401,7 @@ class Admin_Page {
 				<h3><?php esc_html_e( 'Registros de actividad', 'convoca-members' ); ?></h3>
 				<?php
 				global $wpdb;
-				$table_logs = $wpdb->prefix . 'biodevas_logs';
+				$table_logs = $wpdb->prefix . 'convoca_logs';
 				$logs       = $wpdb->get_results(
 					$wpdb->prepare(
 						"SELECT * FROM $table_logs WHERE object_id = %d ORDER BY created_at DESC LIMIT 20",
@@ -462,7 +462,7 @@ class Admin_Page {
 
 	public function dashboard_widget(): void {
 		wp_add_dashboard_widget(
-			'bdv_members_widget',
+			'conv_members_widget',
 			__( '🍁 Miembros Biodevas', 'convoca-members' ),
 			function () {
 				global $wpdb;
@@ -471,7 +471,7 @@ class Admin_Page {
 				);
 				$activos = (int) $wpdb->get_var(
 					"SELECT COUNT(*) FROM {$wpdb->postmeta} pm JOIN {$wpdb->posts} p ON p.ID = pm.post_id
-					 WHERE pm.meta_key = '_bdv_estado_miembro' AND pm.meta_value = 'activo'
+					 WHERE pm.meta_key = '_conv_estado_miembro' AND pm.meta_value = 'activo'
 					   AND p.post_type = 'miembro' AND p.post_status = 'publish'"
 				);
 				echo '<p>' . sprintf(
@@ -487,7 +487,7 @@ class Admin_Page {
 	/* ── AJAX: Quick state change ──────────────── */
 
 	public function ajax_change_state(): void {
-		check_ajax_referer( 'bdv_admin_nonce', 'nonce' );
+		check_ajax_referer( 'conv_admin_nonce', 'nonce' );
 
 		if ( ! current_user_can( 'gestionar_miembros' ) ) {
 			wp_send_json_error( __( 'Sin permisos.', 'convoca-members' ) );
@@ -514,15 +514,15 @@ class Admin_Page {
 
 
 	public function ajax_log_whatsapp(): void {
-		check_ajax_referer( 'bdv_admin_nonce', 'nonce' );
+		check_ajax_referer( 'conv_admin_nonce', 'nonce' );
 		$post_id = (int) ( wp_unslash( $_POST['post_id'] ) ?? 0 );
 		if ( ! $post_id || ! current_user_can( 'edit_post', $post_id ) ) {
 			wp_die( __( 'No tienes permisos.', 'convoca-members' ) );
 		}
 
 		$now = current_time( 'mysql' );
-		update_post_meta( $post_id, '_bdv_ultimo_contacto_whatsapp', $now );
-		update_post_meta( $post_id, '_bdv_ultimo_contacto', $now );
+		update_post_meta( $post_id, '_conv_ultimo_contacto_whatsapp', $now );
+		update_post_meta( $post_id, '_conv_ultimo_contacto', $now );
 
 		\Convoca\Core\Logger::info(
 			__( 'Se ha iniciado contacto por WhatsApp desde el panel de administración.', 'convoca-members' ),
@@ -573,7 +573,7 @@ class Admin_Page {
 	}
 
 	public function handle_export_members_pdf(): void {
-		if ( ! wp_verify_nonce( $_GET['_wpnonce'] ?? '', 'bdv_export_members_pdf' ) ) {
+		if ( ! wp_verify_nonce( $_GET['_wpnonce'] ?? '', 'conv_export_members_pdf' ) ) {
 			wp_die( __( 'Nonce inválido.', 'convoca-members' ) );
 		}
 		if ( ! current_user_can( 'gestionar_miembros' ) ) {
@@ -595,14 +595,14 @@ class Admin_Page {
 		foreach ( $query->posts as $post ) {
 			$rows[] = array(
 				$post->post_title,
-				get_post_meta( $post->ID, '_bdv_email', true ),
-				get_post_meta( $post->ID, '_bdv_dni', true ),
-				get_post_meta( $post->ID, '_bdv_plan', true ),
-				get_post_meta( $post->ID, '_bdv_estado_miembro', true ) ?: '—',
-				get_post_meta( $post->ID, '_bdv_telefono', true ),
+				get_post_meta( $post->ID, '_conv_email', true ),
+				get_post_meta( $post->ID, '_conv_dni', true ),
+				get_post_meta( $post->ID, '_conv_plan', true ),
+				get_post_meta( $post->ID, '_conv_estado_miembro', true ) ?: '—',
+				get_post_meta( $post->ID, '_conv_telefono', true ),
 			);
 		}
 
-		\biodevas_export_pdf( __( 'Listado de Miembros', 'convoca-members' ), $headers, $rows, 'socios-biodevas' );
+		\convoca_export_pdf( __( 'Listado de Miembros', 'convoca-members' ), $headers, $rows, 'socios-convoca' );
 	}
 }

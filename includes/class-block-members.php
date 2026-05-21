@@ -21,17 +21,17 @@ class Block_Members {
 
 	public function register_assets(): void {
 		wp_register_style(
-			'biodevas-mi-area',
-			BDV_MEMBERS_URL . 'public/assets/mi-area.css',
+			'convoca-mi-area',
+			CONV_MEMBERS_URL . 'public/assets/mi-area.css',
 			array(),
-			BDV_MEMBERS_VERSION
+			CONV_MEMBERS_VERSION
 		);
 
 		wp_register_script(
 			'bdv-blocks-editor',
-			BDV_MEMBERS_URL . 'assets/js/blocks-editor.js',
+			CONV_MEMBERS_URL . 'assets/js/blocks-editor.js',
 			array( 'wp-blocks', 'wp-element', 'wp-server-side-render' ),
-			BDV_MEMBERS_VERSION,
+			CONV_MEMBERS_VERSION,
 			true
 		);
 	}
@@ -39,7 +39,7 @@ class Block_Members {
 	public function register_blocks(): void {
 		// 1. Formulario de Alta
 		register_block_type(
-			'biodevas-members/formulario-alta',
+			'convoca-members/formulario-alta',
 			array(
 				'apiVersion'      => 3,
 				'title'           => __( 'Formulario de Alta', 'convoca-members' ),
@@ -49,13 +49,13 @@ class Block_Members {
 				'keywords'        => array( 'alta', 'socio', 'registro', 'convoca-core' ),
 				'render_callback' => array( $this, 'render_alta' ),
 				'editor_script'   => 'bdv-blocks-editor',
-				'style'           => 'biodevas-mi-area', // Reusing the style handle from Mi_Area if registered.
+				'style'           => 'convoca-mi-area', // Reusing the style handle from Mi_Area if registered.
 			)
 		);
 
 		// 2. Área de Socios
 		register_block_type(
-			'biodevas-members/mi-area',
+			'convoca-members/mi-area',
 			array(
 				'apiVersion'      => 3,
 				'title'           => __( 'Área de Socios', 'convoca-members' ),
@@ -65,14 +65,14 @@ class Block_Members {
 				'keywords'        => array( 'socios', 'panel', 'área privada' ),
 				'render_callback' => array( $this, 'render_mi_area' ),
 				'editor_script'   => 'bdv-blocks-editor',
-				'style'           => 'biodevas-mi-area',
-				'editor_style'    => 'biodevas-mi-area',
+				'style'           => 'convoca-mi-area',
+				'editor_style'    => 'convoca-mi-area',
 			)
 		);
 
 		// 3. Formulario de Voluntariado
 		register_block_type(
-			'biodevas-members/formulario-voluntariado',
+			'convoca-members/formulario-voluntariado',
 			array(
 				'apiVersion'      => 3,
 				'title'           => __( 'Formulario de Voluntariado', 'convoca-members' ),
@@ -82,13 +82,13 @@ class Block_Members {
 				'keywords'        => array( 'voluntariado', 'registro', 'voluntario' ),
 				'render_callback' => array( $this, 'render_voluntariado' ),
 				'editor_script'   => 'bdv-blocks-editor',
-				'style'           => 'biodevas-mi-area',
+				'style'           => 'convoca-mi-area',
 			)
 		);
 
 		// 4. Verificar Certificado
 		register_block_type(
-			'biodevas-members/verificar-certificado',
+			'convoca-members/verificar-certificado',
 			array(
 				'apiVersion'      => 3,
 				'title'           => __( 'Verificar Certificado', 'convoca-members' ),
@@ -98,7 +98,7 @@ class Block_Members {
 				'keywords'        => array( 'certificado', 'verificar', 'voluntariado' ),
 				'render_callback' => array( $this, 'render_verificar_certificado' ),
 				'editor_script'   => 'bdv-blocks-editor',
-				'style'           => 'biodevas-mi-area',
+				'style'           => 'convoca-mi-area',
 			)
 		);
 	}

@@ -142,7 +142,7 @@ class Voluntariado_Gamification {
 
 	const DEFAULT_TRACK = 'busgosu';
 
-	const OPTION_KEY = 'bdv_gamification_tracks';
+	const OPTION_KEY = 'conv_gamification_tracks';
 
 	/**
 	 * Initialize hooks.
@@ -154,15 +154,15 @@ class Voluntariado_Gamification {
 	/**
 	 * Get the track key for a given member.
 	 *
-	 * Examines _bdv_sub_plan then _bdv_plan and extracts the
+	 * Examines _conv_sub_plan then _conv_plan and extracts the
 	 * track name from the suffix (e.g. fam-busgosu → busgosu).
 	 *
 	 * @param  int $member_id Post ID of the member.
 	 * @return string Track key (busgosu, lugg, deva, or DEFAULT_TRACK).
 	 */
 	public static function get_track_for_member( int $member_id ): string {
-		$sub_plan = get_post_meta( $member_id, '_bdv_sub_plan', true );
-		$plan     = get_post_meta( $member_id, '_bdv_plan', true );
+		$sub_plan = get_post_meta( $member_id, '_conv_sub_plan', true );
+		$plan     = get_post_meta( $member_id, '_conv_plan', true );
 		$key      = $sub_plan ?: $plan;
 
 		if ( ! $key ) {

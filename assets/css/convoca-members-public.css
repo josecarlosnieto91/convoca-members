@@ -205,7 +205,7 @@
     accent-color: var(--wp--preset--color--naranja, #ff8700);
 }
 
-/* Common utility classes and grid systems removed in favor of biodevas-common.css */
+/* Common utility classes and grid systems removed in favor of convoca-common.css */
 
 /* ── Summary Table ────────────────────────────── */
 .bdv-summary-table {
@@ -332,7 +332,7 @@
     accent-color: var(--wp--preset--color--naranja, #ff8700);
 }
 
-/* Success screen and buttons managed by biodevas-common.css */
+/* Success screen and buttons managed by convoca-common.css */
 
 /* ── Print ────────────────────────────────────── */
 @media print {

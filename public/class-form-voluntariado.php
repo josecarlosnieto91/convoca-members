@@ -1,6 +1,6 @@
 <?php
 /**
- * Volunteer registration form (shortcode [biodevas_voluntariado]).
+ * Volunteer registration form (shortcode [convoca_voluntariado]).
  *
  * @package Convoca\Members
  */
@@ -32,31 +32,31 @@ class Form_Voluntariado {
 
 	public function __construct() {
 		add_shortcode( 'convoca_voluntariado', array( $this, 'render' ) );
-		add_action( 'wp_ajax_bdv_voluntariado_submit', array( $this, 'handle_submit' ) );
-		add_action( 'wp_ajax_nopriv_bdv_voluntariado_submit', array( $this, 'handle_submit' ) );
+		add_action( 'wp_ajax_conv_voluntariado_submit', array( $this, 'handle_submit' ) );
+		add_action( 'wp_ajax_nopriv_conv_voluntariado_submit', array( $this, 'handle_submit' ) );
 	}
 
 	public function render(): string {
 		wp_enqueue_style(
 			'bdv-members-public',
-			BDV_MEMBERS_URL . 'assets/css/biodevas-members-public.css',
+			CONV_MEMBERS_URL . 'assets/css/convoca-members-public.css',
 			array(),
-			BDV_MEMBERS_VERSION
+			CONV_MEMBERS_VERSION
 		);
 		wp_enqueue_script(
 			'bdv-members-public',
-			BDV_MEMBERS_URL . 'assets/js/biodevas-members-public.js',
+			CONV_MEMBERS_URL . 'assets/js/convoca-members-public.js',
 			array( 'convoca-common-js' ),
-			BDV_MEMBERS_VERSION,
+			CONV_MEMBERS_VERSION,
 			true
 		);
 		$config = array(
 			'ajaxUrl'  => admin_url( 'admin-ajax.php' ),
-			'volNonce' => wp_create_nonce( 'bdv_voluntariado_nonce' ),
+			'volNonce' => wp_create_nonce( 'conv_voluntariado_nonce' ),
 		);
 
 		ob_start();
-		include BDV_MEMBERS_DIR . 'templates/form-voluntariado.php';
+		include CONV_MEMBERS_DIR . 'templates/form-voluntariado.php';
 		$html = ob_get_clean();
 
 		// Inject data-config into the wrapper.
@@ -70,10 +70,10 @@ class Form_Voluntariado {
 	}
 
 	public function handle_submit(): void {
-		check_ajax_referer( 'bdv_voluntariado_nonce', 'nonce' );
+		check_ajax_referer( 'conv_voluntariado_nonce', 'nonce' );
 
 		// Rate limit: max 3 volunteer registrations per hour per IP.
-		if ( ! \Convoca\Core\Utils::check_rate_limit( 'bdv_voluntariado_submit', 3, 3600 ) ) {
+		if ( ! \Convoca\Core\Utils::check_rate_limit( 'conv_voluntariado_submit', 3, 3600 ) ) {
 			wp_send_json_error( array( 'errors' => array( 'Demasiados intentos. Inténtalo de nuevo en una hora.' ) ), 429 );
 		}
 
@@ -161,7 +161,7 @@ class Form_Voluntariado {
 		}
 
 		// Dynamic fields validation.
-		$dynamic_fields = get_option( 'bdv_volunteer_fields', array() );
+		$dynamic_fields = get_option( 'conv_volunteer_fields', array() );
 		$dynamic_data   = array();
 		foreach ( $dynamic_fields as $field ) {
 			$name = 'dyn_' . $field['name'];
@@ -235,21 +235,21 @@ class Form_Voluntariado {
 				'forma_pago'        => 'voluntariado',
 				'plan'              => 'voluntariado',
 				'access_code'       => \Convoca\Core\Utils::generate_access_code(),
-				'rgpd_version'      => ( get_option( 'bdv_members_settings', array() )['rgpd_version'] ?? '1.0' ),
+				'rgpd_version'      => ( get_option( 'conv_members_settings', array() )['rgpd_version'] ?? '1.0' ),
 				'rgpd_timestamp'    => current_time( 'mysql' ),
 				'comunicaciones_ok' => $comunicaciones ? '1' : '0',
 			);
 
 			foreach ( $member_meta as $key => $value ) {
-				update_post_meta( $member_post_id, '_bdv_' . $key, $value );
+				update_post_meta( $member_post_id, '_conv_' . $key, $value );
 			}
 
 			// Vincular WP user con el miembro.
-			update_post_meta( $member_post_id, '_bdv_user_id', $user_id );
-			update_user_meta( $user_id, '_bdv_member_id', $member_post_id );
+			update_post_meta( $member_post_id, '_conv_user_id', $user_id );
+			update_user_meta( $user_id, '_conv_member_id', $member_post_id );
 		}
 
-		$settings = get_option( 'bdv_members_settings', array() );
+		$settings = get_option( 'conv_members_settings', array() );
 
 		$meta_map = array(
 			'_cst_aprobado'                => 0, // Pending approval.
@@ -290,7 +290,7 @@ class Form_Voluntariado {
 			"Se ha recibido una nueva solicitud de voluntariado de {$nombre} ({$email}).\nRevisa la pantalla de 'Gestionar Voluntarios' para aprobarla."
 		);
 
-		do_action( 'bdv_voluntario_pendiente', $user_id );
+		do_action( 'conv_voluntario_pendiente', $user_id );
 
 		wp_send_json_success(
 			array(

@@ -5,7 +5,7 @@
  * Handles database structure upgrades for the members plugin.
  *
  * To add a new upgrade:
- * 1. Increment BDV_MEMBERS_DB_VERSION in biodevas-members.php
+ * 1. Increment CONV_MEMBERS_DB_VERSION in convoca-members.php
  * 2. Add a callback: '1.0.1' => [$this, 'upgrade_to_1_0_1']
  * 3. Implement the private method with idempotent logic.
  *
@@ -27,15 +27,15 @@ class Members_Upgrade_Manager extends Upgrade_Manager {
 	}
 
 	protected function get_db_version(): string {
-		return defined( 'BDV_MEMBERS_DB_VERSION' ) ? BDV_MEMBERS_DB_VERSION : '0.0.0';
+		return defined( 'CONV_MEMBERS_DB_VERSION' ) ? CONV_MEMBERS_DB_VERSION : '0.0.0';
 	}
 
 	protected function get_option_name(): string {
-		return 'bdv_members_db_version';
+		return 'conv_members_db_version';
 	}
 
 	protected function get_transient_prefix(): string {
-		return 'bdv_members';
+		return 'conv_members';
 	}
 
 	protected function get_upgrade_callbacks(): array {
@@ -50,7 +50,7 @@ class Members_Upgrade_Manager extends Upgrade_Manager {
 	 */
 	protected function upgrade_to_1_0_3(): bool {
 		global $wpdb;
-		$table           = $wpdb->prefix . 'bdv_member_sequence';
+		$table           = $wpdb->prefix . 'conv_member_sequence';
 		$charset_collate = $wpdb->get_charset_collate();
 
 		// Table is now created in the common Installer, but ensure it exists.
@@ -66,7 +66,7 @@ class Members_Upgrade_Manager extends Upgrade_Manager {
 		// Idempotent: only initialize if empty.
 		$current_max_seq = (int) $wpdb->get_var( "SELECT MAX(id) FROM $table" );
 		if ( $current_max_seq === 0 ) {
-			$last_number = (int) get_option( 'bdv_last_member_number', 0 );
+			$last_number = (int) get_option( 'conv_last_member_number', 0 );
 
 			if ( $last_number > 0 ) {
 				// Initialize the AUTO_INCREMENT to the last known number.
@@ -77,7 +77,7 @@ class Members_Upgrade_Manager extends Upgrade_Manager {
 					"
                     SELECT MAX(CAST(meta_value AS UNSIGNED)) 
                     FROM {$wpdb->postmeta} 
-                    WHERE meta_key = '_bdv_numero_socio'
+                    WHERE meta_key = '_conv_numero_socio'
                 "
 				);
 				if ( $max_postmeta > 0 ) {
@@ -90,13 +90,13 @@ class Members_Upgrade_Manager extends Upgrade_Manager {
 	}
 
 	/**
-	 * Normalize _bdv_fecha_renovacion to Y-m-d.
+	 * Normalize _conv_fecha_renovacion to Y-m-d.
 	 * Prevents issues with time components in cron queries.
 	 */
 	protected function upgrade_to_1_0_2(): bool {
 		global $wpdb;
 
-		$metas = $wpdb->get_results( "SELECT post_id, meta_value FROM {$wpdb->postmeta} WHERE meta_key = '_bdv_fecha_renovacion'" );
+		$metas = $wpdb->get_results( "SELECT post_id, meta_value FROM {$wpdb->postmeta} WHERE meta_key = '_conv_fecha_renovacion'" );
 
 		if ( empty( $metas ) ) {
 			return true;
@@ -119,7 +119,7 @@ class Members_Upgrade_Manager extends Upgrade_Manager {
 
 			$normalized = wp_date( 'Y-m-d', $timestamp );
 			if ( $normalized !== $current ) {
-				update_post_meta( $meta->post_id, '_bdv_fecha_renovacion', $normalized );
+				update_post_meta( $meta->post_id, '_conv_fecha_renovacion', $normalized );
 			}
 		}
 

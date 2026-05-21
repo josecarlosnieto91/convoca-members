@@ -1,17 +1,17 @@
 /**
  * Biodevas Members — Public JS v2
  * Multi-step navigation, plan logic, advantages, file upload toggle,
- * minor notice, AJAX submission. Uses biodevas-common.js APIs.
+ * minor notice, AJAX submission. Uses convoca-common.js APIs.
  */
 (function (bdv) {
   'use strict';
 
   /* ══ ALTA DE SOCIOS — Multi-step form ══ */
-  bdv.observeDynamicForms('#biodevas-form-alta', function(form) {
+  bdv.observeDynamicForms('#convoca-form-alta', function(form) {
     if (form.id !== 'bdv-alta-form') return;
       
     // Load config from data attribute or fallback to global
-    const wrapper = form.closest('#biodevas-form-alta');
+    const wrapper = form.closest('#convoca-form-alta');
     const inlineConfig = wrapper && wrapper.dataset.config ? JSON.parse(wrapper.dataset.config) : null;
     const config = inlineConfig || window.bdvMembers || {};
 
@@ -36,7 +36,7 @@
       plansData[k] = { ...DEFAULT_PLANS[k], ...inputData[k] };
     }
 
-    const altaWrap = bdv.$('#biodevas-form-alta');
+    const altaWrap = bdv.$('#convoca-form-alta');
     const steps = bdv.$$('.bdv-form-step', altaWrap);
     const dots = bdv.$$('.bdv-step-dot', altaWrap);
     const alert = bdv.$('#bdv-alert');
@@ -96,11 +96,11 @@
     const criticalSelectors = '#bdv-alta-dni, #bdv-alta-email, #bdv-alta-telefono, #bdv-alta-nombre, #bdv-alta-fechanac';
     bdv.$$(criticalSelectors, form).forEach(function (input) {
       input.addEventListener('blur', function () {
-        const field = input.closest('.biodevas-field');
+        const field = input.closest('.convoca-field');
         if (field) bdv.validateField(field);
       });
       input.addEventListener('input', function () {
-        const field = input.closest('.biodevas-field');
+        const field = input.closest('.convoca-field');
         if (field) bdv.clearFieldError(field);
       });
     });
@@ -168,7 +168,7 @@
       if (n === 2) {
         let ok = true;
         bdv.$$('input[required]', stepEl).forEach(f => {
-          const field = f.closest('.biodevas-field');
+          const field = f.closest('.convoca-field');
           if (!f.value || (f.pattern && !new RegExp(f.pattern).test(f.value))) {
             if (field) field.classList.add('has-error');
             ok = false;
@@ -277,7 +277,7 @@
       bdv.setLoading(btn, true, '✔ Confirmar alta');
 
       const ajaxUrl = config.ajaxUrl || '/wp-admin/admin-ajax.php';
-      const nonceUrl = ajaxUrl + (ajaxUrl.includes('?') ? '&' : '?') + 'action=bdv_get_nonce';
+      const nonceUrl = ajaxUrl + (ajaxUrl.includes('?') ? '&' : '?') + 'action=conv_get_nonce';
 
       fetch(nonceUrl)
         .then(r => r.json())
@@ -288,7 +288,7 @@
           const fd = new FormData(form);
           fd.append('nonce', freshNonce);
 
-          return fetch(config.restUrl || '/wp-json/biodevas/v1/alta', {
+          return fetch(config.restUrl || '/wp-json/convoca/v1/alta', {
             method: 'POST',
             headers: {
               'X-BDV-Nonce': freshNonce,
@@ -371,11 +371,11 @@
     const volCritical = '#bdv-vol-dni, #bdv-vol-email, #bdv-vol-telefono, #bdv-vol-nombre, #bdv-vol-fechanac';
     bdv.$$(volCritical, form).forEach(function (input) {
       input.addEventListener('blur', function () {
-        const field = input.closest('.biodevas-field');
+        const field = input.closest('.convoca-field');
         if (field) bdv.validateField(field);
       });
       input.addEventListener('input', function () {
-        const field = input.closest('.biodevas-field');
+        const field = input.closest('.convoca-field');
         if (field) bdv.clearFieldError(field);
       });
     });
@@ -385,7 +385,7 @@
 
       let ok = true;
       bdv.$$('input[required], textarea[required]', form).forEach(f => {
-        const field = f.closest('.biodevas-field');
+        const field = f.closest('.convoca-field');
         if (f.type === 'checkbox') {
           if (!f.checked) ok = false;
         } else if (!f.value) {
@@ -414,7 +414,7 @@
       const fd = new FormData(form);
       const nonce = config.volNonce || '';
 
-      bdv.ajaxPost('bdv_voluntariado_submit', fd, nonce, 
+      bdv.ajaxPost('conv_voluntariado_submit', fd, nonce, 
           (res) => {
               form.style.display = 'none';
               const success = bdv.$('#bdv-vol-success');
@@ -445,4 +445,4 @@
     if (el) el.textContent = val;
   }
 
-})(window.biodevas || {});
+})(window.convoca || {});
