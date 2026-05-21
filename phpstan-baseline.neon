@@ -1,2 +1,595 @@
 parameters:
-	ignoreErrors: []
+	ignoreErrors:
+		-
+			message: '#^Call to static method get_logs\(\) on an unknown class Convoca\\Core\\Logger\.$#'
+			identifier: class.notFound
+			count: 1
+			path: admin/class-admin-dashboard.php
+
+		-
+			message: '#^Call to static method escape_csv_field\(\) on an unknown class Convoca\\Core\\Utils\.$#'
+			identifier: class.notFound
+			count: 5
+			path: admin/class-admin-horas.php
+
+		-
+			message: '#^Call to static method format_date\(\) on an unknown class Convoca\\Core\\Utils\.$#'
+			identifier: class.notFound
+			count: 1
+			path: admin/class-admin-horas.php
+
+		-
+			message: '#^Call to static method log\(\) on an unknown class Convoca\\Core\\Logger\.$#'
+			identifier: class.notFound
+			count: 1
+			path: admin/class-admin-horas.php
+
+		-
+			message: '#^Call to static method warning\(\) on an unknown class Convoca\\Core\\Logger\.$#'
+			identifier: class.notFound
+			count: 2
+			path: admin/class-admin-horas.php
+
+		-
+			message: '#^Call to static method generate_access_code\(\) on an unknown class Convoca\\Core\\Utils\.$#'
+			identifier: class.notFound
+			count: 1
+			path: admin/class-admin-import-csv.php
+
+		-
+			message: '#^Call to static method info\(\) on an unknown class Convoca\\Core\\Logger\.$#'
+			identifier: class.notFound
+			count: 2
+			path: admin/class-admin-import-csv.php
+
+		-
+			message: '#^Call to static method validar_dni\(\) on an unknown class Convoca\\Core\\Utils\.$#'
+			identifier: class.notFound
+			count: 1
+			path: admin/class-admin-import-csv.php
+
+		-
+			message: '#^Call to static method render_log_level_badge\(\) on an unknown class Convoca\\Core\\Utils\.$#'
+			identifier: class.notFound
+			count: 1
+			path: admin/class-admin-logs.php
+
+		-
+			message: '#^Call to static method info\(\) on an unknown class Convoca\\Core\\Logger\.$#'
+			identifier: class.notFound
+			count: 1
+			path: admin/class-admin-member-editor.php
+
+		-
+			message: '#^Call to static method get_payment_link\(\) on an unknown class Convoca\\Gateway\\Payment_Handler\.$#'
+			identifier: class.notFound
+			count: 2
+			path: admin/class-admin-metaboxes.php
+
+		-
+			message: '#^Call to static method info\(\) on an unknown class Convoca\\Core\\Logger\.$#'
+			identifier: class.notFound
+			count: 2
+			path: admin/class-admin-metaboxes.php
+
+		-
+			message: '#^Call to static method is_gateway_active\(\) on an unknown class Convoca\\Core\\Features\.$#'
+			identifier: class.notFound
+			count: 1
+			path: admin/class-admin-metaboxes.php
+
+		-
+			message: '#^Call to static method info\(\) on an unknown class Convoca\\Core\\Logger\.$#'
+			identifier: class.notFound
+			count: 1
+			path: admin/class-admin-page.php
+
+		-
+			message: '#^Function convoca_export_pdf not found\.$#'
+			identifier: function.notFound
+			count: 1
+			path: admin/class-admin-page.php
+
+		-
+			message: '#^Call to static method escape_csv_field\(\) on an unknown class Convoca\\Core\\Utils\.$#'
+			identifier: class.notFound
+			count: 2
+			path: admin/class-admin-proyectos.php
+
+		-
+			message: '#^Call to static method render_diagnostic_panel\(\) on an unknown class Convoca\\Core\\Utils\.$#'
+			identifier: class.notFound
+			count: 1
+			path: admin/class-admin-settings.php
+
+		-
+			message: '#^Call to static method render_stored_notices\(\) on an unknown class Convoca\\Core\\Utils\.$#'
+			identifier: class.notFound
+			count: 1
+			path: admin/class-admin-settings.php
+
+		-
+			message: '#^Access to constant EVENTS on an unknown class Convoca\\Core\\Webhook_Manager\.$#'
+			identifier: class.notFound
+			count: 1
+			path: admin/class-admin-webhooks.php
+
+		-
+			message: '#^Call to static method add_webhook\(\) on an unknown class Convoca\\Core\\Webhook_Manager\.$#'
+			identifier: class.notFound
+			count: 1
+			path: admin/class-admin-webhooks.php
+
+		-
+			message: '#^Call to static method admin_notice\(\) on an unknown class Convoca\\Core\\Utils\.$#'
+			identifier: class.notFound
+			count: 1
+			path: admin/class-admin-webhooks.php
+
+		-
+			message: '#^Call to static method clear_delivery_logs\(\) on an unknown class Convoca\\Core\\Webhook_Manager\.$#'
+			identifier: class.notFound
+			count: 1
+			path: admin/class-admin-webhooks.php
+
+		-
+			message: '#^Call to static method delete_webhook\(\) on an unknown class Convoca\\Core\\Webhook_Manager\.$#'
+			identifier: class.notFound
+			count: 1
+			path: admin/class-admin-webhooks.php
+
+		-
+			message: '#^Call to static method format_date\(\) on an unknown class Convoca\\Core\\Utils\.$#'
+			identifier: class.notFound
+			count: 1
+			path: admin/class-admin-webhooks.php
+
+		-
+			message: '#^Call to static method get_delivery_logs\(\) on an unknown class Convoca\\Core\\Webhook_Manager\.$#'
+			identifier: class.notFound
+			count: 1
+			path: admin/class-admin-webhooks.php
+
+		-
+			message: '#^Call to static method get_webhook\(\) on an unknown class Convoca\\Core\\Webhook_Manager\.$#'
+			identifier: class.notFound
+			count: 3
+			path: admin/class-admin-webhooks.php
+
+		-
+			message: '#^Call to static method get_webhooks\(\) on an unknown class Convoca\\Core\\Webhook_Manager\.$#'
+			identifier: class.notFound
+			count: 1
+			path: admin/class-admin-webhooks.php
+
+		-
+			message: '#^Call to static method test_webhook\(\) on an unknown class Convoca\\Core\\Webhook_Manager\.$#'
+			identifier: class.notFound
+			count: 1
+			path: admin/class-admin-webhooks.php
+
+		-
+			message: '#^Call to static method update_webhook\(\) on an unknown class Convoca\\Core\\Webhook_Manager\.$#'
+			identifier: class.notFound
+			count: 2
+			path: admin/class-admin-webhooks.php
+
+		-
+			message: '#^Call to static method escape_csv_field\(\) on an unknown class Convoca\\Core\\Utils\.$#'
+			identifier: class.notFound
+			count: 1
+			path: admin/class-csv-exporter.php
+
+		-
+			message: '#^Call to static method db_init\(\) on an unknown class Convoca\\Core\\Installer\.$#'
+			identifier: class.notFound
+			count: 1
+			path: convoca-members.php
+
+		-
+			message: '#^Call to static method get_persistent_salt\(\) on an unknown class Convoca\\Core\\Utils\.$#'
+			identifier: class.notFound
+			count: 1
+			path: convoca-members.php
+
+		-
+			message: '#^Call to static method info\(\) on an unknown class Convoca\\Core\\Logger\.$#'
+			identifier: class.notFound
+			count: 1
+			path: convoca-members.php
+
+		-
+			message: '#^Call to static method error\(\) on an unknown class Convoca\\Core\\Logger\.$#'
+			identifier: class.notFound
+			count: 1
+			path: includes/class-audit-logger.php
+
+		-
+			message: '#^Call to static method info\(\) on an unknown class Convoca\\Core\\Logger\.$#'
+			identifier: class.notFound
+			count: 3
+			path: includes/class-audit-logger.php
+
+		-
+			message: '#^Call to static method warning\(\) on an unknown class Convoca\\Core\\Logger\.$#'
+			identifier: class.notFound
+			count: 1
+			path: includes/class-audit-logger.php
+
+		-
+			message: '#^Call to static method admin_notice\(\) on an unknown class Convoca\\Core\\Utils\.$#'
+			identifier: class.notFound
+			count: 1
+			path: includes/class-certificate-generator.php
+
+		-
+			message: '#^Call to static method error\(\) on an unknown class Convoca\\Core\\Logger\.$#'
+			identifier: class.notFound
+			count: 2
+			path: includes/class-cpt-miembro.php
+
+		-
+			message: '#^Call to static method format_date\(\) on an unknown class Convoca\\Core\\Utils\.$#'
+			identifier: class.notFound
+			count: 3
+			path: includes/class-cpt-miembro.php
+
+		-
+			message: '#^Call to static method acquire_lock\(\) on an unknown class Convoca\\Core\\Utils\.$#'
+			identifier: class.notFound
+			count: 4
+			path: includes/class-cron-manager.php
+
+		-
+			message: '#^Call to static method create_payment\(\) on an unknown class Convoca\\Gateway\\Payment_Handler\.$#'
+			identifier: class.notFound
+			count: 1
+			path: includes/class-cron-manager.php
+
+		-
+			message: '#^Call to static method error\(\) on an unknown class Convoca\\Core\\Logger\.$#'
+			identifier: class.notFound
+			count: 4
+			path: includes/class-cron-manager.php
+
+		-
+			message: '#^Call to static method get_member_token\(\) on an unknown class Convoca\\Gateway\\Payment_Handler\.$#'
+			identifier: class.notFound
+			count: 1
+			path: includes/class-cron-manager.php
+
+		-
+			message: '#^Call to static method get_payment_link\(\) on an unknown class Convoca\\Gateway\\Payment_Handler\.$#'
+			identifier: class.notFound
+			count: 1
+			path: includes/class-cron-manager.php
+
+		-
+			message: '#^Call to static method info\(\) on an unknown class Convoca\\Core\\Logger\.$#'
+			identifier: class.notFound
+			count: 7
+			path: includes/class-cron-manager.php
+
+		-
+			message: '#^Call to static method is_gateway_active\(\) on an unknown class Convoca\\Core\\Features\.$#'
+			identifier: class.notFound
+			count: 3
+			path: includes/class-cron-manager.php
+
+		-
+			message: '#^Call to static method release_lock\(\) on an unknown class Convoca\\Core\\Utils\.$#'
+			identifier: class.notFound
+			count: 4
+			path: includes/class-cron-manager.php
+
+		-
+			message: '#^Call to static method warning\(\) on an unknown class Convoca\\Core\\Logger\.$#'
+			identifier: class.notFound
+			count: 3
+			path: includes/class-cron-manager.php
+
+		-
+			message: '#^Call to static method button_html\(\) on an unknown class Convoca\\Core\\Email_Layout\.$#'
+			identifier: class.notFound
+			count: 2
+			path: includes/class-email-manager.php
+
+		-
+			message: '#^Call to static method error\(\) on an unknown class Convoca\\Core\\Logger\.$#'
+			identifier: class.notFound
+			count: 1
+			path: includes/class-email-manager.php
+
+		-
+			message: '#^Call to static method info\(\) on an unknown class Convoca\\Core\\Logger\.$#'
+			identifier: class.notFound
+			count: 2
+			path: includes/class-email-manager.php
+
+		-
+			message: '#^Call to static method meta_table\(\) on an unknown class Convoca\\Core\\Email_Layout\.$#'
+			identifier: class.notFound
+			count: 11
+			path: includes/class-email-manager.php
+
+		-
+			message: '#^Call to static method render\(\) on an unknown class Convoca\\Core\\Email_Layout\.$#'
+			identifier: class.notFound
+			count: 1
+			path: includes/class-email-manager.php
+
+		-
+			message: '#^Call to static method warning\(\) on an unknown class Convoca\\Core\\Logger\.$#'
+			identifier: class.notFound
+			count: 3
+			path: includes/class-email-manager.php
+
+		-
+			message: '#^Call to static method do_action\(\) on an unknown class Convoca\\Core\\Utils\.$#'
+			identifier: class.notFound
+			count: 3
+			path: includes/class-estados.php
+
+		-
+			message: '#^Call to static method info\(\) on an unknown class Convoca\\Core\\Logger\.$#'
+			identifier: class.notFound
+			count: 1
+			path: includes/class-estados.php
+
+		-
+			message: '#^Call to static method warning\(\) on an unknown class Convoca\\Core\\Logger\.$#'
+			identifier: class.notFound
+			count: 1
+			path: includes/class-estados.php
+
+		-
+			message: '#^Call to static method info\(\) on an unknown class Convoca\\Core\\Logger\.$#'
+			identifier: class.notFound
+			count: 3
+			path: includes/class-gdpr-tools.php
+
+		-
+			message: '#^Call to static method check_rate_limit\(\) on an unknown class Convoca\\Core\\Utils\.$#'
+			identifier: class.notFound
+			count: 1
+			path: includes/class-member-auth.php
+
+		-
+			message: '#^Call to static method info\(\) on an unknown class Convoca\\Core\\Logger\.$#'
+			identifier: class.notFound
+			count: 1
+			path: includes/class-member-auth.php
+
+		-
+			message: '#^Call to static method warning\(\) on an unknown class Convoca\\Core\\Logger\.$#'
+			identifier: class.notFound
+			count: 2
+			path: includes/class-member-auth.php
+
+		-
+			message: '#^Call to an undefined method Convoca\\Members\\Members_Upgrade_Manager\:\:init\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: includes/class-members-upgrade-manager.php
+
+		-
+			message: '#^Call to static method warning\(\) on an unknown class Convoca\\Core\\Logger\.$#'
+			identifier: class.notFound
+			count: 1
+			path: includes/class-members-upgrade-manager.php
+
+		-
+			message: '#^Call to static method acquire_lock\(\) on an unknown class Convoca\\Core\\Utils\.$#'
+			identifier: class.notFound
+			count: 2
+			path: includes/class-payment-listener.php
+
+		-
+			message: '#^Call to static method do_action\(\) on an unknown class Convoca\\Core\\Utils\.$#'
+			identifier: class.notFound
+			count: 1
+			path: includes/class-payment-listener.php
+
+		-
+			message: '#^Call to static method error\(\) on an unknown class Convoca\\Core\\Logger\.$#'
+			identifier: class.notFound
+			count: 1
+			path: includes/class-payment-listener.php
+
+		-
+			message: '#^Call to static method format_date\(\) on an unknown class Convoca\\Core\\Utils\.$#'
+			identifier: class.notFound
+			count: 2
+			path: includes/class-payment-listener.php
+
+		-
+			message: '#^Call to static method get_meta\(\) on an unknown class Convoca\\Gateway\\CPT_Pago\.$#'
+			identifier: class.notFound
+			count: 1
+			path: includes/class-payment-listener.php
+
+		-
+			message: '#^Call to static method get_payment_link\(\) on an unknown class Convoca\\Gateway\\Payment_Handler\.$#'
+			identifier: class.notFound
+			count: 1
+			path: includes/class-payment-listener.php
+
+		-
+			message: '#^Call to static method info\(\) on an unknown class Convoca\\Core\\Logger\.$#'
+			identifier: class.notFound
+			count: 4
+			path: includes/class-payment-listener.php
+
+		-
+			message: '#^Call to static method is_gateway_active\(\) on an unknown class Convoca\\Core\\Features\.$#'
+			identifier: class.notFound
+			count: 2
+			path: includes/class-payment-listener.php
+
+		-
+			message: '#^Call to static method warning\(\) on an unknown class Convoca\\Core\\Logger\.$#'
+			identifier: class.notFound
+			count: 2
+			path: includes/class-payment-listener.php
+
+		-
+			message: '#^Call to static method get_branding_html\(\) on an unknown class Convoca\\Core\\Utils\.$#'
+			identifier: class.notFound
+			count: 1
+			path: includes/class-pdf-card.php
+
+		-
+			message: '#^Call to static method get_persistent_salt\(\) on an unknown class Convoca\\Core\\Utils\.$#'
+			identifier: class.notFound
+			count: 1
+			path: includes/class-pdf-card.php
+
+		-
+			message: '#^Instantiated class Convoca\\Core\\CONV_Signature not found\.$#'
+			identifier: class.notFound
+			count: 1
+			path: includes/class-pdf-card.php
+
+		-
+			message: '#^Call to static method admin_notice\(\) on an unknown class Convoca\\Core\\Utils\.$#'
+			identifier: class.notFound
+			count: 1
+			path: includes/class-pdf-document.php
+
+		-
+			message: '#^Call to static method do_action\(\) on an unknown class Convoca\\Core\\Utils\.$#'
+			identifier: class.notFound
+			count: 2
+			path: includes/class-process-member.php
+
+		-
+			message: '#^Call to static method error\(\) on an unknown class Convoca\\Core\\Logger\.$#'
+			identifier: class.notFound
+			count: 5
+			path: includes/class-process-member.php
+
+		-
+			message: '#^Call to static method generate_access_code\(\) on an unknown class Convoca\\Core\\Utils\.$#'
+			identifier: class.notFound
+			count: 1
+			path: includes/class-process-member.php
+
+		-
+			message: '#^Call to static method info\(\) on an unknown class Convoca\\Core\\Logger\.$#'
+			identifier: class.notFound
+			count: 3
+			path: includes/class-process-member.php
+
+		-
+			message: '#^Call to static method is_gateway_active\(\) on an unknown class Convoca\\Core\\Features\.$#'
+			identifier: class.notFound
+			count: 1
+			path: includes/class-process-member.php
+
+		-
+			message: '#^Call to static method validar_dni\(\) on an unknown class Convoca\\Core\\Utils\.$#'
+			identifier: class.notFound
+			count: 1
+			path: includes/class-process-member.php
+
+		-
+			message: '#^Call to static method warning\(\) on an unknown class Convoca\\Core\\Logger\.$#'
+			identifier: class.notFound
+			count: 2
+			path: includes/class-process-member.php
+
+		-
+			message: '#^Call to static method check_rate_limit\(\) on an unknown class Convoca\\Core\\Utils\.$#'
+			identifier: class.notFound
+			count: 2
+			path: includes/class-rest-api.php
+
+		-
+			message: '#^Call to static method count_member_unread\(\) on an unknown class Convoca\\Core\\Notifications\.$#'
+			identifier: class.notFound
+			count: 1
+			path: includes/class-rest-api.php
+
+		-
+			message: '#^Call to static method do_action\(\) on an unknown class Convoca\\Core\\Utils\.$#'
+			identifier: class.notFound
+			count: 2
+			path: includes/class-rest-api.php
+
+		-
+			message: '#^Call to static method format_date\(\) on an unknown class Convoca\\Core\\Utils\.$#'
+			identifier: class.notFound
+			count: 1
+			path: includes/class-rest-api.php
+
+		-
+			message: '#^Call to static method get_member\(\) on an unknown class Convoca\\Core\\Notifications\.$#'
+			identifier: class.notFound
+			count: 1
+			path: includes/class-rest-api.php
+
+		-
+			message: '#^Call to static method mark_member_all_read\(\) on an unknown class Convoca\\Core\\Notifications\.$#'
+			identifier: class.notFound
+			count: 1
+			path: includes/class-rest-api.php
+
+		-
+			message: '#^Call to static method mark_member_read\(\) on an unknown class Convoca\\Core\\Notifications\.$#'
+			identifier: class.notFound
+			count: 1
+			path: includes/class-rest-api.php
+
+		-
+			message: '#^Call to static method rest_cache_get\(\) on an unknown class Convoca\\Core\\Utils\.$#'
+			identifier: class.notFound
+			count: 1
+			path: includes/class-rest-api.php
+
+		-
+			message: '#^Call to static method warning\(\) on an unknown class Convoca\\Core\\Logger\.$#'
+			identifier: class.notFound
+			count: 1
+			path: includes/class-rest-api.php
+
+		-
+			message: '#^Call to static method do_action\(\) on an unknown class Convoca\\Core\\Utils\.$#'
+			identifier: class.notFound
+			count: 2
+			path: includes/class-voluntariado-manager.php
+
+		-
+			message: '#^Call to static method info\(\) on an unknown class Convoca\\Core\\Logger\.$#'
+			identifier: class.notFound
+			count: 1
+			path: includes/class-voluntariado-manager.php
+
+		-
+			message: '#^Call to static method check_rate_limit\(\) on an unknown class Convoca\\Core\\Utils\.$#'
+			identifier: class.notFound
+			count: 3
+			path: public/class-form-handler.php
+
+		-
+			message: '#^Function Convoca\\Gateway\\conv_get_gateway_settings not found\.$#'
+			identifier: function.notFound
+			count: 1
+			path: public/class-form-handler.php
+
+		-
+			message: '#^Call to static method check_rate_limit\(\) on an unknown class Convoca\\Core\\Utils\.$#'
+			identifier: class.notFound
+			count: 1
+			path: public/class-form-voluntariado.php
+
+		-
+			message: '#^Call to static method generate_access_code\(\) on an unknown class Convoca\\Core\\Utils\.$#'
+			identifier: class.notFound
+			count: 1
+			path: public/class-form-voluntariado.php
+
+		-
+			message: '#^Call to static method validate_dni\(\) on an unknown class Convoca\\Core\\Utils\.$#'
+			identifier: class.notFound
+			count: 1
+			path: public/class-form-voluntariado.php
