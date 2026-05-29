@@ -718,10 +718,10 @@ class Cron_Manager {
 	private function get_payment_link( int $pago_id ): string {
 		if ( \Convoca\Core\Features::is_gateway_active() ) {
 			// Get or create persistent token for long-lived links.
-			$token = get_post_meta( $pago_id, '_bdg_link_key', true );
+			$token = get_post_meta( $pago_id, '_conv_link_key', true );
 			if ( empty( $token ) ) {
 				$token = wp_generate_password( 32, false, false );
-				update_post_meta( $pago_id, '_bdg_link_key', $token );
+				update_post_meta( $pago_id, '_conv_link_key', $token );
 			}
 			return \Convoca\Gateway\Payment_Handler::get_payment_link( $pago_id, $token );
 		}

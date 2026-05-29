@@ -154,11 +154,11 @@ class GDPR_Tools {
 					'meta_query'     => array(
 						'relation' => 'AND',
 						array(
-							'key'   => '_bdg_origin',
+							'key'   => '_conv_origin',
 							'value' => 'members',
 						),
 						array(
-							'key'   => '_bdg_origin_id',
+							'key'   => '_conv_origin_id',
 							'value' => $member_id,
 						),
 					),
@@ -166,11 +166,11 @@ class GDPR_Tools {
 			);
 
 			foreach ( $pagos as $pago ) {
-				$amount_cents = (int) get_post_meta( $pago->ID, '_bdg_amount_cents', true );
+				$amount_cents = (int) get_post_meta( $pago->ID, '_conv_amount_cents', true );
 				$pago_data    = array(
 					array(
 						'name'  => 'Concepto',
-						'value' => get_post_meta( $pago->ID, '_bdg_product_desc', true ),
+						'value' => get_post_meta( $pago->ID, '_conv_product_desc', true ),
 					),
 					array(
 						'name'  => 'Importe',
@@ -178,11 +178,11 @@ class GDPR_Tools {
 					),
 					array(
 						'name'  => 'Estado',
-						'value' => get_post_meta( $pago->ID, '_bdg_status', true ),
+						'value' => get_post_meta( $pago->ID, '_conv_status', true ),
 					),
 					array(
 						'name'  => 'Método',
-						'value' => get_post_meta( $pago->ID, '_bdg_method', true ),
+						'value' => get_post_meta( $pago->ID, '_conv_method', true ),
 					),
 					array(
 						'name'  => 'Fecha',
@@ -208,7 +208,7 @@ class GDPR_Tools {
 					'post_status'    => 'any',
 					'meta_query'     => array(
 						array(
-							'key'   => '_bde_email',
+							'key'   => '_conv_email',
 							'value' => $member_email,
 						),
 					),
@@ -216,7 +216,7 @@ class GDPR_Tools {
 			);
 
 			foreach ( $inscripciones as $inscripcion ) {
-				$actividad_id    = get_post_meta( $inscripcion->ID, '_bde_actividad_id', true );
+				$actividad_id    = get_post_meta( $inscripcion->ID, '_conv_actividad_id', true );
 				$actividad_title = $actividad_id ? get_the_title( $actividad_id ) : 'N/A';
 
 				$insc_data = array(
@@ -226,7 +226,7 @@ class GDPR_Tools {
 					),
 					array(
 						'name'  => 'Estado',
-						'value' => get_post_meta( $inscripcion->ID, '_bde_estado', true ),
+						'value' => get_post_meta( $inscripcion->ID, '_conv_estado', true ),
 					),
 					array(
 						'name'  => 'Fecha inscripción',
@@ -398,11 +398,11 @@ class GDPR_Tools {
 					'meta_query'     => array(
 						'relation' => 'AND',
 						array(
-							'key'   => '_bdg_origin',
+							'key'   => '_conv_origin',
 							'value' => 'members',
 						),
 						array(
-							'key'   => '_bdg_origin_id',
+							'key'   => '_conv_origin_id',
 							'value' => $member_id,
 						),
 					),
@@ -410,8 +410,8 @@ class GDPR_Tools {
 			);
 
 			foreach ( $pagos as $pago ) {
-				update_post_meta( $pago->ID, '_bdg_origin_id', 0 );
-				update_post_meta( $pago->ID, '_bdg_product_desc', '[Eliminado]' );
+				update_post_meta( $pago->ID, '_conv_origin_id', 0 );
+				update_post_meta( $pago->ID, '_conv_product_desc', '[Eliminado]' );
 				++$items_retained;
 			}
 
@@ -428,7 +428,7 @@ class GDPR_Tools {
 						'post_status'    => 'any',
 						'meta_query'     => array(
 							array(
-								'key'   => '_bde_email',
+								'key'   => '_conv_email',
 								'value' => $member_email,
 							),
 						),

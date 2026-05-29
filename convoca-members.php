@@ -125,14 +125,14 @@ register_activation_hook(
 			$role->add_cap( 'cst_manage_turnos' );
 			$role->add_cap( 'cst_view_stats' );
 			$role->add_cap( 'cst_audit_hours' );
-			$role->add_cap( 'bde_manage_checkin' );
-			$role->add_cap( 'bde_manage_evaluations' );
-			$role->add_cap( 'bde_view_reports' );
+			$role->add_cap( 'conv_manage_checkin' );
+			$role->add_cap( 'conv_manage_evaluations' );
+			$role->add_cap( 'conv_view_reports' );
 			$role->add_cap( 'conv_manage_hours' );
 			$role->add_cap( 'conv_export_members' );
 			$role->add_cap( 'conv_manage_webhooks' );
-			$role->add_cap( 'bdg_view_payments' );
-			$role->add_cap( 'bdg_manage_payments' );
+			$role->add_cap( 'conv_view_payments' );
+			$role->add_cap( 'conv_manage_payments' );
 			$role->add_cap( 'common_view_logs' );
 			$role->add_cap( 'common_manage_backup' );
 		}
@@ -162,9 +162,9 @@ register_activation_hook(
 					$r->add_cap( 'cst_manage_turnos' );
 					$r->add_cap( 'cst_view_stats' );
 					$r->add_cap( 'cst_audit_hours' );
-					$r->add_cap( 'bde_manage_checkin' );
-					$r->add_cap( 'bde_manage_evaluations' );
-					$r->add_cap( 'bde_view_reports' );
+					$r->add_cap( 'conv_manage_checkin' );
+					$r->add_cap( 'conv_manage_evaluations' );
+					$r->add_cap( 'conv_view_reports' );
 					$r->add_cap( 'conv_manage_hours' );
 				}
 			}

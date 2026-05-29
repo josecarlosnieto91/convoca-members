@@ -182,7 +182,7 @@ class PDF_Card {
 	 * Get the dynamic URL for the reservation panel.
 	 */
 	private static function get_panel_url(): string {
-		$panel_page_id = (int) get_option( 'bde_panel_reservas_page_id' );
+		$panel_page_id = (int) get_option( 'conv_enroll_panel_reservas_page_id' );
 		if ( $panel_page_id ) {
 			return get_permalink( $panel_page_id );
 		}
@@ -199,7 +199,7 @@ class PDF_Card {
 		);
 
 		if ( $page_id ) {
-			update_option( 'bde_panel_reservas_page_id', $page_id );
+			update_option( 'conv_enroll_panel_reservas_page_id', $page_id );
 			return get_permalink( $page_id );
 		}
 

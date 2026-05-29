@@ -352,11 +352,11 @@ class Rest_API {
 			'meta_query'     => array(
 				'relation' => 'OR',
 				array(
-					'key'   => '_bde_email',
+					'key'   => '_conv_email',
 					'value' => $email,
 				),
 				array(
-					'key'   => '_bde_dni',
+					'key'   => '_conv_dni',
 					'value' => $dni,
 				),
 			),
@@ -367,10 +367,10 @@ class Rest_API {
 
 		if ( $query->have_posts() ) {
 			foreach ( $query->posts as $post ) {
-				$actividad_id = get_post_meta( $post->ID, '_bde_actividad_id', true );
+				$actividad_id = get_post_meta( $post->ID, '_conv_actividad_id', true );
 				$actividad    = get_the_title( $actividad_id );
 
-				$estado = get_post_meta( $post->ID, '_bde_estado', true );
+				$estado = get_post_meta( $post->ID, '_conv_estado', true );
 				$item   = array(
 					'id'        => $post->ID,
 					'fecha'     => get_the_date( 'd/m/Y', $post->ID ),
@@ -380,12 +380,12 @@ class Rest_API {
 
 				// Only include token for confirmed states (needed for ICS download).
 				if ( in_array( $estado, array( 'confirmada', 'pagada' ), true ) ) {
-					$item['token'] = get_post_meta( $post->ID, '_bde_checkin_token', true );
+					$item['token'] = get_post_meta( $post->ID, '_conv_checkin_token', true );
 				}
 
 				// Include Google Photos album link if available.
 				if ( $actividad_id ) {
-					$album_url = get_post_meta( $actividad_id, '_bde_google_album_url', true );
+					$album_url = get_post_meta( $actividad_id, '_conv_google_album_url', true );
 					if ( ! empty( $album_url ) ) {
 						$item['fotos_url'] = $album_url;
 					}
@@ -410,11 +410,11 @@ class Rest_API {
 			'posts_per_page' => -1,
 			'meta_query'     => array(
 				array(
-					'key'   => '_bdg_origin',
+					'key'   => '_conv_origin',
 					'value' => 'members',
 				),
 				array(
-					'key'   => '_bdg_origin_id',
+					'key'   => '_conv_origin_id',
 					'value' => $member_id,
 				),
 			),
@@ -425,13 +425,13 @@ class Rest_API {
 
 		if ( $query->have_posts() ) {
 			foreach ( $query->posts as $post ) {
-				$status = get_post_meta( $post->ID, '_bdg_status', true );
-				$amount = (int) get_post_meta( $post->ID, '_bdg_amount_cents', true );
+				$status = get_post_meta( $post->ID, '_conv_status', true );
+				$amount = (int) get_post_meta( $post->ID, '_conv_amount_cents', true );
 
 				$items[] = array(
 					'id'       => $post->ID,
 					'fecha'    => get_the_date( 'd/m/Y', $post->ID ),
-					'concepto' => get_post_meta( $post->ID, '_bdg_product_desc', true ),
+					'concepto' => get_post_meta( $post->ID, '_conv_product_desc', true ),
 					'importe'  => number_format( $amount / 100, 2, ',', '.' ),
 					'estado'   => $status,
 				);
@@ -661,13 +661,13 @@ class Rest_API {
 			);
 			$act_query = new \WP_Query( $act_args );
 			foreach ( $act_query->posts as $p ) {
-				$fecha     = get_post_meta( $p->ID, '_bde_fecha_inicio', true );
+				$fecha     = get_post_meta( $p->ID, '_conv_fecha_inicio', true );
 				$results[] = array(
 					'type'      => 'activity',
 					'id'        => $p->ID,
 					'title'     => $p->post_title,
 					'fecha'     => $fecha ? \Convoca\Core\Utils::format_date( $fecha, 'd/m/Y H:i' ) : '',
-					'ubicacion' => get_post_meta( $p->ID, '_bde_ubicacion', true ),
+					'ubicacion' => get_post_meta( $p->ID, '_conv_ubicacion', true ),
 					'url'       => get_permalink( $p->ID ),
 				);
 			}

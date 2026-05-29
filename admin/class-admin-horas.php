@@ -182,7 +182,7 @@ class Admin_Horas extends \WP_List_Table {
 				'post_type'      => 'actividad',
 				'posts_per_page' => 30,
 				'post_status'    => 'publish',
-				'meta_key'       => '_bde_fecha_inicio',
+				'meta_key'       => '_conv_fecha_inicio',
 				'orderby'        => 'meta_value',
 				'order'          => 'DESC',
 			)
@@ -249,7 +249,7 @@ class Admin_Horas extends \WP_List_Table {
 								<option value="0"><?php esc_html_e( '— Ninguna actividad específica —', 'convoca-members' ); ?></option>
 								<?php foreach ( $activities as $a ) : ?>
 									<option value="<?php echo (int) $a->ID; ?>" <?php selected( $actividad_id, $a->ID ); ?>>
-										<?php echo esc_html( $a->post_title ); ?> (<?php echo esc_html( \Convoca\Core\Utils::format_date( get_post_meta( $a->ID, '_bde_fecha_inicio', true ), 'd/m/Y' ) ); ?>)
+										<?php echo esc_html( $a->post_title ); ?> (<?php echo esc_html( \Convoca\Core\Utils::format_date( get_post_meta( $a->ID, '_conv_fecha_inicio', true ), 'd/m/Y' ) ); ?>)
 									</option>
 								<?php endforeach; ?>
 							</select>

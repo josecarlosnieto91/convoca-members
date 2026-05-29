@@ -587,15 +587,15 @@ class Admin_Metaboxes {
 			array(
 				'post_type'      => 'inscripcion',
 				'posts_per_page' => -1,
-				'meta_key'       => '_bde_email',
+				'meta_key'       => '_conv_email',
 				'meta_value'     => get_post_meta( $member_id, '_conv_email', true ),
 			)
 		);
 		foreach ( $inscriptions as $insc ) {
 			$data['inscriptions'][] = array(
 				'id'        => $insc->ID,
-				'actividad' => get_the_title( get_post_meta( $insc->ID, '_bde_actividad_id', true ) ),
-				'estado'    => get_post_meta( $insc->ID, '_bde_estado', true ),
+				'actividad' => get_the_title( get_post_meta( $insc->ID, '_conv_actividad_id', true ) ),
+				'estado'    => get_post_meta( $insc->ID, '_conv_estado', true ),
 				'fecha'     => $insc->post_date,
 			);
 		}
@@ -646,7 +646,7 @@ class Admin_Metaboxes {
 			array(
 				'post_type'      => 'inscripcion',
 				'posts_per_page' => -1,
-				'meta_key'       => '_bde_email',
+				'meta_key'       => '_conv_email',
 				'meta_value'     => $email,
 			)
 		);
