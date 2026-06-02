@@ -367,12 +367,6 @@ parameters:
 			path: includes/class-member-auth.php
 
 		-
-			message: '#^Call to an undefined method Convoca\\Members\\Members_Upgrade_Manager\:\:init\(\)\.$#'
-			identifier: method.notFound
-			count: 1
-			path: includes/class-members-upgrade-manager.php
-
-		-
 			message: '#^Call to static method warning\(\) on an unknown class Convoca\\Core\\Logger\.$#'
 			identifier: class.notFound
 			count: 1
