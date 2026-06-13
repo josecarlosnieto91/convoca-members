@@ -1,5 +1,5 @@
 /**
- * Biodevas Members — Mi Area JS (Vanilla)
+ * Convoca Members — Mi Area JS (Vanilla)
  * User panel operations inside 'Mi Area'.
  */
 (function(bdv) {
@@ -628,7 +628,7 @@
         <div class="digital-card-preview">
           <p>Tu carnet de socio/a digital:</p>
           <div class="placeholder-card card-glass">
-            <h4 class="text-gradient">Biodevas Membership</h4>
+            <h4 class="text-gradient">Convoca Membership</h4>
             <div class="card-chip"></div>
             <div class="card-details">
               <span class="card-label">Socio/a Numerario/a</span>

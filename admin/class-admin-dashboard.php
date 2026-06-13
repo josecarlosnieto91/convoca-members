@@ -219,7 +219,7 @@ class Admin_Dashboard {
 				'recent_errors'
 			);
 		} catch ( \Throwable $e ) {
-			error_log( 'Biodevas Dashboard Stats Error: ' . $e->getMessage() );
+			error_log( 'Convoca Dashboard Stats Error: ' . $e->getMessage() );
 			return $default_stats;
 		}
 	}

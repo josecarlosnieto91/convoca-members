@@ -100,7 +100,7 @@ class Mi_Area {
 			<header class="bdv-panel-header">
 				<div>
 					<h1>¡Hola, <span><?php echo esc_html( $post->post_title ); ?></span>!</h1>
-					<p class="subtitle"><?php _e( 'Bienvenido a tu panel de socio de Biodevas.', 'convoca-members' ); ?></p>
+					<p class="subtitle"><?php _e( 'Bienvenido a tu panel de socio de Convoca.', 'convoca-members' ); ?></p>
 				</div>
 				<button id="bdv-logout-btn" class="btn-link"><?php _e( 'Cerrar sesión', 'convoca-members' ); ?></button>
 			</header>

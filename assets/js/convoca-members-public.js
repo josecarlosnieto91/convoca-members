@@ -1,5 +1,5 @@
 /**
- * Biodevas Members — Public JS v2
+ * Convoca Members — Public JS v2
  * Multi-step navigation, plan logic, advantages, file upload toggle,
  * minor notice, AJAX submission. Uses convoca-common.js APIs.
  */

@@ -24,7 +24,7 @@ class Admin_Webhooks {
 	}
 
 	/**
-	 * Register submenu under Biodevas Members.
+	 * Register submenu under Convoca Members.
 	 */
 	public function add_menu(): void {
 		add_submenu_page(

@@ -29,7 +29,7 @@ class Admin_Page {
 
 	public function register_menu(): void {
 		add_menu_page(
-			__( 'Miembros Biodevas', 'convoca-members' ),
+			__( 'Miembros Convoca', 'convoca-members' ),
 			__( 'Miembros', 'convoca-members' ),
 			'gestionar_miembros',
 			'bdv-members',
@@ -166,7 +166,7 @@ class Admin_Page {
 		?>
 		<div class="wrap">
 			<h1 class="wp-heading-inline">
-				<?php $is_voluntarios ? esc_html_e( 'Voluntarios Biodevas', 'convoca-members' ) : esc_html_e( 'Miembros Biodevas', 'convoca-members' ); ?>
+				<?php $is_voluntarios ? esc_html_e( 'Voluntarios Biodevas', 'convoca-members' ) : esc_html_e( 'Miembros Convoca', 'convoca-members' ); ?>
 			</h1>
 			<a href="<?php echo esc_url( admin_url( 'post-new.php?post_type=miembro' . ( $is_voluntarios ? '&es_voluntario=1' : '' ) ) ); ?>" class="page-title-action">
 				<?php esc_html_e( 'Añadir nuevo', 'convoca-members' ); ?>
@@ -463,7 +463,7 @@ class Admin_Page {
 	public function dashboard_widget(): void {
 		wp_add_dashboard_widget(
 			'conv_members_widget',
-			__( '🍁 Miembros Biodevas', 'convoca-members' ),
+			__( '🍁 Miembros Convoca', 'convoca-members' ),
 			function () {
 				global $wpdb;
 				$total   = (int) $wpdb->get_var(

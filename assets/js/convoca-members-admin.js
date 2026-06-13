@@ -1,5 +1,5 @@
 /**
- * Biodevas Members — Admin JS
+ * Convoca Members — Admin JS
  * Quick state change + CSV export modal + WhatsApp tracking + autocomplete.
  */
 (function (bdvAdmin) {

@@ -137,7 +137,7 @@ class Email_Manager {
 						)
 					)
 					. '<p>Un miembro del equipo revisará tu solicitud y te contactaremos pronto.</p>'
-					. '<p>¡Gracias por unirte a la familia Biodevas!</p>',
+					. '<p>¡Gracias por unirte a la familia Convoca!</p>',
 			),
 			'bienvenida'                       => array(
 				'subject' => '¡Bienvenido/a a Biodevas, {nombre}!',
@@ -159,7 +159,7 @@ class Email_Manager {
 							),
 						)
 					)
-					. '<p>Ya formas parte de la comunidad Biodevas. Puedes participar en todas nuestras actividades y proyectos.</p>'
+					. '<p>Ya formas parte de la comunidad Convoca. Puedes participar en todas nuestras actividades y proyectos.</p>'
 					. '<p>Si tienes cualquier duda, escríbenos a <a href="mailto:coordinacion@getconvoca.app">coordinacion@getconvoca.app</a>.</p>'
 					. '<p>¡Nos vemos en el campo! 🌿</p>',
 			),
@@ -266,7 +266,7 @@ class Email_Manager {
 						)
 					)
 					. '<p>No tienes que hacer nada. Si hay algún problema con el cargo, te avisaremos.</p>'
-					. '<p>¡Gracias por seguir apoyando a Biodevas!</p>',
+					. '<p>¡Gracias por seguir apoyando a Convoca!</p>',
 			),
 			'renovacion_completada'            => array(
 				'subject' => 'Renovación completada con éxito — Biodevas',
