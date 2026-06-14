@@ -132,11 +132,11 @@ class PDF_Document {
 			$signature = new \Convoca\Core\CONV_Signature();
 
 			// Collect user data.
-			$dni       = get_user_meta( $user_id, '_cst_dni', true );
+			$dni       = get_user_meta( $user_id, '_convoca_shifts_dni', true );
 			$email     = $user->user_email;
-			$telefono  = get_user_meta( $user_id, '_cst_telefono', true );
-			$direccion = get_user_meta( $user_id, '_cst_direccion', true );
-			$municipio = get_user_meta( $user_id, '_cst_municipio', true );
+			$telefono  = get_user_meta( $user_id, '_convoca_shifts_telefono', true );
+			$direccion = get_user_meta( $user_id, '_convoca_shifts_direccion', true );
+			$municipio = get_user_meta( $user_id, '_convoca_shifts_municipio', true );
 
 			$legal_text = get_option( 'conv_volunteer_legal_text', '' );
 			$date       = wp_date( 'd/m/Y' );
@@ -151,7 +151,7 @@ class PDF_Document {
 				$dynamic_html .= '<h3>Información Adicional</h3><table style="width:100%; border-collapse: collapse; margin-bottom: 20px;">';
 				foreach ( $dynamic_fields as $field ) {
 					$field_name = isset( $field['name'] ) ? $field['name'] : '';
-					$val        = get_user_meta( $user_id, '_cst_' . $field_name, true );
+					$val        = get_user_meta( $user_id, '_convoca_shifts_' . $field_name, true );
 
 					if ( $val ) {
 						$dynamic_html .= '<tr class="' . esc_attr( 'bdv-field-' . $field_name ) . '">';

@@ -148,9 +148,9 @@ register_activation_hook(
 			$role->add_cap( 'gestionar_miembros' );
 			$role->add_cap( 'gestionar_documentos_voluntariado' );
 			$role->add_cap( 'view_reports' );
-			$role->add_cap( 'cst_manage_turnos' );
-			$role->add_cap( 'cst_view_stats' );
-			$role->add_cap( 'cst_audit_hours' );
+			$role->add_cap( 'convoca_shifts_manage_turnos' );
+			$role->add_cap( 'convoca_shifts_view_stats' );
+			$role->add_cap( 'convoca_shifts_audit_hours' );
 			$role->add_cap( 'conv_manage_checkin' );
 			$role->add_cap( 'conv_manage_evaluations' );
 			$role->add_cap( 'conv_view_reports' );
@@ -185,9 +185,9 @@ register_activation_hook(
 
 				// New granular caps for monitor_actividad.
 				if ( $role_name === 'monitor_actividad' ) {
-					$r->add_cap( 'cst_manage_turnos' );
-					$r->add_cap( 'cst_view_stats' );
-					$r->add_cap( 'cst_audit_hours' );
+					$r->add_cap( 'convoca_shifts_manage_turnos' );
+					$r->add_cap( 'convoca_shifts_view_stats' );
+					$r->add_cap( 'convoca_shifts_audit_hours' );
 					$r->add_cap( 'conv_manage_checkin' );
 					$r->add_cap( 'conv_manage_evaluations' );
 					$r->add_cap( 'conv_view_reports' );
