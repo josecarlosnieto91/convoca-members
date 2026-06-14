@@ -3,7 +3,7 @@
  * Multi-step navigation, plan logic, advantages, file upload toggle,
  * minor notice, AJAX submission. Uses convoca-common.js APIs.
  */
-(function (bdv) {
+(function (conv) {
   'use strict';
 
   /* ══ ALTA DE SOCIOS — Multi-step form ══ */

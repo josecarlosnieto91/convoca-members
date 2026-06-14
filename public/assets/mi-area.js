@@ -160,9 +160,9 @@
     renderSearch: function() {
       var self = this;
       var html = '' +
-        '<h2>🔍 ' + (window.convTrans ? bdvTrans('Buscar actividades', 'convoca-members') : 'Buscar actividades') + '</h2>' +
+        '<h2>🔍 ' + (window.convTrans ? convTrans('Buscar actividades', 'convoca-members') : 'Buscar actividades') + '</h2>' +
         '<div class="conv-search-wrap">' +
-          '<input type="text" id="conv-search-input" class="conv-search-input" placeholder="' + (window.convTrans ? bdvTrans('Buscar por nombre, ubicación…', 'convoca-members') : 'Buscar por nombre, ubicación…') + '" />' +
+          '<input type="text" id="conv-search-input" class="conv-search-input" placeholder="' + (window.convTrans ? convTrans('Buscar por nombre, ubicación…', 'convoca-members') : 'Buscar por nombre, ubicación…') + '" />' +
           '<button id="conv-search-btn" class="conv-search-btn">🔍</button>' +
         '</div>' +
         '<div id="conv-search-results" class="conv-search-results"></div>';
@@ -177,7 +177,7 @@
       function doSearch() {
         var q = input.value.trim();
         if (q.length < 2) {
-          results.innerHTML = '<p class="text-muted">' + (window.convTrans ? bdvTrans('Escribe al menos 2 caracteres.', 'convoca-members') : 'Escribe al menos 2 caracteres.') + '</p>';
+          results.innerHTML = '<p class="text-muted">' + (window.convTrans ? convTrans('Escribe al menos 2 caracteres.', 'convoca-members') : 'Escribe al menos 2 caracteres.') + '</p>';
           return;
         }
         results.innerHTML = '<div class="conv-spinner"></div>';
@@ -185,7 +185,7 @@
           .then(function(r) { return r.json(); })
           .then(function(data) {
             if (!data.results || data.results.length === 0) {
-              results.innerHTML = '<p class="text-muted">' + (window.convTrans ? bdvTrans('No se encontraron resultados.', 'convoca-members') : 'No se encontraron resultados.') + '</p>';
+              results.innerHTML = '<p class="text-muted">' + (window.convTrans ? convTrans('No se encontraron resultados.', 'convoca-members') : 'No se encontraron resultados.') + '</p>';
               return;
             }
             var rows = '';
@@ -200,7 +200,7 @@
             results.innerHTML = rows;
           })
           .catch(function() {
-            results.innerHTML = '<p class="text-danger">' + (window.convTrans ? bdvTrans('Error al buscar.', 'convoca-members') : 'Error al buscar.') + '</p>';
+            results.innerHTML = '<p class="text-danger">' + (window.convTrans ? convTrans('Error al buscar.', 'convoca-members') : 'Error al buscar.') + '</p>';
           });
       }
 

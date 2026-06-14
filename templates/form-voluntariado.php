@@ -226,14 +226,14 @@ $areas = \Convoca\Members\Form_Voluntariado::INTEREST_AREAS;
 		$legal_text = get_option( 'conv_volunteer_legal_text', '' );
 		if ( ! empty( $legal_text ) ) :
 			?>
-		<div class="convoca-check-group" style="margin-top: 1.5rem; padding: 15px; background: #f9f9f9; border-left: 4px solid #ff8700;">
-			<div style="margin-bottom: 10px; font-size: 0.9em; color: #555;">
-				<?php echo wp_kses_post( $legal_text ); ?>
-			</div>
-			<input type="checkbox" id="conv-vol-declaracion" name="declaracion_responsable" required>
-			<label for="conv-vol-declaracion" style="font-weight: bold;">He leído y acepto esta Declaración Responsable. *</label>
+		<div style="margin-bottom: 10px; font-size: 0.9em; color: #555; padding: 15px; background: #f9f9f9; border-left: 4px solid #ff8700;">
+			<?php echo wp_kses_post( $legal_text ); ?>
 		</div>
 		<?php endif; ?>
+		<div class="convoca-check-group">
+			<input type="checkbox" id="conv-vol-declaracion" name="declaracion_responsable" required>
+			<label for="conv-vol-declaracion" style="font-weight: bold;">He leído y acepto la Declaración Responsable. *</label>
+		</div>
 
 		<button type="submit" class="convoca-btn convoca-btn-primary" style="width:100%;margin-top:1.5rem">Enviar solicitud de
 			voluntariado 🌱</button>
