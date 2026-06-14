@@ -154,9 +154,9 @@ class PDF_Document {
 					$val        = get_user_meta( $user_id, '_convoca_shifts_' . $field_name, true );
 
 					if ( $val ) {
-						$dynamic_html .= '<tr class="' . esc_attr( 'bdv-field-' . $field_name ) . '">';
-						$dynamic_html .= '<th class="' . esc_attr( 'bdv-label' ) . '" style="text-align: left; padding: 8px; border-bottom: 1px solid #ddd; width: 40%;">' . esc_html( $field['label'] ?? '' ) . '</th>';
-						$dynamic_html .= '<td class="' . esc_attr( 'bdv-value' ) . '" style="padding: 8px; border-bottom: 1px solid #ddd;">' . esc_html( $val ) . '</td>';
+						$dynamic_html .= '<tr class="' . esc_attr( 'conv-field-' . $field_name ) . '">';
+						$dynamic_html .= '<th class="' . esc_attr( 'conv-label' ) . '" style="text-align: left; padding: 8px; border-bottom: 1px solid #ddd; width: 40%;">' . esc_html( $field['label'] ?? '' ) . '</th>';
+						$dynamic_html .= '<td class="' . esc_attr( 'conv-value' ) . '" style="padding: 8px; border-bottom: 1px solid #ddd;">' . esc_html( $val ) . '</td>';
 						$dynamic_html .= '</tr>';
 					}
 				}

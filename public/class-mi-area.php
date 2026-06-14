@@ -51,7 +51,7 @@ class Mi_Area {
 		ob_start();
 		$member_id = Member_Auth::get_current_member_id();
 
-		echo '<div id="bdv-mi-area" class="bdv-mi-area" data-loading="true">';
+		echo '<div id="conv-mi-area" class="conv-mi-area" data-loading="true">';
 
 		if ( $member_id > 0 ) {
 			$this->render_dashboard( $member_id );
@@ -69,10 +69,10 @@ class Mi_Area {
 	 */
 	private function render_login_form(): void {
 		?>
-		<div class="bdv-login-container card-glass">
+		<div class="conv-login-container card-glass">
 			<h2 class="text-gradient">Acceso Socios</h2>
 			<p><?php _e( 'Introduce tu usuario y contraseña para acceder a tu área privada.', 'convoca-members' ); ?></p>
-			<form id="bdv-login-form" class="bdv-login-form">
+			<form id="conv-login-form" class="conv-login-form">
 				<div class="form-group">
 					<label for="username"><?php _e( 'Usuario o Email', 'convoca-members' ); ?></label>
 					<input type="text" id="username" name="username" required placeholder="ejemplo@getconvoca.app">
@@ -96,18 +96,18 @@ class Mi_Area {
 	private function render_dashboard( int $member_id ): void {
 		$post = get_post( $member_id );
 		?>
-		<div class="bdv-dashboard-container">
-			<header class="bdv-panel-header">
+		<div class="conv-dashboard-container">
+			<header class="conv-panel-header">
 				<div>
 					<h1>¡Hola, <span><?php echo esc_html( $post->post_title ); ?></span>!</h1>
 					<p class="subtitle"><?php _e( 'Bienvenido a tu panel de socio de Convoca.', 'convoca-members' ); ?></p>
 				</div>
-				<button id="bdv-logout-btn" class="btn-link"><?php _e( 'Cerrar sesión', 'convoca-members' ); ?></button>
+				<button id="conv-logout-btn" class="btn-link"><?php _e( 'Cerrar sesión', 'convoca-members' ); ?></button>
 			</header>
 
-			<div class="bdv-panel-grid">
+			<div class="conv-panel-grid">
 				<!-- Navigation -->
-				<nav class="bdv-panel-nav card-glass">
+				<nav class="conv-panel-nav card-glass">
 					<ul>
 						<li class="active" data-tab="profile">👤 <?php _e( 'Mis Datos', 'convoca-members' ); ?></li>
 						<li data-tab="membership">🪪 <?php _e( 'Carnet Digital', 'convoca-members' ); ?></li>
@@ -115,13 +115,13 @@ class Mi_Area {
 						<li data-tab="hours">⏳ <?php _e( 'Voluntariado', 'convoca-members' ); ?></li>
 						<li data-tab="payments">💳 <?php _e( 'Pagos y Cuotas', 'convoca-members' ); ?></li>
 						<li data-tab="search">🔍 <?php _e( 'Buscar', 'convoca-members' ); ?></li>
-						<li data-tab="notifications" class="bdv-notif-tab">🔔 <?php _e( 'Notificaciones', 'convoca-members' ); ?> <span class="bdv-notif-badge" id="bdv-notif-count" style="display:none">0</span></li>
+						<li data-tab="notifications" class="conv-notif-tab">🔔 <?php _e( 'Notificaciones', 'convoca-members' ); ?> <span class="conv-notif-badge" id="conv-notif-count" style="display:none">0</span></li>
 					</ul>
 				</nav>
 
 				<!-- Content -->
-				<main class="bdv-panel-content card-glass" id="bdv-main-content">
-					<div class="bdv-spinner"></div>
+				<main class="conv-panel-content card-glass" id="conv-main-content">
+					<div class="conv-spinner"></div>
 				</main>
 			</div>
 		</div>

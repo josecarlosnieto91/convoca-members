@@ -16,7 +16,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Admin_Member_Editor {
 
-	const SLUG = 'bdv-member-editor';
+	const SLUG = 'conv-member-editor';
 
 	public function __construct() {
 		add_action( 'admin_post_conv_save_member', array( $this, 'handle_save' ) );
@@ -216,7 +216,7 @@ class Admin_Member_Editor {
 				</div>
 
 				<div style="margin-top:40px;display:flex;justify-content:flex-end;gap:15px;align-items:center;">
-					<a href="<?php echo esc_url( admin_url( 'admin.php?page=bdv-members' ) ); ?>" class="convoca-btn convoca-btn-outline">
+					<a href="<?php echo esc_url( admin_url( 'admin.php?page=conv-members' ) ); ?>" class="convoca-btn convoca-btn-outline">
 						&larr; <?php esc_html_e( 'Volver al listado', 'convoca-members' ); ?>
 					</a>
 					<button type="submit" class="convoca-btn convoca-btn-primary">
@@ -367,7 +367,7 @@ class Admin_Member_Editor {
 		}
 
 		wp_trash_post( $post_id );
-		wp_safe_redirect( admin_url( 'admin.php?page=bdv-members' ) );
+		wp_safe_redirect( admin_url( 'admin.php?page=conv-members' ) );
 		exit;
 	}
 }

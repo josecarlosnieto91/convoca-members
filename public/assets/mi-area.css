@@ -5,7 +5,7 @@
   --text-muted: var(--wp--preset--color--gris-plomo, #666);
 }
 
-#bdv-mi-area {
+#conv-mi-area {
   min-height: 400px;
   max-width: 1200px;
   margin: 2rem auto;
@@ -30,25 +30,25 @@
 }
 
 /* Login */
-.bdv-login-container {
+.conv-login-container {
   max-width: 450px;
   margin: 4rem auto;
   text-align: center;
 }
 
-.bdv-login-form .form-group {
+.conv-login-form .form-group {
   margin-bottom: 1.5rem;
   text-align: left;
 }
 
-.bdv-login-form label {
+.conv-login-form label {
   display: block;
   margin-bottom: 0.5rem;
   font-size: 0.875rem;
   color: var(--text-muted);
 }
 
-.bdv-login-form input {
+.conv-login-form input {
   width: 100%;
   padding: 0.75rem 1rem;
   background: var(--wp--preset--color--blanco, #fff);
@@ -58,47 +58,47 @@
   transition: border-color 0.2s;
 }
 
-.bdv-login-form input:focus {
+.conv-login-form input:focus {
   border-color: var(--wp--preset--color--naranja, #ff8700);
   outline: none;
 }
-.bdv-login-form input:focus-visible {
+.conv-login-form input:focus-visible {
   outline: 3px solid var(--wp--preset--color--amarillo, #ffab00);
   outline-offset: 2px;
 }
 
 /* Dashboard */
-.bdv-panel-header {
+.conv-panel-header {
   display: flex;
   justify-content: space-between;
   align-items: flex-end;
   margin-bottom: 3rem;
 }
 
-.bdv-panel-header h1 {
+.conv-panel-header h1 {
   font-size: 2.5rem;
   margin: 0;
   font-weight: 300;
 }
 
-.bdv-panel-header h1 span {
+.conv-panel-header h1 span {
   font-weight: 800;
   color: var(--primary);
 }
 
-.bdv-panel-grid {
+.conv-panel-grid {
   display: grid;
   grid-template-columns: 250px 1fr;
   gap: 2rem;
 }
 
-.bdv-panel-nav ul {
+.conv-panel-nav ul {
   list-style: none;
   padding: 0;
   margin: 0;
 }
 
-.bdv-panel-nav li {
+.conv-panel-nav li {
   padding: 0.75rem 1rem;
   margin-bottom: 0.5rem;
   border-radius: 0.5rem;
@@ -110,34 +110,34 @@
   gap: 0.75rem;
 }
 
-.bdv-panel-nav li:hover, .bdv-panel-nav li.active {
+.conv-panel-nav li:hover, .conv-panel-nav li.active {
   background: rgba(0, 0, 0, 0.05);
   color: var(--text-main);
 }
 
-.bdv-panel-nav li.active {
+.conv-panel-nav li.active {
   border-left: 3px solid var(--wp--preset--color--naranja, #ff8700);
   padding-left: calc(1rem - 3px);
 }
 
-.bdv-panel-content {
+.conv-panel-content {
   min-height: 500px;
   position: relative;
 }
 
 /* Tables */
-.bdv-table {
+.conv-table {
   width: 100%;
   border-collapse: collapse;
 }
 
-.bdv-table th, .bdv-table td {
+.conv-table th, .conv-table td {
   padding: 1rem;
   text-align: left;
   border-bottom: 1px solid var(--border-color);
 }
 
-.bdv-table th {
+.conv-table th {
   color: var(--text-muted);
   font-size: 0.75rem;
   text-transform: uppercase;
@@ -189,37 +189,37 @@
 }
 
 /* Spinner */
-.bdv-spinner {
+.conv-spinner {
   width: 40px;
   height: 40px;
   border: 4px solid rgba(0, 0, 0, 0.1);
   border-top-color: var(--wp--preset--color--naranja, #ff8700);
   border-radius: 50%;
-  animation: bdv-spin 1s linear infinite;
+  animation: conv-spin 1s linear infinite;
   position: absolute;
   top: 50%;
   left: 50%;
   margin: -20px 0 0 -20px;
 }
 
-@keyframes bdv-spin {
+@keyframes conv-spin {
   to { transform: rotate(360deg); }
 }
 
 /* Notifications Tab */
-.bdv-notif-empty-state {
+.conv-notif-empty-state {
   text-align: center;
   padding: 3rem 1rem;
   color: var(--text-muted);
 }
 
-.bdv-member-notifications-list {
+.conv-member-notifications-list {
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
 }
 
-.bdv-member-notif-item {
+.conv-member-notif-item {
   display: flex;
   align-items: center;
   gap: 0.75rem;
@@ -229,38 +229,38 @@
   transition: background 0.2s;
 }
 
-.bdv-member-notif-item:hover {
+.conv-member-notif-item:hover {
   background: rgba(0, 0, 0, 0.02);
 }
 
-.bdv-member-notif-unread {
+.conv-member-notif-unread {
   background: rgba(255, 135, 0, 0.05);
   border-left: 3px solid var(--wp--preset--color--naranja, #ff8700);
 }
 
-.bdv-member-notif-icon {
+.conv-member-notif-icon {
   font-size: 1.25rem;
   flex-shrink: 0;
 }
 
-.bdv-member-notif-body {
+.conv-member-notif-body {
   flex: 1;
   min-width: 0;
 }
 
-.bdv-member-notif-title {
+.conv-member-notif-title {
   font-size: 0.9rem;
   font-weight: 500;
   color: var(--text-main);
 }
 
-.bdv-member-notif-time {
+.conv-member-notif-time {
   font-size: 0.75rem;
   color: var(--text-muted);
   margin-top: 0.25rem;
 }
 
-.bdv-member-notif-read-btn {
+.conv-member-notif-read-btn {
   border: 1px solid var(--wp--preset--color--verde, #059669);
   color: var(--wp--preset--color--verde, #059669);
   background: transparent;
@@ -277,12 +277,12 @@
   flex-shrink: 0;
 }
 
-.bdv-member-notif-read-btn:hover {
+.conv-member-notif-read-btn:hover {
   background: var(--wp--preset--color--verde, #059669);
   color: #fff;
 }
 
-.bdv-btn-mark-all-read {
+.conv-btn-mark-all-read {
   border: 1px solid var(--wp--preset--color--lila, #7c3aed);
   background: transparent;
   color: var(--wp--preset--color--lila, #7c3aed);
@@ -294,18 +294,18 @@
   transition: all 0.2s;
 }
 
-.bdv-btn-mark-all-read:hover {
+.conv-btn-mark-all-read:hover {
   background: rgba(124, 58, 237, 0.1);
 }
 
 /* ── Track label ──────────────────────────────── */
 
-.bdv-track-label {
+.conv-track-label {
   margin-bottom: 0.75rem;
   padding: 0.35rem 0;
 }
 
-.bdv-track-label span {
+.conv-track-label span {
   display: inline-block;
   font-size: 0.75rem;
   font-weight: 700;
@@ -319,45 +319,45 @@
 
 /* ── Gamification: Volunteer Levels & Badges ──────────────── */
 
-.bdv-level-badge {
+.conv-level-badge {
   display: flex;
   align-items: center;
   gap: 1rem;
   padding: 1rem 1.25rem;
   margin-bottom: 1rem;
   border-radius: 0.75rem;
-  background: color-mix(in srgb, var(--bdv-level-color, #7FA36B) 12%, var(--card-bg));
-  border: 1px solid color-mix(in srgb, var(--bdv-level-color, #7FA36B) 30%, transparent);
+  background: color-mix(in srgb, var(--conv-level-color, #7FA36B) 12%, var(--card-bg));
+  border: 1px solid color-mix(in srgb, var(--conv-level-color, #7FA36B) 30%, transparent);
   transition: all 0.3s ease;
 }
 
-.bdv-level-emoji {
+.conv-level-emoji {
   font-size: 2.5rem;
   line-height: 1;
 }
 
-.bdv-level-info {
+.conv-level-info {
   display: flex;
   flex-direction: column;
 }
 
-.bdv-level-info strong {
+.conv-level-info strong {
   font-size: 1.2rem;
   font-weight: 800;
-  color: var(--bdv-level-color, #7FA36B);
+  color: var(--conv-level-color, #7FA36B);
 }
 
-.bdv-level-info small {
+.conv-level-info small {
   font-size: 0.8rem;
   color: var(--text-muted);
 }
 
 /* Progress bar */
-.bdv-progress-container {
+.conv-progress-container {
   margin-bottom: 1.25rem;
 }
 
-.bdv-progress-bar {
+.conv-progress-bar {
   width: 100%;
   height: 12px;
   background: rgba(0, 0, 0, 0.06);
@@ -365,13 +365,13 @@
   overflow: hidden;
 }
 
-.bdv-progress-fill {
+.conv-progress-fill {
   height: 100%;
   border-radius: 6px;
   transition: width 0.5s ease;
 }
 
-.bdv-progress-label {
+.conv-progress-label {
   display: flex;
   justify-content: space-between;
   font-size: 0.8rem;
@@ -379,21 +379,21 @@
   margin-top: 0.4rem;
 }
 
-.bdv-progress-label.completed {
+.conv-progress-label.completed {
   justify-content: center;
   font-weight: 700;
   color: var(--wp--preset--color--naranja, #ff8700);
 }
 
 /* Level ladder (horizontal steps) */
-.bdv-level-steps {
+.conv-level-steps {
   display: flex;
   gap: 0.5rem;
   justify-content: space-between;
   margin: 1rem 0 0.5rem;
 }
 
-.bdv-level-step {
+.conv-level-step {
   flex: 1;
   display: flex;
   flex-direction: column;
@@ -408,13 +408,13 @@
   min-width: 0;
 }
 
-.bdv-level-step .bdv-step-emoji {
+.conv-level-step .conv-step-emoji {
   font-size: 1.5rem;
   line-height: 1;
   transition: transform 0.3s ease;
 }
 
-.bdv-level-step .bdv-step-name {
+.conv-level-step .conv-step-name {
   font-size: 0.7rem;
   font-weight: 600;
   text-transform: uppercase;
@@ -422,40 +422,40 @@
   white-space: nowrap;
 }
 
-.bdv-level-step .bdv-step-hours {
+.conv-level-step .conv-step-hours {
   font-size: 0.65rem;
   color: var(--text-muted);
 }
 
 /* Active (reached) level step */
-.bdv-level-step.active {
+.conv-level-step.active {
   border-color: var(--step-color, #7FA36B);
   background: color-mix(in srgb, var(--step-color, #7FA36B) 10%, var(--card-bg));
   box-shadow: 0 2px 8px color-mix(in srgb, var(--step-color, #7FA36B) 20%, transparent);
 }
 
-.bdv-level-step.active .bdv-step-name {
+.conv-level-step.active .conv-step-name {
   color: var(--step-color, #7FA36B);
 }
 
-.bdv-level-step.active .bdv-step-emoji {
+.conv-level-step.active .conv-step-emoji {
   transform: scale(1.15);
 }
 
 /* Locked (not yet reached) level step */
-.bdv-level-step.locked {
+.conv-level-step.locked {
   opacity: 0.5;
   filter: grayscale(0.6);
 }
 
-.bdv-level-step.locked .bdv-step-name {
+.conv-level-step.locked .conv-step-name {
   color: var(--text-muted);
 }
 
 /* Responsive: stack levels on small screens */
 /* ── Admin: Gamification settings ────────────── */
 
-.bdv-gami-levels-table th {
+.conv-gami-levels-table th {
   font-size: 0.8rem;
   font-weight: 700;
   text-transform: uppercase;
@@ -463,26 +463,26 @@
   padding: 10px 8px !important;
 }
 
-.bdv-gami-levels-table td {
+.conv-gami-levels-table td {
   vertical-align: middle;
   padding: 8px !important;
 }
 
-.bdv-gami-levels-table input[type="text"],
-.bdv-gami-levels-table input[type="number"] {
+.conv-gami-levels-table input[type="text"],
+.conv-gami-levels-table input[type="number"] {
   border: 1px solid #dcdcde;
   border-radius: 4px;
   padding: 4px 6px;
 }
 
-.bdv-gami-preview {
+.conv-gami-preview {
   background: rgba(0, 0, 0, 0.02);
   border-radius: 6px;
   padding: 4px 8px;
   white-space: nowrap;
 }
 
-.bdv-gamification-track-selector select {
+.conv-gamification-track-selector select {
   min-width: 250px;
   padding: 4px 8px;
   border-radius: 4px;
@@ -490,25 +490,25 @@
 }
 
 @media (max-width: 600px) {
-  .bdv-level-steps {
+  .conv-level-steps {
     flex-wrap: wrap;
     gap: 0.4rem;
   }
 
-  .bdv-level-step {
+  .conv-level-step {
     flex: 0 0 calc(33.33% - 0.4rem);
     padding: 0.5rem 0.3rem;
   }
 
-  .bdv-level-step .bdv-step-emoji {
+  .conv-level-step .conv-step-emoji {
     font-size: 1.2rem;
   }
 
-  .bdv-level-step .bdv-step-name {
+  .conv-level-step .conv-step-name {
     font-size: 0.65rem;
   }
 
-  .bdv-progress-label {
+  .conv-progress-label {
     flex-direction: column;
     align-items: center;
     gap: 0.15rem;
@@ -516,19 +516,19 @@
 }
 
 @media (max-width: 900px) {
-  .bdv-panel-grid {
+  .conv-panel-grid {
     grid-template-columns: 1fr;
   }
 }
 
 /* ── Search tab ──────────────────────────────────── */
-.bdv-search-wrap {
+.conv-search-wrap {
   display: flex;
   gap: 8px;
   margin-bottom: 20px;
 }
 
-.bdv-search-input {
+.conv-search-input {
   flex: 1;
   padding: 12px 16px;
   border: 2px solid #e2e8f0;
@@ -538,12 +538,12 @@
   transition: border-color 0.2s;
 }
 
-.bdv-search-input:focus {
+.conv-search-input:focus {
   border-color: #FF8700;
   box-shadow: 0 0 0 3px rgba(255, 135, 0, 0.15);
 }
 
-.bdv-search-btn {
+.conv-search-btn {
   padding: 12px 24px;
   background: #FF8700;
   color: #fff;
@@ -554,17 +554,17 @@
   transition: background 0.2s;
 }
 
-.bdv-search-btn:hover {
+.conv-search-btn:hover {
   background: #e67a00;
 }
 
-.bdv-search-results {
+.conv-search-results {
   display: flex;
   flex-direction: column;
   gap: 10px;
 }
 
-.bdv-search-item {
+.conv-search-item {
   background: #faf8f6;
   border-left: 4px solid #FF8700;
   border-radius: 0 8px 8px 0;
@@ -572,29 +572,29 @@
   transition: background 0.2s;
 }
 
-.bdv-search-item:hover {
+.conv-search-item:hover {
   background: #f0ece8;
 }
 
-.bdv-search-item-title {
+.conv-search-item-title {
   font-weight: 600;
   font-size: 16px;
   color: #1e293b;
   margin-bottom: 4px;
 }
 
-.bdv-search-item-meta {
+.conv-search-item-meta {
   font-size: 13px;
   color: #64748b;
   display: flex;
   gap: 12px;
 }
 
-.bdv-notif-tab {
+.conv-notif-tab {
     position: relative;
 }
 
-.bdv-notif-badge {
+.conv-notif-badge {
     display: inline-block;
     background: #ef4444;
     color: #fff;
@@ -607,14 +607,14 @@
     margin-left: 2px;
 }
 
-.bdv-notif-empty-state {
+.conv-notif-empty-state {
     padding: 40px 20px;
     text-align: center;
     color: #94a3b8;
 }
 
-.bdv-search-date,
-.bdv-search-loc {
+.conv-search-date,
+.conv-search-loc {
   display: inline-flex;
   align-items: center;
   gap: 4px;

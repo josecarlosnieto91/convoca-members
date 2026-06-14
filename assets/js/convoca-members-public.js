@@ -7,13 +7,13 @@
   'use strict';
 
   /* ══ ALTA DE SOCIOS — Multi-step form ══ */
-  bdv.observeDynamicForms('#convoca-form-alta', function(form) {
-    if (form.id !== 'bdv-alta-form') return;
+  conv.observeDynamicForms('#convoca-form-alta', function(form) {
+    if (form.id !== 'conv-alta-form') return;
       
     // Load config from data attribute or fallback to global
     const wrapper = form.closest('#convoca-form-alta');
     const inlineConfig = wrapper && wrapper.dataset.config ? JSON.parse(wrapper.dataset.config) : null;
-    const config = inlineConfig || window.bdvMembers || {};
+    const config = inlineConfig || window.convMembers || {};
 
     // Fallback data in case PHP localization fails or DB is empty
     const DEFAULT_PLANS = {
@@ -36,11 +36,11 @@
       plansData[k] = { ...DEFAULT_PLANS[k], ...inputData[k] };
     }
 
-    const altaWrap = bdv.$('#convoca-form-alta');
-    const steps = bdv.$$('.bdv-form-step', altaWrap);
-    const dots = bdv.$$('.bdv-step-dot', altaWrap);
-    const alert = bdv.$('#bdv-alert');
-    const progress = bdv.$('.bdv-step-indicator', altaWrap);
+    const altaWrap = conv.$('#convoca-form-alta');
+    const steps = conv.$$('.conv-form-step', altaWrap);
+    const dots = conv.$$('.conv-step-dot', altaWrap);
+    const alert = conv.$('#conv-alert');
+    const progress = conv.$('.conv-step-indicator', altaWrap);
     let current = 1;
 
     /* Step navigation */
@@ -58,10 +58,10 @@
       altaWrap.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
 
-    bdv.$$('.bdv-next', altaWrap).forEach(btn =>
+    conv.$$('.conv-next', altaWrap).forEach(btn =>
       btn.addEventListener('click', () => goStep(+btn.dataset.next))
     );
-    bdv.$$('.bdv-prev', altaWrap).forEach(btn =>
+    conv.$$('.conv-prev', altaWrap).forEach(btn =>
       btn.addEventListener('click', () => goStep(+btn.dataset.prev))
     );
 
@@ -77,15 +77,15 @@
     }
 
     /* Plan selection */
-    bdv.$$('input[name="plan"]', altaWrap).forEach(radio =>
+    conv.$$('input[name="plan"]', altaWrap).forEach(radio =>
       radio.addEventListener('change', () => {
         const v = radio.value;
-        const famEl = bdv.$('#bdv-sub-familiar');
-        const juvEl = bdv.$('#bdv-sub-juvenil');
+        const famEl = conv.$('#conv-sub-familiar');
+        const juvEl = conv.$('#conv-sub-juvenil');
         if (famEl) famEl.style.display = v === 'familiar' ? 'block' : 'none';
         if (juvEl) juvEl.style.display = v === 'juvenil' ? 'block' : 'none';
         if (v !== 'familiar' && v !== 'juvenil') {
-          bdv.$$('input[name="sub_plan"]', altaWrap).forEach(r => r.checked = false);
+          conv.$$('input[name="sub_plan"]', altaWrap).forEach(r => r.checked = false);
         }
         showAdvantages(v);
         updatePaymentMethods(v);
@@ -93,22 +93,22 @@
     );
 
     /* ── Real‑time blur validation on critical fields ── */
-    const criticalSelectors = '#bdv-alta-dni, #bdv-alta-email, #bdv-alta-telefono, #bdv-alta-nombre, #bdv-alta-fechanac';
-    bdv.$$(criticalSelectors, form).forEach(function (input) {
+    const criticalSelectors = '#conv-alta-dni, #conv-alta-email, #conv-alta-telefono, #conv-alta-nombre, #conv-alta-fechanac';
+    conv.$$(criticalSelectors, form).forEach(function (input) {
       input.addEventListener('blur', function () {
         const field = input.closest('.convoca-field');
-        if (field) bdv.validateField(field);
+        if (field) conv.validateField(field);
       });
       input.addEventListener('input', function () {
         const field = input.closest('.convoca-field');
-        if (field) bdv.clearFieldError(field);
+        if (field) conv.clearFieldError(field);
       });
     });
 
 
     function showAdvantages(planKey) {
-      var advEl = bdv.$("#bdv-advantages");
-      var listEl = bdv.$("#bdv-advantages-list");
+      var advEl = conv.$("#conv-advantages");
+      var listEl = conv.$("#conv-advantages-list");
       if (!advEl || !listEl) return;
       
       var plan = plansData[planKey];
@@ -124,7 +124,7 @@
     }
 
     /* Show sub-plan advantages when sub-plan is selected */
-    bdv.$$("input[name=sub_plan]", altaWrap).forEach(function(radio) {
+    conv.$$("input[name=sub_plan]", altaWrap).forEach(function(radio) {
       radio.addEventListener("change", function() {
         showAdvantages(radio.value);
         updatePaymentMethods(radio.value);
@@ -139,35 +139,35 @@
         validMethods = ['tarjeta', 'bizum', 'transferencia'];
       }
 
-      bdv.$$('#bdv-economic-options .bdv-radio-card').forEach(el => {
+      conv.$$('#conv-economic-options .conv-radio-card').forEach(el => {
         const method = el.dataset.method;
         const isIncluded = validMethods.includes(method);
         el.style.display = isIncluded ? 'block' : 'none';
       });
 
-      const ecoBtn = bdv.$('#bdv-type-economic');
+      const ecoBtn = conv.$('#conv-type-economic');
       if (ecoBtn) ecoBtn.style.display = 'block';
 
       const currentMode = form.querySelector('input[name="payment_mode_ui"]:checked');
       if (currentMode && currentMode.value === 'economic' && ecoBtn && ecoBtn.style.display === 'none') {
         currentMode.checked = false;
-        bdv.$('#bdv-economic-options').style.display = 'none';
+        conv.$('#conv-economic-options').style.display = 'none';
         ecoBtn.classList.remove('selected');
       }
 
-      const subChecked = form.querySelector('#bdv-economic-options input:checked');
+      const subChecked = form.querySelector('#conv-economic-options input:checked');
       if (subChecked && subChecked.parentElement.style.display === 'none') {
         subChecked.checked = false;
-        bdv.$('#bdv-transfer-details').style.display = 'none';
+        conv.$('#conv-transfer-details').style.display = 'none';
       }
     }
 
-    const fechaInput = bdv.$('#bdv-fechanac');
+    const fechaInput = conv.$('#conv-fechanac');
     if (fechaInput) {
       fechaInput.addEventListener('change', () => {
         const age = calcAge(fechaInput.value);
-        const badge = bdv.$('#bdv-age-badge');
-        const minor = bdv.$('#bdv-minor');
+        const badge = conv.$('#conv-age-badge');
+        const minor = conv.$('#conv-minor');
         if (badge && age !== null) {
           badge.style.display = 'inline-block';
           badge.textContent = age + ' años' + (age < 18 ? ' (menor de edad)' : '');
@@ -183,16 +183,16 @@
 
       if (n === 1) {
         const sel = form.querySelector('input[name="plan"]:checked');
-        if (!sel) { bdv.showAlert(alert, 'Selecciona una forma de colaborar.'); return false; }
+        if (!sel) { conv.showAlert(alert, 'Selecciona una forma de colaborar.'); return false; }
         if ((sel.value === 'familiar' || sel.value === 'juvenil') &&
           !form.querySelector('input[name="sub_plan"]:checked')) {
-          bdv.showAlert(alert, 'Selecciona la modalidad dentro de tu plan.'); return false;
+          conv.showAlert(alert, 'Selecciona la modalidad dentro de tu plan.'); return false;
         }
       }
 
       if (n === 2) {
         let ok = true;
-        bdv.$$('input[required]', stepEl).forEach(f => {
+        conv.$$('input[required]', stepEl).forEach(f => {
           const field = f.closest('.convoca-field');
           if (!f.value || (f.pattern && !new RegExp(f.pattern).test(f.value))) {
             if (field) field.classList.add('has-error');
@@ -204,26 +204,26 @@
         
         const age = calcAge(fechaInput?.value);
         if (age !== null && age < 18) {
-          const tutorNombre = bdv.$('#bdv-tutor-nombre');
-          const tutorDni = bdv.$('#bdv-tutor-dni');
+          const tutorNombre = conv.$('#conv-tutor-nombre');
+          const tutorDni = conv.$('#conv-tutor-dni');
           if (tutorNombre && !tutorNombre.value.trim()) { ok = false; }
           if (tutorDni && !tutorDni.value.trim()) { ok = false; }
         }
-        if (!ok) { bdv.showAlert(alert, 'Rellena todos los campos obligatorios.'); return false; }
+        if (!ok) { conv.showAlert(alert, 'Rellena todos los campos obligatorios.'); return false; }
       }
 
       if (n === 3) {
         const pago = form.querySelector('input[name="forma_pago"]:checked');
-        if (!pago) { bdv.showAlert(alert, 'Selecciona una forma de pago.'); return false; }
+        if (!pago) { conv.showAlert(alert, 'Selecciona una forma de pago.'); return false; }
         
         if (pago.value === 'voluntariado') {
-          const acuerdo = bdv.$('#bdv-acuerdo-vol');
-          if (acuerdo && !acuerdo.checked) { bdv.showAlert(alert, 'Debes aceptar el acuerdo de voluntariado.'); return false; }
+          const acuerdo = conv.$('#conv-acuerdo-vol');
+          if (acuerdo && !acuerdo.checked) { conv.showAlert(alert, 'Debes aceptar el acuerdo de voluntariado.'); return false; }
         }
-        if (!bdv.$('#bdv-rgpd').checked) { bdv.showAlert(alert, 'Debes aceptar la Política de Privacidad.'); return false; }
+        if (!conv.$('#conv-rgpd').checked) { conv.showAlert(alert, 'Debes aceptar la Política de Privacidad.'); return false; }
       }
 
-      bdv.hideAlert(alert);
+      conv.hideAlert(alert);
       return true;
     }
 
@@ -243,17 +243,17 @@
       const fechanac = v('fecha_nacimiento');
       const age = calcAge(fechanac);
 
-      setText('#bdv-sum-nombre', nombre);
-      setText('#bdv-sum-dni', v('dni'));
-      setText('#bdv-sum-fechanac', fechanac ? new Date(fechanac).toLocaleDateString('es-ES') : '—');
-      setText('#bdv-sum-edad', age !== null ? age + ' años' : '—');
-      setText('#bdv-sum-menor', age !== null && age < 18 ? 'Sí' : 'No');
-      setText('#bdv-sum-email', v('email'));
-      setText('#bdv-sum-telefono', v('telefono'));
-      setText('#bdv-sum-whatsapp', v('whatsapp') === 'si' ? 'Sí' : 'No');
-      setText('#bdv-sum-direccion', v('direccion'));
-      setText('#bdv-sum-municipio', v('municipio'));
-      setText('#bdv-sum-canal', v('canal_contacto'));
+      setText('#conv-sum-nombre', nombre);
+      setText('#conv-sum-dni', v('dni'));
+      setText('#conv-sum-fechanac', fechanac ? new Date(fechanac).toLocaleDateString('es-ES') : '—');
+      setText('#conv-sum-edad', age !== null ? age + ' años' : '—');
+      setText('#conv-sum-menor', age !== null && age < 18 ? 'Sí' : 'No');
+      setText('#conv-sum-email', v('email'));
+      setText('#conv-sum-telefono', v('telefono'));
+      setText('#conv-sum-whatsapp', v('whatsapp') === 'si' ? 'Sí' : 'No');
+      setText('#conv-sum-direccion', v('direccion'));
+      setText('#conv-sum-municipio', v('municipio'));
+      setText('#conv-sum-canal', v('canal_contacto'));
 
       const plan = v('plan');
       const sub = v('sub_plan');
@@ -270,24 +270,24 @@
         'voluntariado': 'Horas de voluntariado'
       };
 
-      setText('#bdv-sum-plan', planLabel);
-      setText('#bdv-sum-modalidad', modalidad);
-      setText('#bdv-sum-pago', paymentMap[v('forma_pago')] || v('forma_pago'));
-      setText('#bdv-sum-importe', (v('forma_pago') === 'voluntariado') ? (parseFloat(data?.hours || 0) + 'h') : (parseInt(data?.price || 0) + '€'));
+      setText('#conv-sum-plan', planLabel);
+      setText('#conv-sum-modalidad', modalidad);
+      setText('#conv-sum-pago', paymentMap[v('forma_pago')] || v('forma_pago'));
+      setText('#conv-sum-importe', (v('forma_pago') === 'voluntariado') ? (parseFloat(data?.hours || 0) + 'h') : (parseInt(data?.price || 0) + '€'));
 
       const today = new Date().toLocaleDateString('es-ES');
-      setText('#bdv-sum-fecha', today);
-      setText('#bdv-sum-rgpd', 'Sí');
-      setText('#bdv-sum-coms', v('comunicaciones_ok') === '1' ? 'Sí' : 'No');
+      setText('#conv-sum-fecha', today);
+      setText('#conv-sum-rgpd', 'Sí');
+      setText('#conv-sum-coms', v('comunicaciones_ok') === '1' ? 'Sí' : 'No');
 
-      setText('#bdv-card-name', nombre);
-      setText('#bdv-card-type', planLabel);
-      setText('#bdv-card-id', 'Socio/a #TEMP');
-      setText('#bdv-card-date', 'Alta: ' + today);
+      setText('#conv-card-name', nombre);
+      setText('#conv-card-type', planLabel);
+      setText('#conv-card-id', 'Socio/a #TEMP');
+      setText('#conv-card-date', 'Alta: ' + today);
 
-      const cardEl = bdv.$('#bdv-card-preview');
+      const cardEl = conv.$('#conv-card-preview');
       if (cardEl) {
-        cardEl.className = 'bdv-card-visual';
+        cardEl.className = 'conv-card-visual';
         if (key.includes('busgosu')) cardEl.classList.add('card-busgosu');
         if (key.includes('lugg')) cardEl.classList.add('card-lugg');
         if (key.includes('deva')) cardEl.classList.add('card-deva');
@@ -299,7 +299,7 @@
       if (!validateStep(current)) return;
 
       const btn = form.querySelector('[type="submit"]');
-      bdv.setLoading(btn, true, '✔ Confirmar alta');
+      conv.setLoading(btn, true, '✔ Confirmar alta');
 
       const ajaxUrl = config.ajaxUrl || '/wp-admin/admin-ajax.php';
       const nonceUrl = ajaxUrl + (ajaxUrl.includes('?') ? '&' : '?') + 'action=conv_get_nonce';
@@ -331,59 +331,59 @@
             }
 
             form.style.display = 'none';
-            bdv.$$('.bdv-step-indicator', altaWrap).forEach(el => el.style.display = 'none');
-            const success = bdv.$('#bdv-success');
+            conv.$$('.conv-step-indicator', altaWrap).forEach(el => el.style.display = 'none');
+            const success = conv.$('#conv-success');
             if (success) {
               success.style.display = 'block';
 
               if (res.data.gateway_error) {
-                const title = bdv.$('h3', success);
-                const subText = bdv.$('p', success);
-                const cardSummary = bdv.$('.bdv-success-summary', success);
+                const title = conv.$('h3', success);
+                const subText = conv.$('p', success);
+                const cardSummary = conv.$('.conv-success-summary', success);
 
                 if (title) title.textContent = 'Registro recibido (Pago pendiente)';
                 if (subText) subText.innerHTML = `<strong>Aviso:</strong> ${res.data.error_message}. Tu número de socio se confirmará cuando recibamos el pago.`;
                 if (cardSummary) cardSummary.style.borderTop = '2px dashed #e74c3c';
               } else if (res.data.is_volunteer) {
-                const sub = bdv.$('p', success);
+                const sub = conv.$('p', success);
                 if (sub) sub.innerHTML = 'Tu solicitud de voluntariado se ha registrado correctamente. <strong>Nos pondremos en contacto contigo para una entrevista personal</strong> y formalizar el acuerdo.';
               }
 
-              setText('#bdv-final-name', res.data.nombre);
-              setText('#bdv-final-id', (res.data.gateway_error ? 'Pendiente' : 'Socio/a #' + res.data.member_id));
-              setText('#bdv-final-type', res.data.plan_label);
-              setText('#bdv-final-date', 'Alta: ' + res.data.fecha);
+              setText('#conv-final-name', res.data.nombre);
+              setText('#conv-final-id', (res.data.gateway_error ? 'Pendiente' : 'Socio/a #' + res.data.member_id));
+              setText('#conv-final-type', res.data.plan_label);
+              setText('#conv-final-date', 'Alta: ' + res.data.fecha);
             }
           } else {
             const msgs = res.data?.errors?.join('<br>') || 'Error desconocido.';
-            bdv.showAlert(alert, msgs);
-            bdv.setLoading(btn, false, '✔ Confirmar alta');
+            conv.showAlert(alert, msgs);
+            conv.setLoading(btn, false, '✔ Confirmar alta');
           }
         })
         .catch(() => {
-          bdv.showAlert(alert, 'Error de conexión. Inténtalo de nuevo.');
-          bdv.setLoading(btn, false, '✔ Confirmar alta');
+          conv.showAlert(alert, 'Error de conexión. Inténtalo de nuevo.');
+          conv.setLoading(btn, false, '✔ Confirmar alta');
         });
     });
   });
 
   /* ══ VOLUNTARIADO — Single form ══ */
-  bdv.observeDynamicForms('#bdv-vol-wrapper', function(form) {
-    if (form.id !== 'bdv-vol-form') return;
+  conv.observeDynamicForms('#conv-vol-wrapper', function(form) {
+    if (form.id !== 'conv-vol-form') return;
 
     // Load config from data attribute or fallback to global
-    const wrapper = form.closest('#bdv-vol-wrapper');
+    const wrapper = form.closest('#conv-vol-wrapper');
     const inlineConfig = wrapper && wrapper.dataset.config ? JSON.parse(wrapper.dataset.config) : null;
-    const config = inlineConfig || window.bdvMembers || {};
+    const config = inlineConfig || window.convMembers || {};
       
-    const alert = bdv.$('#bdv-vol-alert');
+    const alert = conv.$('#conv-vol-alert');
 
-    const fechaInput = bdv.$('#bdv-vol-fechanac');
+    const fechaInput = conv.$('#conv-vol-fechanac');
     if (fechaInput) {
       fechaInput.addEventListener('change', () => {
         const age = calcAge(fechaInput.value);
-        const badge = bdv.$('#bdv-vol-age-badge');
-        const minor = bdv.$('#bdv-vol-minor');
+        const badge = conv.$('#conv-vol-age-badge');
+        const minor = conv.$('#conv-vol-minor');
         if (badge && age !== null) {
           badge.style.display = 'inline-block';
           badge.textContent = age + ' años' + (age < 18 ? ' (menor de edad)' : '');
@@ -393,15 +393,15 @@
     }
 
     /* ── Real‑time blur validation ── */
-    const volCritical = '#bdv-vol-dni, #bdv-vol-email, #bdv-vol-telefono, #bdv-vol-nombre, #bdv-vol-fechanac';
-    bdv.$$(volCritical, form).forEach(function (input) {
+    const volCritical = '#conv-vol-dni, #conv-vol-email, #conv-vol-telefono, #conv-vol-nombre, #conv-vol-fechanac';
+    conv.$$(volCritical, form).forEach(function (input) {
       input.addEventListener('blur', function () {
         const field = input.closest('.convoca-field');
-        if (field) bdv.validateField(field);
+        if (field) conv.validateField(field);
       });
       input.addEventListener('input', function () {
         const field = input.closest('.convoca-field');
-        if (field) bdv.clearFieldError(field);
+        if (field) conv.clearFieldError(field);
       });
     });
 
@@ -409,7 +409,7 @@
       e.preventDefault();
 
       let ok = true;
-      bdv.$$('input[required], textarea[required]', form).forEach(f => {
+      conv.$$('input[required], textarea[required]', form).forEach(f => {
         const field = f.closest('.convoca-field');
         if (f.type === 'checkbox') {
           if (!f.checked) ok = false;
@@ -421,34 +421,34 @@
         }
       });
 
-      if (!bdv.$('#bdv-vol-codigo').checked ||
-        !bdv.$('#bdv-vol-protocolo').checked ||
-        !bdv.$('#bdv-vol-rgpd').checked) {
-        bdv.showAlert(alert, 'Debes aceptar todos los compromisos obligatorios.');
+      if (!conv.$('#conv-vol-codigo').checked ||
+        !conv.$('#conv-vol-protocolo').checked ||
+        !conv.$('#conv-vol-rgpd').checked) {
+        conv.showAlert(alert, 'Debes aceptar todos los compromisos obligatorios.');
         return;
       }
 
       if (!ok) {
-        bdv.showAlert(alert, 'Rellena todos los campos obligatorios.');
+        conv.showAlert(alert, 'Rellena todos los campos obligatorios.');
         return;
       }
 
       const btn = form.querySelector('[type="submit"]');
-      bdv.setLoading(btn, true, 'Enviar solicitud de voluntariado 🌱');
+      conv.setLoading(btn, true, 'Enviar solicitud de voluntariado 🌱');
 
       const fd = new FormData(form);
       const nonce = config.volNonce || '';
 
-      bdv.ajaxPost('conv_voluntariado_submit', fd, nonce, 
+      conv.ajaxPost('conv_voluntariado_submit', fd, nonce, 
           (res) => {
               form.style.display = 'none';
-              const success = bdv.$('#bdv-vol-success');
+              const success = conv.$('#conv-vol-success');
               if (success) success.style.display = 'block';
           },
           (res) => {
               const msgs = res.data?.errors?.join('<br>') || 'Error desconocido.';
-              bdv.showAlert(alert, msgs);
-              bdv.setLoading(btn, false, 'Enviar solicitud de voluntariado 🌱');
+              conv.showAlert(alert, msgs);
+              conv.setLoading(btn, false, 'Enviar solicitud de voluntariado 🌱');
           }
       );
     });
@@ -466,7 +466,7 @@
   }
 
   function setText(sel, val) {
-    const el = bdv.$(sel);
+    const el = conv.$(sel);
     if (el) el.textContent = val;
   }
 

@@ -45,13 +45,13 @@ class Form_Handler {
 	 */
 	public function render(): string {
 		wp_enqueue_style(
-			'bdv-members-public',
+			'conv-members-public',
 			CONV_MEMBERS_URL . 'assets/css/convoca-members-public.css',
 			array(),
 			CONV_MEMBERS_VERSION
 		);
 		wp_enqueue_script(
-			'bdv-members-public',
+			'conv-members-public',
 			CONV_MEMBERS_URL . 'assets/js/convoca-members-public.js',
 			array( 'convoca-common-js' ),
 			CONV_MEMBERS_VERSION,

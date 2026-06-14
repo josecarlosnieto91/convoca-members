@@ -205,8 +205,8 @@ class Admin_Settings {
 	public function render(): void {
 		$active_tab = $this->get_active_tab();
 		?>
-		<div class="wrap bdv-members-settings-wrap">
-			<div class="bdv-admin-header" style="display: flex; align-items: center; gap: 20px; margin-bottom: 20px;">
+		<div class="wrap conv-members-settings-wrap">
+			<div class="conv-admin-header" style="display: flex; align-items: center; gap: 20px; margin-bottom: 20px;">
 				<img src="<?php echo esc_url( CONVOCA_IMAGES_URL . 'logo.png' ); ?>" alt="Convoca Members" style="width: 80px; height: 80px; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.1);">
 				<div>
 					<h1 style="margin: 0; padding: 0;"><?php esc_html_e( 'Ajustes — Miembros Convoca', 'convoca-members' ); ?></h1>
@@ -215,27 +215,27 @@ class Admin_Settings {
 			</div>
 
 			<nav class="nav-tab-wrapper">
-				<a href="?page=bdv-members-settings&tab=general"
+				<a href="?page=conv-members-settings&tab=general"
 					class="nav-tab <?php echo $active_tab === 'general' ? 'nav-tab-active' : ''; ?>">
 					<?php esc_html_e( 'General', 'convoca-members' ); ?>
 				</a>
-				<a href="?page=bdv-members-settings&tab=plans"
+				<a href="?page=conv-members-settings&tab=plans"
 					class="nav-tab <?php echo $active_tab === 'plans' ? 'nav-tab-active' : ''; ?>">
 					<?php esc_html_e( 'Planes de Socio', 'convoca-members' ); ?>
 				</a>
-				<a href="?page=bdv-members-settings&tab=emails"
+				<a href="?page=conv-members-settings&tab=emails"
 					class="nav-tab <?php echo $active_tab === 'emails' ? 'nav-tab-active' : ''; ?>">
 					<?php esc_html_e( 'Plantillas de Email', 'convoca-members' ); ?>
 				</a>
-				<a href="?page=bdv-members-settings&tab=volunteers"
+				<a href="?page=conv-members-settings&tab=volunteers"
 					class="nav-tab <?php echo $active_tab === 'volunteers' ? 'nav-tab-active' : ''; ?>">
 					<?php esc_html_e( 'Campos Voluntariado', 'convoca-members' ); ?>
 				</a>
-				<a href="?page=bdv-members-settings&tab=gamification"
+				<a href="?page=conv-members-settings&tab=gamification"
 					class="nav-tab <?php echo $active_tab === 'gamification' ? 'nav-tab-active' : ''; ?>">
 					🏆 <?php esc_html_e( 'Gamificación', 'convoca-members' ); ?>
 				</a>
-				<a href="?page=bdv-members-settings&tab=status"
+				<a href="?page=conv-members-settings&tab=status"
 					class="nav-tab <?php echo $active_tab === 'status' ? 'nav-tab-active' : ''; ?>">
 					<?php esc_html_e( 'Estado', 'convoca-members' ); ?>
 				</a>
@@ -243,7 +243,7 @@ class Admin_Settings {
 
 			<?php \Convoca\Core\Utils::render_stored_notices(); ?>
 
-			<div class="bdv-settings-content">
+			<div class="conv-settings-content">
 				<?php
 				switch ( $active_tab ) {
 					case 'plans':
@@ -329,7 +329,7 @@ class Admin_Settings {
 		<form method="post" action="options.php">
 			<?php settings_fields( 'conv_members_plans_group' ); ?>
 
-			<div id="bdv-plans-container">
+			<div id="conv-plans-container">
 				<?php foreach ( $plans as $key => $plan ) : ?>
 					<?php $this->render_single_plan_card( $key, $plan ); ?>
 				<?php endforeach; ?>
@@ -340,7 +340,7 @@ class Admin_Settings {
 				No, request says "Add from settings". 
 				Strategy: A simple "Add Plan" button that reveals a new empty card with a key input. -->
 
-			<div class="bdv-add-plan-wrapper"
+			<div class="conv-add-plan-wrapper"
 				style="margin-top: 20px; padding: 20px; border: 2px dashed #ccc; text-align: center;">
 				<h3><?php esc_html_e( 'Añadir Nuevo Plan', 'convoca-members' ); ?></h3>
 				<p><?php esc_html_e( 'Para añadir un plan, guarda primero los cambios actuales.', 'convoca-members' ); ?></p>
@@ -351,7 +351,7 @@ class Admin_Settings {
 				</div>
 			</div>
 
-			<template id="bdv-plan-card-template">
+			<template id="conv-plan-card-template">
 				<?php
 				$clean_plan = array(
 					'label'           => __( 'Nuevo Plan', 'convoca-members' ),
@@ -377,13 +377,13 @@ class Admin_Settings {
 					if (!key) { alert('<?php echo esc_js( __( 'Escribe un ID único para el plan', 'convoca-members' ) ); ?>'); return; }
 					key = key.toLowerCase().replace(/[^a-z0-9-]/g, '-');
 
-					var container = document.getElementById('bdv-plans-container');
+					var container = document.getElementById('conv-plans-container');
 					if (document.querySelector('input[name="conv_members_plans[' + key + '][label]"]')) {
 						alert('<?php echo esc_js( __( 'Este ID ya existe.', 'convoca-members' ) ); ?>');
 						return;
 					}
 
-					var template = document.getElementById('bdv-plan-card-template');
+					var template = document.getElementById('conv-plan-card-template');
 					var clone = template.content.cloneNode(true);
 					var html = clone.firstElementChild.outerHTML.replace(/__KEY__/g, key);
 					
@@ -403,7 +403,7 @@ class Admin_Settings {
 	private function render_single_plan_card( $key, $plan ): void {
 		$active = isset( $plan['active'] ) ? (bool) $plan['active'] : true; // Default active if not set.
 		?>
-		<div class="bdv-plan-card postbox" style="margin-bottom: 20px;">
+		<div class="conv-plan-card postbox" style="margin-bottom: 20px;">
 			<div class="postbox-header"
 				style="padding: 10px; display: flex; justify-content: space-between; align-items: center;">
 				<h2 style="margin:0; font-size: 1.2em;">
@@ -417,7 +417,7 @@ class Admin_Settings {
 						<?php esc_html_e( 'Activo', 'convoca-members' ); ?>
 					</label>
 					<button type="button" class="button-link-delete" style="color: #b32d2e; margin-left: 15px;"
-						onclick="if(confirm('<?php echo esc_js( __( '¿Eliminar este plan al guardar? (Desmarca activo para ocultarlo)', 'convoca-members' ) ); ?>')) { this.closest('.bdv-plan-card').remove(); }">
+						onclick="if(confirm('<?php echo esc_js( __( '¿Eliminar este plan al guardar? (Desmarca activo para ocultarlo)', 'convoca-members' ) ); ?>')) { this.closest('.conv-plan-card').remove(); }">
 						<?php esc_html_e( 'Eliminar', 'convoca-members' ); ?>
 					</button>
 				</div>
@@ -552,7 +552,7 @@ class Admin_Settings {
 					'body'    => '',
 				);
 				?>
-				<div class="bdv-template-card postbox">
+				<div class="conv-template-card postbox">
 					<div class="postbox-header" style="padding:10px;">
 						<h2 style="margin:0;"><?php echo esc_html( $tpl_labels[ $slug ] ?? $slug ); ?></h2>
 					</div>
@@ -589,13 +589,13 @@ class Admin_Settings {
 			<h2 style="margin-top: 40px;"><?php esc_html_e( 'Campos Personalizados', 'convoca-members' ); ?></h2>
 			<p class="description"><?php esc_html_e( 'Estos campos se solicitarán en el formulario de registro de voluntarios. Los campos base (Nombre, DNI, Email, Teléfono) ya están incluidos y no necesitan añadirse aquí.', 'convoca-members' ); ?></p>
 
-			<div id="bdv-fields-container">
+			<div id="conv-fields-container">
 				<?php foreach ( $fields as $index => $field ) : ?>
 					<?php $this->render_single_field_card( $index, $field ); ?>
 				<?php endforeach; ?>
 			</div>
 
-			<div class="bdv-add-field-wrapper" style="margin-top: 20px; padding: 20px; border: 2px dashed #ccc; text-align: center;">
+			<div class="conv-add-field-wrapper" style="margin-top: 20px; padding: 20px; border: 2px dashed #ccc; text-align: center;">
 				<h3><?php esc_html_e( 'Añadir Nuevo Campo', 'convoca-members' ); ?></h3>
 				<p><?php esc_html_e( 'Para añadir un campo, guarda primero los cambios actuales.', 'convoca-members' ); ?></p>
 				<div style="text-align: left; max_width: 600px; margin: 0 auto; display: inline-block;">
@@ -605,7 +605,7 @@ class Admin_Settings {
 				</div>
 			</div>
 
-			<template id="bdv-field-card-template">
+			<template id="conv-field-card-template">
 				<?php
 				$clean_field = array(
 					'label'    => 'Nuevo Campo',
@@ -623,13 +623,13 @@ class Admin_Settings {
 					if (!name) { alert('Escribe un ID único para el campo'); return; }
 					name = name.toLowerCase().replace(/[^a-z0-9-]/g, '-');
 
-					var container = document.getElementById('bdv-fields-container');
+					var container = document.getElementById('conv-fields-container');
 					if (document.querySelector('input[name="conv_volunteer_fields[' + name + '][label]"]')) {
 						alert('Este ID ya existe.');
 						return;
 					}
 
-					var template = document.getElementById('bdv-field-card-template');
+					var template = document.getElementById('conv-field-card-template');
 					var clone = template.content.cloneNode(true);
 					var html = clone.firstElementChild.outerHTML.replace(/__INDEX__/g, name);
 
@@ -661,14 +661,14 @@ class Admin_Settings {
 	private function render_single_field_card( $index, $field ): void {
 		$name = esc_attr( $field['name'] ?? $index );
 		?>
-		<div class="bdv-field-card postbox" style="margin-bottom: 15px;">
+		<div class="conv-field-card postbox" style="margin-bottom: 15px;">
 			<div class="postbox-header" style="padding: 10px; display: flex; justify-content: space-between; align-items: center;">
 				<h3 style="margin:0;">
 					<?php echo esc_html( $field['label'] ?? 'Nuevo Campo' ); ?>
 					<code style="opacity: 0.5;">(<?php echo $name; ?>)</code>
 				</h3>
 				<button type="button" class="button-link-delete" style="color: #b32d2e;"
-					onclick="if(confirm('¿Eliminar este campo al guardar?')) { this.closest('.bdv-field-card').remove(); }">
+					onclick="if(confirm('¿Eliminar este campo al guardar?')) { this.closest('.conv-field-card').remove(); }">
 					<?php esc_html_e( 'Eliminar', 'convoca-members' ); ?>
 				</button>
 			</div>
@@ -738,15 +738,15 @@ class Admin_Settings {
 		}
 
 		?>
-		<div class="bdv-gamification-settings">
+		<div class="conv-gamification-settings">
 			<h2><?php esc_html_e( '🏆 Gamificación — Badges por Modalidad', 'convoca-members' ); ?></h2>
 			<p class="description">
 				<?php esc_html_e( 'Aquí puedes personalizar los badges de cada track (modalidad). Los valores por defecto se usan si no introduces cambios.', 'convoca-members' ); ?>
 			</p>
 
-			<div class="bdv-gamification-track-selector" style="margin: 20px 0;">
-				<label for="bdv-gamification-track-select"><strong><?php esc_html_e( 'Selecciona track:', 'convoca-members' ); ?></strong></label>
-				<select id="bdv-gamification-track-select" onchange="bdvGamiSwitchTrack(this.value)">
+			<div class="conv-gamification-track-selector" style="margin: 20px 0;">
+				<label for="conv-gamification-track-select"><strong><?php esc_html_e( 'Selecciona track:', 'convoca-members' ); ?></strong></label>
+				<select id="conv-gamification-track-select" onchange="bdvGamiSwitchTrack(this.value)">
 					<?php foreach ( $tracks as $key => $track ) : ?>
 						<option value="<?php echo esc_attr( $key ); ?>">
 							<?php echo esc_html( $track['label'] ); ?>
@@ -760,7 +760,7 @@ class Admin_Settings {
 				<input type="hidden" name="conv_save_gamification" value="1">
 
 				<?php foreach ( $tracks as $track_key => $track ) : ?>
-					<div class="bdv-gami-track-panel" id="bdv-gami-track-<?php echo esc_attr( $track_key ); ?>"
+					<div class="conv-gami-track-panel" id="conv-gami-track-<?php echo esc_attr( $track_key ); ?>"
 						style="display: <?php echo $track_key === 'busgosu' ? 'block' : 'none'; ?>;">
 						<div class="postbox">
 							<div class="postbox-header" style="padding: 12px 15px; display: flex; align-items: center; gap: 10px;">
@@ -777,7 +777,7 @@ class Admin_Settings {
 								</p>
 
 								<h3><?php esc_html_e( 'Niveles', 'convoca-members' ); ?></h3>
-								<table class="wp-list-table widefat fixed striped bdv-gami-levels-table">
+								<table class="wp-list-table widefat fixed striped conv-gami-levels-table">
 									<thead>
 										<tr>
 											<th style="width:50px;">#</th>
@@ -804,7 +804,7 @@ class Admin_Settings {
 															name="conv_gamification_tracks[<?php echo esc_attr( $track_key ); ?>][levels][<?php echo $i; ?>][emoji]"
 															value="<?php echo esc_attr( $level['emoji'] ); ?>"
 															style="width:60px; text-align:center; font-size:1.2em;"
-															class="bdv-emoji-input">
+															class="conv-emoji-input">
 												</td>
 												<td>
 													<input type="number" step="0.5" min="0"
@@ -825,7 +825,7 @@ class Admin_Settings {
 															class="regular-text" style="width:100%;">
 												</td>
 												<td>
-													<div class="bdv-gami-preview" style="display:flex; align-items:center; gap:6px;">
+													<div class="conv-gami-preview" style="display:flex; align-items:center; gap:6px;">
 														<span style="font-size:1.4rem;"><?php echo esc_html( $level['emoji'] ); ?></span>
 														<span style="font-weight:600; color:<?php echo esc_attr( $level['color'] ); ?>; font-size:0.85rem;"><?php echo esc_html( $level['name'] ); ?></span>
 													</div>
@@ -849,10 +849,10 @@ class Admin_Settings {
 
 		<script>
 		function bdvGamiSwitchTrack(trackKey) {
-			document.querySelectorAll('.bdv-gami-track-panel').forEach(function(el) {
+			document.querySelectorAll('.conv-gami-track-panel').forEach(function(el) {
 				el.style.display = 'none';
 			});
-			var panel = document.getElementById('bdv-gami-track-' + trackKey);
+			var panel = document.getElementById('conv-gami-track-' + trackKey);
 			if (panel) panel.style.display = 'block';
 		}
 		</script>

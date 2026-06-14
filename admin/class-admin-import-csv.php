@@ -23,11 +23,11 @@ class Admin_Import_CSV {
 
 	public function register_page(): void {
 		add_submenu_page(
-			'bdv-members',
+			'conv-members',
 			__( 'Importar Socios CSV', 'convoca-members' ),
 			__( 'Importar CSV', 'convoca-members' ),
 			'manage_options',
-			'bdv-import-csv',
+			'conv-import-csv',
 			array( $this, 'render' )
 		);
 	}
@@ -235,7 +235,7 @@ class Admin_Import_CSV {
 			600
 		);
 
-		wp_safe_redirect( admin_url( 'admin.php?page=bdv-import-csv' ) );
+		wp_safe_redirect( admin_url( 'admin.php?page=conv-import-csv' ) );
 		exit;
 	}
 
@@ -331,7 +331,7 @@ class Admin_Import_CSV {
 			$this->process_batch( $batch_key, $batch_size );
 
 			// Redirect back to continue.
-			wp_safe_redirect( admin_url( 'admin.php?page=bdv-import-csv' ) );
+			wp_safe_redirect( admin_url( 'admin.php?page=conv-import-csv' ) );
 			exit;
 		}
 
@@ -365,7 +365,7 @@ class Admin_Import_CSV {
 			$message .= ' ' . sprintf( __( '%d errores:', 'convoca-members' ), count( $errors ) ) . ' ' . implode( ' | ', array_slice( $errors, 0, 10 ) );
 		}
 
-		wp_safe_redirect( admin_url( 'admin.php?page=bdv-import-csv&import_result=' . urlencode( $message ) ) );
+		wp_safe_redirect( admin_url( 'admin.php?page=conv-import-csv&import_result=' . urlencode( $message ) ) );
 		exit;
 	}
 
@@ -382,13 +382,13 @@ class Admin_Import_CSV {
 		$state     = get_transient( $batch_key );
 
 		if ( ! $state || empty( $state['rows'] ) ) {
-			wp_safe_redirect( admin_url( 'admin.php?page=bdv-import-csv' ) );
+			wp_safe_redirect( admin_url( 'admin.php?page=conv-import-csv' ) );
 			exit;
 		}
 
 		$this->process_batch( $batch_key, 25 );
 
-		wp_safe_redirect( admin_url( 'admin.php?page=bdv-import-csv' ) );
+		wp_safe_redirect( admin_url( 'admin.php?page=conv-import-csv' ) );
 		exit;
 	}
 

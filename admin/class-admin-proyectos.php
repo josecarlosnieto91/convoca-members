@@ -31,7 +31,7 @@ class Admin_Proyectos extends \WP_List_Table {
 	 * Enqueue assets for the custom editor.
 	 */
 	public function enqueue_assets( $hook ) {
-		if ( strpos( $hook, 'bdv-proyecto-editor' ) !== false ) {
+		if ( strpos( $hook, 'conv-proyecto-editor' ) !== false ) {
 			wp_enqueue_style( 'convoca-core', CONV_COMMON_URL . 'assets/css/convoca-common.css', array(), CONV_COMMON_VERSION );
 		}
 	}
@@ -48,12 +48,12 @@ class Admin_Proyectos extends \WP_List_Table {
 
 		if ( ( $screen && $screen->id === CPT_Proyecto::POST_TYPE ) || $post_type === CPT_Proyecto::POST_TYPE ) {
 			if ( isset( $screen->action ) && $screen->action === 'add' || strpos( $_SERVER['REQUEST_URI'], 'post-new.php' ) !== false ) {
-				wp_redirect( admin_url( 'admin.php?page=bdv-proyecto-editor' ) );
+				wp_redirect( admin_url( 'admin.php?page=conv-proyecto-editor' ) );
 				exit;
 			} else {
 				$post_id = isset( $_GET['post'] ) ? (int) $_GET['post'] : 0;
 				if ( $post_id && strpos( $_SERVER['REQUEST_URI'], 'post.php' ) !== false ) {
-					wp_redirect( admin_url( 'admin.php?page=bdv-proyecto-editor&id=' . $post_id ) );
+					wp_redirect( admin_url( 'admin.php?page=conv-proyecto-editor&id=' . $post_id ) );
 					exit;
 				}
 			}
@@ -64,7 +64,7 @@ class Admin_Proyectos extends \WP_List_Table {
 		$node_id = 'new-proyecto';
 		$node    = $wp_admin_bar->get_node( $node_id );
 		if ( $node ) {
-			$node->href = admin_url( 'admin.php?page=bdv-proyecto-editor' );
+			$node->href = admin_url( 'admin.php?page=conv-proyecto-editor' );
 			$wp_admin_bar->add_node( $node );
 		}
 	}
@@ -84,11 +84,11 @@ class Admin_Proyectos extends \WP_List_Table {
 
 	public function add_menu() {
 		add_submenu_page(
-			'bdv-members',
+			'conv-members',
 			__( 'Proyectos', 'convoca-members' ),
 			__( 'Proyectos', 'convoca-members' ),
 			'gestionar_miembros',
-			'bdv-proyectos',
+			'conv-proyectos',
 			array( $this, 'render_page' )
 		);
 
@@ -97,7 +97,7 @@ class Admin_Proyectos extends \WP_List_Table {
 			__( 'Editor de Proyecto', 'convoca-members' ),
 			__( 'Editor de Proyecto', 'convoca-members' ),
 			'gestionar_miembros',
-			'bdv-proyecto-editor',
+			'conv-proyecto-editor',
 			array( $this, 'render_editor' )
 		);
 	}
@@ -118,7 +118,7 @@ class Admin_Proyectos extends \WP_List_Table {
 
 			<form method="get">
 				<input type="hidden" name="post_type" value="miembro">
-				<input type="hidden" name="page" value="bdv-proyectos">
+				<input type="hidden" name="page" value="conv-proyectos">
 				<?php
 				$this->search_box( __( 'Buscar proyectos', 'convoca-members' ), 'proyecto' );
 				$this->display();
@@ -321,18 +321,18 @@ class Admin_Proyectos extends \WP_List_Table {
 		<div class="wrap convoca-admin">
 			<h1><?php echo esc_html( $title ); ?></h1>
 
-			<form method="post" action="<?php echo admin_url( 'admin-post.php' ); ?>" class="bdv-form-custom">
+			<form method="post" action="<?php echo admin_url( 'admin-post.php' ); ?>" class="conv-form-custom">
 				<input type="hidden" name="action" value="conv_save_proyecto_admin">
 				<input type="hidden" name="id" value="<?php echo $post_id; ?>">
 				<?php wp_nonce_field( 'conv_save_proyecto_nonce' ); ?>
 
-				<div class="bdv-grid bdv-grid--2">
-					<div class="bdv-card">
-						<div class="bdv-card-header">
+				<div class="conv-grid conv-grid--2">
+					<div class="conv-card">
+						<div class="conv-card-header">
 							<h2><?php _e( 'Información General', 'convoca-members' ); ?></h2>
 						</div>
-						<div class="bdv-card-body">
-							<div class="bdv-field">
+						<div class="conv-card-body">
+							<div class="conv-field">
 								<label for="title"><?php _e( 'Nombre del Proyecto', 'convoca-members' ); ?> *</label>
 								<input type="text" name="post_title" id="title" value="<?php echo $proyecto ? esc_attr( $proyecto->post_title ) : ''; ?>" required class="widefat">
 							</div>
@@ -344,22 +344,22 @@ class Admin_Proyectos extends \WP_List_Table {
 						</div>
 					</div>
 
-					<div class="bdv-card">
-						<div class="bdv-card-header">
+					<div class="conv-card">
+						<div class="conv-card-header">
 							<h2><?php _e( 'Configuración y Fechas', 'convoca-members' ); ?></h2>
 						</div>
-						<div class="bdv-card-body">
-							<div class="bdv-field">
+						<div class="conv-card-body">
+							<div class="conv-field">
 								<label for="fecha_inicio"><?php _e( 'Fecha de Inicio', 'convoca-members' ); ?> *</label>
 								<input type="date" name="fecha_inicio" id="fecha_inicio" value="<?php echo esc_attr( $meta['fecha_inicio'] ); ?>" required>
 							</div>
 
-							<div class="bdv-field">
+							<div class="conv-field">
 								<label for="fecha_fin"><?php _e( 'Fecha de Fin (opcional)', 'convoca-members' ); ?></label>
 								<input type="date" name="fecha_fin" id="fecha_fin" value="<?php echo esc_attr( $meta['fecha_fin'] ); ?>">
 							</div>
 
-							<div class="bdv-field">
+							<div class="conv-field">
 								<label for="responsable"><?php _e( 'Responsable', 'convoca-members' ); ?></label>
 								<select name="responsable" id="responsable">
 									<?php foreach ( $users as $user ) : ?>
@@ -370,7 +370,7 @@ class Admin_Proyectos extends \WP_List_Table {
 								</select>
 							</div>
 
-							<div class="bdv-field">
+							<div class="conv-field">
 								<label>
 									<input type="checkbox" name="activo" value="1" <?php checked( $meta['activo'], '1' ); ?>>
 									<?php _e( 'Proyecto Activo', 'convoca-members' ); ?>
@@ -380,9 +380,9 @@ class Admin_Proyectos extends \WP_List_Table {
 					</div>
 				</div>
 
-				<div class="bdv-form-actions">
+				<div class="conv-form-actions">
 					<?php submit_button( __( 'Guardar Proyecto', 'convoca-members' ), 'primary', 'submit', false ); ?>
-					<a href="<?php echo admin_url( 'admin.php?page=bdv-proyectos' ); ?>" class="button"><?php _e( 'Cancelar', 'convoca-members' ); ?></a>
+					<a href="<?php echo admin_url( 'admin.php?page=conv-proyectos' ); ?>" class="button"><?php _e( 'Cancelar', 'convoca-members' ); ?></a>
 				</div>
 			</form>
 		</div>
@@ -428,7 +428,7 @@ class Admin_Proyectos extends \WP_List_Table {
 		update_post_meta( $post_id, '_conv_responsable', (int) $_POST['responsable'] );
 		update_post_meta( $post_id, '_conv_activo', isset( $_POST['activo'] ) ? '1' : '0' );
 
-		wp_redirect( admin_url( 'admin.php?page=bdv-proyectos&message=saved' ) );
+		wp_redirect( admin_url( 'admin.php?page=conv-proyectos&message=saved' ) );
 		exit;
 	}
 }

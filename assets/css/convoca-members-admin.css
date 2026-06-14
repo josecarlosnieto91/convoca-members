@@ -3,14 +3,14 @@
  */
 
 /* ── Stats Bar ────────────────────────────────── */
-.bdv-stats-bar {
+.conv-stats-bar {
     display: flex;
     gap: 1rem;
     margin: 1rem 0 1.5rem;
     flex-wrap: wrap;
 }
 
-.bdv-stat {
+.conv-stat {
     background: #fff;
     border: 1px solid #c3c4c7;
     border-radius: 4px;
@@ -19,7 +19,7 @@
     min-width: 100px;
 }
 
-.bdv-stat-num {
+.conv-stat-num {
     display: block;
     font-size: 1.8rem;
     font-weight: 700;
@@ -29,7 +29,7 @@
 }
 
 /* ── Detail Grid ──────────────────────────────── */
-.bdv-detail-grid {
+.conv-detail-grid {
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 1.5rem;
@@ -37,25 +37,25 @@
 }
 
 @media (max-width: 900px) {
-    .bdv-detail-grid {
+    .conv-detail-grid {
         grid-template-columns: 1fr;
     }
 }
 
-.bdv-detail-card {
+.conv-detail-card {
     background: #fff;
     border: 1px solid #c3c4c7;
     border-radius: 4px;
     padding: 1rem 1.25rem;
 }
 
-.bdv-detail-card h3 {
+.conv-detail-card h3 {
     margin-top: 0;
     color: #320028;
 }
 
 /* ── Template Cards (Settings) ────────────────── */
-.bdv-template-card {
+.conv-template-card {
     background: #fff;
     border: 1px solid #c3c4c7;
     border-radius: 4px;
@@ -63,7 +63,7 @@
     margin-bottom: 1rem;
 }
 
-.bdv-template-card h3 {
+.conv-template-card h3 {
     margin-top: 0;
     color: #320028;
 }
@@ -110,7 +110,7 @@
 }
 
 /* ── CSV Export Modal ──────────────────────────── */
-.bdv-modal-overlay {
+.conv-modal-overlay {
     display: none;
     position: fixed;
     top: 0;
@@ -126,11 +126,11 @@
     box-sizing: border-box;
 }
 
-body.bdv-modal-open {
+body.conv-modal-open {
     overflow: hidden;
 }
 
-.bdv-modal-content {
+.conv-modal-content {
     background: #fff;
     border-radius: 6px;
     box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
@@ -140,15 +140,15 @@ body.bdv-modal-open {
     display: flex;
     flex-direction: column;
     position: relative;
-    animation: bdv-fade-in 0.15s ease-out;
+    animation: conv-fade-in 0.15s ease-out;
 }
 
-@keyframes bdv-fade-in {
+@keyframes conv-fade-in {
     from { opacity: 0; transform: translateY(-10px); }
     to   { opacity: 1; transform: translateY(0); }
 }
 
-.bdv-modal-header {
+.conv-modal-header {
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -157,13 +157,13 @@ body.bdv-modal-open {
     flex-shrink: 0;
 }
 
-.bdv-modal-header h2 {
+.conv-modal-header h2 {
     margin: 0;
     font-size: 1.3em;
     color: #320028;
 }
 
-.bdv-modal-close {
+.conv-modal-close {
     background: none;
     border: none;
     font-size: 28px;
@@ -173,29 +173,29 @@ body.bdv-modal-open {
     padding: 0 4px;
 }
 
-.bdv-modal-close:hover {
+.conv-modal-close:hover {
     color: #000;
 }
 
-.bdv-modal-body {
+.conv-modal-body {
     padding: 16px 24px;
     overflow-y: auto;
     flex: 1;
 }
 
-.bdv-modal-body .description {
+.conv-modal-body .description {
     margin-top: 0;
     margin-bottom: 12px;
     color: #666;
 }
 
-.bdv-columns-grid {
+.conv-columns-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
     gap: 6px 16px;
 }
 
-.bdv-column-checkbox {
+.conv-column-checkbox {
     display: flex;
     align-items: center;
     gap: 6px;
@@ -207,16 +207,16 @@ body.bdv-modal-open {
     transition: background 0.1s;
 }
 
-.bdv-column-checkbox:hover {
+.conv-column-checkbox:hover {
     background: #f0f7ff;
 }
 
-.bdv-column-checkbox input[type="checkbox"] {
+.conv-column-checkbox input[type="checkbox"] {
     margin: 0;
     flex-shrink: 0;
 }
 
-.bdv-modal-footer {
+.conv-modal-footer {
     display: flex;
     gap: 8px;
     padding: 12px 24px;
@@ -225,26 +225,26 @@ body.bdv-modal-open {
     flex-shrink: 0;
 }
 
-.bdv-modal-footer .button {
+.conv-modal-footer .button {
     flex-shrink: 0;
 }
 
 /* Responsive */
 @media (max-width: 600px) {
-    .bdv-modal-content {
+    .conv-modal-content {
         max-height: 90vh;
         border-radius: 0;
     }
-    .bdv-modal-overlay {
+    .conv-modal-overlay {
         padding: 0;
     }
-    .bdv-columns-grid {
+    .conv-columns-grid {
         grid-template-columns: 1fr;
     }
-    .bdv-modal-footer {
+    .conv-modal-footer {
         flex-direction: column;
     }
-    .bdv-modal-footer .button {
+    .conv-modal-footer .button {
         width: 100%;
         text-align: center;
     }

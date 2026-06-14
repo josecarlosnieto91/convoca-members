@@ -44,7 +44,7 @@ class Admin_Horas extends \WP_List_Table {
 	 * Enqueue assets for the custom editor.
 	 */
 	public function enqueue_assets( $hook ) {
-		if ( strpos( $hook, 'bdv-horas-editor' ) !== false ) {
+		if ( strpos( $hook, 'conv-horas-editor' ) !== false ) {
 			wp_enqueue_style( 'convoca-core', CONV_COMMON_URL . 'assets/css/convoca-common.css', array(), CONV_COMMON_VERSION );
 		}
 	}
@@ -56,12 +56,12 @@ class Admin_Horas extends \WP_List_Table {
 		$screen = get_current_screen();
 		if ( $screen && $screen->id === 'registro_hora' ) {
 			if ( $screen->action === 'add' ) {
-				wp_redirect( admin_url( 'admin.php?page=bdv-horas-editor' ) );
+				wp_redirect( admin_url( 'admin.php?page=conv-horas-editor' ) );
 				exit;
 			} else {
 				$post_id = isset( $_GET['post'] ) ? (int) $_GET['post'] : 0;
 				if ( $post_id ) {
-					wp_redirect( admin_url( 'admin.php?page=bdv-horas-editor&id=' . $post_id ) );
+					wp_redirect( admin_url( 'admin.php?page=conv-horas-editor&id=' . $post_id ) );
 					exit;
 				}
 			}
@@ -138,7 +138,7 @@ class Admin_Horas extends \WP_List_Table {
 			wp_die( $post_id->get_error_message() );
 		}
 
-		wp_redirect( admin_url( 'admin.php?page=bdv-volunteer-hours&message=saved' ) );
+		wp_redirect( admin_url( 'admin.php?page=conv-volunteer-hours&message=saved' ) );
 		exit;
 	}
 
@@ -284,7 +284,7 @@ class Admin_Horas extends \WP_List_Table {
 							<button type="submit" class="convoca-btn convoca-btn-primary">
 								<?php echo $record_id ? __( 'Guardar Cambios', 'convoca-members' ) : __( 'Crear Registro', 'convoca-members' ); ?>
 							</button>
-							<a href="<?php echo esc_url( admin_url( 'admin.php?page=bdv-volunteer-hours' ) ); ?>" class="convoca-btn convoca-btn-outline">
+							<a href="<?php echo esc_url( admin_url( 'admin.php?page=conv-volunteer-hours' ) ); ?>" class="convoca-btn convoca-btn-outline">
 								<?php esc_html_e( 'Cancelar', 'convoca-members' ); ?>
 							</a>
 						</div>
@@ -315,7 +315,7 @@ class Admin_Horas extends \WP_List_Table {
 
 			<form method="get">
 				<input type="hidden" name="post_type" value="miembro">
-				<input type="hidden" name="page" value="bdv-volunteer-hours">
+				<input type="hidden" name="page" value="conv-volunteer-hours">
 				
 				<div class="tablenav top">
 					<div class="alignleft actions">
@@ -687,7 +687,7 @@ class Admin_Horas extends \WP_List_Table {
 			\Convoca\Core\Logger::log( "Registro de horas $record_id marcado como $new_status por admin " . get_current_user_id(), 'Members/Hours', $socio_id );
 		}
 
-		wp_redirect( admin_url( 'edit.php?post_type=miembro&page=bdv-volunteer-hours' ) );
+		wp_redirect( admin_url( 'edit.php?post_type=miembro&page=conv-volunteer-hours' ) );
 		exit;
 	}
 }

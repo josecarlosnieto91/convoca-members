@@ -2,7 +2,7 @@
  * Convoca Members — Mi Area JS (Vanilla)
  * User panel operations inside 'Mi Area'.
  */
-(function(bdv) {
+(function(conv) {
   'use strict';
 
   const MiArea = {
@@ -14,8 +14,8 @@
     },
 
     cache: function() {
-      this.$container = bdv.$('#bdv-mi-area');
-      this.$main = bdv.$('#bdv-main-content');
+      this.$container = conv.$('#conv-mi-area');
+      this.$main = conv.$('#conv-main-content');
     },
 
     bindEvents: function() {
@@ -23,35 +23,35 @@
 
       // Event delegation implementation for container
       this.$container.addEventListener('submit', function(e) {
-        if (e.target && e.target.id === 'bdv-login-form') {
+        if (e.target && e.target.id === 'conv-login-form') {
             e.preventDefault();
             self.handleLogin(e.target);
-        } else if (e.target && e.target.id === 'bdv-hours-form') {
+        } else if (e.target && e.target.id === 'conv-hours-form') {
             e.preventDefault();
             self.submitHours(e.target);
         }
       });
 
       this.$container.addEventListener('click', function(e) {
-        if (e.target.closest('#bdv-logout-btn')) {
+        if (e.target.closest('#conv-logout-btn')) {
             e.preventDefault();
             self.handleLogout();
-        } else if (e.target.closest('#bdv-btn-unsubscribe')) {
+        } else if (e.target.closest('#conv-btn-unsubscribe')) {
             e.preventDefault();
             if (confirm('¿Estás seguro de que quieres solicitar la baja del club de socios?')) {
                 self.requestUnsubscribe();
             }
         } else {
-            const tabBtn = e.target.closest('.bdv-panel-nav li');
+            const tabBtn = e.target.closest('.conv-panel-nav li');
             if (tabBtn) {
                 if (tabBtn.classList.contains('active')) return;
-                bdv.$$('.bdv-panel-nav li', self.$container).forEach(t => t.classList.remove('active'));
+                conv.$$('.conv-panel-nav li', self.$container).forEach(t => t.classList.remove('active'));
                 tabBtn.classList.add('active');
                 self.switchTab(tabBtn.dataset.tab);
             }
 
             // Notifications: mark single read
-            var readBtn = e.target.closest('.bdv-member-notif-read-btn');
+            var readBtn = e.target.closest('.conv-member-notif-read-btn');
             if (readBtn) {
                 e.preventDefault();
                 self.markNotificationRead(readBtn.dataset.notifId);
@@ -68,8 +68,8 @@
     },
 
     checkLoginStatus: function() {
-      if (window.bdvMiArea && window.bdvMiArea.isLoggedIn) {
-        const activeTabEl = bdv.$('.bdv-panel-nav li.active', this.$container);
+      if (window.convMiArea && window.convMiArea.isLoggedIn) {
+        const activeTabEl = conv.$('.conv-panel-nav li.active', this.$container);
         const activeTab = activeTabEl ? activeTabEl.dataset.tab : 'profile';
         this.switchTab(activeTab);
         // Fetch unread notification count for badge
@@ -79,8 +79,8 @@
 
     fetchUnreadCount: function() {
       var self = this;
-      fetch(window.bdvMiArea.apiUrl + '/member/notifications?limit=1', {
-        headers: { 'X-WP-Nonce': window.bdvMiArea.nonce }
+      fetch(window.convMiArea.apiUrl + '/member/notifications?limit=1', {
+        headers: { 'X-WP-Nonce': window.convMiArea.nonce }
       })
       .then(function(r) { return r.json(); })
       .then(function(data) {
@@ -90,7 +90,7 @@
     },
 
     updateNotifBadge: function(count) {
-      var badge = bdv.$('#bdv-notif-count');
+      var badge = conv.$('#conv-notif-count');
       if (!badge) return;
       if (count > 0) {
         badge.style.display = 'inline';
@@ -105,18 +105,18 @@
 
     handleLogin: function(form) {
       const btn = form.querySelector('button');
-      const result = bdv.$('.form-result', form);
+      const result = conv.$('.form-result', form);
       const data = {
-        username: bdv.$('#username', form).value,
-        password: bdv.$('#password', form).value
+        username: conv.$('#username', form).value,
+        password: conv.$('#password', form).value
       };
 
-      bdv.setLoading(btn, true, 'Entrar');
+      conv.setLoading(btn, true, 'Entrar');
       result.innerHTML = '';
 
-      fetch(window.bdvMiArea.apiUrl + '/login', {
+      fetch(window.convMiArea.apiUrl + '/login', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json', 'X-WP-Nonce': window.bdvMiArea.nonce },
+        headers: { 'Content-Type': 'application/json', 'X-WP-Nonce': window.convMiArea.nonce },
         body: JSON.stringify(data)
       })
       .then(res => res.json())
@@ -125,12 +125,12 @@
           location.reload();
         } else {
           result.innerHTML = '<p class="text-error">' + res.message + '</p>';
-          bdv.setLoading(btn, false, 'Entrar');
+          conv.setLoading(btn, false, 'Entrar');
         }
       })
       .catch(() => {
         result.innerHTML = '<p class="text-error">Error de conexión.</p>';
-        bdv.setLoading(btn, false, 'Entrar');
+        conv.setLoading(btn, false, 'Entrar');
       });
     },
 
@@ -140,7 +140,7 @@
     },
 
     switchTab: function(tab) {
-      this.$main.innerHTML = '<div class="bdv-spinner"></div>';
+      this.$main.innerHTML = '<div class="conv-spinner"></div>';
       
       // Refresh unread count on any tab switch
       this.fetchUnreadCount();
@@ -160,47 +160,47 @@
     renderSearch: function() {
       var self = this;
       var html = '' +
-        '<h2>🔍 ' + (window.bdvTrans ? bdvTrans('Buscar actividades', 'convoca-members') : 'Buscar actividades') + '</h2>' +
-        '<div class="bdv-search-wrap">' +
-          '<input type="text" id="bdv-search-input" class="bdv-search-input" placeholder="' + (window.bdvTrans ? bdvTrans('Buscar por nombre, ubicación…', 'convoca-members') : 'Buscar por nombre, ubicación…') + '" />' +
-          '<button id="bdv-search-btn" class="bdv-search-btn">🔍</button>' +
+        '<h2>🔍 ' + (window.convTrans ? bdvTrans('Buscar actividades', 'convoca-members') : 'Buscar actividades') + '</h2>' +
+        '<div class="conv-search-wrap">' +
+          '<input type="text" id="conv-search-input" class="conv-search-input" placeholder="' + (window.convTrans ? bdvTrans('Buscar por nombre, ubicación…', 'convoca-members') : 'Buscar por nombre, ubicación…') + '" />' +
+          '<button id="conv-search-btn" class="conv-search-btn">🔍</button>' +
         '</div>' +
-        '<div id="bdv-search-results" class="bdv-search-results"></div>';
+        '<div id="conv-search-results" class="conv-search-results"></div>';
       this.$main.innerHTML = html;
 
       // Wire up search
-      var input = bdv.$('#bdv-search-input');
-      var btn = bdv.$('#bdv-search-btn');
-      var results = bdv.$('#bdv-search-results');
+      var input = conv.$('#conv-search-input');
+      var btn = conv.$('#conv-search-btn');
+      var results = conv.$('#conv-search-results');
       if (!input) return;
 
       function doSearch() {
         var q = input.value.trim();
         if (q.length < 2) {
-          results.innerHTML = '<p class="text-muted">' + (window.bdvTrans ? bdvTrans('Escribe al menos 2 caracteres.', 'convoca-members') : 'Escribe al menos 2 caracteres.') + '</p>';
+          results.innerHTML = '<p class="text-muted">' + (window.convTrans ? bdvTrans('Escribe al menos 2 caracteres.', 'convoca-members') : 'Escribe al menos 2 caracteres.') + '</p>';
           return;
         }
-        results.innerHTML = '<div class="bdv-spinner"></div>';
-        fetch(window.bdvMiArea.apiUrl + '/search?q=' + encodeURIComponent(q) + '&type=activities&limit=20')
+        results.innerHTML = '<div class="conv-spinner"></div>';
+        fetch(window.convMiArea.apiUrl + '/search?q=' + encodeURIComponent(q) + '&type=activities&limit=20')
           .then(function(r) { return r.json(); })
           .then(function(data) {
             if (!data.results || data.results.length === 0) {
-              results.innerHTML = '<p class="text-muted">' + (window.bdvTrans ? bdvTrans('No se encontraron resultados.', 'convoca-members') : 'No se encontraron resultados.') + '</p>';
+              results.innerHTML = '<p class="text-muted">' + (window.convTrans ? bdvTrans('No se encontraron resultados.', 'convoca-members') : 'No se encontraron resultados.') + '</p>';
               return;
             }
             var rows = '';
             data.results.forEach(function(item) {
-              var dateHtml = item.fecha ? '<span class="bdv-search-date">' + item.fecha + '</span>' : '';
-              var locHtml = item.ubicacion ? '<span class="bdv-search-loc">📍 ' + item.ubicacion + '</span>' : '';
-              rows += '<div class="bdv-search-item">' +
-                '<div class="bdv-search-item-title">' + item.title + '</div>' +
-                '<div class="bdv-search-item-meta">' + dateHtml + ' ' + locHtml + '</div>' +
+              var dateHtml = item.fecha ? '<span class="conv-search-date">' + item.fecha + '</span>' : '';
+              var locHtml = item.ubicacion ? '<span class="conv-search-loc">📍 ' + item.ubicacion + '</span>' : '';
+              rows += '<div class="conv-search-item">' +
+                '<div class="conv-search-item-title">' + item.title + '</div>' +
+                '<div class="conv-search-item-meta">' + dateHtml + ' ' + locHtml + '</div>' +
               '</div>';
             });
             results.innerHTML = rows;
           })
           .catch(function() {
-            results.innerHTML = '<p class="text-danger">' + (window.bdvTrans ? bdvTrans('Error al buscar.', 'convoca-members') : 'Error al buscar.') + '</p>';
+            results.innerHTML = '<p class="text-danger">' + (window.convTrans ? bdvTrans('Error al buscar.', 'convoca-members') : 'Error al buscar.') + '</p>';
           });
       }
 
@@ -212,12 +212,12 @@
     },
 
     fetchProfile: function() {
-      fetch(window.bdvMiArea.apiUrl + '/me', { headers: { 'X-WP-Nonce': window.bdvMiArea.nonce } })
+      fetch(window.convMiArea.apiUrl + '/me', { headers: { 'X-WP-Nonce': window.convMiArea.nonce } })
       .then(res => res.json())
       .then(profile => {
         const html = `
           <h2>👤 Mis Datos</h2>
-          <div class="bdv-meta-grid">
+          <div class="conv-meta-grid">
             <div class="meta-item"><strong>Nombre:</strong> <span>${profile.nombre}</span></div>
             <div class="meta-item"><strong>Email:</strong> <span>${profile.email}</span></div>
             <div class="meta-item"><strong>Código de Acceso:</strong> <span>${profile.codigo}</span></div>
@@ -226,7 +226,7 @@
           <hr>
           <h3>Zona de Peligro</h3>
           <p class="text-muted">Si deseas solicitar tu baja como socio/a, puedes hacerlo pulsando el siguiente botón. Se notificará a la administración para procesarla.</p>
-          <button id="bdv-btn-unsubscribe" class="btn-danger-outline">Solicitar Baja</button>
+          <button id="conv-btn-unsubscribe" class="btn-danger-outline">Solicitar Baja</button>
         `;
         this.$main.innerHTML = html;
       })
@@ -234,7 +234,7 @@
     },
 
     fetchInscriptions: function() {
-      fetch(window.bdvMiArea.apiUrl + '/me/inscripciones', { headers: { 'X-WP-Nonce': window.bdvMiArea.nonce } })
+      fetch(window.convMiArea.apiUrl + '/me/inscripciones', { headers: { 'X-WP-Nonce': window.convMiArea.nonce } })
       .then(res => res.json())
       .then(data => {
         if (!data.items || data.items.length === 0) {
@@ -246,7 +246,7 @@
 
         let html = `
           <h2>📝 Mis Inscripciones</h2>
-          <table class="bdv-table">
+          <table class="conv-table">
             <thead>
               <tr>
                 <th>Fecha</th>
@@ -280,7 +280,7 @@
     },
 
     fetchPayments: function() {
-      fetch(window.bdvMiArea.apiUrl + '/me/pagos', { headers: { 'X-WP-Nonce': window.bdvMiArea.nonce } })
+      fetch(window.convMiArea.apiUrl + '/me/pagos', { headers: { 'X-WP-Nonce': window.convMiArea.nonce } })
       .then(res => res.json())
       .then(data => {
         if (!data.items || data.items.length === 0) {
@@ -290,7 +290,7 @@
 
         let html = `
           <h2>💳 Mis Pagos</h2>
-          <table class="bdv-table">
+          <table class="conv-table">
             <thead>
               <tr>
                 <th>Fecha</th>
@@ -318,16 +318,16 @@
 
     fetchHours: function() {
       Promise.all([
-        fetch(window.bdvMiArea.apiUrl + '/me/horas', { headers: { 'X-WP-Nonce': window.bdvMiArea.nonce } }).then(res => res.json()),
-        fetch(window.bdvMiArea.apiUrl + '/activities', { headers: { 'X-WP-Nonce': window.bdvMiArea.nonce } }).then(res => res.json()),
-        fetch(window.bdvMiArea.apiUrl + '/proyectos').then(res => res.json()),
-        fetch(window.bdvMiArea.apiUrl + '/me/gamification', { headers: { 'X-WP-Nonce': window.bdvMiArea.nonce } }).then(res => res.json().catch(function(){return null;}))
+        fetch(window.convMiArea.apiUrl + '/me/horas', { headers: { 'X-WP-Nonce': window.convMiArea.nonce } }).then(res => res.json()),
+        fetch(window.convMiArea.apiUrl + '/activities', { headers: { 'X-WP-Nonce': window.convMiArea.nonce } }).then(res => res.json()),
+        fetch(window.convMiArea.apiUrl + '/proyectos').then(res => res.json()),
+        fetch(window.convMiArea.apiUrl + '/me/gamification', { headers: { 'X-WP-Nonce': window.convMiArea.nonce } }).then(res => res.json().catch(function(){return null;}))
       ])
       .then(([data, activities, proyectos, gamification]) => {
         let itemsHtml = '<p>No tienes registros de horas.</p>';
         if (data && data.items && data.items.length > 0) {
           itemsHtml = `
-            <table class="bdv-table">
+            <table class="conv-table">
               <thead>
                 <tr>
                   <th>Fecha</th>
@@ -365,44 +365,44 @@
 
           // Track label
           if (trackLabel) {
-            gamifyHtml += '<div class="bdv-track-label"><span>' + trackLabel + '</span></div>';
+            gamifyHtml += '<div class="conv-track-label"><span>' + trackLabel + '</span></div>';
           }
 
           // Level badge
-          gamifyHtml += '<div class="bdv-level-badge" style="--bdv-level-color: ' + lvl.color + '">';
-          gamifyHtml += '<span class="bdv-level-emoji">' + lvl.emoji + '</span>';
-          gamifyHtml += '<div class="bdv-level-info"><strong>' + lvl.name + '</strong>';
+          gamifyHtml += '<div class="conv-level-badge" style="--conv-level-color: ' + lvl.color + '">';
+          gamifyHtml += '<span class="conv-level-emoji">' + lvl.emoji + '</span>';
+          gamifyHtml += '<div class="conv-level-info"><strong>' + lvl.name + '</strong>';
           gamifyHtml += '<small>' + (lvl.desc || 'Nivel ' + (lvl.index + 1) + ' de 5') + '</small></div>';
           gamifyHtml += '</div>';
 
           // Progress bar toward next level
           if (nextLvl) {
-            gamifyHtml += '<div class="bdv-progress-container">';
-            gamifyHtml += '<div class="bdv-progress-bar"><div class="bdv-progress-fill" style="width: ' + nextLvl.progress_percent + '%; background: ' + nextLvl.color + ';"></div></div>';
-            gamifyHtml += '<div class="bdv-progress-label"><span>' + nextLvl.progress_percent + '%</span><span>Siguiente nivel: ' + nextLvl.name + ' (' + nextLvl.hours + 'h)</span><span>' + nextLvl.hours_to_go + 'h restantes</span></div>';
+            gamifyHtml += '<div class="conv-progress-container">';
+            gamifyHtml += '<div class="conv-progress-bar"><div class="conv-progress-fill" style="width: ' + nextLvl.progress_percent + '%; background: ' + nextLvl.color + ';"></div></div>';
+            gamifyHtml += '<div class="conv-progress-label"><span>' + nextLvl.progress_percent + '%</span><span>Siguiente nivel: ' + nextLvl.name + ' (' + nextLvl.hours + 'h)</span><span>' + nextLvl.hours_to_go + 'h restantes</span></div>';
             gamifyHtml += '</div>';
           } else {
-            gamifyHtml += '<div class="bdv-progress-container">';
-            gamifyHtml += '<div class="bdv-progress-bar"><div class="bdv-progress-fill" style="width: 100%; background: #7D0032;"></div></div>';
-            gamifyHtml += '<div class="bdv-progress-label completed">🏆 ¡Has alcanzado el nivel máximo!</div>';
+            gamifyHtml += '<div class="conv-progress-container">';
+            gamifyHtml += '<div class="conv-progress-bar"><div class="conv-progress-fill" style="width: 100%; background: #7D0032;"></div></div>';
+            gamifyHtml += '<div class="conv-progress-label completed">🏆 ¡Has alcanzado el nivel máximo!</div>';
             gamifyHtml += '</div>';
           }
 
           // Level ladder
-          gamifyHtml += '<div class="bdv-level-steps">';
+          gamifyHtml += '<div class="conv-level-steps">';
           allLevels.forEach(function(l) {
-            var cls = l.reached ? 'bdv-level-step active' : 'bdv-level-step locked';
+            var cls = l.reached ? 'conv-level-step active' : 'conv-level-step locked';
             gamifyHtml += '<div class="' + cls + '" style="--step-color: ' + l.color + '">';
-            gamifyHtml += '<span class="bdv-step-emoji">' + l.emoji + '</span>';
-            gamifyHtml += '<span class="bdv-step-name">' + l.name + '</span>';
-            gamifyHtml += '<span class="bdv-step-hours">' + l.hours + 'h</span>';
+            gamifyHtml += '<span class="conv-step-emoji">' + l.emoji + '</span>';
+            gamifyHtml += '<span class="conv-step-name">' + l.name + '</span>';
+            gamifyHtml += '<span class="conv-step-hours">' + l.hours + 'h</span>';
             gamifyHtml += '</div>';
           });
           gamifyHtml += '</div>';
         }
 
         let html = `
-          <div class="bdv-hours-layout">
+          <div class="conv-hours-layout">
             <div class="hours-header">
               <h2>⏳ Mis Horas de Voluntariado</h2>
               <div class="hours-summary">
@@ -414,7 +414,7 @@
             
             <section class="card-inner">
               <h3>Añadir Nuevo Registro</h3>
-              <form id="bdv-hours-form" class="bdv-inline-form">
+              <form id="conv-hours-form" class="conv-inline-form">
                 <div class="form-group"><input type="date" name="fecha" required></div>
                 <div class="form-group">
                   <select name="proyecto_id" required>
@@ -444,18 +444,18 @@
           </div>
         `;
         
-        fetch(window.bdvMiArea.apiUrl + '/me/certificate', { headers: { 'X-WP-Nonce': window.bdvMiArea.nonce } })
+        fetch(window.convMiArea.apiUrl + '/me/certificate', { headers: { 'X-WP-Nonce': window.convMiArea.nonce } })
         .then(res => res.json())
         .then(cert => {
           if (cert.success) {
-            html += '<div class="bdv-certificate-section" style="margin-top: 30px; text-align: center; padding: 20px; background: #d4edda; border-radius: 8px;">' +
+            html += '<div class="conv-certificate-section" style="margin-top: 30px; text-align: center; padding: 20px; background: #d4edda; border-radius: 8px;">' +
               '<h3>🎉 ¡Felicidades! Has completado tu voluntariado</h3>' +
               '<p>Has completado ' + cert.horas + ' horas. Ya puedes descargar tu certificado.</p>' +
               '<a href="' + cert.download_url + '" class="btn btn-primary" target="_blank">📜 Descargar Certificado</a>' +
               '</div>';
           } else if (cert.progress) {
             const pct = cert.progress.porcentaje;
-            html += '<div class="bdv-certificate-section" style="margin-top: 30px; text-align: center; padding: 20px; background: #fff3cd; border-radius: 8px;">' +
+            html += '<div class="conv-certificate-section" style="margin-top: 30px; text-align: center; padding: 20px; background: #fff3cd; border-radius: 8px;">' +
               '<h3>📊 Progreso hacia el certificado</h3>' +
               '<div style="width: 100%; background: #e9ecef; height: 20px; border-radius: 10px; overflow: hidden; margin: 10px 0;">' +
               '<div style="width: ' + pct + '%; background: #28a745; height: 100%;"></div></div>' +
@@ -470,26 +470,26 @@
     },
 
     submitHours: function(form) {
-      if (!bdv.form.validate(form)) {
+      if (!conv.form.validate(form)) {
           alert('Revisa los campos obligatorios.');
           return;
       }
 
       const data = {
-        fecha: bdv.$('[name="fecha"]', form).value,
-        proyecto_id: bdv.$('[name="proyecto_id"]', form).value,
-        actividad_id: bdv.$('[name="actividad_id"]', form).value,
-        horas: bdv.$('[name="horas"]', form).value,
-        tareas: bdv.$('[name="tareas"]', form).value,
-        descripcion: bdv.$('[name="descripcion"]', form).value
+        fecha: conv.$('[name="fecha"]', form).value,
+        proyecto_id: conv.$('[name="proyecto_id"]', form).value,
+        actividad_id: conv.$('[name="actividad_id"]', form).value,
+        horas: conv.$('[name="horas"]', form).value,
+        tareas: conv.$('[name="tareas"]', form).value,
+        descripcion: conv.$('[name="descripcion"]', form).value
       };
 
       const btn = form.querySelector('button[type="submit"]');
-      bdv.setLoading(btn, true, 'Añadiendo...');
+      conv.setLoading(btn, true, 'Añadiendo...');
 
-      fetch(window.bdvMiArea.apiUrl + '/me/horas', {
+      fetch(window.convMiArea.apiUrl + '/me/horas', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json', 'X-WP-Nonce': window.bdvMiArea.nonce },
+        headers: { 'Content-Type': 'application/json', 'X-WP-Nonce': window.convMiArea.nonce },
         body: JSON.stringify(data)
       })
       .then(res => res.json())
@@ -498,19 +498,19 @@
           this.switchTab('hours');
         } else {
           alert('Error: ' + res.message);
-          bdv.setLoading(btn, false, 'Añadir');
+          conv.setLoading(btn, false, 'Añadir');
         }
       })
       .catch(() => {
           alert('Error de conexión.');
-          bdv.setLoading(btn, false, 'Añadir');
+          conv.setLoading(btn, false, 'Añadir');
       });
     },
 
     requestUnsubscribe: function() {
-      fetch(window.bdvMiArea.apiUrl + '/me/unsubscribe', {
+      fetch(window.convMiArea.apiUrl + '/me/unsubscribe', {
         method: 'POST',
-        headers: { 'X-WP-Nonce': window.bdvMiArea.nonce }
+        headers: { 'X-WP-Nonce': window.convMiArea.nonce }
       })
       .then(res => res.json())
       .then(res => {
@@ -526,8 +526,8 @@
 
     fetchNotifications: function() {
       var self = this;
-      fetch(window.bdvMiArea.apiUrl + '/member/notifications', {
-        headers: { 'X-WP-Nonce': window.bdvMiArea.nonce }
+      fetch(window.convMiArea.apiUrl + '/member/notifications', {
+        headers: { 'X-WP-Nonce': window.convMiArea.nonce }
       })
       .then(res => res.json())
       .then(data => {
@@ -537,16 +537,16 @@
         var html = '<h2>🔔 Notificaciones</h2>';
 
         if (notifications.length === 0) {
-          html += '<div class="bdv-notif-empty-state"><p>No tienes notificaciones pendientes.</p></div>';
+          html += '<div class="conv-notif-empty-state"><p>No tienes notificaciones pendientes.</p></div>';
           this.$main.innerHTML = html;
           return;
         }
 
         if (unread > 0) {
-          html += '<div style="margin-bottom: 1rem;"><button class="bdv-btn-mark-all-read" data-action="mark-all-read">✅ Marcar todas como leídas</button></div>';
+          html += '<div style="margin-bottom: 1rem;"><button class="conv-btn-mark-all-read" data-action="mark-all-read">✅ Marcar todas como leídas</button></div>';
         }
 
-        html += '<div class="bdv-member-notifications-list">';
+        html += '<div class="conv-member-notifications-list">';
 
         notifications.forEach(function(n) {
           var isUnread = !n.read;
@@ -557,16 +557,16 @@
             'info': 'ℹ️'
           };
           var icon = iconMap[n.type] || 'ℹ️';
-          var itemClass = 'bdv-member-notif-item' + (isUnread ? ' bdv-member-notif-unread' : '');
+          var itemClass = 'conv-member-notif-item' + (isUnread ? ' conv-member-notif-unread' : '');
 
           html += '<div class="' + itemClass + '" data-id="' + n.id + '">';
-          html += '<span class="bdv-member-notif-icon">' + icon + '</span>';
-          html += '<div class="bdv-member-notif-body">';
-          html += '<div class="bdv-member-notif-title">' + this.escHtml(n.title) + '</div>';
-          html += '<div class="bdv-member-notif-time">' + this.humanTime(n.time) + '</div>';
+          html += '<span class="conv-member-notif-icon">' + icon + '</span>';
+          html += '<div class="conv-member-notif-body">';
+          html += '<div class="conv-member-notif-title">' + this.escHtml(n.title) + '</div>';
+          html += '<div class="conv-member-notif-time">' + this.humanTime(n.time) + '</div>';
           html += '</div>';
           if (isUnread) {
-            html += '<button class="bdv-member-notif-read-btn" data-notif-id="' + n.id + '" title="Marcar como leída">✓</button>';
+            html += '<button class="conv-member-notif-read-btn" data-notif-id="' + n.id + '" title="Marcar como leída">✓</button>';
           }
           html += '</div>';
         }.bind(this));
@@ -582,9 +582,9 @@
 
     markNotificationRead: function(id) {
       var self = this;
-      fetch(window.bdvMiArea.apiUrl + '/member/notifications/read', {
+      fetch(window.convMiArea.apiUrl + '/member/notifications/read', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json', 'X-WP-Nonce': window.bdvMiArea.nonce },
+        headers: { 'Content-Type': 'application/json', 'X-WP-Nonce': window.convMiArea.nonce },
         body: JSON.stringify({ id: id })
       })
       .then(function(res) { return res.json(); })
@@ -595,9 +595,9 @@
 
     markAllNotificationsRead: function() {
       var self = this;
-      fetch(window.bdvMiArea.apiUrl + '/member/notifications/read-all', {
+      fetch(window.convMiArea.apiUrl + '/member/notifications/read-all', {
         method: 'POST',
-        headers: { 'X-WP-Nonce': window.bdvMiArea.nonce }
+        headers: { 'X-WP-Nonce': window.convMiArea.nonce }
       })
       .then(function(res) { return res.json(); })
       .then(function() {
@@ -635,15 +635,15 @@
             </div>
           </div>
           <br>
-          <button id="bdv-btn-card" class="btn-primary">Ver / Descargar Carnet</button>
+          <button id="conv-btn-card" class="btn-primary">Ver / Descargar Carnet</button>
         </div>
       `;
       this.$main.innerHTML = html;
 
-      const btnCard = bdv.$('#bdv-btn-card', this.$main);
+      const btnCard = conv.$('#conv-btn-card', this.$main);
       if (btnCard) {
           btnCard.addEventListener('click', () => {
-              fetch(window.bdvMiArea.apiUrl + '/me/card', { headers: { 'X-WP-Nonce': window.bdvMiArea.nonce } })
+              fetch(window.convMiArea.apiUrl + '/me/card', { headers: { 'X-WP-Nonce': window.convMiArea.nonce } })
               .then(res => res.text())
               .then(html => {
                   const win = window.open('', '_blank');

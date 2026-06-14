@@ -38,13 +38,13 @@ class Form_Voluntariado {
 
 	public function render(): string {
 		wp_enqueue_style(
-			'bdv-members-public',
+			'conv-members-public',
 			CONV_MEMBERS_URL . 'assets/css/convoca-members-public.css',
 			array(),
 			CONV_MEMBERS_VERSION
 		);
 		wp_enqueue_script(
-			'bdv-members-public',
+			'conv-members-public',
 			CONV_MEMBERS_URL . 'assets/js/convoca-members-public.js',
 			array( 'convoca-common-js' ),
 			CONV_MEMBERS_VERSION,
@@ -61,8 +61,8 @@ class Form_Voluntariado {
 
 		// Inject data-config into the wrapper.
 		$html = str_replace(
-			'id="bdv-vol-wrapper"',
-			'id="bdv-vol-wrapper" data-config=\'' . esc_attr( wp_json_encode( $config ) ) . '\'',
+			'id="conv-vol-wrapper"',
+			'id="conv-vol-wrapper" data-config=\'' . esc_attr( wp_json_encode( $config ) ) . '\'',
 			$html
 		);
 

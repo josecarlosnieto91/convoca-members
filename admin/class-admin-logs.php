@@ -66,7 +66,7 @@ class Admin_Logs {
 			<h1>Registros de Auditoría</h1>
 
 			<p>
-				<a href="<?php echo wp_nonce_url( admin_url( 'admin.php?page=bdv-members-logs&action=clear' ), 'conv_clear_members_logs' ); ?>" 
+				<a href="<?php echo wp_nonce_url( admin_url( 'admin.php?page=conv-members-logs&action=clear' ), 'conv_clear_members_logs' ); ?>" 
 					class="button button-secondary"
 					onclick="return confirm('¿Estás seguro de que quieres borrar todos los logs de Members?');">
 					Borrar logs de Members
@@ -95,7 +95,7 @@ class Admin_Logs {
 								<td><code><?php echo esc_html( $log->context ); ?></code></td>
 								<td>
 									<?php if ( $log->object_id ) : ?>
-										<a href="<?php echo admin_url( 'admin.php?page=bdv-members&member_id=' . $log->object_id ); ?>">#<?php echo (int) $log->object_id; ?></a>
+										<a href="<?php echo admin_url( 'admin.php?page=conv-members&member_id=' . $log->object_id ); ?>">#<?php echo (int) $log->object_id; ?></a>
 									<?php else : ?>
 										—
 									<?php endif; ?>

@@ -15,26 +15,26 @@ if ( ! defined( 'ABSPATH' ) ) {
 $areas = \Convoca\Members\Form_Voluntariado::INTEREST_AREAS;
 ?>
 
-<div id="bdv-vol-wrapper" class="convoca-form" role="region" aria-label="Formulario de voluntariado">
+<div id="conv-vol-wrapper" class="convoca-form" role="region" aria-label="Formulario de voluntariado">
 
 	<!-- Alert container -->
-	<div id="bdv-vol-alert" class="convoca-alert" style="display:none" role="alert" aria-live="assertive"></div>
+	<div id="conv-vol-alert" class="convoca-alert" style="display:none" role="alert" aria-live="assertive"></div>
 
-	<form id="bdv-vol-form" novalidate>
+	<form id="conv-vol-form" novalidate>
 
 		<!-- Personal data -->
 		<h3>📌 Datos personales</h3>
 
 			<div class="convoca-grid-2">
 				<div class="convoca-field">
-					<label for="bdv-vol-nombre">Nombre completo *</label>
-					<input type="text" id="bdv-vol-nombre" name="nombre" required autocomplete="name"
+					<label for="conv-vol-nombre">Nombre completo *</label>
+					<input type="text" id="conv-vol-nombre" name="nombre" required autocomplete="name"
 						placeholder="Nombre y apellidos">
 					<span class="convoca-error-msg">Este campo es obligatorio.</span>
 				</div>
 				<div class="convoca-field">
-					<label for="bdv-vol-dni">DNI / NIE *</label>
-					<input type="text" id="bdv-vol-dni" name="dni" placeholder="12345678A" required
+					<label for="conv-vol-dni">DNI / NIE *</label>
+					<input type="text" id="conv-vol-dni" name="dni" placeholder="12345678A" required
 						pattern="([0-9]{8}[A-Za-z]|[XYZxyz][0-9]{7}[A-Za-z])">
 					<span class="convoca-error-msg">Introduce un DNI o NIE válido.</span>
 				</div>
@@ -42,14 +42,14 @@ $areas = \Convoca\Members\Form_Voluntariado::INTEREST_AREAS;
 
 			<div class="convoca-grid-2">
 				<div class="convoca-field">
-					<label for="bdv-vol-fechanac">Fecha de nacimiento *</label>
-					<input type="date" id="bdv-vol-fechanac" name="fecha_nacimiento" required>
+					<label for="conv-vol-fechanac">Fecha de nacimiento *</label>
+					<input type="date" id="conv-vol-fechanac" name="fecha_nacimiento" required>
 					<span class="convoca-error-msg">Introduce tu fecha de nacimiento.</span>
-					<span id="bdv-vol-age-badge" class="bdv-age-badge" style="display:none"></span>
+					<span id="conv-vol-age-badge" class="conv-age-badge" style="display:none"></span>
 				</div>
 				<div class="convoca-field">
-					<label for="bdv-vol-email">Correo electrónico *</label>
-					<input type="email" id="bdv-vol-email" name="email" required autocomplete="email"
+					<label for="conv-vol-email">Correo electrónico *</label>
+					<input type="email" id="conv-vol-email" name="email" required autocomplete="email"
 						placeholder="tu@correo.com">
 					<span class="convoca-error-msg">Introduce un email válido.</span>
 				</div>
@@ -57,14 +57,14 @@ $areas = \Convoca\Members\Form_Voluntariado::INTEREST_AREAS;
 
 			<div class="convoca-grid-2">
 				<div class="convoca-field">
-					<label for="bdv-vol-telefono">Teléfono *</label>
-					<input type="tel" id="bdv-vol-telefono" name="telefono" required autocomplete="tel"
+					<label for="conv-vol-telefono">Teléfono *</label>
+					<input type="tel" id="conv-vol-telefono" name="telefono" required autocomplete="tel"
 						placeholder="600 000 000">
 					<span class="convoca-error-msg">Introduce tu número de teléfono.</span>
 				</div>
 				<div class="convoca-field">
-					<label for="bdv-vol-whatsapp">¿Tu teléfono tiene WhatsApp?</label>
-					<select id="bdv-vol-whatsapp" name="whatsapp">
+					<label for="conv-vol-whatsapp">¿Tu teléfono tiene WhatsApp?</label>
+					<select id="conv-vol-whatsapp" name="whatsapp">
 						<option value="si">Sí</option>
 						<option value="no">No</option>
 					</select>
@@ -72,21 +72,21 @@ $areas = \Convoca\Members\Form_Voluntariado::INTEREST_AREAS;
 			</div>
 
 			<div class="convoca-field">
-				<label for="bdv-vol-direccion">Dirección postal *</label>
-				<input type="text" id="bdv-vol-direccion" name="direccion" required autocomplete="street-address"
+				<label for="conv-vol-direccion">Dirección postal *</label>
+				<input type="text" id="conv-vol-direccion" name="direccion" required autocomplete="street-address"
 					placeholder="Calle, número, piso">
 				<span class="convoca-error-msg">Introduce tu dirección.</span>
 			</div>
 
 			<div class="convoca-grid-2">
 				<div class="convoca-field">
-					<label for="bdv-vol-municipio">Municipio / Localidad *</label>
-					<input type="text" id="bdv-vol-municipio" name="municipio" required placeholder="Ej: Oviedo">
+					<label for="conv-vol-municipio">Municipio / Localidad *</label>
+					<input type="text" id="conv-vol-municipio" name="municipio" required placeholder="Ej: Oviedo">
 					<span class="convoca-error-msg">Introduce tu municipio.</span>
 				</div>
 				<div class="convoca-field">
-					<label for="bdv-vol-canal">Canal de contacto preferente</label>
-					<select id="bdv-vol-canal" name="canal_contacto">
+					<label for="conv-vol-canal">Canal de contacto preferente</label>
+					<select id="conv-vol-canal" name="canal_contacto">
 						<option value="whatsapp">WhatsApp</option>
 						<option value="email">Email</option>
 						<option value="telefono">Teléfono</option>
@@ -95,29 +95,29 @@ $areas = \Convoca\Members\Form_Voluntariado::INTEREST_AREAS;
 			</div>
 
 			<!-- Minor notice -->
-			<div id="bdv-vol-minor" class="convoca-box-warning" style="display:none">
+			<div id="conv-vol-minor" class="convoca-box-warning" style="display:none">
 				<strong>⚠️ Al ser menor de edad, necesitas autorización de tu tutor/a legal.</strong>
 				<div class="convoca-grid-2 convoca-mt-small">
 					<div class="convoca-field">
-						<label for="bdv-vol-tutor-nombre">Nombre del tutor/a legal *</label>
-						<input type="text" id="bdv-vol-tutor-nombre" name="tutor_nombre">
+						<label for="conv-vol-tutor-nombre">Nombre del tutor/a legal *</label>
+						<input type="text" id="conv-vol-tutor-nombre" name="tutor_nombre">
 					</div>
 					<div class="convoca-field">
-						<label for="bdv-vol-tutor-dni">DNI del tutor/a *</label>
-						<input type="text" id="bdv-vol-tutor-dni" name="tutor_dni">
+						<label for="conv-vol-tutor-dni">DNI del tutor/a *</label>
+						<input type="text" id="conv-vol-tutor-dni" name="tutor_dni">
 					</div>
 				</div>
 				<div class="convoca-check-group">
-					<input type="checkbox" id="bdv-vol-tutor-auth" name="tutor_auth">
-					<label for="bdv-vol-tutor-auth">El/la tutor/a legal autoriza la participación del menor en actividades
+					<input type="checkbox" id="conv-vol-tutor-auth" name="tutor_auth">
+					<label for="conv-vol-tutor-auth">El/la tutor/a legal autoriza la participación del menor en actividades
 						de voluntariado de Convoca.</label>
 				</div>
 			</div>
 
 		<!-- Interest areas -->
 		<h3 style="margin-top:2rem">🌍 ¿En qué te interesa colaborar?</h3>
-		<p class="bdv-small">Selecciona todas las áreas que te interesen.</p>
-		<div class="bdv-interest-grid" role="group" aria-label="Áreas de interés">
+		<p class="conv-small">Selecciona todas las áreas que te interesen.</p>
+		<div class="conv-interest-grid" role="group" aria-label="Áreas de interés">
 			<?php foreach ( $areas as $value => $label ) : ?>
 				<label>
 					<input type="checkbox" name="intereses[]" value="<?php echo esc_attr( $value ); ?>">
@@ -130,8 +130,8 @@ $areas = \Convoca\Members\Form_Voluntariado::INTEREST_AREAS;
 		<h3 style="margin-top:2rem">📅 Tu disponibilidad</h3>
 		<div class="convoca-grid-2">
 			<div class="convoca-field">
-				<label for="bdv-vol-disponibilidad">¿Cuándo puedes participar?</label>
-				<select id="bdv-vol-disponibilidad" name="disponibilidad">
+				<label for="conv-vol-disponibilidad">¿Cuándo puedes participar?</label>
+				<select id="conv-vol-disponibilidad" name="disponibilidad">
 					<option value="fines-semana">Fines de semana</option>
 					<option value="entre-semana">Entre semana</option>
 					<option value="ambos">Ambos</option>
@@ -139,8 +139,8 @@ $areas = \Convoca\Members\Form_Voluntariado::INTEREST_AREAS;
 				</select>
 			</div>
 			<div class="convoca-field">
-				<label for="bdv-vol-experiencia">¿Experiencia previa en voluntariado?</label>
-				<select id="bdv-vol-experiencia" name="experiencia">
+				<label for="conv-vol-experiencia">¿Experiencia previa en voluntariado?</label>
+				<select id="conv-vol-experiencia" name="experiencia">
 					<option value="no">No, es mi primera vez</option>
 					<option value="algo">Sí, algo de experiencia</option>
 					<option value="mucha">Sí, amplia experiencia</option>
@@ -149,8 +149,8 @@ $areas = \Convoca\Members\Form_Voluntariado::INTEREST_AREAS;
 		</div>
 
 		<div class="convoca-field">
-			<label for="bdv-vol-motivacion">¿Por qué quieres ser voluntario/a en Convoca?</label>
-			<textarea id="bdv-vol-motivacion" name="motivacion" rows="3"
+			<label for="conv-vol-motivacion">¿Por qué quieres ser voluntario/a en Convoca?</label>
+			<textarea id="conv-vol-motivacion" name="motivacion" rows="3"
 				placeholder="Cuéntanos qué te motiva…"></textarea>
 		</div>
 
@@ -160,7 +160,7 @@ $areas = \Convoca\Members\Form_Voluntariado::INTEREST_AREAS;
 		if ( ! empty( $dynamic_fields ) ) :
 			echo '<h3 style="margin-top:2rem">📋 Información adicional</h3>';
 			foreach ( $dynamic_fields as $field ) :
-				$id       = 'bdv-vol-' . esc_attr( $field['name'] );
+				$id       = 'conv-vol-' . esc_attr( $field['name'] );
 				$name     = 'dyn_' . esc_attr( $field['name'] );
 				$required = ! empty( $field['required'] ) ? 'required' : '';
 				$req_mark = ! empty( $field['required'] ) ? ' *' : '';
@@ -196,29 +196,29 @@ $areas = \Convoca\Members\Form_Voluntariado::INTEREST_AREAS;
 		<!-- Consent -->
 		<h3 style="margin-top:2rem">✅ Compromisos y consentimiento</h3>
 		<div class="convoca-check-group">
-			<input type="checkbox" id="bdv-vol-codigo" name="acepto_codigo" required>
-			<label for="bdv-vol-codigo">He leído y acepto el <a
+			<input type="checkbox" id="conv-vol-codigo" name="acepto_codigo" required>
+			<label for="conv-vol-codigo">He leído y acepto el <a
 					href="https://drive.google.com/file/d/1MmUSP9hVygjpJi1ACAILLWajzTeqEqlA/view" target="_blank".
 					rel="noopener">Código Ético</a> y el <a
 					href="https://drive.google.com/file/d/1Qps5ghQjNOPH4B55JEmlkQARJrpPN9jK/view" target="_blank".
 					rel="noopener">Programa de Voluntariado</a>. *</label>
 		</div>
 		<div class="convoca-check-group">
-			<input type="checkbox" id="bdv-vol-protocolo" name="acepto_protocolo" required>
-			<label for="bdv-vol-protocolo">He leído el <a
+			<input type="checkbox" id="conv-vol-protocolo" name="acepto_protocolo" required>
+			<label for="conv-vol-protocolo">He leído el <a
 					href="https://drive.google.com/file/d/1g0-466CC7vutS3xkag42tY5vsiSDqHXA/view" target="_blank".
 					rel="noopener">Protocolo para la prevención del acoso</a>. *</label>
 		</div>
 		<div class="convoca-check-group">
-			<input type="checkbox" id="bdv-vol-rgpd" name="rgpd" required>
-			<label for="bdv-vol-rgpd">He leído y acepto la <a
+			<input type="checkbox" id="conv-vol-rgpd" name="rgpd" required>
+			<label for="conv-vol-rgpd">He leído y acepto la <a
 					href="<?php echo esc_url( home_url( '/politica-de-privacidad/' ) ); ?>" target="_blank"
 					rel="noopener">Política de Privacidad</a> y el tratamiento de mis datos personales conforme al RGPD.
 				*</label>
 		</div>
 		<div class="convoca-check-group">
-			<input type="checkbox" id="bdv-vol-comunicaciones" name="comunicaciones">
-			<label for="bdv-vol-comunicaciones">Autorizo a Convoca a enviarme comunicaciones sobre actividades,
+			<input type="checkbox" id="conv-vol-comunicaciones" name="comunicaciones">
+			<label for="conv-vol-comunicaciones">Autorizo a Convoca a enviarme comunicaciones sobre actividades,
 				proyectos y oportunidades de voluntariado.</label>
 		</div>
 		
@@ -230,8 +230,8 @@ $areas = \Convoca\Members\Form_Voluntariado::INTEREST_AREAS;
 			<div style="margin-bottom: 10px; font-size: 0.9em; color: #555;">
 				<?php echo wp_kses_post( $legal_text ); ?>
 			</div>
-			<input type="checkbox" id="bdv-vol-declaracion" name="declaracion_responsable" required>
-			<label for="bdv-vol-declaracion" style="font-weight: bold;">He leído y acepto esta Declaración Responsable. *</label>
+			<input type="checkbox" id="conv-vol-declaracion" name="declaracion_responsable" required>
+			<label for="conv-vol-declaracion" style="font-weight: bold;">He leído y acepto esta Declaración Responsable. *</label>
 		</div>
 		<?php endif; ?>
 
@@ -241,7 +241,7 @@ $areas = \Convoca\Members\Form_Voluntariado::INTEREST_AREAS;
 	</form>
 
 	<!-- Success screen -->
-	<div id="bdv-vol-success" class="convoca-success-screen" style="display:none" role="status" aria-live="polite">
+	<div id="conv-vol-success" class="convoca-success-screen" style="display:none" role="status" aria-live="polite">
 		<div class="convoca-success-icon">🌱</div>
 		<h2>¡Gracias por querer ser voluntario/a!</h2>
 		<p>Tu solicitud se ha registrado correctamente. Hemos enviado un email de confirmación a tu correo.</p>

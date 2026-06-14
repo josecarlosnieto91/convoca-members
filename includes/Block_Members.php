@@ -28,7 +28,7 @@ class Block_Members {
 		);
 
 		wp_register_script(
-			'bdv-blocks-editor',
+			'conv-blocks-editor',
 			CONV_MEMBERS_URL . 'assets/js/blocks-editor.js',
 			array( 'wp-blocks', 'wp-element', 'wp-server-side-render' ),
 			CONV_MEMBERS_VERSION,
@@ -48,7 +48,7 @@ class Block_Members {
 				'description'     => __( 'Formulario de registro multi-paso para nuevos socios.', 'convoca-members' ),
 				'keywords'        => array( 'alta', 'socio', 'registro', 'convoca-core' ),
 				'render_callback' => array( $this, 'render_alta' ),
-				'editor_script'   => 'bdv-blocks-editor',
+				'editor_script'   => 'conv-blocks-editor',
 				'style'           => 'convoca-mi-area', // Reusing the style handle from Mi_Area if registered.
 			)
 		);
@@ -64,7 +64,7 @@ class Block_Members {
 				'description'     => __( 'Panel privado de socios: datos, carnet, inscripciones, voluntariado y pagos.', 'convoca-members' ),
 				'keywords'        => array( 'socios', 'panel', 'área privada' ),
 				'render_callback' => array( $this, 'render_mi_area' ),
-				'editor_script'   => 'bdv-blocks-editor',
+				'editor_script'   => 'conv-blocks-editor',
 				'style'           => 'convoca-mi-area',
 				'editor_style'    => 'convoca-mi-area',
 			)
@@ -81,7 +81,7 @@ class Block_Members {
 				'description'     => __( 'Formulario de registro para nuevos voluntarios.', 'convoca-members' ),
 				'keywords'        => array( 'voluntariado', 'registro', 'voluntario' ),
 				'render_callback' => array( $this, 'render_voluntariado' ),
-				'editor_script'   => 'bdv-blocks-editor',
+				'editor_script'   => 'conv-blocks-editor',
 				'style'           => 'convoca-mi-area',
 			)
 		);
@@ -97,7 +97,7 @@ class Block_Members {
 				'description'     => __( 'Página de verificación de certificados de voluntariado.', 'convoca-members' ),
 				'keywords'        => array( 'certificado', 'verificar', 'voluntariado' ),
 				'render_callback' => array( $this, 'render_verificar_certificado' ),
-				'editor_script'   => 'bdv-blocks-editor',
+				'editor_script'   => 'conv-blocks-editor',
 				'style'           => 'convoca-mi-area',
 			)
 		);

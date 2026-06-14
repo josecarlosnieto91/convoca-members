@@ -28,11 +28,11 @@ class Admin_Webhooks {
 	 */
 	public function add_menu(): void {
 		add_submenu_page(
-			'bdv-members',
+			'conv-members',
 			__( 'Webhooks', 'convoca-members' ),
 			'🔗 Webhooks',
 			'conv_manage_webhooks',
-			'bdv-webhooks',
+			'conv-webhooks',
 			array( $this, 'render_page' )
 		);
 	}
@@ -68,7 +68,7 @@ class Admin_Webhooks {
 					)
 				);
 
-				wp_redirect( admin_url( 'admin.php?page=bdv-webhooks&msg=created' ) );
+				wp_redirect( admin_url( 'admin.php?page=conv-webhooks&msg=created' ) );
 				exit;
 			}
 
@@ -87,7 +87,7 @@ class Admin_Webhooks {
 					)
 				);
 
-				wp_redirect( admin_url( 'admin.php?page=bdv-webhooks&msg=updated' ) );
+				wp_redirect( admin_url( 'admin.php?page=conv-webhooks&msg=updated' ) );
 				exit;
 			}
 		}
@@ -102,13 +102,13 @@ class Admin_Webhooks {
 
 			if ( $action === 'delete' ) {
 				Webhook_Manager::delete_webhook( $id );
-				wp_redirect( admin_url( 'admin.php?page=bdv-webhooks&msg=deleted' ) );
+				wp_redirect( admin_url( 'admin.php?page=conv-webhooks&msg=deleted' ) );
 				exit;
 			}
 
 			if ( $action === 'test' ) {
 				Webhook_Manager::test_webhook( $id );
-				wp_redirect( admin_url( 'admin.php?page=bdv-webhooks&msg=tested' ) );
+				wp_redirect( admin_url( 'admin.php?page=conv-webhooks&msg=tested' ) );
 				exit;
 			}
 
@@ -117,13 +117,13 @@ class Admin_Webhooks {
 				if ( $webhook ) {
 					Webhook_Manager::update_webhook( $id, array( 'active' => ! $webhook['active'] ) );
 				}
-				wp_redirect( admin_url( 'admin.php?page=bdv-webhooks&msg=toggled' ) );
+				wp_redirect( admin_url( 'admin.php?page=conv-webhooks&msg=toggled' ) );
 				exit;
 			}
 
 			if ( $action === 'clear_logs' ) {
 				Webhook_Manager::clear_delivery_logs( $id );
-				wp_redirect( admin_url( 'admin.php?page=bdv-webhooks&view=logs&webhook_id=' . $id . '&msg=logs_cleared' ) );
+				wp_redirect( admin_url( 'admin.php?page=conv-webhooks&view=logs&webhook_id=' . $id . '&msg=logs_cleared' ) );
 				exit;
 			}
 		}
@@ -183,7 +183,7 @@ class Admin_Webhooks {
 		$webhooks = Webhook_Manager::get_webhooks();
 
 		echo '<div style="margin-bottom:15px;">';
-		echo '<a href="' . esc_url( admin_url( 'admin.php?page=bdv-webhooks&view=create' ) ) . '" class="button button-primary">+ Añadir Webhook</a>';
+		echo '<a href="' . esc_url( admin_url( 'admin.php?page=conv-webhooks&view=create' ) ) . '" class="button button-primary">+ Añadir Webhook</a>';
 		echo '</div>';
 
 		if ( empty( $webhooks ) ) {
@@ -218,28 +218,28 @@ class Admin_Webhooks {
 			echo '<td>';
 
 			// Edit.
-			echo '<a href="' . esc_url( admin_url( 'admin.php?page=bdv-webhooks&view=edit&webhook_id=' . $id ) ) . '" class="button button-small">Editar</a> ';
+			echo '<a href="' . esc_url( admin_url( 'admin.php?page=conv-webhooks&view=edit&webhook_id=' . $id ) ) . '" class="button button-small">Editar</a> ';
 
 			// Test.
 			$test_url = wp_nonce_url(
-				admin_url( 'admin.php?page=bdv-webhooks&conv_wh_action=test&webhook_id=' . $id ),
+				admin_url( 'admin.php?page=conv-webhooks&conv_wh_action=test&webhook_id=' . $id ),
 				'conv_wh_action_' . $id
 			);
 			echo '<a href="' . esc_url( $test_url ) . '" class="button button-small">🔔 Test</a> ';
 
 			// Logs.
-			echo '<a href="' . esc_url( admin_url( 'admin.php?page=bdv-webhooks&view=logs&webhook_id=' . $id ) ) . '" class="button button-small">📋 Logs</a> ';
+			echo '<a href="' . esc_url( admin_url( 'admin.php?page=conv-webhooks&view=logs&webhook_id=' . $id ) ) . '" class="button button-small">📋 Logs</a> ';
 
 			// Toggle.
 			$toggle_url = wp_nonce_url(
-				admin_url( 'admin.php?page=bdv-webhooks&conv_wh_action=toggle&webhook_id=' . $id ),
+				admin_url( 'admin.php?page=conv-webhooks&conv_wh_action=toggle&webhook_id=' . $id ),
 				'conv_wh_action_' . $id
 			);
 			echo '<a href="' . esc_url( $toggle_url ) . '" class="button button-small">' . ( $active ? '⏸ Pausar' : '▶ Activar' ) . '</a> ';
 
 			// Delete.
 			$delete_url = wp_nonce_url(
-				admin_url( 'admin.php?page=bdv-webhooks&conv_wh_action=delete&webhook_id=' . $id ),
+				admin_url( 'admin.php?page=conv-webhooks&conv_wh_action=delete&webhook_id=' . $id ),
 				'conv_wh_action_' . $id
 			);
 			echo '<a href="' . esc_url( $delete_url ) . '" class="button button-small" onclick="return confirm(\'¿Eliminar este webhook?\')">🗑</a>';
@@ -267,7 +267,7 @@ class Admin_Webhooks {
 		$title  = $is_edit ? 'Editar Webhook' : 'Nuevo Webhook';
 
 		echo '<h2>' . esc_html( $title ) . '</h2>';
-		echo '<a href="' . esc_url( admin_url( 'admin.php?page=bdv-webhooks' ) ) . '" class="button" style="margin-bottom:15px;">← Volver a la lista</a>';
+		echo '<a href="' . esc_url( admin_url( 'admin.php?page=conv-webhooks' ) ) . '" class="button" style="margin-bottom:15px;">← Volver a la lista</a>';
 
 		echo '<form method="post" action="">';
 		wp_nonce_field( 'conv_webhook_nonce' );
@@ -335,10 +335,10 @@ class Admin_Webhooks {
 		}
 
 		echo '<h2>📋 Registro de entregas — ' . esc_html( $webhook['label'] ?? 'Sin nombre' ) . '</h2>';
-		echo '<a href="' . esc_url( admin_url( 'admin.php?page=bdv-webhooks' ) ) . '" class="button">← Volver</a> ';
+		echo '<a href="' . esc_url( admin_url( 'admin.php?page=conv-webhooks' ) ) . '" class="button">← Volver</a> ';
 
 		$clear_url = wp_nonce_url(
-			admin_url( 'admin.php?page=bdv-webhooks&conv_wh_action=clear_logs&webhook_id=' . $webhook_id ),
+			admin_url( 'admin.php?page=conv-webhooks&conv_wh_action=clear_logs&webhook_id=' . $webhook_id ),
 			'conv_wh_action_' . $webhook_id
 		);
 		echo '<a href="' . esc_url( $clear_url ) . '" class="button" onclick="return confirm(\'¿Limpiar todos los registros?\')">🗑 Limpiar logs</a>';

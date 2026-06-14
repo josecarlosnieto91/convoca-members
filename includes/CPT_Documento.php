@@ -23,7 +23,7 @@ class CPT_Documento {
 	public function redirect_default_editor(): void {
 		global $typenow;
 		if ( $typenow === 'conv_documento' ) {
-			wp_safe_redirect( admin_url( 'admin.php?page=bdv-members' ) );
+			wp_safe_redirect( admin_url( 'admin.php?page=conv-members' ) );
 			exit;
 		}
 	}

@@ -30,7 +30,7 @@ class Admin_List extends \WP_List_Table {
 				'singular' => 'miembro',
 				'plural'   => 'miembros',
 				'ajax'     => false,
-				'screen'   => 'bdv-members',
+				'screen'   => 'conv-members',
 			)
 		);
 	}
@@ -174,7 +174,7 @@ class Admin_List extends \WP_List_Table {
 		}
 
 		// Filter by volunteer status (from custom submenu).
-		if ( ! empty( $get_data['voluntarios'] ) || ( isset( $get_data['page'] ) && $get_data['page'] === 'bdv-members-voluntarios' ) ) {
+		if ( ! empty( $get_data['voluntarios'] ) || ( isset( $get_data['page'] ) && $get_data['page'] === 'conv-members-voluntarios' ) ) {
 			$args['meta_query'] = array_merge(
 				$args['meta_query'] ?? array(),
 				array(
@@ -343,7 +343,7 @@ class Admin_List extends \WP_List_Table {
 	}
 
 	public function column_nombre( $item ): string {
-		$url       = admin_url( 'admin.php?page=bdv-members&member_id=' . $item->ID );
+		$url       = admin_url( 'admin.php?page=conv-members&member_id=' . $item->ID );
 		$name_link = '<a href="' . esc_url( $url ) . '"><strong>' . esc_html( $item->post_title ) . '</strong></a>';
 
 		// Row actions.

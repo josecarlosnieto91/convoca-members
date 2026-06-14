@@ -630,7 +630,7 @@ class Cron_Manager {
 	 * Build the HTML body for the admin weekly digest.
 	 */
 	private function build_digest_body( array $stats ): string {
-		$admin_url  = admin_url( 'admin.php?page=bdv-members' );
+		$admin_url  = admin_url( 'admin.php?page=conv-members' );
 		$tz         = new \DateTimeZone( wp_timezone_string() );
 		$week_ago_f = ( new \DateTime( 'now', $tz ) )->modify( '-7 days' )->format( 'd/m/Y' );
 		$today_f    = ( new \DateTime( 'now', $tz ) )->format( 'd/m/Y' );

@@ -5,14 +5,14 @@
  */
 
 /* ── Step Indicator ───────────────────────────── */
-.bdv-step-indicator {
+.conv-step-indicator {
     display: flex;
     gap: 0.75rem;
     justify-content: center;
     margin-bottom: 2rem;
 }
 
-.bdv-step-dot {
+.conv-step-dot {
     width: 40px;
     height: 40px;
     border-radius: 50%;
@@ -28,7 +28,7 @@
     position: relative;
 }
 
-.bdv-step-dot:not(:last-child)::after {
+.conv-step-dot:not(:last-child)::after {
     content: '';
     position: absolute;
     top: 50%;
@@ -39,32 +39,32 @@
     transition: background var(--wp--custom--transition, 0.3s ease);
 }
 
-.bdv-step-dot.done::after {
+.conv-step-dot.done::after {
     background: var(--wp--preset--color--verde, #2d5a27);
 }
 
-.bdv-step-dot.active {
+.conv-step-dot.active {
     background: var(--wp--preset--color--naranja, #ff8700);
     color: var(--wp--preset--color--blanco, #fff);
     box-shadow: 0 0 0 4px rgba(255, 135, 0, 0.2);
 }
 
-.bdv-step-dot.done {
+.conv-step-dot.done {
     background: var(--wp--preset--color--verde, #2d5a27);
     color: var(--wp--preset--color--blanco, #fff);
 }
 
 /* ── Steps (multi-step navigation) ───────────── */
-.bdv-form-step {
+.conv-form-step {
     display: none;
-    animation: bdv-fade-in 0.3s ease;
+    animation: conv-fade-in 0.3s ease;
 }
 
-.bdv-form-step.active {
+.conv-form-step.active {
     display: block;
 }
 
-@keyframes bdv-fade-in {
+@keyframes conv-fade-in {
     from {
         opacity: 0;
         transform: translateY(8px);
@@ -76,7 +76,7 @@
     }
 }
 
-.bdv-form-nav {
+.conv-form-nav {
     display: flex;
     justify-content: space-between;
     margin-top: 1.5rem;
@@ -84,26 +84,26 @@
 }
 
 /* ── Plan Grid ────────────────────────────────── */
-.bdv-plan-grid {
+.conv-plan-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
     gap: 1rem;
     margin-bottom: 1.5rem;
 }
 
-.bdv-plan-option {
+.conv-plan-option {
     position: relative;
     cursor: pointer;
 }
 
-.bdv-plan-option input {
+.conv-plan-option input {
     position: absolute;
     opacity: 0;
     width: 0;
     height: 0;
 }
 
-.bdv-plan-label {
+.conv-plan-label {
     display: block;
     padding: 1rem 1.25rem;
     border: 2px solid var(--wp--preset--color--gris-medio, #e0e0e0);
@@ -115,84 +115,84 @@
     height: 100%;
 }
 
-.bdv-plan-label h4 {
+.conv-plan-label h4 {
     font-family: var(--wp--preset--font-family--display, 'Outfit', sans-serif);
     font-size: 1.05rem;
     margin: 0 0 0.25rem;
     color: var(--wp--preset--color--violeta, #320028);
 }
 
-.bdv-price {
+.conv-price {
     font-family: var(--wp--preset--font-family--display, 'Outfit', sans-serif);
     font-size: 1.3rem;
     font-weight: 700;
     color: var(--wp--preset--color--naranja, #ff8700);
 }
 
-.bdv-alt {
+.conv-alt {
     font-size: 0.8rem;
     color: #888;
     display: block;
     margin-top: 0.15rem;
 }
 
-.bdv-plan-option input:checked+.bdv-plan-label {
+.conv-plan-option input:checked+.conv-plan-label {
     border-color: var(--wp--preset--color--naranja, #ff8700);
     background: rgba(255, 135, 0, 0.06);
     box-shadow: 0 0 0 2px var(--wp--preset--color--naranja, #ff8700);
 }
 
-.bdv-plan-option:hover .bdv-plan-label {
+.conv-plan-option:hover .conv-plan-label {
     border-color: var(--wp--preset--color--naranja, #ff8700);
 }
 
-.bdv-plan-option input:focus-visible+.bdv-plan-label {
+.conv-plan-option input:focus-visible+.conv-plan-label {
     outline: 3px solid var(--wp--preset--color--amarillo, #ffab00);
     outline-offset: 2px;
 }
 
 /* ── Advantages Box (from static web) ─────────── */
-.bdv-advantages {
+.conv-advantages {
     background: var(--wp--preset--color--gris-piedra, #f4f4f4);
     border-radius: var(--wp--custom--radius--small, 8px);
     padding: 0.75rem 1.25rem;
     margin: 1rem 0;
     font-size: 0.9rem;
-    animation: bdv-fade-in 0.3s ease;
+    animation: conv-fade-in 0.3s ease;
 }
 
-.bdv-advantages p {
+.conv-advantages p {
     font-weight: 700;
     margin: 0 0 0.3rem;
     color: var(--wp--preset--color--violeta, #320028);
 }
 
-.bdv-advantages ul {
+.conv-advantages ul {
     list-style: none;
     padding: 0;
     margin: 0;
 }
 
-.bdv-advantages li {
+.conv-advantages li {
     padding: 0.3rem 0;
 }
 
-.bdv-advantages li::before {
+.conv-advantages li::before {
     content: '✓ ';
     color: var(--wp--preset--color--naranja, #ff8700);
     font-weight: 700;
 }
 
 /* ── Sub-Plans ────────────────────────────────── */
-.bdv-sub-plan {
+.conv-sub-plan {
     margin-top: 1rem;
     padding: 1rem;
     background: var(--wp--preset--color--gris-piedra, #f4f4f4);
     border-radius: var(--wp--custom--radius--small, 8px);
-    animation: bdv-fade-in 0.3s ease;
+    animation: conv-fade-in 0.3s ease;
 }
 
-.bdv-sub-plan label {
+.conv-sub-plan label {
     display: flex;
     align-items: center;
     gap: 0.5rem;
@@ -201,33 +201,33 @@
     font-size: 0.92rem;
 }
 
-.bdv-sub-plan input[type="radio"] {
+.conv-sub-plan input[type="radio"] {
     accent-color: var(--wp--preset--color--naranja, #ff8700);
 }
 
 /* Common utility classes and grid systems removed in favor of convoca-common.css */
 
 /* ── Summary Table ────────────────────────────── */
-.bdv-summary-table {
+.conv-summary-table {
     width: 100%;
     border-collapse: collapse;
     margin: 1rem 0;
 }
 
-.bdv-summary-table td {
+.conv-summary-table td {
     padding: 0.6rem 0.75rem;
     border-bottom: 1px solid var(--wp--preset--color--gris-medio, #e0e0e0);
     font-size: 0.92rem;
 }
 
-.bdv-summary-table td:first-child {
+.conv-summary-table td:first-child {
     font-weight: 700;
     width: 40%;
     color: var(--wp--preset--color--violeta, #320028);
 }
 
 /* ── Card Preview ─────────────────────────────── */
-.bdv-card-preview {
+.conv-card-preview {
     background: linear-gradient(135deg,
             var(--wp--preset--color--violeta, #320028),
             var(--wp--preset--color--granate, #7d0032));
@@ -240,7 +240,7 @@
     overflow: hidden;
 }
 
-.bdv-card-preview::after {
+.conv-card-preview::after {
     content: '';
     position: absolute;
     top: -30px;
@@ -252,7 +252,7 @@
     pointer-events: none;
 }
 
-.bdv-card-preview h3 {
+.conv-card-preview h3 {
     font-family: var(--wp--preset--font-family--display, 'Outfit', sans-serif);
     color: var(--wp--preset--color--amarillo, #ffab00);
     margin: 0 0 0.2rem;
@@ -261,7 +261,7 @@
     z-index: 1;
 }
 
-.bdv-card-name {
+.conv-card-name {
     font-size: 1.4rem;
     font-family: var(--wp--preset--font-family--display, 'Outfit', sans-serif);
     font-weight: 700;
@@ -270,14 +270,14 @@
     z-index: 1;
 }
 
-.bdv-card-id {
+.conv-card-id {
     font-size: 0.85rem;
     opacity: 0.7;
     position: relative;
     z-index: 1;
 }
 
-.bdv-card-type {
+.conv-card-type {
     display: inline-block;
     background: var(--wp--preset--color--naranja, #ff8700);
     padding: 0.15rem 0.7rem;
@@ -289,7 +289,7 @@
     z-index: 1;
 }
 
-.bdv-card-date {
+.conv-card-date {
     font-size: 0.8rem;
     opacity: 0.6;
     margin-top: 0.3rem;
@@ -298,14 +298,14 @@
 }
 
 /* ── Interest Grid ────────────────────────────── */
-.bdv-interest-grid {
+.conv-interest-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
     gap: 0.5rem;
     margin-bottom: 1rem;
 }
 
-.bdv-interest-grid label {
+.conv-interest-grid label {
     display: flex;
     align-items: center;
     gap: 0.5rem;
@@ -318,17 +318,17 @@
     border: 2px solid transparent;
 }
 
-.bdv-interest-grid label:hover {
+.conv-interest-grid label:hover {
     background: rgba(255, 135, 0, 0.08);
 }
 
-.bdv-interest-grid input:checked+span,
-.bdv-interest-grid label:has(input:checked) {
+.conv-interest-grid input:checked+span,
+.conv-interest-grid label:has(input:checked) {
     border-color: var(--wp--preset--color--naranja, #ff8700);
     background: rgba(255, 135, 0, 0.06);
 }
 
-.bdv-interest-grid input {
+.conv-interest-grid input {
     accent-color: var(--wp--preset--color--naranja, #ff8700);
 }
 
@@ -337,12 +337,12 @@
 /* ── Print ────────────────────────────────────── */
 @media print {
 
-    .bdv-step-indicator,
-    .bdv-form-nav {
+    .conv-step-indicator,
+    .conv-form-nav {
         display: none !important;
     }
 
-    .bdv-card-preview {
+    .conv-card-preview {
         break-inside: avoid;
     }
 }

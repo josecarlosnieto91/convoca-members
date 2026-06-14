@@ -24,19 +24,19 @@ class Verificar_Certificado {
 
 		ob_start();
 
-		echo '<div class="bdv-verify-container">';
+		echo '<div class="conv-verify-container">';
 
 		if ( $search ) {
 			$result = Certificate_Generator::verify( $search );
 
 			if ( $result ) {
 				?>
-				<div class="convoca-alert convoca-alert--ok convoca-card bdv-cert-result">
-					<div class="bdv-cert-header">
-						<span class="bdv-cert-icon">✅</span>
+				<div class="convoca-alert convoca-alert--ok convoca-card conv-cert-result">
+					<div class="conv-cert-header">
+						<span class="conv-cert-icon">✅</span>
 						<h2 class="text-gradient"><?php _e( 'Certificado Válido', 'convoca-members' ); ?></h2>
 					</div>
-					<div class="bdv-cert-details">
+					<div class="conv-cert-details">
 						<div class="detail-row">
 							<span class="detail-label"><?php _e( 'Nombre:', 'convoca-members' ); ?></span>
 							<span class="detail-value"><?php echo esc_html( $result['nombre'] ); ?></span>
@@ -59,8 +59,8 @@ class Verificar_Certificado {
 			} else {
 				?>
 				<div class="convoca-alert convoca-alert--danger convoca-card">
-					<div class="bdv-cert-header">
-						<span class="bdv-cert-icon">❌</span>
+					<div class="conv-cert-header">
+						<span class="conv-cert-icon">❌</span>
 						<h2><?php _e( 'Certificado No Encontrado', 'convoca-members' ); ?></h2>
 					</div>
 					<p><?php _e( 'El ID de certificado proporcionado no es válido o no existe en nuestros registros.', 'convoca-members' ); ?></p>
@@ -70,11 +70,11 @@ class Verificar_Certificado {
 		}
 
 		?>
-		<div class="convoca-card convoca-form bdv-verify-card">
+		<div class="convoca-card convoca-form conv-verify-card">
 			<h2 class="text-gradient">🔍 <?php _e( 'Verificar Certificado', 'convoca-members' ); ?></h2>
 			<p class="subtitle"><?php _e( 'Introduce el ID del certificado para verificar su autenticidad y validez oficial.', 'convoca-members' ); ?></p>
 			
-			<form method="post" class="bdv-verify-form">
+			<form method="post" class="conv-verify-form">
 				<div class="form-group">
 					<label for="certificado_id"><?php _e( 'ID del Certificado', 'convoca-members' ); ?></label>
 					<input type="text" id="certificado_id" name="certificado_id" 

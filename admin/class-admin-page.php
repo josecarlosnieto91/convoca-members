@@ -32,23 +32,23 @@ class Admin_Page {
 			__( 'Miembros Convoca', 'convoca-members' ),
 			__( 'Miembros', 'convoca-members' ),
 			'gestionar_miembros',
-			'bdv-members',
+			'conv-members',
 			array( $this, 'render_list_page' ),
 			'dashicons-groups',
 			26
 		);
 
 		add_submenu_page(
-			'bdv-members',
+			'conv-members',
 			__( 'Todos los Miembros', 'convoca-members' ),
 			__( 'Todos los Miembros', 'convoca-members' ),
 			'gestionar_miembros',
-			'bdv-members',
+			'conv-members',
 			array( $this, 'render_list_page' )
 		);
 
 		add_submenu_page(
-			'bdv-members',
+			'conv-members',
 			__( 'Añadir nuevo Miembro', 'convoca-members' ),
 			__( 'Añadir nuevo', 'convoca-members' ),
 			'gestionar_miembros',
@@ -57,16 +57,16 @@ class Admin_Page {
 		);
 
 		add_submenu_page(
-			'bdv-members',
+			'conv-members',
 			__( 'Gestionar Voluntarios', 'convoca-members' ),
 			__( 'Voluntarios', 'convoca-members' ),
 			'gestionar_miembros',
-			'bdv-members-voluntarios',
+			'conv-members-voluntarios',
 			array( $this, 'render_list_page' )
 		);
 
 		add_submenu_page(
-			'bdv-members',
+			'conv-members',
 			__( 'Añadir nuevo Voluntario', 'convoca-members' ),
 			__( 'Añadir voluntario', 'convoca-members' ),
 			'gestionar_miembros',
@@ -75,29 +75,29 @@ class Admin_Page {
 		);
 
 		add_submenu_page(
-			'bdv-members',
+			'conv-members',
 			__( 'Ajustes', 'convoca-members' ),
 			__( 'Ajustes', 'convoca-members' ),
 			'manage_options',
-			'bdv-members-settings',
+			'conv-members-settings',
 			array( $this, 'render_settings_page' )
 		);
 
 		add_submenu_page(
-			'bdv-members',
+			'conv-members',
 			__( 'Registros', 'convoca-members' ),
 			__( 'Registros', 'convoca-members' ),
 			'common_view_logs',
-			'bdv-members-logs',
+			'conv-members-logs',
 			array( $this, 'render_logs_page' )
 		);
 
 		add_submenu_page(
-			'bdv-members',
+			'conv-members',
 			__( 'Estado del Sistema', 'convoca-members' ),
 			__( 'Estado', 'convoca-members' ),
 			'manage_options',
-			'bdv-members-status',
+			'conv-members-status',
 			function () {
 				if ( ! class_exists( '\\Convoca\\Members\\Admin_Status' ) ) {
 					require_once CONV_MEMBERS_DIR . 'includes/class-admin-status.php';
@@ -110,24 +110,24 @@ class Admin_Page {
 	/* ── Assets ────────────────────────────────── */
 
 	public function enqueue_assets( string $hook ): void {
-		if ( ! str_contains( $hook, 'bdv-members' ) ) {
+		if ( ! str_contains( $hook, 'conv-members' ) ) {
 			return;
 		}
 		wp_enqueue_style(
-			'bdv-members-admin',
+			'conv-members-admin',
 			CONV_MEMBERS_URL . 'assets/css/convoca-members-admin.css',
 			array(),
 			CONV_MEMBERS_VERSION
 		);
 		wp_enqueue_script(
-			'bdv-members-admin',
+			'conv-members-admin',
 			CONV_MEMBERS_URL . 'assets/js/convoca-members-admin.js',
 			array( 'convoca-common-admin-js' ),
 			CONV_MEMBERS_VERSION,
 			true
 		);
 		wp_localize_script(
-			'bdv-members-admin',
+			'conv-members-admin',
 			'bdvAdmin',
 			array(
 				'ajaxUrl'        => admin_url( 'admin-ajax.php' ),
@@ -162,7 +162,7 @@ class Admin_Page {
 
 		$list = new Admin_List();
 		$list->prepare_items();
-		$is_voluntarios = ! empty( $_GET['voluntarios'] ) || ( isset( $_GET['page'] ) && $_GET['page'] === 'bdv-members-voluntarios' );
+		$is_voluntarios = ! empty( $_GET['voluntarios'] ) || ( isset( $_GET['page'] ) && $_GET['page'] === 'conv-members-voluntarios' );
 		?>
 		<div class="wrap">
 			<h1 class="wp-heading-inline">
@@ -178,15 +178,15 @@ class Admin_Page {
 
 			<!-- Filters -->
 			<form method="get">
-				<input type="hidden" name="page" value="bdv-members">
+				<input type="hidden" name="page" value="conv-members">
 				<?php wp_nonce_field( 'bulk-members', '_conv_nonce', true, false ); ?>
-				<?php $list->search_box( __( 'Buscar', 'convoca-members' ), 'bdv-search' ); ?>
+				<?php $list->search_box( __( 'Buscar', 'convoca-members' ), 'conv-search' ); ?>
 				<?php $list->display(); ?>
 			</form>
 
 			<!-- CSV / PDF export -->
 			<p style="margin-top:1rem">
-				<button type="button" id="bdv-csv-export-btn"
+				<button type="button" id="conv-csv-export-btn"
 					class="convoca-btn convoca-btn-outline">📥
 					<?php esc_html_e( 'Exportar CSV', 'convoca-members' ); ?>
 				</button>
@@ -219,17 +219,17 @@ class Admin_Page {
 			);
 		}
 		?>
-		<div class="bdv-stats-bar">
-			<div class="bdv-stat"><span class="bdv-stat-num">
+		<div class="conv-stats-bar">
+			<div class="conv-stat"><span class="conv-stat-num">
 					<?php echo $counts['activo']; ?>
 				</span> <?php esc_html_e( 'Activos', 'convoca-members' ); ?></div>
-			<div class="bdv-stat"><span class="bdv-stat-num">
+			<div class="conv-stat"><span class="conv-stat-num">
 					<?php echo $counts['pendiente_pago'] + $counts['pendiente_documentacion']; ?>
 				</span> <?php esc_html_e( 'Pendientes', 'convoca-members' ); ?></div>
-			<div class="bdv-stat"><span class="bdv-stat-num">
+			<div class="conv-stat"><span class="conv-stat-num">
 					<?php echo $counts['baja']; ?>
 				</span> <?php esc_html_e( 'Bajas', 'convoca-members' ); ?></div>
-			<div class="bdv-stat"><span class="bdv-stat-num">
+			<div class="conv-stat"><span class="conv-stat-num">
 					<?php echo array_sum( $counts ); ?>
 				</span> <?php esc_html_e( 'Total', 'convoca-members' ); ?></div>
 		</div>
@@ -253,7 +253,7 @@ class Admin_Page {
 		?>
 		<div class="wrap">
 			<h1>
-				<a href="<?php echo esc_url( admin_url( 'admin.php?page=bdv-members' ) ); ?>">← <?php esc_html_e( 'Listado', 'convoca-members' ); ?></a>
+				<a href="<?php echo esc_url( admin_url( 'admin.php?page=conv-members' ) ); ?>">← <?php esc_html_e( 'Listado', 'convoca-members' ); ?></a>
 				&nbsp;
 				<?php echo esc_html( $post->post_title ); ?>
 				<?php echo Estados::badge_html( $estado ); ?>
@@ -265,8 +265,8 @@ class Admin_Page {
 			</h1>
 			<hr class="wp-header-end">
 
-			<div class="bdv-detail-grid">
-				<div class="bdv-detail-card">
+			<div class="conv-detail-grid">
+				<div class="conv-detail-card">
 					<h3><?php esc_html_e( 'Datos personales', 'convoca-members' ); ?></h3>
 					<table class="widefat striped">
 						<tr>
@@ -345,9 +345,9 @@ class Admin_Page {
 					</table>
 				</div>
 
-				<div class="bdv-detail-card">
+				<div class="conv-detail-card">
 					<h3><?php esc_html_e( 'Cambiar estado', 'convoca-members' ); ?></h3>
-					<form id="bdv-state-form">
+					<form id="conv-state-form">
 						<input type="hidden" name="post_id" value="<?php echo (int) $post_id; ?>">
 						<select name="nuevo_estado">
 							<?php foreach ( Estados::TRANSITIONS[ $estado ] ?? array() as $target ) : ?>
@@ -397,7 +397,7 @@ class Admin_Page {
 			</div>
 
 			<!-- Logs Section -->
-			<div class="bdv-detail-card" style="margin-top: 2rem;">
+			<div class="conv-detail-card" style="margin-top: 2rem;">
 				<h3><?php esc_html_e( 'Registros de actividad', 'convoca-members' ); ?></h3>
 				<?php
 				global $wpdb;
@@ -479,7 +479,7 @@ class Admin_Page {
 					esc_html( $activos ),
 					esc_html( $total )
 				) . '</p>';
-				echo '<a href="' . esc_url( admin_url( 'admin.php?page=bdv-members' ) ) . '" class="button">' . esc_html__( 'Ver listado completo', 'convoca-members' ) . '</a>';
+				echo '<a href="' . esc_url( admin_url( 'admin.php?page=conv-members' ) ) . '" class="button">' . esc_html__( 'Ver listado completo', 'convoca-members' ) . '</a>';
 			}
 		);
 	}
@@ -538,17 +538,17 @@ class Admin_Page {
 		$columns = CSV_Exporter::get_available_columns();
 		$saved   = CSV_Exporter::get_user_columns();
 		?>
-		<div id="bdv-csv-modal" class="bdv-modal-overlay" role="dialog" aria-modal="true" aria-labelledby="bdv-csv-modal-title" style="display:none;">
-			<div class="bdv-modal-content">
-				<div class="bdv-modal-header">
-					<h2 id="bdv-csv-modal-title"><?php esc_html_e( '📥 Exportar CSV — Seleccionar columnas', 'convoca-members' ); ?></h2>
-					<button type="button" class="bdv-modal-close" aria-label="<?php esc_attr_e( 'Cerrar', 'convoca-members' ); ?>">&times;</button>
+		<div id="conv-csv-modal" class="conv-modal-overlay" role="dialog" aria-modal="true" aria-labelledby="conv-csv-modal-title" style="display:none;">
+			<div class="conv-modal-content">
+				<div class="conv-modal-header">
+					<h2 id="conv-csv-modal-title"><?php esc_html_e( '📥 Exportar CSV — Seleccionar columnas', 'convoca-members' ); ?></h2>
+					<button type="button" class="conv-modal-close" aria-label="<?php esc_attr_e( 'Cerrar', 'convoca-members' ); ?>">&times;</button>
 				</div>
-				<div class="bdv-modal-body">
+				<div class="conv-modal-body">
 					<p class="description"><?php esc_html_e( 'Selecciona las columnas que quieres incluir en la exportación.', 'convoca-members' ); ?></p>
-					<div class="bdv-columns-grid">
+					<div class="conv-columns-grid">
 						<?php foreach ( $columns as $key => $label ) : ?>
-							<label class="bdv-column-checkbox">
+							<label class="conv-column-checkbox">
 								<input type="checkbox" name="csv_col[]" value="<?php echo esc_attr( $key ); ?>"
 									<?php checked( in_array( $key, $saved ?? array_keys( $columns ) ) ); ?>>
 								<?php echo esc_html( $label ); ?>
@@ -556,14 +556,14 @@ class Admin_Page {
 						<?php endforeach; ?>
 					</div>
 				</div>
-				<div class="bdv-modal-footer">
-					<button type="button" id="bdv-csv-export-selected" class="button button-primary">
+				<div class="conv-modal-footer">
+					<button type="button" id="conv-csv-export-selected" class="button button-primary">
 						<?php esc_html_e( 'Exportar seleccionadas', 'convoca-members' ); ?>
 					</button>
-					<button type="button" id="bdv-csv-export-all" class="button">
+					<button type="button" id="conv-csv-export-all" class="button">
 						<?php esc_html_e( 'Exportar todo', 'convoca-members' ); ?>
 					</button>
-					<button type="button" id="bdv-csv-restore-default" class="button">
+					<button type="button" id="conv-csv-restore-default" class="button">
 						<?php esc_html_e( 'Restaurar defecto', 'convoca-members' ); ?>
 					</button>
 				</div>

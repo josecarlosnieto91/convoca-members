@@ -166,7 +166,7 @@ class CPT_Proyecto {
 		$post_id = $post->ID;
 		$meta    = self::get_meta( $post_id );
 		?>
-		<div class="bdv-proyecto-metabox">
+		<div class="conv-proyecto-metabox">
 			<?php wp_nonce_field( 'conv_save_proyecto', 'conv_proyecto_nonce' ); ?>
 			<p>
 				<label for="conv_fecha_inicio"><?php esc_html_e( 'Fecha de inicio:', 'convoca-members' ); ?></label>

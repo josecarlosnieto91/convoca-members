@@ -104,7 +104,7 @@ class Admin_Metaboxes {
 
 		$estado_cuota = get_post_meta( $post->ID, '_conv_estado_cuota', true );
 		?>
-		<div class="bdv-actions-panel">
+		<div class="conv-actions-panel">
 			<p><strong>Estado Cuota:</strong> <?php echo esc_html( ucfirst( $estado_cuota ?: 'pendiente' ) ); ?></p>
 
 			<?php if ( $pago_id ) : ?>
@@ -115,35 +115,35 @@ class Admin_Metaboxes {
 				</p>
 			<?php endif; ?>
 
-			<button type="button" class="convoca-btn convoca-btn-primary convoca-btn--full" id="bdv-send-payment-link" style="margin-bottom:10px;">
+			<button type="button" class="convoca-btn convoca-btn-primary convoca-btn--full" id="conv-send-payment-link" style="margin-bottom:10px;">
 				Generar y Enviar Link de Pago
 			</button>
 
-			<button type="button" class="convoca-btn convoca-btn-secondary convoca-btn--full" id="bdv-send-reminder">
+			<button type="button" class="convoca-btn convoca-btn-secondary convoca-btn--full" id="conv-send-reminder">
 				Enviar Recordatorio
 			</button>
 
-			<div id="bdv-ajax-response" style="margin-top:10px;"></div>
+			<div id="conv-ajax-response" style="margin-top:10px;"></div>
 			
 			<hr>
 
 			<h4 style="margin:15px 0 10px 0;"><?php esc_html_e( 'RGPD', 'convoca-members' ); ?></h4>
-			<button type="button" class="convoca-btn convoca-btn-outline convoca-btn--full" id="bdv-export-data" style="margin-bottom:5px;">
+			<button type="button" class="convoca-btn convoca-btn-outline convoca-btn--full" id="conv-export-data" style="margin-bottom:5px;">
 				📥 Exportar datos (JSON)
 			</button>
-			<button type="button" class="convoca-btn convoca-btn-outline convoca-btn--full convoca-btn--danger" id="bdv-delete-data">
+			<button type="button" class="convoca-btn convoca-btn-outline convoca-btn--full convoca-btn--danger" id="conv-delete-data">
 				🗑️  Eliminar todos los datos
 			</button>
 
-			<div id="bdv-rgpd-response" style="margin-top:10px;"></div>
+			<div id="conv-rgpd-response" style="margin-top:10px;"></div>
 		</div>
 
 		<script>
 			document.addEventListener('DOMContentLoaded', function () {
 				var postId = <?php echo $post->ID; ?>;
 				var nonce = '<?php echo wp_create_nonce( 'conv_actions_' . $post->ID ); ?>';
-				var msgBox = document.getElementById('bdv-ajax-response');
-				var rgpdMsgBox = document.getElementById('bdv-rgpd-response');
+				var msgBox = document.getElementById('conv-ajax-response');
+				var rgpdMsgBox = document.getElementById('conv-rgpd-response');
 
 				function conv_ajax_action(action, btn) {
 					btn.disabled = true;
@@ -175,7 +175,7 @@ class Admin_Metaboxes {
 					});
 				}
 
-				var btnPaymentLink = document.getElementById('bdv-send-payment-link');
+				var btnPaymentLink = document.getElementById('conv-send-payment-link');
 				if (btnPaymentLink) {
 					btnPaymentLink.addEventListener('click', function () {
 						if (confirm('¿Generar un nuevo pago en Redsys y enviar email al socio?')) {
@@ -184,7 +184,7 @@ class Admin_Metaboxes {
 					});
 				}
 
-				var btnReminder = document.getElementById('bdv-send-reminder');
+				var btnReminder = document.getElementById('conv-send-reminder');
 				if (btnReminder) {
 					btnReminder.addEventListener('click', function () {
 						if (confirm('¿Reenviar el recordatorio de pago?')) {
@@ -193,7 +193,7 @@ class Admin_Metaboxes {
 					});
 				}
 
-				var btnExportData = document.getElementById('bdv-export-data');
+				var btnExportData = document.getElementById('conv-export-data');
 				if (btnExportData) {
 					btnExportData.addEventListener('click', function () {
 						if (!confirm('¿Exportar todos los datos de este miembro en formato JSON?')) return;
@@ -225,7 +225,7 @@ class Admin_Metaboxes {
 					});
 				}
 
-				var btnDeleteData = document.getElementById('bdv-delete-data');
+				var btnDeleteData = document.getElementById('conv-delete-data');
 				if (btnDeleteData) {
 					btnDeleteData.addEventListener('click', function () {
 						if (!confirm('⚠️ ¿Estás seguro? Esta acción eliminará PERMANENTEMENTE todos los datos del miembro (incluyendo inscripciones, pagos y logs). Esta acción no se puede deshacer.')) return;

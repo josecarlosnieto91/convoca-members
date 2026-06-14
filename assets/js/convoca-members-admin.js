@@ -8,7 +8,7 @@
     if (!bdvAdmin) return;
 
     /* ── Quick state change ──────────────────────── */
-    const stateForm = document.getElementById('bdv-state-form');
+    const stateForm = document.getElementById('conv-state-form');
     if (stateForm) {
         stateForm.addEventListener('submit', function (e) {
             e.preventDefault();
@@ -20,7 +20,7 @@
             }
 
             const fd = new FormData(stateForm);
-            const nonce = window.bdvAdmin?.nonce || '';
+            const nonce = window.convAdmin?.nonce || '';
 
             bdvAdmin.ajaxPost('conv_change_state', fd, nonce,
                 (res) => { location.reload(); },
@@ -37,13 +37,13 @@
 
     /* ── CSV Export Modal ─────────────────────────── */
     (function () {
-        var modalOverlay = document.getElementById('bdv-csv-modal');
-        var exportBtn = document.getElementById('bdv-csv-export-btn');
-        var closeBtn = modalOverlay ? modalOverlay.querySelector('.bdv-modal-close') : null;
+        var modalOverlay = document.getElementById('conv-csv-modal');
+        var exportBtn = document.getElementById('conv-csv-export-btn');
+        var closeBtn = modalOverlay ? modalOverlay.querySelector('.conv-modal-close') : null;
 
-        var exportSelectedBtn = document.getElementById('bdv-csv-export-selected');
-        var exportAllBtn = document.getElementById('bdv-csv-export-all');
-        var restoreDefaultBtn = document.getElementById('bdv-csv-restore-default');
+        var exportSelectedBtn = document.getElementById('conv-csv-export-selected');
+        var exportAllBtn = document.getElementById('conv-csv-export-all');
+        var restoreDefaultBtn = document.getElementById('conv-csv-restore-default');
 
         if (!modalOverlay || !exportBtn) return;
 
@@ -51,7 +51,7 @@
 
         function openModal() {
             modalOverlay.style.display = 'flex';
-            document.body.classList.add('bdv-modal-open');
+            document.body.classList.add('conv-modal-open');
             // Focus first checkbox
             var firstCheckbox = modalOverlay.querySelector('input[type="checkbox"]');
             if (firstCheckbox) firstCheckbox.focus();
@@ -59,7 +59,7 @@
 
         function closeModal() {
             modalOverlay.style.display = 'none';
-            document.body.classList.remove('bdv-modal-open');
+            document.body.classList.remove('conv-modal-open');
             exportBtn.focus();
         }
 
@@ -214,7 +214,7 @@
     if (searchInput) {
         var searchBox = searchInput.closest('.search-box') || searchInput.parentElement;
         var dropdown = document.createElement('div');
-        dropdown.className = 'bdv-autocomplete-results';
+        dropdown.className = 'conv-autocomplete-results';
         dropdown.style.cssText = 'position:absolute;background:#fff;border:1px solid #ccc;border-radius:4px;max-height:250px;overflow-y:auto;width:100%;z-index:999;display:none;box-shadow:0 4px 12px rgba(0,0,0,0.1);';
         searchBox.style.position = 'relative';
         searchBox.appendChild(dropdown);
@@ -235,7 +235,7 @@
                             el.style.cssText = 'padding:8px 12px;cursor:pointer;border-bottom:1px solid #f0f0f1;';
                             el.innerHTML = '<strong>' + item.title + '</strong> <span style="color:#999;font-size:12px;">' + (item.email || '') + '</span>';
                             el.addEventListener('click', function () {
-                                window.location = 'admin.php?page=bdv-members&member_id=' + item.id;
+                                window.location = 'admin.php?page=conv-members&member_id=' + item.id;
                             });
                             el.addEventListener('mouseenter', function () { el.style.background = '#f0f7ff'; });
                             el.addEventListener('mouseleave', function () { el.style.background = ''; });
