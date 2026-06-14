@@ -22,7 +22,7 @@ class Admin_List extends \WP_List_Table {
 
 
 	/** Default WhatsApp message template. */
-	private const WA_MSG = 'Hola {nombre}, te escribimos desde Biodevas. ';
+	private const WA_MSG = 'Hola {nombre}, te escribimos desde Convoca. ';
 
 	public function __construct() {
 		parent::__construct(

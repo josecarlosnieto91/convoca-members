@@ -137,7 +137,7 @@ class Admin_Webhooks {
 		$msg  = sanitize_text_field( $_GET['msg'] ?? '' );
 
 		echo '<div class="wrap">';
-		echo '<h1>🔗 Webhooks — Biodevas</h1>';
+		echo '<h1>🔗 Webhooks — Convoca</h1>';
 
 		// Flash messages.
 		$messages = array(
@@ -187,7 +187,7 @@ class Admin_Webhooks {
 		echo '</div>';
 
 		if ( empty( $webhooks ) ) {
-			echo '<div class="convoca-alert convoca-alert--info" style="display:block;margin-bottom:20px;"><p>No hay webhooks configurados. Los webhooks permiten notificar a sistemas externos cuando ocurren eventos en Biodevas.</p></div>';
+			echo '<div class="convoca-alert convoca-alert--info" style="display:block;margin-bottom:20px;"><p>No hay webhooks configurados. Los webhooks permiten notificar a sistemas externos cuando ocurren eventos en Convoca.</p></div>';
 			return;
 		}
 

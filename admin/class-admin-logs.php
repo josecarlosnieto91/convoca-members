@@ -1,6 +1,6 @@
 <?php
 /**
- * Admin Logs page: visualize logs from the centralized Biodevas logs table.
+ * Admin Logs page: visualize logs from the centralized Convoca logs table.
  *
  * @package Convoca\Members
  */
