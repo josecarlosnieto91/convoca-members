@@ -4,7 +4,7 @@
  *
  * Templates stored in wp_options, editable via admin.
  * Uses wp_mail() — SMTP configured externally.
- * All emails use the premium Biodevas HTML layout
+ * All emails use the premium Convoca HTML layout
  * (orange #FF8700 + violet #320028) from Common\Email_Layout.
  *
  * @package Convoca\Members
@@ -97,7 +97,7 @@ class Email_Manager {
 
 		$defaults = array(
 			'credenciales_acceso'              => array(
-				'subject' => 'Bienvenido/a a Biodevas — Tus credenciales de acceso',
+				'subject' => 'Bienvenido/a a ' . get_bloginfo('name') . ' — Tus credenciales de acceso',
 				'body'    => '<h1>¡Bienvenido/a, {nombre}!</h1>'
 					. '<p>Tu solicitud ha sido aprobada. Ya puedes acceder a tu área privada de socio/a.</p>'
 					. Email_Layout::meta_table(
@@ -117,9 +117,9 @@ class Email_Manager {
 					. '<p>Si tienes cualquier problema, responde a este email o escribe a coordinacion@getconvoca.app.</p>',
 			),
 			'solicitud_recibida'               => array(
-				'subject' => 'Hemos recibido tu solicitud — Biodevas',
+				'subject' => 'Hemos recibido tu solicitud — ' . get_bloginfo('name'),
 				'body'    => '<h1>Hola {nombre},</h1>'
-					. '<p>Hemos recibido correctamente tu solicitud como <strong>{tipo_miembro}</strong> en Biodevas.</p>'
+					. '<p>Hemos recibido correctamente tu solicitud como <strong>{tipo_miembro}</strong> en ' . esc_html(get_bloginfo('name')) . '.</p>'
 					. Email_Layout::meta_table(
 						array(
 							array(
@@ -140,8 +140,8 @@ class Email_Manager {
 					. '<p>¡Gracias por unirte a la familia Convoca!</p>',
 			),
 			'bienvenida'                       => array(
-				'subject' => '¡Bienvenido/a a Biodevas, {nombre}!',
-				'body'    => '<h1>¡Bienvenido/a a Biodevas, {nombre}! 🎉</h1>'
+				'subject' => '\u00a1Bienvenido/a a ' . get_bloginfo('name') . ', {nombre}!',
+				'body'    => '<h1>00a1Bienvenido/a a ' . esc_html(get_bloginfo('name')) . ', {nombre}! 0001F389</H1>'
 					. '<p>Tu alta como <strong>{tipo_miembro}</strong> ha sido confirmada.</p>'
 					. Email_Layout::meta_table(
 						array(
@@ -164,7 +164,7 @@ class Email_Manager {
 					. '<p>¡Nos vemos en el campo! 🌿</p>',
 			),
 			'recordatorio_pago'                => array(
-				'subject' => 'Recordatorio de pago (1/3) — Biodevas',
+				'subject' => 'Recordatorio de pago (1/3) — ' . get_bloginfo('name'),
 				'body'    => '<h1>Hola {nombre},</h1>'
 					. '<p>Tu solicitud de alta/renovación como <strong>{tipo_miembro}</strong> está pendiente de pago.</p>'
 					. Email_Layout::meta_table(
@@ -183,7 +183,7 @@ class Email_Manager {
 					. '<p>Si ya has realizado el pago, ignora este mensaje.</p>',
 			),
 			'pago_pendiente_2'                 => array(
-				'subject' => 'Segundo aviso: pago pendiente — Biodevas',
+				'subject' => 'Segundo aviso: pago pendiente — ' . get_bloginfo('name'),
 				'body'    => '<h1>Hola {nombre},</h1>'
 					. '<p>Seguimos sin constancia del pago de tu cuota de <strong>{tipo_miembro}</strong>.</p>'
 					. Email_Layout::meta_table(
@@ -197,7 +197,7 @@ class Email_Manager {
 					. '<p>Es importante completar el pago para mantener tu estado activo y acceder a las ventajas de socio.</p>',
 			),
 			'pago_pendiente_ultimo'            => array(
-				'subject' => 'Último aviso: suspensión inminente — Biodevas',
+				'subject' => 'Último aviso: suspensión inminente — ' . get_bloginfo('name'),
 				'body'    => '<h1>Hola {nombre},</h1>'
 					. '<p>Este es el <strong>último aviso</strong> respecto a tu cuota pendiente de <strong>{tipo_miembro}</strong>.</p>'
 					. Email_Layout::meta_table(
@@ -211,7 +211,7 @@ class Email_Manager {
 					. '<p>Si no recibimos el pago en los próximos días, tu cuenta será suspendida automáticamente.</p>',
 			),
 			'renovacion'                       => array(
-				'subject' => 'Tu renovación en Biodevas (30 días) — Biodevs',
+				'subject' => 'Tu renovación en ' . get_bloginfo('name') . ' (30 días)',
 				'body'    => '<h1>Hola {nombre},</h1>'
 					. '<p>Faltan <strong>30 días</strong> para tu fecha de renovación como {tipo_miembro}.</p>'
 					. Email_Layout::meta_table(
@@ -234,19 +234,19 @@ class Email_Manager {
 					. '<p>¡Gracias por seguir con nosotros!</p>',
 			),
 			'renovacion_15d'                   => array(
-				'subject' => 'Tu renovación en Biodevas (15 días) — Biodevas',
+				'subject' => 'Tu renovación en ' . get_bloginfo('name') . ' (15 días)',
 				'body'    => '<h1>Hola {nombre},</h1>'
 					. '<p>Faltan solo <strong>15 días</strong> para que venza tu membresía de {tipo_miembro}.</p>'
 					. '<p>Recuerda renovar para no perder tu antigüedad y beneficios.</p>',
 			),
 			'renovacion_7d'                    => array(
-				'subject' => 'Última semana para tu renovación — Biodevas',
+				'subject' => 'Última semana para tu renovación — ' . get_bloginfo('name'),
 				'body'    => '<h1>Hola {nombre},</h1>'
 					. '<p>Tu membresía de {tipo_miembro} vencerá en <strong>7 días</strong>.</p>'
 					. '<p>Evita la suspensión automática realizando el pago desde tu panel de socio.</p>',
 			),
 			'renovacion_automatica'            => array(
-				'subject' => 'Procesando tu renovación automática — Biodevas',
+				'subject' => 'Procesando tu renovación automática — ' . get_bloginfo('name'),
 				'body'    => '<h1>Hola {nombre},</h1>'
 					. '<p>Como tienes activada la renovación automática, hemos generado el cargo correspondiente a tu cuota de {tipo_miembro}.</p>'
 					. Email_Layout::meta_table(
@@ -269,7 +269,7 @@ class Email_Manager {
 					. '<p>¡Gracias por seguir apoyando a Convoca!</p>',
 			),
 			'renovacion_completada'            => array(
-				'subject' => 'Renovación completada con éxito — Biodevas',
+				'subject' => 'Renovación completada con éxito — ' . get_bloginfo('name'),
 				'body'    => '<h1>¡Buenas noticias, {nombre}! 🎉</h1>'
 					. '<p>El pago de tu cuota anual como <strong>{tipo_miembro}</strong> se ha procesado correctamente.</p>'
 					. Email_Layout::meta_table(
@@ -284,9 +284,9 @@ class Email_Manager {
 					. '<p>¡Gracias por tu compromiso con la naturaleza! 🌍</p>',
 			),
 			'voluntariado_recordatorio'        => array(
-				'subject' => 'Recuerda tus horas de voluntariado — Biodevas',
+				'subject' => 'Recuerda tus horas de voluntariado — ' . get_bloginfo('name'),
 				'body'    => '<h1>Hola {nombre},</h1>'
-					. '<p>Te escribimos para recordarte tu compromiso de voluntariado con Biodevas.</p>'
+					. '<p>Te escribimos para recordarte tu compromiso de voluntariado con ' . esc_html(get_bloginfo('name')) . '.</p>'
 					. Email_Layout::meta_table(
 						array(
 							array(
@@ -307,7 +307,7 @@ class Email_Manager {
 					. '<p>¡Tus manos son fundamentales para la asociación! 🌱</p>',
 			),
 			'objetivo_voluntariado_completado' => array(
-				'subject' => '🎉 ¡Felicidades! Has completado tu voluntariado — Biodevas',
+				'subject' => '\U0001f389 ¡Felicidades! Has completado tu voluntariado — ' . get_bloginfo('name'),
 				'body'    => '<h1>¡Enhorabuena, {nombre}! 🎉</h1>'
 					. '<p>Has completado las <strong>{horas_totales}h</strong> de voluntariado requeridas para el plan <strong>{plan_nombre}</strong>.</p>'
 					. Email_Layout::meta_table(
@@ -413,7 +413,7 @@ class Email_Manager {
 		$subject = $this->replace_vars( $tpl['subject'], $vars );
 		$body    = $this->replace_vars( $tpl['body'] ?? '', $vars );
 
-		// Wrap in premium Biodevas HTML layout (always HTML now).
+		// Wrap in premium Convoca HTML layout (always HTML now).
 		$headers = array( 'Content-Type: text/html; charset=UTF-8' );
 
 		// Get Sender Name from settings.
@@ -469,7 +469,7 @@ class Email_Manager {
 			$admin_headers[] = 'From: ' . $sender_name . ' <' . $system_email . '>';
 			wp_mail(
 				$system_email,
-				'[Biodevas] ' . $subject,
+				'[' . esc_html(get_bloginfo('name')) . '] ' . $subject,
 				"Notificación automática — Miembro: {$vars['{nombre}']}\n\n" . $body,
 				$admin_headers
 			);

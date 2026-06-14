@@ -3,7 +3,7 @@
  * Template: Multi-step member registration form v2.
  *
  * Rendered by [convoca_alta] shortcode.
- * Aligned with Biodevas Theme v2 and static alta-socios.html.
+ * Aligned with Convoca Theme v2 and static alta-socios.html.
  *
  * @package Convoca\Members
  */
@@ -300,7 +300,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 					<div class="convoca-check-group">
 						<input type="checkbox" id="bdv-acuerdo-vol" name="acuerdo_voluntariado">
 						<label for="bdv-acuerdo-vol">Acepto y firmo digitalmente el acuerdo de voluntariado con
-							Biodevas, comprometiéndome a cumplir las horas correspondientes a mi plan.</label>
+							Convoca, comprometiéndome a cumplir las horas correspondientes a mi plan con ' . esc_html(get_bloginfo('name')) . '.</label>
 					</div>
 				</div>
 			</div>
@@ -312,11 +312,11 @@ if ( ! defined( 'ABSPATH' ) ) {
 					<label for="bdv-rgpd">He leído y acepto la <a
 							href="<?php echo esc_url( home_url( '/politica-de-privacidad/' ) ); ?>" target="_blank"
 							rel="noopener">Política de Privacidad</a> y el tratamiento de mis datos personales conforme
-						al RGPD. Mis datos serán incluidos en el libro de socios de la Asociación Biodevas. *</label>
+						al RGPD. Mis datos serán incluidos en el libro de socios de la Asociación. *</label>
 				</div>
 				<div class="convoca-check-group">
 					<input type="checkbox" id="bdv-comunicaciones" name="comunicaciones">
-					<label for="bdv-comunicaciones">Autorizo a Biodevas a enviarme comunicaciones sobre actividades,
+					<label for="bdv-comunicaciones">Autorizo a Convoca a enviarme comunicaciones sobre actividades,
 						proyectos y noticias relevantes.</label>
 				</div>
 			</div>
@@ -378,7 +378,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 			<!-- Card preview -->
 			<h3 class="bdv-text-center" style="margin-top:2rem">Tu tarjeta de socio/a</h3>
 			<div class="bdv-card-preview">
-				<h3>🍁 BIODEVAS</h3>
+				<h3>🍁 CONVOCA</h3>
 				<div class="bdv-card-name" id="bdv-card-name">—</div>
 				<div class="bdv-card-id" id="bdv-card-id">Socio/a #—</div>
 				<div class="bdv-card-type" id="bdv-card-type">—</div>
@@ -396,10 +396,10 @@ if ( ! defined( 'ABSPATH' ) ) {
 	<!-- Success screen -->
 	<div id="bdv-success" class="convoca-success-screen" style="display:none" role="status" aria-live="polite">
 		<div class="convoca-success-icon">🎉</div>
-		<h2>¡Bienvenido/a a Biodevas!</h2>
+		<h2>¡Bienvenido/a a Convoca!</h2>
 		<p>Tu alta se ha registrado correctamente. Hemos enviado un email de confirmación a tu correo.</p>
 		<div class="bdv-card-preview" id="bdv-card-final">
-			<h3>🍁 BIODEVAS</h3>
+			<h3>🍁 CONVOCA</h3>
 			<div class="bdv-card-name" id="bdv-final-name">—</div>
 			<div class="bdv-card-id" id="bdv-final-id">Socio/a #—</div>
 			<div class="bdv-card-type" id="bdv-final-type">—</div>

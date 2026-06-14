@@ -1,6 +1,6 @@
 <?php
 /**
- * Upgrade Manager for Biodevas Members.
+ * Upgrade Manager for Convoca Members.
  *
  * Handles database structure upgrades for the members plugin.
  *

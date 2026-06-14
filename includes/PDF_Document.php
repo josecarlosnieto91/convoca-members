@@ -31,7 +31,7 @@ class PDF_Document {
 		if ( $error ) {
 			delete_transient( self::ERROR_TRANSIENT . $user_id );
 			\Convoca\Core\Utils::admin_notice(
-				'<strong>' . esc_html__( 'Error en la generación del documento Biodevas:', 'convoca-members' ) . '</strong><br>' . esc_html( $error ),
+				'<strong>' . esc_html__( 'Error en la generación del documento:', 'convoca-members' ) . '</strong><br>' . esc_html( $error ),
 				'danger'
 			);
 		}
@@ -125,7 +125,7 @@ class PDF_Document {
 			if ( ! class_exists( '\\Convoca\\Core\\CONV_Signature' ) ) {
 				$wpdb->query( 'ROLLBACK' );
 				wp_delete_post( $temp_post_id, true );
-				error_log( 'Biodevas: CONV_Signature class not found.' );
+				error_log( 'Convoca: CONV_Signature class not found.' );
 				return null;
 			}
 
@@ -227,7 +227,7 @@ class PDF_Document {
 			if ( isset( $temp_post_id ) ) {
 				wp_delete_post( $temp_post_id, true );
 			}
-			error_log( 'Biodevas PDF Gen Exception: ' . $e->getMessage() );
+			error_log( 'Convoca PDF Gen Exception: ' . $e->getMessage() );
 			return null;
 		}
 	}

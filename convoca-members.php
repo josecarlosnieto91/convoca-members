@@ -436,7 +436,7 @@ add_shortcode(
         <h2 style="color:var(--wp--preset--color--violeta,#320028);margin:0 0 10px;">' . esc_html__( 'Socio Activo', 'convoca-members' ) . '</h2>
         <p style="font-size:18px;font-weight:700;margin:5px 0;">' . esc_html( $post->post_title ) . '</p>
         <p style="color:#666;">' . ( $num ? '#' . esc_html( str_pad( $num, 4, '0', STR_PAD_LEFT ) ) : '' ) . ' · ' . esc_html( $plan_label ) . '</p>
-        <p style="font-size:13px;color:#999;margin-top:20px;">' . esc_html__( 'Verificado por Biodevas', 'convoca-members' ) . '</p>
+        <p style="font-size:13px;color:#999;margin-top:20px;">' . esc_html__( 'Verificado por Convoca', 'convoca-members' ) . '</p>
     </div>';
 	}
 );

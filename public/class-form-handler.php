@@ -57,7 +57,7 @@ class Form_Handler {
 			CONV_MEMBERS_VERSION,
 			true
 		);
-		$raw_gateway    = function_exists( 'Biodevas\\Gateway\\conv_get_gateway_settings' ) ? \Convoca\Gateway\conv_get_gateway_settings() : array();
+		$raw_gateway    = function_exists( 'Convoca\\Gateway\\conv_get_gateway_settings' ) ? \Convoca\Gateway\conv_get_gateway_settings() : array();
 		$public_gateway = array_intersect_key( $raw_gateway, array_flip( array( 'iban', 'beneficiary', 'instructions' ) ) );
 
 		$config = array(

@@ -24,6 +24,24 @@ Plugin completo para gestionar miembros (socios y voluntarios) de una asociació
 * Tarjeta de socio digital con código QR
 * Shortcodes: [convoca_alta_socio], [convoca_mi_area], [convoca_voluntariado], [convoca_verificar_socio], [convoca_verificar_certificado]
 
+= Privacidad =
+
+Este plugin recoge y almacena datos personales de socios y voluntarios: nombre y apellidos, correo electrónico, teléfono, dirección postal, DNI/NIF, fecha de nacimiento, plan de membresía seleccionado, áreas de interés de voluntariado, registro de horas de voluntariado y datos de la tarjeta de socio digital (incluyendo código QR). Estos datos se almacenan en la base de datos local de WordPress (tablas personalizadas wp_convoca_members_* y metadatos de usuario).
+
+Los datos se utilizan para gestionar la afiliación, comunicación con socios y voluntarios, control de cuotas y períodos de carencia, emisión de certificados PDF de horas de voluntariado, generación de la tarjeta de socio digital y verificación de membresía. Los certificados PDF se generan localmente mediante Dompdf y no se envían a servidores externos.
+
+Los datos de pago (cuotas) se gestionan a través del plugin Convoca Gateway; este plugin no almacena datos bancarios ni de tarjeta de crédito.
+
+No se comparten datos personales con terceros. Los correos electrónicos automáticos se envían a través del sistema de correo de WordPress.
+
+Los usuarios tienen derecho a:
+* Solicitar acceso a sus datos almacenados
+* Solicitar la exportación de sus datos en formato estructurado
+* Solicitar la corrección de datos inexactos
+* Solicitar la eliminación de sus datos (con la limitación de registros necesarios para obligaciones legales y contables)
+* Revocar el consentimiento para comunicaciones
+Para ejercer estos derechos, contacte con el administrador del sitio.
+
 == Installation ==
 
 1. Asegúrate de que Convoca Core está activo

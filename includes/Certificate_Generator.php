@@ -203,7 +203,7 @@ class Certificate_Generator {
         <div class="header">
             <div class="logo">🌿</div>
             <h1>Certificado de Voluntariado</h1>
-            <p>Asociación Biodevas</p>
+            <p>" . esc_html(get_bloginfo("name")) . "</p>
         </div>
         <div class="contenido">
             <p>Certificamos que <span class="nombre">' . esc_html( $nombre ) . '</span></p>

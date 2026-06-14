@@ -3,7 +3,7 @@
  * Template: Volunteer registration form v2.
  *
  * Rendered by [convoca_voluntariado] shortcode.
- * Aligned with Biodevas Theme v2 and static voluntariado.html.
+ * Aligned with Convoca Theme v2 and static voluntariado.html.
  *
  * @package Convoca\Members
  */
@@ -110,7 +110,7 @@ $areas = \Convoca\Members\Form_Voluntariado::INTEREST_AREAS;
 				<div class="convoca-check-group">
 					<input type="checkbox" id="bdv-vol-tutor-auth" name="tutor_auth">
 					<label for="bdv-vol-tutor-auth">El/la tutor/a legal autoriza la participación del menor en actividades
-						de voluntariado de Biodevas.</label>
+						de voluntariado de Convoca.</label>
 				</div>
 			</div>
 
@@ -149,7 +149,7 @@ $areas = \Convoca\Members\Form_Voluntariado::INTEREST_AREAS;
 		</div>
 
 		<div class="convoca-field">
-			<label for="bdv-vol-motivacion">¿Por qué quieres ser voluntario/a en Biodevas?</label>
+			<label for="bdv-vol-motivacion">¿Por qué quieres ser voluntario/a en Convoca?</label>
 			<textarea id="bdv-vol-motivacion" name="motivacion" rows="3"
 				placeholder="Cuéntanos qué te motiva…"></textarea>
 		</div>
@@ -218,7 +218,7 @@ $areas = \Convoca\Members\Form_Voluntariado::INTEREST_AREAS;
 		</div>
 		<div class="convoca-check-group">
 			<input type="checkbox" id="bdv-vol-comunicaciones" name="comunicaciones">
-			<label for="bdv-vol-comunicaciones">Autorizo a Biodevas a enviarme comunicaciones sobre actividades,
+			<label for="bdv-vol-comunicaciones">Autorizo a Convoca a enviarme comunicaciones sobre actividades,
 				proyectos y oportunidades de voluntariado.</label>
 		</div>
 		

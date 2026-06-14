@@ -95,7 +95,7 @@ class Audit_Logger {
 			return;
 		}
 
-		// 3. Generic log for other Biodevas fields (only track that it changed, not the value)
+		// 3. Generic log for other Convoca fields (only track that it changed, not the value)
 		if ( str_starts_with( $meta_key, '_conv_' ) ) {
 			\Convoca\Core\Logger::info(
 				sprintf( __( 'Metadato "%s" actualizado.', 'convoca-members' ), $meta_key ),

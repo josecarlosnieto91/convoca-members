@@ -55,14 +55,14 @@ class GDPR_Tools {
 	 * ──────────────────────────────────────────── */
 
 	/**
-	 * Register the Biodevas data exporter.
+	 * Register the Convoca data exporter.
 	 *
 	 * @param array $exporters
 	 * @return array
 	 */
 	public static function register_exporter( array $exporters ): array {
 		$exporters['convoca-members'] = array(
-			'exporter_friendly_name' => __( 'Biodevas — Datos de socio', 'convoca-members' ),
+			'exporter_friendly_name' => get_bloginfo('name') . ' — ' . __( 'Datos de socio', 'convoca-members' ),
 			'callback'               => array( self::class, 'export_personal_data' ),
 		);
 		return $exporters;
@@ -138,7 +138,7 @@ class GDPR_Tools {
 			if ( ! empty( $profile_data ) ) {
 				$export_items[] = array(
 					'group_id'          => 'convoca-member-profile',
-					'group_label'       => 'Datos de socio Biodevas',
+					'group_label'       => 'Datos de socio ' . get_bloginfo('name'),
 					'group_description' => 'Datos personales almacenados como socio de la asociación.',
 					'item_id'           => "member-{$member_id}",
 					'data'              => $profile_data,
@@ -192,7 +192,7 @@ class GDPR_Tools {
 
 				$export_items[] = array(
 					'group_id'          => 'convoca-payments',
-					'group_label'       => 'Pagos Biodevas',
+					'group_label'       => 'Pagos ' . get_bloginfo('name'),
 					'group_description' => 'Historial de pagos realizados.',
 					'item_id'           => "payment-{$pago->ID}",
 					'data'              => $pago_data,
@@ -236,7 +236,7 @@ class GDPR_Tools {
 
 				$export_items[] = array(
 					'group_id'          => 'convoca-inscriptions',
-					'group_label'       => 'Inscripciones Biodevas',
+					'group_label'       => 'Inscripciones ' . get_bloginfo('name'),
 					'group_description' => 'Inscripciones a actividades.',
 					'item_id'           => "inscription-{$inscripcion->ID}",
 					'data'              => $insc_data,
@@ -285,7 +285,7 @@ class GDPR_Tools {
 
 				$export_items[] = array(
 					'group_id'          => 'convoca-volunteering',
-					'group_label'       => 'Horas de voluntariado Biodevas',
+					'group_label'       => 'Horas de voluntariado ' . get_bloginfo('name'),
 					'group_description' => 'Registros de horas de voluntariado.',
 					'item_id'           => "volunteer-hour-{$hora->ID}",
 					'data'              => $hora_data,
@@ -305,14 +305,14 @@ class GDPR_Tools {
 	 * ──────────────────────────────────────────── */
 
 	/**
-	 * Register the Biodevas data eraser.
+	 * Register the Convoca data exporter.eraser.
 	 *
 	 * @param array $erasers
 	 * @return array
 	 */
 	public static function register_eraser( array $erasers ): array {
 		$erasers['convoca-members'] = array(
-			'eraser_friendly_name' => __( 'Biodevas — Datos de socio', 'convoca-members' ),
+			'eraser_friendly_name' => __( 'Convoca — Datos de socio', 'convoca-members' ),
 			'callback'             => array( self::class, 'erase_personal_data' ),
 		);
 		return $erasers;

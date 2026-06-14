@@ -30,7 +30,7 @@
         'formulario-alta',
         'Formulario de Alta',
         'id-alt',
-        'Formulario de registro multi-paso para nuevos socios de Biodevas.',
+        'Formulario de registro multi-paso para nuevos socios.',
         '#f0fdf4'
     );
     registerMembersBlock(

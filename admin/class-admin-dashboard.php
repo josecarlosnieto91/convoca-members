@@ -1,6 +1,6 @@
 <?php
 /**
- * Admin Dashboard Widget for Biodevas alerts and quick stats.
+ * Admin Dashboard Widget for Convoca alerts and quick stats.
  *
  * Displays:
  * - Key metrics (active members, pending payments, expiring soon)
@@ -33,7 +33,7 @@ class Admin_Dashboard {
 
 		wp_add_dashboard_widget(
 			'conv_dashboard_alerts',
-			'🌿 Biodevas — Panel de control',
+			'🌿 ' . get_bloginfo('name') . ' — ' . __('Panel de control', 'convoca-members'),
 			array( $this, 'render_widget' )
 		);
 	}
