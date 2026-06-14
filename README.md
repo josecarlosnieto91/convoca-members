@@ -1,12 +1,12 @@
-# Biodevas Members
+# Convoca Members
 
-Gestión de socios, voluntariado y membresías para la Asociación Biodevas.
+Gestión de socios, voluntariado y membresías para la Asociación Convoca.
 
 ## Requirements
 
 - WordPress 6.4+
 - PHP 8.1+
-- biodevas-common plugin active
+- convoca-core plugin active
 
 ## Main Features
 
@@ -29,7 +29,7 @@ Gestión de socios, voluntariado y membresías para la Asociación Biodevas.
 
 ## Dependencies
 
-biodevas-common, WordPress 6.4+, PHP 8.1+, Dompdf (optional)
+convoca-core, WordPress 6.4+, PHP 8.1+, Dompdf (optional)
 
 ## Version
 

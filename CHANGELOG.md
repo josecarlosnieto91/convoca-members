@@ -1,4 +1,4 @@
-# Changelog - Biodevas Members
+# Changelog - Convoca Members
 
 ## 2.6.1
 - **Fix:** Eliminado botón "Descargar Carnet Digital" (generaba PDF mal formado). Usar "Tarjeta" en acciones.
@@ -26,7 +26,7 @@
 - **Fix:** Improved HTML email detection - uses `strip_tags()` to detect actual HTML tags.
 
 ## 2.5.0
-- **Centralización:** Migración total del flujo de transferencia bancaria al Biodevas Gateway. Eliminado el campo de subida local en el formulario de registro para evitar duplicidad.
+- **Centralización:** Migración total del flujo de transferencia bancaria al Convoca Gateway. Eliminado el campo de subida local en el formulario de registro para evitar duplicidad.
 - **Mejora:** Rediseño Premium de la tarjeta de socio (PDF) con degradados vibrantes Lila y Naranja alineados con la nueva identidad visual.
 - **Mejora:** Pestaña de **Estado** en ajustes ahora incluye la verificación de la página "Panel de Reservas" necesaria para el QR.
 - **Fix:** Consistencia de versiones entre cabecera y constantes internas.
@@ -39,7 +39,7 @@
 
 ## 2.3.0
 - **Mejora:** Corregidos los estilos de los bloques "Mi Área", "Alta" y "Voluntariado" (ahora se cargan correctamente en el editor).
-- **Mejora:** Rediseño completo del bloque de "Verificar Certificado" para ajustarse a la guía de estilos de Biodevas.
+- **Mejora:** Rediseño completo del bloque de "Verificar Certificado" para ajustarse a la guía de estilos de Convoca.
 - **Mejora:** Asegurada la accesibilidad administrativa a todos los tipos de contenido de socios.
 - **Mejora:** Eliminación de estilos inline en favor de clases del sistema de diseño del tema.
 
@@ -47,13 +47,13 @@
 - **Nuevo:** Sistema de gestión de Voluntariado expandido (separación clara entre Socios y Voluntarios).
 - **Nuevo:** Generación automática del "Acuerdo de Incorporación de Voluntariado" mediante `BDV_Signature`.
 - **Nuevo:** Registro de datos técnicos de aceptación (IP, timestamp, hash) en el PDF del acuerdo.
-- **Mejora:** Campos personalizables en el formulario `[biodevas_voluntariado]` (Teléfono, DNI, Dirección, etc.).
+- **Mejora:** Campos personalizables en el formulario `[convoca_voluntariado]` (Teléfono, DNI, Dirección, etc.).
 - **Mejora:** Lógica de asignación de roles y capacidades (`voluntario_aprobado`) centralizada.
 
 ## 1.4.0
 - **Mejora:** Refactorizado el sistema de generación de Acuerdos para usar el motor centralizado `BDV_Signature`.
 - **Nuevo:** Sistema de auditoría completo — registra cambios de estado, borrados lógicos, emails enviados, contacto vía WhatsApp y todas las acciones administrativas.
-- **Nuevo:** Bloques de Gutenberg nativos para todos los shortcodes (`biodevas/alta-socio`, `biodevas/mi-area`, `biodevas/voluntariado`).
+- **Nuevo:** Bloques de Gutenberg nativos para todos los shortcodes (`convoca/alta-socio`, `convoca/mi-area`, `convoca/voluntariado`).
 - **Nuevo:** Botones AJAX corregidos en el metabox de socio (Generar Link de Pago, Enviar Recordatorio RGPD).
 - **Fix:** Migración completa de `date()` → `wp_date()` en 7 archivos para consistencia de zona horaria (Europe/Madrid).
 - **Fix:** Número de socio ahora se muestra correctamente en la tarjeta de socio.
