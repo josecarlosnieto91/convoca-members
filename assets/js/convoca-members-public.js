@@ -423,7 +423,8 @@
 
       if (!conv.$('#conv-vol-codigo').checked ||
         !conv.$('#conv-vol-protocolo').checked ||
-        !conv.$('#conv-vol-rgpd').checked) {
+        !conv.$('#conv-vol-rgpd').checked ||
+        !conv.$('#conv-vol-declaracion').checked) {
         conv.showAlert(alert, 'Debes aceptar todos los compromisos obligatorios.');
         return;
       }
