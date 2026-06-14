@@ -105,6 +105,31 @@
       });
     });
 
+
+    function showAdvantages(planKey) {
+      var advEl = bdv.$("#bdv-advantages");
+      var listEl = bdv.$("#bdv-advantages-list");
+      if (!advEl || !listEl) return;
+      
+      var plan = plansData[planKey];
+      var advantages = (plan && plan.advantages) ? plan.advantages : [];
+      
+      if (advantages.length > 0) {
+        listEl.innerHTML = advantages.map(function(a) { return "<li>" + a + "</li>"; }).join("");
+        advEl.style.display = "block";
+      } else {
+        listEl.innerHTML = "";
+        advEl.style.display = "none";
+      }
+    }
+
+    /* Show sub-plan advantages when sub-plan is selected */
+    bdv.$$("input[name=sub_plan]", altaWrap).forEach(function(radio) {
+      radio.addEventListener("change", function() {
+        showAdvantages(radio.value);
+        updatePaymentMethods(radio.value);
+      });
+    });
     function updatePaymentMethods(planKey) {
       let plan = plansData[planKey];
       if (!plan) return;
