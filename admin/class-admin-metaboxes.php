@@ -264,7 +264,7 @@ class Admin_Metaboxes {
 		?>
 		<div class="convoca-grid-2">
 			<!-- Status & Plan -->
-			<h3 class="convoca-field" style="grid-column: 1 / -1; margin-top: 1rem; padding-bottom: 0.5rem; border-bottom: 1px solid var(--bde-border, #ccc);">Estado y Plan</h3>
+			<h3 class="convoca-field" style="grid-column: 1 / -1; margin-top: 1rem; padding-bottom: 0.5rem; border-bottom: 1px solid var(--convoca-border, #ccc);">Estado y Plan</h3>
 
 			<div class="convoca-field">
 				<label for="conv_estado_miembro">Estado</label>
@@ -311,7 +311,7 @@ class Admin_Metaboxes {
 			</div>
 
 			<!-- Personal Data -->
-			<h3 class="convoca-field" style="grid-column: 1 / -1; margin-top: 1rem; padding-bottom: 0.5rem; border-bottom: 1px solid var(--bde-border, #ccc);">Datos Personales</h3>
+			<h3 class="convoca-field" style="grid-column: 1 / -1; margin-top: 1rem; padding-bottom: 0.5rem; border-bottom: 1px solid var(--convoca-border, #ccc);">Datos Personales</h3>
 
 			<div class="convoca-field">
 				<label for="conv_email">Email</label>
@@ -334,7 +334,7 @@ class Admin_Metaboxes {
 			</div>
 
 			<!-- Address -->
-			<h3 class="convoca-field" style="grid-column: 1 / -1; margin-top: 1rem; padding-bottom: 0.5rem; border-bottom: 1px solid var(--bde-border, #ccc);">Dirección</h3>
+			<h3 class="convoca-field" style="grid-column: 1 / -1; margin-top: 1rem; padding-bottom: 0.5rem; border-bottom: 1px solid var(--convoca-border, #ccc);">Dirección</h3>
 
 			<div class="convoca-field">
 				<label for="conv_direccion">Dirección</label>
@@ -347,7 +347,7 @@ class Admin_Metaboxes {
 			</div>
 
 			<!-- Notes -->
-			<h3 class="convoca-field" style="grid-column: 1 / -1; margin-top: 1rem; padding-bottom: 0.5rem; border-bottom: 1px solid var(--bde-border, #ccc);">Notas Internas</h3>
+			<h3 class="convoca-field" style="grid-column: 1 / -1; margin-top: 1rem; padding-bottom: 0.5rem; border-bottom: 1px solid var(--convoca-border, #ccc);">Notas Internas</h3>
 
 			<div class="convoca-field" style="grid-column: 1 / -1;">
 				<label for="conv_observaciones">Observaciones</label>
@@ -355,7 +355,7 @@ class Admin_Metaboxes {
 			</div>
 
 			<!-- Voluntariado -->
-			<h3 class="convoca-field" style="grid-column: 1 / -1; margin-top: 1rem; padding-bottom: 0.5rem; border-bottom: 1px solid var(--bde-border, #ccc);">Voluntariado</h3>
+			<h3 class="convoca-field" style="grid-column: 1 / -1; margin-top: 1rem; padding-bottom: 0.5rem; border-bottom: 1px solid var(--convoca-border, #ccc);">Voluntariado</h3>
 
 			<div class="convoca-field">
 				<div class="convoca-check-group">

@@ -88,7 +88,7 @@ class Admin_Member_Editor {
 						<input type="text" id="conv_nombre" name="conv_nombre" value="<?php echo $is_edit ? esc_attr( $post->post_title ) : ''; ?>" required>
 					</div>
 
-					<h3 style="grid-column:1/-1;margin-top:1rem;padding-bottom:.5rem;border-bottom:1px solid var(--bde-border,#ccc);"><?php esc_html_e( 'Estado y Plan', 'convoca-members' ); ?></h3>
+					<h3 style="grid-column:1/-1;margin-top:1rem;padding-bottom:.5rem;border-bottom:1px solid var(--convoca-border,#ccc);"><?php esc_html_e( 'Estado y Plan', 'convoca-members' ); ?></h3>
 
 					<div class="convoca-field">
 						<label for="conv_estado_miembro"><?php esc_html_e( 'Estado', 'convoca-members' ); ?></label>
@@ -133,7 +133,7 @@ class Admin_Member_Editor {
 						</div>
 					</div>
 
-					<h3 style="grid-column:1/-1;margin-top:1rem;padding-bottom:.5rem;border-bottom:1px solid var(--bde-border,#ccc);"><?php esc_html_e( 'Datos Personales', 'convoca-members' ); ?></h3>
+					<h3 style="grid-column:1/-1;margin-top:1rem;padding-bottom:.5rem;border-bottom:1px solid var(--convoca-border,#ccc);"><?php esc_html_e( 'Datos Personales', 'convoca-members' ); ?></h3>
 
 					<div class="convoca-field">
 						<label for="conv_email"><?php esc_html_e( 'Email', 'convoca-members' ); ?></label>
@@ -155,7 +155,7 @@ class Admin_Member_Editor {
 						<input type="date" id="conv_fecha_nacimiento" name="conv_fecha_nacimiento" value="<?php echo esc_attr( $m( 'fecha_nacimiento' ) ); ?>">
 					</div>
 
-					<h3 style="grid-column:1/-1;margin-top:1rem;padding-bottom:.5rem;border-bottom:1px solid var(--bde-border,#ccc);"><?php esc_html_e( 'Dirección', 'convoca-members' ); ?></h3>
+					<h3 style="grid-column:1/-1;margin-top:1rem;padding-bottom:.5rem;border-bottom:1px solid var(--convoca-border,#ccc);"><?php esc_html_e( 'Dirección', 'convoca-members' ); ?></h3>
 
 					<div class="convoca-field">
 						<label for="conv_direccion"><?php esc_html_e( 'Dirección', 'convoca-members' ); ?></label>
@@ -167,7 +167,7 @@ class Admin_Member_Editor {
 						<input type="text" id="conv_municipio" name="conv_municipio" value="<?php echo esc_attr( $m( 'municipio' ) ); ?>">
 					</div>
 
-					<h3 style="grid-column:1/-1;margin-top:1rem;padding-bottom:.5rem;border-bottom:1px solid var(--bde-border,#ccc);"><?php esc_html_e( 'Voluntariado', 'convoca-members' ); ?></h3>
+					<h3 style="grid-column:1/-1;margin-top:1rem;padding-bottom:.5rem;border-bottom:1px solid var(--convoca-border,#ccc);"><?php esc_html_e( 'Voluntariado', 'convoca-members' ); ?></h3>
 
 					<div class="convoca-field" style="grid-column:1/-1;">
 						<div class="convoca-check-group">
@@ -201,7 +201,7 @@ class Admin_Member_Editor {
 						<textarea id="conv_motivacion" name="conv_motivacion" rows="3"><?php echo esc_textarea( $m( 'motivacion' ) ); ?></textarea>
 					</div>
 
-					<h3 style="grid-column:1/-1;margin-top:1rem;padding-bottom:.5rem;border-bottom:1px solid var(--bde-border,#ccc);"><?php esc_html_e( 'Notas Internas', 'convoca-members' ); ?></h3>
+					<h3 style="grid-column:1/-1;margin-top:1rem;padding-bottom:.5rem;border-bottom:1px solid var(--convoca-border,#ccc);"><?php esc_html_e( 'Notas Internas', 'convoca-members' ); ?></h3>
 
 					<div class="convoca-field" style="grid-column:1/-1;">
 						<label for="conv_observaciones"><?php esc_html_e( 'Observaciones', 'convoca-members' ); ?></label>
