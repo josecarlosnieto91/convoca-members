@@ -6,6 +6,7 @@
  * Version: 2.6.1
  * Requires at least: 6.4
  * Requires PHP:      8.1
+ * Tested up to:      7.0
  * Author:            Jose Carlos Nieto Ramos
  * Author URI:        https://josecarlosnietoramos.wordpress.com.
  * License:           GPL-2.0-or-later
@@ -104,6 +105,10 @@ spl_autoload_register(
 register_activation_hook(
 	__FILE__,
 	function (): void {
+		if ( ! class_exists( '\\Convoca\\Core\\Utils' ) ) {
+			deactivate_plugins( plugin_basename( __FILE__ ) );
+			wp_die( 'Convoca Members requires Convoca Core to be active. Please activate Convoca Core first.' );
+		}
 		// Autoloader is already registered, no need to require these manually.
 		Convoca\Members\CPT_Miembro::register();
 		\Convoca\Core\Installer::db_init();
