@@ -2,10 +2,10 @@
  * Convoca Members — Admin JS
  * Quick state change + CSV export modal + WhatsApp tracking + autocomplete.
  */
-(function (bdvAdmin) {
+(function (convAdmin) {
     'use strict';
 
-    if (!bdvAdmin) return;
+    if (!convAdmin) return;
 
     /* ── Quick state change ──────────────────────── */
     const stateForm = document.getElementById('conv-state-form');
@@ -22,7 +22,7 @@
             const fd = new FormData(stateForm);
             const nonce = window.convAdmin?.nonce || '';
 
-            bdvAdmin.ajaxPost('conv_change_state', fd, nonce,
+            convAdmin.ajaxPost('conv_change_state', fd, nonce,
                 (res) => { location.reload(); },
                 (res) => {
                     alert(res.data?.message || res.data || 'Error al cambiar el estado.');
@@ -114,7 +114,7 @@
         }
 
         function downloadCsv(columns) {
-            var baseUrl = bdvAdmin.columnsUrl || (bdvAdmin.ajaxUrl + '?action=conv_export_csv&nonce=' + bdvAdmin.csvNonce);
+            var baseUrl = convAdmin.columnsUrl || (convAdmin.ajaxUrl + '?action=conv_export_csv&nonce=' + convAdmin.csvNonce);
             if (columns && columns.length > 0) {
                 baseUrl += '&columns=' + encodeURIComponent(columns.join(','));
             }
@@ -128,7 +128,7 @@
             fd.append('columns', JSON.stringify(columns));
 
             var xhr = new XMLHttpRequest();
-            xhr.open('POST', bdvAdmin.ajaxUrl + '?action=conv_save_csv_columns&nonce=' + bdvAdmin.csvNonce, true);
+            xhr.open('POST', convAdmin.ajaxUrl + '?action=conv_save_csv_columns&nonce=' + convAdmin.csvNonce, true);
             xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded; charset=UTF-8');
 
             xhr.onload = function () {
@@ -163,7 +163,7 @@
 
         if (exportAllBtn) {
             exportAllBtn.addEventListener('click', function () {
-                var allCols = Object.keys(bdvAdmin.allColumns || {});
+                var allCols = Object.keys(convAdmin.allColumns || {});
                 saveColumnPreference(allCols);
                 downloadCsv(null); // Export all columns
                 closeModal();
@@ -172,7 +172,7 @@
 
         if (restoreDefaultBtn) {
             restoreDefaultBtn.addEventListener('click', function () {
-                var defaults = bdvAdmin.defaultColumns || [];
+                var defaults = convAdmin.defaultColumns || [];
                 saveColumnPreference(defaults, function () {
                     // Reset checkboxes to defaults
                     var checkboxes = modalOverlay.querySelectorAll('input[name="csv_col[]"]');
@@ -198,7 +198,7 @@
                     const fd = new FormData();
                     fd.append('action', 'conv_log_whatsapp');
                     fd.append('post_id', postId);
-                    fd.append('nonce', bdvAdmin.nonce);
+                    fd.append('nonce', convAdmin.nonce);
                     
                     fetch(ajaxurl, {
                         method: 'POST',

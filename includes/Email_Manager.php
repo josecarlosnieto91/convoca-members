@@ -525,7 +525,7 @@ class Email_Manager {
 				'fields'         => 'ids',
 				'meta_query'     => array(
 					array(
-						'key'   => ' _conv_miembro_id',
+						'key'   => '_conv_member_id',
 						'value' => $post_id,
 					),
 					array(

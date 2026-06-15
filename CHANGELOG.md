@@ -15,7 +15,7 @@
 - Corrección: Fechas date() → wp_date() en todos los módulos
 - Corrección: Consultas de renovación con IS NOT NULL AND != ''
 - Rendimiento: Per-member lock en recordatorios de pago (try/finally)
-- Mejora: Creación automática de la tabla bdv_member_sequence (upgrade 1.0.3) para numeración de socios sin bloqueos
+- Mejora: Creación automática de la tabla conv_member_sequence (upgrade 1.0.3) para numeración de socios sin bloqueos
 - Actualización: Documentación sincronizada (versión 2.6.0)
 
 ## 2.5.1

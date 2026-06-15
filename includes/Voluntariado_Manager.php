@@ -70,7 +70,7 @@ class Voluntariado_Manager {
              )
              AND post_id IN (
                  SELECT post_id FROM {$wpdb->postmeta} 
-                 WHERE meta_key = ' _conv_miembro_id' AND meta_value = %d
+                 WHERE meta_key = '_conv_member_id' AND meta_value = %d
              )
              AND post_id IN (
                  SELECT post_id FROM {$wpdb->postmeta} 

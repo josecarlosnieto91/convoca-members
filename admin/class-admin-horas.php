@@ -146,7 +146,7 @@ class Admin_Horas extends \WP_List_Table {
 		$record_id = isset( $_GET['id'] ) ? (int) $_GET['id'] : 0;
 		$record    = $record_id ? get_post( $record_id ) : null;
 
-		$miembro_id   = $record ? (int) get_post_meta( $record_id, ' _conv_miembro_id', true ) : 0;
+		$miembro_id   = $record ? (int) get_post_meta( $record_id, '_conv_member_id', true ) : 0;
 		$fecha        = $record ? get_post_meta( $record_id, '_conv_fecha', true ) : current_time( 'Y-m-d' );
 		$horas        = $record ? get_post_meta( $record_id, '_conv_horas', true ) : '';
 		$proyecto_id  = $record ? (int) get_post_meta( $record_id, '_conv_proyecto_id', true ) : 0;
@@ -403,7 +403,7 @@ class Admin_Horas extends \WP_List_Table {
 		);
 
 		foreach ( $query->posts as $post ) {
-			$socio_id = get_post_meta( $post->ID, ' _conv_miembro_id', true );
+			$socio_id = get_post_meta( $post->ID, '_conv_member_id', true );
 			$socio    = $socio_id ? ( get_post( $socio_id )?->post_title ?? '' ) : '';
 
 			$proyecto_id = get_post_meta( $post->ID, '_conv_proyecto_id', true );
@@ -504,7 +504,7 @@ class Admin_Horas extends \WP_List_Table {
 	}
 
 	public function column_socio( $item ) {
-		$socio_id = get_post_meta( $item->ID, ' _conv_miembro_id', true );
+		$socio_id = get_post_meta( $item->ID, '_conv_member_id', true );
 		if ( ! $socio_id ) {
 			return '—';
 		}
@@ -605,7 +605,7 @@ class Admin_Horas extends \WP_List_Table {
 		check_admin_referer( 'process_horas_' . $record_id );
 
 		if ( $record_id && in_array( $new_status, array( 'aprobada', 'rechazada' ) ) ) {
-			$miembro_id      = (int) get_post_meta( $record_id, ' _conv_miembro_id', true );
+			$miembro_id      = (int) get_post_meta( $record_id, '_conv_member_id', true );
 			$current_user_id = get_current_user_id();
 
 			// Robust identification of the volunteer user ID.
@@ -683,7 +683,7 @@ class Admin_Horas extends \WP_List_Table {
 			}
 
 			// Log activity.
-			$socio_id = get_post_meta( $record_id, ' _conv_miembro_id', true );
+			$socio_id = get_post_meta( $record_id, '_conv_member_id', true );
 			\Convoca\Core\Logger::log( "Registro de horas $record_id marcado como $new_status por admin " . get_current_user_id(), 'Members/Hours', $socio_id );
 		}
 

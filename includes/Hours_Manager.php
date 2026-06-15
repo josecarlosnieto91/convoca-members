@@ -97,7 +97,7 @@ class Hours_Manager {
 			return $post_id;
 		}
 
-		update_post_meta( $post_id, ' _conv_miembro_id', $miembro_id );
+		update_post_meta( $post_id, '_conv_member_id', $miembro_id );
 		update_post_meta( $post_id, '_conv_fecha', $fecha );
 		update_post_meta( $post_id, '_conv_horas', $horas );
 		update_post_meta( $post_id, '_conv_proyecto_id', $proyecto_id );
@@ -135,7 +135,7 @@ class Hours_Manager {
 			$new_status = $new_status ? 'aprobada' : 'rechazada';
 		}
 
-		$miembro_id = (int) get_post_meta( $record_id, ' _conv_miembro_id', true );
+		$miembro_id = (int) get_post_meta( $record_id, '_conv_member_id', true );
 		if ( ! $miembro_id ) {
 			return false;
 		}

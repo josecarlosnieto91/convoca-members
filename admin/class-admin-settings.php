@@ -347,7 +347,7 @@ class Admin_Settings {
 				<div style="text-align: left; max_width: 600px; margin: 0 auto; display: inline-block;">
 					<label><?php esc_html_e( 'ID del Plan (ej: <code>socio-colaborador</code>):', 'convoca-members' ); ?> </label>
 					<input type="text" id="new_plan_key" placeholder="slug-unico">
-					<button type="button" class="button" onclick="bdvAddNewPlan()"><?php esc_html_e( 'Añadir', 'convoca-members' ); ?></button>
+					<button type="button" class="button" onclick="convAddNewPlan()"><?php esc_html_e( 'Añadir', 'convoca-members' ); ?></button>
 				</div>
 			</div>
 
@@ -372,7 +372,7 @@ class Admin_Settings {
 			</template>
 
 			<script>
-				function bdvAddNewPlan() {
+				function convAddNewPlan() {
 					var key = document.getElementById('new_plan_key').value.trim();
 					if (!key) { alert('<?php echo esc_js( __( 'Escribe un ID único para el plan', 'convoca-members' ) ); ?>'); return; }
 					key = key.toLowerCase().replace(/[^a-z0-9-]/g, '-');
@@ -601,7 +601,7 @@ class Admin_Settings {
 				<div style="text-align: left; max_width: 600px; margin: 0 auto; display: inline-block;">
 					<label><?php esc_html_e( 'ID del Campo (solo minúsculas y guiones, ej: alergias):', 'convoca-members' ); ?> </label>
 					<input type="text" id="new_field_name" placeholder="id-del-campo">
-					<button type="button" class="button" onclick="bdvAddNewField()"><?php esc_html_e( 'Añadir', 'convoca-members' ); ?></button>
+					<button type="button" class="button" onclick="convAddNewField()"><?php esc_html_e( 'Añadir', 'convoca-members' ); ?></button>
 				</div>
 			</div>
 
@@ -618,7 +618,7 @@ class Admin_Settings {
 			</template>
 
 			<script>
-				function bdvAddNewField() {
+				function convAddNewField() {
 					var name = document.getElementById('new_field_name').value.trim();
 					if (!name) { alert('Escribe un ID único para el campo'); return; }
 					name = name.toLowerCase().replace(/[^a-z0-9-]/g, '-');
@@ -746,7 +746,7 @@ class Admin_Settings {
 
 			<div class="conv-gamification-track-selector" style="margin: 20px 0;">
 				<label for="conv-gamification-track-select"><strong><?php esc_html_e( 'Selecciona track:', 'convoca-members' ); ?></strong></label>
-				<select id="conv-gamification-track-select" onchange="bdvGamiSwitchTrack(this.value)">
+				<select id="conv-gamification-track-select" onchange="convGamiSwitchTrack(this.value)">
 					<?php foreach ( $tracks as $key => $track ) : ?>
 						<option value="<?php echo esc_attr( $key ); ?>">
 							<?php echo esc_html( $track['label'] ); ?>
@@ -848,7 +848,7 @@ class Admin_Settings {
 		</div>
 
 		<script>
-		function bdvGamiSwitchTrack(trackKey) {
+		function convGamiSwitchTrack(trackKey) {
 			document.querySelectorAll('.conv-gami-track-panel').forEach(function(el) {
 				el.style.display = 'none';
 			});

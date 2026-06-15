@@ -786,7 +786,7 @@ class Cron_Manager {
 			$wpdb->prepare(
 				"SELECT COALESCE(SUM(pm_h.meta_value), 0)
              FROM {$wpdb->posts} p
-             JOIN {$wpdb->postmeta} pm_m ON p.ID = pm_m.post_id AND pm_m.meta_key = ' _conv_miembro_id' AND pm_m.meta_value = %d
+             JOIN {$wpdb->postmeta} pm_m ON p.ID = pm_m.post_id AND pm_m.meta_key = '_conv_member_id' AND pm_m.meta_value = %d
              JOIN {$wpdb->postmeta} pm_h ON p.ID = pm_h.post_id AND pm_h.meta_key = '_conv_horas'
              JOIN {$wpdb->postmeta} pm_e ON p.ID = pm_e.post_id AND pm_e.meta_key = '_conv_estado' AND pm_e.meta_value = 'aprobada'
              WHERE p.post_type = 'registro_hora'

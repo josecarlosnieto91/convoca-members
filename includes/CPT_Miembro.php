@@ -244,7 +244,7 @@ class CPT_Miembro {
 				),
 				'hierarchical' => true,
 				'show_in_rest' => true,
-				'public'       => true,
+				'public'       => false,
 			)
 		);
 

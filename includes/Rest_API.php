@@ -453,7 +453,7 @@ class Rest_API {
 			'posts_per_page' => -1,
 			'meta_query'     => array(
 				array(
-					'key'   => ' _conv_miembro_id',
+					'key'   => '_conv_member_id',
 					'value' => $member_id,
 				),
 			),

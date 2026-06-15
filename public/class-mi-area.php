@@ -28,7 +28,7 @@ class Mi_Area {
 		$member_id = Member_Auth::get_current_member_id();
 		wp_localize_script(
 			'convoca-mi-area',
-			'bdvMiArea',
+			'convMiArea',
 			array(
 				'apiUrl'     => rest_url( 'convoca/v1' ),
 				'nonce'      => wp_create_nonce( 'wp_rest' ),

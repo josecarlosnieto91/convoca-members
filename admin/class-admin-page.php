@@ -128,7 +128,7 @@ class Admin_Page {
 		);
 		wp_localize_script(
 			'conv-members-admin',
-			'bdvAdmin',
+			'convAdmin',
 			array(
 				'ajaxUrl'        => admin_url( 'admin-ajax.php' ),
 				'nonce'          => wp_create_nonce( 'conv_admin_nonce' ),

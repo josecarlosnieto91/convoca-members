@@ -251,7 +251,7 @@ class GDPR_Tools {
 					'post_status'    => 'any',
 					'meta_query'     => array(
 						array(
-							'key'   => ' _conv_miembro_id',
+							'key'   => '_conv_member_id',
 							'value' => $member_id,
 						),
 					),
@@ -453,7 +453,7 @@ class GDPR_Tools {
 					'post_status'    => 'any',
 					'meta_query'     => array(
 						array(
-							'key'   => ' _conv_miembro_id',
+							'key'   => '_conv_member_id',
 							'value' => $member_id,
 						),
 					),

@@ -129,7 +129,7 @@ class Certificate_Generator {
              INNER JOIN {$wpdb->postmeta} ph ON ph.post_id = p.ID AND ph.meta_key = '_conv_proyecto_id'
              INNER JOIN {$wpdb->postmeta} hm ON hm.post_id = p.ID AND hm.meta_key = '_conv_horas'
              INNER JOIN {$wpdb->postmeta} he ON he.post_id = p.ID AND he.meta_key = '_conv_estado' AND he.meta_value = 'aprobada'
-             INNER JOIN {$wpdb->postmeta} hm2 ON hm2.post_id = p.ID AND hm2.meta_key = ' _conv_miembro_id' AND hm2.meta_value = %d
+             INNER JOIN {$wpdb->postmeta} hm2 ON hm2.post_id = p.ID AND hm2.meta_key = '_conv_member_id' AND hm2.meta_value = %d
              WHERE p.post_type = 'registro_hora'
              GROUP BY p.ID
              ORDER BY horas DESC",

@@ -89,7 +89,7 @@ class Form_Handler {
 	 */
 	public static function handle_submit_rest( \WP_REST_Request $request ): \WP_REST_Response {
 		// 1. Validate custom nonce (works for public users)
-		$nonce = $request->get_header( 'X-BDV-Nonce' ) ?: $request->get_param( 'nonce' );
+		$nonce = $request->get_header( 'X-Conv-Nonce' ) ?: $request->get_param( 'nonce' );
 		if ( ! $nonce || ! wp_verify_nonce( $nonce, 'conv_alta_nonce' ) ) {
 			return new \WP_REST_Response(
 				array(

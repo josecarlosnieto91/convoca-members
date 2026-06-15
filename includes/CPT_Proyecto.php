@@ -134,7 +134,7 @@ class CPT_Proyecto {
 				"SELECT DISTINCT pm.post_id as proyecto_id, p.post_title, p.post_content
              FROM {$wpdb->postmeta} pm
              INNER JOIN {$wpdb->posts} p ON p.ID = pm.post_id
-             INNER JOIN {$wpdb->postmeta} ph ON ph.post_id = pm.post_id AND ph.meta_key = ' _conv_miembro_id' AND ph.meta_value = %d
+             INNER JOIN {$wpdb->postmeta} ph ON ph.post_id = pm.post_id AND ph.meta_key = '_conv_member_id' AND ph.meta_value = %d
              WHERE pm.meta_key = '_conv_proyecto_id'
              AND pm.meta_value = p.ID
              AND p.post_type = %s

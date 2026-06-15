@@ -17,12 +17,9 @@
  * Network:           true
  */
 
-if ( ! defined( 'ABSPATH' ) ) {
+namespace Convoca\Members;
 
-// Load translations.
-add_action( 'init', function () {
-	load_plugin_textdomain( 'convoca-members', false, dirname( plugin_basename( __FILE__ ) ) . '/languages' );
-} );
+if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
@@ -110,7 +107,7 @@ register_activation_hook(
 			wp_die( 'Convoca Members requires Convoca Core to be active. Please activate Convoca Core first.' );
 		}
 		// Autoloader is already registered, no need to require these manually.
-		Convoca\Members\CPT_Miembro::register();
+		\Convoca\Members\CPT_Miembro::register();
 		\Convoca\Core\Installer::db_init();
 
 		// Schedule Daily Cron.
@@ -128,7 +125,7 @@ register_activation_hook(
 		flush_rewrite_rules();
 
 		// Default email templates.
-		Convoca\Members\Email_Manager::install_defaults();
+		\Convoca\Members\Email_Manager::install_defaults();
 
 		// Default settings.
 		if ( false === get_option( 'conv_members_settings' ) ) {
@@ -246,49 +243,52 @@ add_action(
 	'plugins_loaded',
 	function (): void {
 
+		// Load translations.
+		load_plugin_textdomain( 'convoca-members', false, dirname( plugin_basename( __FILE__ ) ) . '/languages' );
+
 		// Core.
-		new Convoca\Members\CPT_Miembro();
-		new Convoca\Members\Estados();
-		new Convoca\Members\Email_Manager();
-		new Convoca\Members\Rest_API();
-		new Convoca\Members\Payment_Listener();
-		new Convoca\Members\CPT_Registro_Hora();
-		new Convoca\Members\CPT_Proyecto();
-		new Convoca\Members\CPT_Documento();
+		new \Convoca\Members\CPT_Miembro();
+		new \Convoca\Members\Estados();
+		new \Convoca\Members\Email_Manager();
+		new \Convoca\Members\Rest_API();
+		new \Convoca\Members\Payment_Listener();
+		new \Convoca\Members\CPT_Registro_Hora();
+		new \Convoca\Members\CPT_Proyecto();
+		new \Convoca\Members\CPT_Documento();
 		\Convoca\Members\PDF_Document::init();
 		\Convoca\Members\Certificate_Generator::init();
 		\Convoca\Members\Voluntariado_Manager::init();
 		\Convoca\Members\Voluntariado_Gamification::init();
 		// GDPR compliance: data export/erasure via WordPress Privacy Tools.
-		Convoca\Members\GDPR_Tools::init();
+		\Convoca\Members\GDPR_Tools::init();
 		// Automation handled via state hooks.
 		// Load Cron Jobs.
-		new Convoca\Members\Cron_Manager();
-		new Convoca\Members\Audit_Logger();
+		new \Convoca\Members\Cron_Manager();
+		new \Convoca\Members\Audit_Logger();
 
 		// Upgrade Manager (checks for DB version upgrades on admin_init).
-		new Convoca\Members\Members_Upgrade_Manager();
+		new \Convoca\Members\Members_Upgrade_Manager();
 
 		// Admin.
 		if ( is_admin() ) {
-			new Convoca\Members\Admin_Page();
-			new Convoca\Members\Admin_Settings();
-			new Convoca\Members\Admin_Metaboxes();
-			new Convoca\Members\CSV_Exporter();
-			new Convoca\Members\Admin_Horas();
-			new Convoca\Members\Admin_Dashboard();
-			new Convoca\Members\Admin_Webhooks();
-			new Convoca\Members\Admin_Proyectos();
-			new Convoca\Members\Admin_Member_Editor();
-			new Convoca\Members\Admin_Import_CSV();
+			new \Convoca\Members\Admin_Page();
+			new \Convoca\Members\Admin_Settings();
+			new \Convoca\Members\Admin_Metaboxes();
+			new \Convoca\Members\CSV_Exporter();
+			new \Convoca\Members\Admin_Horas();
+			new \Convoca\Members\Admin_Dashboard();
+			new \Convoca\Members\Admin_Webhooks();
+			new \Convoca\Members\Admin_Proyectos();
+			new \Convoca\Members\Admin_Member_Editor();
+			new \Convoca\Members\Admin_Import_CSV();
 		}
 
 		// Public.
-		new Convoca\Members\Form_Handler();
-		new Convoca\Members\Form_Voluntariado();
-		new Convoca\Members\Mi_Area();
-		new Convoca\Members\Verificar_Certificado();
-		new Convoca\Members\Block_Members();
+		new \Convoca\Members\Form_Handler();
+		new \Convoca\Members\Form_Voluntariado();
+		new \Convoca\Members\Mi_Area();
+		new \Convoca\Members\Verificar_Certificado();
+		new \Convoca\Members\Block_Members();
 	}
 );
 

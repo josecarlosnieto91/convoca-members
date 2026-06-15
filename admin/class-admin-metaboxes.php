@@ -604,7 +604,7 @@ class Admin_Metaboxes {
 			array(
 				'post_type'      => 'registro_hora',
 				'posts_per_page' => -1,
-				'meta_key'       => ' _conv_miembro_id',
+				'meta_key'       => '_conv_member_id',
 				'meta_value'     => $member_id,
 			)
 		);
@@ -658,7 +658,7 @@ class Admin_Metaboxes {
 			array(
 				'post_type'      => 'registro_hora',
 				'posts_per_page' => -1,
-				'meta_key'       => ' _conv_miembro_id',
+				'meta_key'       => '_conv_member_id',
 				'meta_value'     => $member_id,
 			)
 		);
