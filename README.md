@@ -35,6 +35,10 @@ convoca-core, WordPress 6.4+, PHP 8.1+, Dompdf (optional)
 
 2.6.0
 
+### 2.6.2
+- docs: add MANUAL_USUARIO.md with 15-section admin guide
+- dev: add phpstan.neon (level 5) for static analysis
+
 ### 2.6.0
 - Seguridad: Dedup email con INSERT ON DUPLICATE KEY UPDATE
 - Corrección: Email queue lock liberado correctamente (Utils::release_lock)
