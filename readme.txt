@@ -4,7 +4,7 @@ Tags: members, volunteers, association, socios, voluntarios, convoca
 Requires at least: 6.4
 Tested up to: 7.0
 Requires PHP: 8.1
-Stable tag: 2.6.1
+Stable tag: 2.6.2
 License: GPL-2.0-or-later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -67,6 +67,10 @@ Sí, para la generación de PDF con Dompdf.
 
 == Changelog ==
 
+
+= 2.6.2 =
+* Added: MANUAL_USUARIO.md with complete admin guide
+* Dev: Added phpstan.neon for static analysis
 = 2.6.1 =
 * Fix: Logo en tarjeta de socio, acciones del listado, feedback notices
 * Nuevo: Asignación masiva de números de socio
