@@ -214,7 +214,8 @@ add_action(
 	function (): void {
 
 		// Load translations.
-		load_plugin_textdomain( 'convoca-members', false, dirname( plugin_basename( __FILE__ ) ) . '/languages' );
+		wp_set_script_translations( 'convoca-members-scripts', 'convoca-members', plugin_dir_path( __FILE__ ) . 'languages/' );
+	load_plugin_textdomain( 'convoca-members', false, dirname( plugin_basename( __FILE__ ) ) . '/languages' );
 
 		// Core.
 		new \Convoca\Members\CPT_Miembro();
