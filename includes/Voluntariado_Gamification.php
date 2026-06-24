@@ -161,8 +161,8 @@ class Voluntariado_Gamification {
 	 * @return string Track key (busgosu, lugg, deva, or DEFAULT_TRACK).
 	 */
 	public static function get_track_for_member( int $member_id ): string {
-		$sub_plan = get_post_meta( $member_id, '_conv_sub_plan', true );
-		$plan     = get_post_meta( $member_id, '_conv_plan', true );
+		$sub_plan = get_post_meta( $member_id, '_convoca_sub_plan', true );
+		$plan     = get_post_meta( $member_id, '_convoca_plan', true );
 		$key      = $sub_plan ?: $plan;
 
 		if ( ! $key ) {

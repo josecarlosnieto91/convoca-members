@@ -26,7 +26,7 @@ class Voluntariado_Manager {
 	public static function on_hora_aprobada( int $hora_id, int $miembro_id ): void {
 		$total_horas = self::get_horas_aprobadas( $miembro_id );
 
-		$plan = get_post_meta( $miembro_id, '_conv_plan', true );
+		$plan = get_post_meta( $miembro_id, '_convoca_plan', true );
 		if ( empty( $plan ) ) {
 			return;
 		}
@@ -41,7 +41,7 @@ class Voluntariado_Manager {
 			return;
 		}
 
-		$ya_completo = get_post_meta( $miembro_id, '_conv_objetivo_horas_completado', true );
+		$ya_completo = get_post_meta( $miembro_id, '_convoca_objetivo_horas_completado', true );
 
 		if ( $ya_completo === '1' ) {
 			return;
@@ -62,7 +62,7 @@ class Voluntariado_Manager {
 			$wpdb->prepare(
 				"SELECT SUM(CAST(meta_value AS DECIMAL(10,2))) 
              FROM {$wpdb->postmeta} 
-             WHERE meta_key = '_conv_horas' 
+             WHERE meta_key = '_convoca_horas' 
              AND post_id IN (
                  SELECT ID FROM {$wpdb->posts} 
                  WHERE post_type = 'registro_hora' 
@@ -70,11 +70,11 @@ class Voluntariado_Manager {
              )
              AND post_id IN (
                  SELECT post_id FROM {$wpdb->postmeta} 
-                 WHERE meta_key = '_conv_member_id' AND meta_value = %d
+                 WHERE meta_key = '_convoca_member_id' AND meta_value = %d
              )
              AND post_id IN (
                  SELECT post_id FROM {$wpdb->postmeta} 
-                 WHERE meta_key = '_conv_estado' AND meta_value = 'aprobada'
+                 WHERE meta_key = '_convoca_estado' AND meta_value = 'aprobada'
              )",
 				$miembro_id
 			)
@@ -87,14 +87,14 @@ class Voluntariado_Manager {
 	 * Convert volunteer to active member.
 	 */
 	private static function convertir_en_activo( int $miembro_id, float $total_horas, string $plan ): void {
-		update_post_meta( $miembro_id, '_conv_objetivo_horas_completado', '1' );
-		update_post_meta( $miembro_id, '_conv_fecha_objetivo_completado', current_time( 'mysql' ) );
-		update_post_meta( $miembro_id, '_conv_horas_totales_voluntariado', $total_horas );
+		update_post_meta( $miembro_id, '_convoca_objetivo_horas_completado', '1' );
+		update_post_meta( $miembro_id, '_convoca_fecha_objetivo_completado', current_time( 'mysql' ) );
+		update_post_meta( $miembro_id, '_convoca_horas_totales_voluntariado', $total_horas );
 
-		$estado_actual = get_post_meta( $miembro_id, '_conv_estado_miembro', true );
+		$estado_actual = get_post_meta( $miembro_id, '_convoca_estado_miembro', true );
 
 		if ( $estado_actual !== 'activo' ) {
-			update_post_meta( $miembro_id, '_conv_estado_cuota', 'activa' );
+			update_post_meta( $miembro_id, '_convoca_estado_cuota', 'activa' );
 			Estados::change( $miembro_id, 'activo', "Completadas {$total_horas}h del plan {$plan}" );
 		}
 
@@ -123,14 +123,14 @@ class Voluntariado_Manager {
 	 * Check if member has completed their hours objective.
 	 */
 	public static function ha_completado_objetivo( int $miembro_id ): bool {
-		return get_post_meta( $miembro_id, '_conv_objetivo_horas_completado', true ) === '1';
+		return get_post_meta( $miembro_id, '_convoca_objetivo_horas_completado', true ) === '1';
 	}
 
 	/**
 	 * Get hours objective for a member's plan.
 	 */
 	public static function get_horas_objetivo( int $miembro_id ): float {
-		$plan = get_post_meta( $miembro_id, '_conv_plan', true );
+		$plan = get_post_meta( $miembro_id, '_convoca_plan', true );
 		if ( empty( $plan ) ) {
 			return 0;
 		}

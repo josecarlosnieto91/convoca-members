@@ -77,7 +77,7 @@ class Members_Upgrade_Manager extends Upgrade_Manager {
 					"
                     SELECT MAX(CAST(meta_value AS UNSIGNED)) 
                     FROM {$wpdb->postmeta} 
-                    WHERE meta_key = '_conv_numero_socio'
+                    WHERE meta_key = '_convoca_numero_socio'
                 "
 				);
 				if ( $max_postmeta > 0 ) {
@@ -96,7 +96,7 @@ class Members_Upgrade_Manager extends Upgrade_Manager {
 	protected function upgrade_to_1_0_2(): bool {
 		global $wpdb;
 
-		$metas = $wpdb->get_results( "SELECT post_id, meta_value FROM {$wpdb->postmeta} WHERE meta_key = '_conv_fecha_renovacion'" );
+		$metas = $wpdb->get_results( "SELECT post_id, meta_value FROM {$wpdb->postmeta} WHERE meta_key = '_convoca_fecha_renovacion'" );
 
 		if ( empty( $metas ) ) {
 			return true;
@@ -119,7 +119,7 @@ class Members_Upgrade_Manager extends Upgrade_Manager {
 
 			$normalized = wp_date( 'Y-m-d', $timestamp );
 			if ( $normalized !== $current ) {
-				update_post_meta( $meta->post_id, '_conv_fecha_renovacion', $normalized );
+				update_post_meta( $meta->post_id, '_convoca_fecha_renovacion', $normalized );
 			}
 		}
 

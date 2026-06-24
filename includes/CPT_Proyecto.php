@@ -87,7 +87,7 @@ class CPT_Proyecto {
 	public static function get_meta( int $post_id ): array {
 		$data = array();
 		foreach ( self::META_KEYS as $key ) {
-			$data[ $key ] = get_post_meta( $post_id, '_conv_' . $key, true );
+			$data[ $key ] = get_post_meta( $post_id, '_convoca_' . $key, true );
 		}
 		return $data;
 	}
@@ -134,8 +134,8 @@ class CPT_Proyecto {
 				"SELECT DISTINCT pm.post_id as proyecto_id, p.post_title, p.post_content
              FROM {$wpdb->postmeta} pm
              INNER JOIN {$wpdb->posts} p ON p.ID = pm.post_id
-             INNER JOIN {$wpdb->postmeta} ph ON ph.post_id = pm.post_id AND ph.meta_key = '_conv_member_id' AND ph.meta_value = %d
-             WHERE pm.meta_key = '_conv_proyecto_id'
+             INNER JOIN {$wpdb->postmeta} ph ON ph.post_id = pm.post_id AND ph.meta_key = '_convoca_member_id' AND ph.meta_value = %d
+             WHERE pm.meta_key = '_convoca_proyecto_id'
              AND pm.meta_value = p.ID
              AND p.post_type = %s
              AND p.post_status = 'publish'
@@ -229,10 +229,10 @@ class CPT_Proyecto {
 			return;
 		}
 
-		update_post_meta( $post_id, '_conv_fecha_inicio', sanitize_text_field( $_POST['convoca_fecha_inicio'] ?? '' ) );
-		update_post_meta( $post_id, '_conv_fecha_fin', sanitize_text_field( $_POST['convoca_fecha_fin'] ?? '' ) );
-		update_post_meta( $post_id, '_conv_fecha_baja', sanitize_text_field( $_POST['convoca_fecha_baja'] ?? '' ) );
-		update_post_meta( $post_id, '_conv_responsable', sanitize_text_field( $_POST['convoca_responsable'] ?? '' ) );
-		update_post_meta( $post_id, '_conv_activo', ! empty( $_POST['convoca_activo'] ) ? '1' : '0' );
+		update_post_meta( $post_id, '_convoca_fecha_inicio', sanitize_text_field( $_POST['convoca_fecha_inicio'] ?? '' ) );
+		update_post_meta( $post_id, '_convoca_fecha_fin', sanitize_text_field( $_POST['convoca_fecha_fin'] ?? '' ) );
+		update_post_meta( $post_id, '_convoca_fecha_baja', sanitize_text_field( $_POST['convoca_fecha_baja'] ?? '' ) );
+		update_post_meta( $post_id, '_convoca_responsable', sanitize_text_field( $_POST['convoca_responsable'] ?? '' ) );
+		update_post_meta( $post_id, '_convoca_activo', ! empty( $_POST['convoca_activo'] ) ? '1' : '0' );
 	}
 }

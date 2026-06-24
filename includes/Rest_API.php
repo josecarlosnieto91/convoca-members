@@ -321,17 +321,17 @@ class Rest_API {
 			return new \WP_REST_Response( array( 'error' => 'Miembro no encontrado.' ), 404 );
 		}
 
-		$access_code = get_post_meta( $member_id, '_conv_access_code', true );
+		$access_code = get_post_meta( $member_id, '_convoca_access_code', true );
 		$masked_code = ! empty( $access_code ) ? substr( $access_code, 0, 4 ) . '****' : '';
 
 		return new \WP_REST_Response(
 			array(
 				'id'     => $member_id,
 				'nombre' => $post->post_title,
-				'email'  => get_post_meta( $member_id, '_conv_email', true ),
+				'email'  => get_post_meta( $member_id, '_convoca_email', true ),
 				'codigo' => $masked_code,
-				'estado' => get_post_meta( $member_id, '_conv_estado_miembro', true ),
-				'tipo'   => (array) get_post_meta( $member_id, '_conv_modalidad', true ) ?: array( 'Socio/a' ),
+				'estado' => get_post_meta( $member_id, '_convoca_estado_miembro', true ),
+				'tipo'   => (array) get_post_meta( $member_id, '_convoca_modalidad', true ) ?: array( 'Socio/a' ),
 			)
 		);
 	}
@@ -341,8 +341,8 @@ class Rest_API {
 	 */
 	public function get_inscriptions( \WP_REST_Request $request ): \WP_REST_Response {
 		$member_id = Member_Auth::get_current_member_id();
-		$email     = get_post_meta( $member_id, '_conv_email', true );
-		$dni       = get_post_meta( $member_id, '_conv_dni', true );
+		$email     = get_post_meta( $member_id, '_convoca_email', true );
+		$dni       = get_post_meta( $member_id, '_convoca_dni', true );
 
 		// Query inscriptions by email or DNI.
 		$args = array(
@@ -352,11 +352,11 @@ class Rest_API {
 			'meta_query'     => array(
 				'relation' => 'OR',
 				array(
-					'key'   => '_conv_email',
+					'key'   => '_convoca_email',
 					'value' => $email,
 				),
 				array(
-					'key'   => '_conv_dni',
+					'key'   => '_convoca_dni',
 					'value' => $dni,
 				),
 			),
@@ -367,10 +367,10 @@ class Rest_API {
 
 		if ( $query->have_posts() ) {
 			foreach ( $query->posts as $post ) {
-				$actividad_id = get_post_meta( $post->ID, '_conv_actividad_id', true );
+				$actividad_id = get_post_meta( $post->ID, '_convoca_actividad_id', true );
 				$actividad    = get_the_title( $actividad_id );
 
-				$estado = get_post_meta( $post->ID, '_conv_estado', true );
+				$estado = get_post_meta( $post->ID, '_convoca_estado', true );
 				$item   = array(
 					'id'        => $post->ID,
 					'fecha'     => get_the_date( 'd/m/Y', $post->ID ),
@@ -380,12 +380,12 @@ class Rest_API {
 
 				// Only include token for confirmed states (needed for ICS download).
 				if ( in_array( $estado, array( 'confirmada', 'pagada' ), true ) ) {
-					$item['token'] = get_post_meta( $post->ID, '_conv_checkin_token', true );
+					$item['token'] = get_post_meta( $post->ID, '_convoca_checkin_token', true );
 				}
 
 				// Include Google Photos album link if available.
 				if ( $actividad_id ) {
-					$album_url = get_post_meta( $actividad_id, '_conv_google_album_url', true );
+					$album_url = get_post_meta( $actividad_id, '_convoca_google_album_url', true );
 					if ( ! empty( $album_url ) ) {
 						$item['fotos_url'] = $album_url;
 					}
@@ -410,11 +410,11 @@ class Rest_API {
 			'posts_per_page' => -1,
 			'meta_query'     => array(
 				array(
-					'key'   => '_conv_origin',
+					'key'   => '_convoca_origin',
 					'value' => 'members',
 				),
 				array(
-					'key'   => '_conv_origin_id',
+					'key'   => '_convoca_origin_id',
 					'value' => $member_id,
 				),
 			),
@@ -425,13 +425,13 @@ class Rest_API {
 
 		if ( $query->have_posts() ) {
 			foreach ( $query->posts as $post ) {
-				$status = get_post_meta( $post->ID, '_conv_status', true );
-				$amount = (int) get_post_meta( $post->ID, '_conv_amount_cents', true );
+				$status = get_post_meta( $post->ID, '_convoca_status', true );
+				$amount = (int) get_post_meta( $post->ID, '_convoca_amount_cents', true );
 
 				$items[] = array(
 					'id'       => $post->ID,
 					'fecha'    => get_the_date( 'd/m/Y', $post->ID ),
-					'concepto' => get_post_meta( $post->ID, '_conv_product_desc', true ),
+					'concepto' => get_post_meta( $post->ID, '_convoca_product_desc', true ),
 					'importe'  => number_format( $amount / 100, 2, ',', '.' ),
 					'estado'   => $status,
 				);
@@ -453,7 +453,7 @@ class Rest_API {
 			'posts_per_page' => -1,
 			'meta_query'     => array(
 				array(
-					'key'   => '_conv_member_id',
+					'key'   => '_convoca_member_id',
 					'value' => $member_id,
 				),
 			),
@@ -467,11 +467,11 @@ class Rest_API {
 
 		if ( $query->have_posts() ) {
 			foreach ( $query->posts as $post ) {
-				$horas        = (float) get_post_meta( $post->ID, '_conv_horas', true );
-				$estado       = get_post_meta( $post->ID, '_conv_estado', true ) ?: 'pendiente';
-				$actividad_id = get_post_meta( $post->ID, '_conv_actividad_id', true );
-				$proyecto_id  = get_post_meta( $post->ID, '_conv_proyecto_id', true );
-				$tareas       = get_post_meta( $post->ID, '_conv_tareas', true );
+				$horas        = (float) get_post_meta( $post->ID, '_convoca_horas', true );
+				$estado       = get_post_meta( $post->ID, '_convoca_estado', true ) ?: 'pendiente';
+				$actividad_id = get_post_meta( $post->ID, '_convoca_actividad_id', true );
+				$proyecto_id  = get_post_meta( $post->ID, '_convoca_proyecto_id', true );
+				$tareas       = get_post_meta( $post->ID, '_convoca_tareas', true );
 
 				if ( $estado === 'aprobada' ) {
 					$total_horas += $horas;
@@ -479,7 +479,7 @@ class Rest_API {
 
 				$items[] = array(
 					'id'           => $post->ID,
-					'fecha'        => get_post_meta( $post->ID, '_conv_fecha', true ) ?: get_the_date( 'd/m/Y', $post->ID ),
+					'fecha'        => get_post_meta( $post->ID, '_convoca_fecha', true ) ?: get_the_date( 'd/m/Y', $post->ID ),
 					'descripcion'  => $post->post_content,
 					'horas'        => $horas,
 					'estado'       => $estado,
@@ -488,7 +488,7 @@ class Rest_API {
 					'proyecto'     => $proyecto_id ? get_the_title( $proyecto_id ) : '',
 					'proyecto_id'  => $proyecto_id,
 					'tareas'       => $tareas,
-					'nota_admin'   => get_post_meta( $post->ID, '_conv_nota_admin', true ) ?: '',
+					'nota_admin'   => get_post_meta( $post->ID, '_convoca_nota_admin', true ) ?: '',
 				);
 			}
 		}
@@ -605,32 +605,32 @@ class Rest_API {
 				'meta_query'     => array(
 					'relation' => 'OR',
 					array(
-						'key'     => '_conv_email',
+						'key'     => '_convoca_email',
 						'value'   => $q,
 						'compare' => 'LIKE',
 					),
 					array(
-						'key'     => '_conv_dni',
+						'key'     => '_convoca_dni',
 						'value'   => $q,
 						'compare' => 'LIKE',
 					),
 					array(
-						'key'     => '_conv_telefono',
+						'key'     => '_convoca_telefono',
 						'value'   => $q,
 						'compare' => 'LIKE',
 					),
 					array(
-						'key'     => '_conv_numero_socio',
+						'key'     => '_convoca_numero_socio',
 						'value'   => $q,
 						'compare' => 'LIKE',
 					),
 					array(
-						'key'     => '_conv_access_code',
+						'key'     => '_convoca_access_code',
 						'value'   => $q,
 						'compare' => 'LIKE',
 					),
 					array(
-						'key'     => '_conv_nombre',
+						'key'     => '_convoca_nombre',
 						'value'   => $q,
 						'compare' => 'LIKE',
 					),
@@ -642,8 +642,8 @@ class Rest_API {
 					'type'   => 'member',
 					'id'     => $p->ID,
 					'title'  => $p->post_title,
-					'email'  => get_post_meta( $p->ID, '_conv_email', true ),
-					'estado' => get_post_meta( $p->ID, '_conv_estado_miembro', true ),
+					'email'  => get_post_meta( $p->ID, '_convoca_email', true ),
+					'estado' => get_post_meta( $p->ID, '_convoca_estado_miembro', true ),
 					'url'    => rest_url( 'convoca-members/v1/me' ),
 				);
 			}
@@ -661,13 +661,13 @@ class Rest_API {
 			);
 			$act_query = new \WP_Query( $act_args );
 			foreach ( $act_query->posts as $p ) {
-				$fecha     = get_post_meta( $p->ID, '_conv_fecha_inicio', true );
+				$fecha     = get_post_meta( $p->ID, '_convoca_fecha_inicio', true );
 				$results[] = array(
 					'type'      => 'activity',
 					'id'        => $p->ID,
 					'title'     => $p->post_title,
 					'fecha'     => $fecha ? \Convoca\Core\Utils::format_date( $fecha, 'd/m/Y H:i' ) : '',
-					'ubicacion' => get_post_meta( $p->ID, '_conv_ubicacion', true ),
+					'ubicacion' => get_post_meta( $p->ID, '_convoca_ubicacion', true ),
 					'url'       => get_permalink( $p->ID ),
 				);
 			}
@@ -717,7 +717,7 @@ class Rest_API {
 			$results[] = array(
 				'id'    => $p->ID,
 				'title' => $p->post_title,
-				'email' => get_post_meta( $p->ID, '_conv_email', true ),
+				'email' => get_post_meta( $p->ID, '_convoca_email', true ),
 			);
 		}
 		return new \WP_REST_Response( $results, 200 );
@@ -755,7 +755,7 @@ class Rest_API {
 			);
 		}
 
-		$cert_id = get_post_meta( $member_id, '_conv_certificado_id', true );
+		$cert_id = get_post_meta( $member_id, '_convoca_certificado_id', true );
 
 		return new \WP_REST_Response(
 			array(
@@ -816,7 +816,7 @@ class Rest_API {
 
 		$notifications = \Convoca\Core\Notifications::get_member( $member_id, $limit );
 		$unread_count  = \Convoca\Core\Notifications::count_member_unread( $member_id );
-		$all           = get_post_meta( $member_id, '_conv_notifications', true ) ?: array();
+		$all           = get_post_meta( $member_id, '_convoca_notifications', true ) ?: array();
 
 		return new \WP_REST_Response(
 			array(
@@ -869,7 +869,7 @@ class Rest_API {
 			wp_die( 'Documento no encontrado.', 'Error', array( 'response' => 404 ) );
 		}
 
-		$user_id         = (int) get_post_meta( $id, '_conv_usuario_id', true );
+		$user_id         = (int) get_post_meta( $id, '_convoca_usuario_id', true );
 		$current_user_id = get_current_user_id();
 
 		// Security check: Admin OR Owner.
@@ -877,7 +877,7 @@ class Rest_API {
 			wp_die( 'No tienes permiso para ver este documento.', 'Acceso Denegado', array( 'response' => 403 ) );
 		}
 
-		$filepath = get_post_meta( $id, '_conv_documento_path', true );
+		$filepath = get_post_meta( $id, '_convoca_documento_path', true );
 
 		if ( ! $filepath || ! file_exists( $filepath ) ) {
 			wp_die( 'El archivo físico no existe en el servidor.', 'Error', array( 'response' => 404 ) );

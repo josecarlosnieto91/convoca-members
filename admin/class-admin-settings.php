@@ -21,10 +21,10 @@ class Admin_Settings {
 	}
 
 	public function handle_custom_save(): void {
-		if ( ! isset( $_POST['_conv_settings_nonce'] ) ) {
+		if ( ! isset( $_POST['_convoca_settings_nonce'] ) ) {
 			return;
 		}
-		if ( ! wp_verify_nonce( $_POST['_conv_settings_nonce'], 'convoca_members_settings_save' ) ) {
+		if ( ! wp_verify_nonce( $_POST['_convoca_settings_nonce'], 'convoca_members_settings_save' ) ) {
 			return;
 		}
 		if ( ! current_user_can( 'manage_options' ) ) {
@@ -276,7 +276,7 @@ class Admin_Settings {
 		$settings = get_option( 'convoca_members_settings', array() );
 		?>
 		<form method="post">
-			<?php wp_nonce_field( 'convoca_members_settings_save', '_conv_settings_nonce' ); ?>
+			<?php wp_nonce_field( 'convoca_members_settings_save', '_convoca_settings_nonce' ); ?>
 			<input type="hidden" name="conv_save_settings" value="general">
 
 			<div class="convoca-field">
@@ -570,7 +570,7 @@ class Admin_Settings {
 				</div>
 			<?php endforeach; ?>
 
-			<input type="hidden" name="conv_save_templates" value="1">
+			<input type="hidden" name="convoca_save_templates" value="1">
 			<?php submit_button( __( 'Guardar Plantillas', 'convoca-members' ) ); ?>
 		</form>
 		<?php

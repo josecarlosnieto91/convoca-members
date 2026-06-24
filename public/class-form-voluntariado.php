@@ -241,12 +241,12 @@ class Form_Voluntariado {
 			);
 
 			foreach ( $member_meta as $key => $value ) {
-				update_post_meta( $member_post_id, '_conv_' . $key, $value );
+				update_post_meta( $member_post_id, '_convoca_' . $key, $value );
 			}
 
 			// Vincular WP user con el miembro.
-			update_post_meta( $member_post_id, '_conv_user_id', $user_id );
-			update_user_meta( $user_id, '_conv_member_id', $member_post_id );
+			update_post_meta( $member_post_id, '_convoca_user_id', $user_id );
+			update_user_meta( $user_id, '_convoca_member_id', $member_post_id );
 		}
 
 		$settings = get_option( 'convoca_members_settings', array() );

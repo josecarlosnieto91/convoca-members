@@ -517,21 +517,21 @@ class Admin_Import_CSV {
 
 			// Generate access code for new members.
 			$access_code = \Convoca\Core\Utils::generate_access_code();
-			update_post_meta( $post_id, '_conv_access_code', $access_code );
+			update_post_meta( $post_id, '_convoca_access_code', $access_code );
 
 			// Assign member number only to new members.
 			$num = CPT_Miembro::get_next_member_number( $post_id );
-			update_post_meta( $post_id, '_conv_numero_socio', $num );
+			update_post_meta( $post_id, '_convoca_numero_socio', $num );
 		}
 
 		// Save meta (for both new and updated members).
 		$meta_map = array( 'email', 'dni', 'telefono', 'direccion', 'municipio', 'plan' );
 		foreach ( $meta_map as $m ) {
 			if ( ! empty( $row[ $m ] ) ) {
-				update_post_meta( $post_id, '_conv_' . $m, sanitize_text_field( $row[ $m ] ) );
+				update_post_meta( $post_id, '_convoca_' . $m, sanitize_text_field( $row[ $m ] ) );
 			}
 		}
-		update_post_meta( $post_id, '_conv_estado_miembro', 'activo' );
+		update_post_meta( $post_id, '_convoca_estado_miembro', 'activo' );
 
 		if ( $send_welcome ) {
 			do_action( 'convoca_member_created', $post_id, array( 'nombre' => $nombre ) );
@@ -559,7 +559,7 @@ class Admin_Import_CSV {
 			array(
 				'post_type'      => 'miembro',
 				'posts_per_page' => 1,
-				'meta_key'       => '_conv_email',
+				'meta_key'       => '_convoca_email',
 				'meta_value'     => $email,
 				'fields'         => 'ids',
 			)
@@ -574,7 +574,7 @@ class Admin_Import_CSV {
 				array(
 					'post_type'      => 'miembro',
 					'posts_per_page' => 1,
-					'meta_key'       => '_conv_dni',
+					'meta_key'       => '_convoca_dni',
 					'meta_value'     => $dni,
 					'fields'         => 'ids',
 				)

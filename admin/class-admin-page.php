@@ -179,7 +179,7 @@ class Admin_Page {
 			<!-- Filters -->
 			<form method="get">
 				<input type="hidden" name="page" value="conv-members">
-				<?php wp_nonce_field( 'bulk-members', '_conv_nonce', true, false ); ?>
+				<?php wp_nonce_field( 'bulk-members', '_convoca_nonce', true, false ); ?>
 				<?php $list->search_box( __( 'Buscar', 'convoca-members' ), 'conv-search' ); ?>
 				<?php $list->display(); ?>
 			</form>
@@ -212,7 +212,7 @@ class Admin_Page {
 				$wpdb->prepare(
 					"SELECT COUNT(*) FROM {$wpdb->postmeta} pm
 				 JOIN {$wpdb->posts} p ON p.ID = pm.post_id
-				 WHERE pm.meta_key = '_conv_estado_miembro' AND pm.meta_value = %s
+				 WHERE pm.meta_key = '_convoca_estado_miembro' AND pm.meta_value = %s
 				   AND p.post_type = 'miembro' AND p.post_status = 'publish'",
 					$state
 				)
@@ -245,7 +245,7 @@ class Admin_Page {
 			return;
 		}
 
-		$meta         = fn( string $key ) => get_post_meta( $post_id, '_conv_' . $key, true );
+		$meta         = fn( string $key ) => get_post_meta( $post_id, '_convoca_' . $key, true );
 		$estado       = $meta( 'estado_miembro' ) ?: 'pendiente_documentacion';
 		$history      = Estados::get_history( $post_id );
 		$terms        = wp_get_object_terms( $post_id, 'tipo_miembro', array( 'fields' => 'names' ) );
@@ -471,7 +471,7 @@ class Admin_Page {
 				);
 				$activos = (int) $wpdb->get_var(
 					"SELECT COUNT(*) FROM {$wpdb->postmeta} pm JOIN {$wpdb->posts} p ON p.ID = pm.post_id
-					 WHERE pm.meta_key = '_conv_estado_miembro' AND pm.meta_value = 'activo'
+					 WHERE pm.meta_key = '_convoca_estado_miembro' AND pm.meta_value = 'activo'
 					   AND p.post_type = 'miembro' AND p.post_status = 'publish'"
 				);
 				echo '<p>' . sprintf(
@@ -521,8 +521,8 @@ class Admin_Page {
 		}
 
 		$now = current_time( 'mysql' );
-		update_post_meta( $post_id, '_conv_ultimo_contacto_whatsapp', $now );
-		update_post_meta( $post_id, '_conv_ultimo_contacto', $now );
+		update_post_meta( $post_id, '_convoca_ultimo_contacto_whatsapp', $now );
+		update_post_meta( $post_id, '_convoca_ultimo_contacto', $now );
 
 		\Convoca\Core\Logger::info(
 			__( 'Se ha iniciado contacto por WhatsApp desde el panel de administración.', 'convoca-members' ),
@@ -595,11 +595,11 @@ class Admin_Page {
 		foreach ( $query->posts as $post ) {
 			$rows[] = array(
 				$post->post_title,
-				get_post_meta( $post->ID, '_conv_email', true ),
-				get_post_meta( $post->ID, '_conv_dni', true ),
-				get_post_meta( $post->ID, '_conv_plan', true ),
-				get_post_meta( $post->ID, '_conv_estado_miembro', true ) ?: '—',
-				get_post_meta( $post->ID, '_conv_telefono', true ),
+				get_post_meta( $post->ID, '_convoca_email', true ),
+				get_post_meta( $post->ID, '_convoca_dni', true ),
+				get_post_meta( $post->ID, '_convoca_plan', true ),
+				get_post_meta( $post->ID, '_convoca_estado_miembro', true ) ?: '—',
+				get_post_meta( $post->ID, '_convoca_telefono', true ),
 			);
 		}
 

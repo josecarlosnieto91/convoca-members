@@ -20,14 +20,14 @@ class PDF_Card {
 	 */
 	public static function get_html( int $post_id ): string {
 		$nombre            = get_the_title( $post_id );
-		$num_socio         = get_post_meta( $post_id, '_conv_numero_socio', true );
+		$num_socio         = get_post_meta( $post_id, '_convoca_numero_socio', true );
 		$num_socio_display = $num_socio ? str_pad( $num_socio, 4, '0', STR_PAD_LEFT ) : esc_html__( 'PENDIENTE', 'convoca-members' );
 
-		$plan_key  = get_post_meta( $post_id, '_conv_plan', true );
+		$plan_key  = get_post_meta( $post_id, '_convoca_plan', true );
 		$plan_data = CPT_Miembro::get_plan( $plan_key ?: '' );
 		$plan      = ( $plan_data && isset( $plan_data['label'] ) ) ? $plan_data['label'] : esc_html__( 'Socio/a', 'convoca-members' );
 
-		$fecha     = get_post_meta( $post_id, '_conv_fecha_alta', true );
+		$fecha     = get_post_meta( $post_id, '_convoca_fecha_alta', true );
 		$fecha_fmt = $fecha ? wp_date( 'd/m/Y', strtotime( $fecha ) ) : wp_date( 'd/m/Y', strtotime( get_the_date( 'Y-m-d', $post_id ) ) );
 
 		$logo_html = \Convoca\Core\Utils::get_branding_html( 'members', '', 'height: 45px; width: auto; color: #fff; margin: 0; font-size: 24px;' );
@@ -208,7 +208,7 @@ class PDF_Card {
 	}
 
 	/**
-	 * Generate a PDF for the member card using CONV_Signature (Dompdf).
+	 * Generate a PDF for the member card using Signature (Dompdf).
 	 *
 	 * @param int $post_id Member post ID.
 	 * @return string PDF binary content.
@@ -217,7 +217,7 @@ class PDF_Card {
 		$html     = self::get_html( $post_id );
 		$tmp_path = wp_tempnam( 'member-card-' ) . '.pdf';
 
-		$signature = new \Convoca\Core\CONV_Signature();
+		$signature = new \Convoca\Core\Signature();
 		$result    = $signature->generate_pdf(
 			$html,
 			array(),

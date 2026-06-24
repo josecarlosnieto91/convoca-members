@@ -45,14 +45,14 @@ class PDF_Document {
 		$existing = get_posts(
 			array(
 				'post_type'      => 'convoca_documento',
-				'meta_key'       => '_conv_usuario_id',
+				'meta_key'       => '_convoca_usuario_id',
 				'meta_value'     => $user_id,
 				'posts_per_page' => 1,
 			)
 		);
 
 		if ( ! empty( $existing ) ) {
-			$filepath = get_post_meta( $existing[0]->ID, '_conv_documento_path', true );
+			$filepath = get_post_meta( $existing[0]->ID, '_convoca_documento_path', true );
 			if ( $filepath && file_exists( $filepath ) ) {
 				$attachments[] = $filepath;
 			}
@@ -75,7 +75,7 @@ class PDF_Document {
 				"SELECT p.ID FROM {$wpdb->posts} p 
              INNER JOIN {$wpdb->postmeta} pm ON p.ID = pm.post_id 
              WHERE p.post_type = 'convoca_documento' 
-             AND pm.meta_key = '_conv_usuario_id' AND pm.meta_value = %d 
+             AND pm.meta_key = '_convoca_usuario_id' AND pm.meta_value = %d 
              AND p.post_status = 'publish' LIMIT 1",
 				$user_id
 			)
@@ -109,7 +109,7 @@ class PDF_Document {
 					"SELECT p.ID FROM {$wpdb->posts} p 
                  INNER JOIN {$wpdb->postmeta} pm ON p.ID = pm.post_id 
                  WHERE p.post_type = 'convoca_documento' 
-                 AND pm.meta_key = '_conv_usuario_id' AND pm.meta_value = %d 
+                 AND pm.meta_key = '_convoca_usuario_id' AND pm.meta_value = %d 
                  AND p.post_status = 'publish' 
                  FOR UPDATE",
 					$user_id
@@ -122,14 +122,14 @@ class PDF_Document {
 				return (int) $existing_id;
 			}
 
-			if ( ! class_exists( '\\Convoca\\Core\\CONV_Signature' ) ) {
+			if ( ! class_exists( '\\Convoca\\Core\\Signature' ) ) {
 				$wpdb->query( 'ROLLBACK' );
 				wp_delete_post( $temp_post_id, true );
-				error_log( 'Convoca: CONV_Signature class not found.' );
+				error_log( 'Convoca: Signature class not found.' );
 				return null;
 			}
 
-			$signature = new \Convoca\Core\CONV_Signature();
+			$signature = new \Convoca\Core\Signature();
 
 			// Collect user data.
 			$dni       = get_user_meta( $user_id, '_convoca_shifts_dni', true );
@@ -170,8 +170,8 @@ class PDF_Document {
 			$content_for_hash = $user_id . $dni . $email . $timestamp;
 			$stamp_html       = $signature->get_acceptance_stamp_html( $nombre, $ip, $timestamp, $content_for_hash );
 
-			if ( str_contains( $template_html, '<!-- FIRMA DIGITAL SERÁ AÑADIDA POR LA CLASE CONV_Signature -->' ) ) {
-				$template_html = str_replace( '<!-- FIRMA DIGITAL SERÁ AÑADIDA POR LA CLASE CONV_Signature -->', $stamp_html, $template_html );
+			if ( str_contains( $template_html, '<!-- FIRMA DIGITAL SERÁ AÑADIDA POR LA CLASE Signature -->' ) ) {
+				$template_html = str_replace( '<!-- FIRMA DIGITAL SERÁ AÑADIDA POR LA CLASE Signature -->', $stamp_html, $template_html );
 			} else {
 				$template_html .= $stamp_html;
 			}
@@ -213,11 +213,11 @@ class PDF_Document {
 			// ── 4. Publish and save meta INSIDE transaction ──
 			$wpdb->update( $wpdb->posts, array( 'post_status' => 'publish' ), array( 'ID' => $temp_post_id ) );
 
-			update_post_meta( $temp_post_id, '_conv_usuario_id', $user_id );
-			update_post_meta( $temp_post_id, '_conv_tipo_documento', 'acuerdo_voluntariado' );
-			update_post_meta( $temp_post_id, '_conv_hash', $hash );
-			update_post_meta( $temp_post_id, '_conv_documento_url', rest_url( 'convoca-members/v1/documentos/' . $temp_post_id ) );
-			update_post_meta( $temp_post_id, '_conv_documento_path', $generated_path );
+			update_post_meta( $temp_post_id, '_convoca_usuario_id', $user_id );
+			update_post_meta( $temp_post_id, '_convoca_tipo_documento', 'acuerdo_voluntariado' );
+			update_post_meta( $temp_post_id, '_convoca_hash', $hash );
+			update_post_meta( $temp_post_id, '_convoca_documento_url', rest_url( 'convoca-members/v1/documentos/' . $temp_post_id ) );
+			update_post_meta( $temp_post_id, '_convoca_documento_path', $generated_path );
 
 			$wpdb->query( 'COMMIT' );
 			return $temp_post_id;

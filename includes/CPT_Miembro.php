@@ -319,8 +319,8 @@ class CPT_Miembro {
 	 * @return string|null     Full wa.me URL or null if no phone.
 	 */
 	public static function whatsapp_link( int $post_id, string $message = '' ): ?string {
-		$phone  = get_post_meta( $post_id, '_conv_telefono', true );
-		$has_wa = get_post_meta( $post_id, '_conv_whatsapp', true );
+		$phone  = get_post_meta( $post_id, '_convoca_telefono', true );
+		$has_wa = get_post_meta( $post_id, '_convoca_whatsapp', true );
 
 		if ( ! $phone || $has_wa === 'no' ) {
 			return null;
@@ -335,7 +335,7 @@ class CPT_Miembro {
 
 		$url = 'https://wa.me/' . $clean;
 		if ( $message ) {
-			$nombre = get_post_meta( $post_id, '_conv_nombre', true ) ?: get_the_title( $post_id );
+			$nombre = get_post_meta( $post_id, '_convoca_nombre', true ) ?: get_the_title( $post_id );
 			$msg    = str_replace( '{nombre}', $nombre, $message );
 			$url   .= '?text=' . rawurlencode( $msg );
 		}
@@ -433,8 +433,8 @@ class CPT_Miembro {
 	public static function approve_member( int $post_id ): bool {
 		global $wpdb;
 
-		$status = get_post_meta( $post_id, '_conv_estado_miembro', true );
-		$num    = get_post_meta( $post_id, '_conv_numero_socio', true );
+		$status = get_post_meta( $post_id, '_convoca_estado_miembro', true );
+		$num    = get_post_meta( $post_id, '_convoca_numero_socio', true );
 
 		// If already active AND already has a number, nothing to do.
 		if ( $status === 'activo' && ! empty( $num ) ) {
@@ -447,14 +447,14 @@ class CPT_Miembro {
 			// Assign number if missing.
 			if ( empty( $num ) ) {
 				$num = self::get_next_member_number_internal( $post_id );
-				update_post_meta( $post_id, '_conv_numero_socio', $num );
+				update_post_meta( $post_id, '_convoca_numero_socio', $num );
 			}
-			update_post_meta( $post_id, '_conv_estado_cuota', 'activa' );
+			update_post_meta( $post_id, '_convoca_estado_cuota', 'activa' );
 
 			// Set dates.
 			$now = current_time( 'Y-m-d' );
-			update_post_meta( $post_id, '_conv_fecha_alta', $now );
-			update_post_meta( $post_id, '_conv_fecha_renovacion', \Convoca\Core\Utils::format_date( '+1 year', 'Y-m-d' ) );
+			update_post_meta( $post_id, '_convoca_fecha_alta', $now );
+			update_post_meta( $post_id, '_convoca_fecha_renovacion', \Convoca\Core\Utils::format_date( '+1 year', 'Y-m-d' ) );
 
 			// Activate via state machine (triggers audit log + hooks).
 			Estados::change( $post_id, 'activo', "Aprobado manualmente. Socio #$num" );
@@ -478,8 +478,8 @@ class CPT_Miembro {
 	 * @param int $post_id Member ID.
 	 */
 	public static function check_member_status( int $post_id ): void {
-		$status       = get_post_meta( $post_id, '_conv_estado_miembro', true );
-		$renewal_date = get_post_meta( $post_id, '_conv_fecha_renovacion', true );
+		$status       = get_post_meta( $post_id, '_convoca_estado_miembro', true );
+		$renewal_date = get_post_meta( $post_id, '_convoca_fecha_renovacion', true );
 		$today        = current_time( 'Y-m-d' );
 
 		if ( $status === 'baja' || empty( $renewal_date ) ) {
@@ -487,7 +487,7 @@ class CPT_Miembro {
 		}
 
 		// Skip volunteers — their renewal is handled by Voluntariado_Manager, not by payment.
-		$forma_pago = get_post_meta( $post_id, '_conv_forma_pago', true );
+		$forma_pago = get_post_meta( $post_id, '_convoca_forma_pago', true );
 		if ( $forma_pago === 'voluntariado' ) {
 			return;
 		}
@@ -496,8 +496,8 @@ class CPT_Miembro {
 		$baja_date = \Convoca\Core\Utils::format_date( $renewal_date . ' +30 days', 'Y-m-d' );
 		if ( $today > $baja_date ) {
 			Estados::change( $post_id, 'baja', 'Baja automática por falta de pago (30 días tras vencimiento).' );
-			update_post_meta( $post_id, '_conv_estado_cuota', 'vencida' );
-			update_post_meta( $post_id, '_conv_fecha_baja', $today );
+			update_post_meta( $post_id, '_convoca_estado_cuota', 'vencida' );
+			update_post_meta( $post_id, '_convoca_fecha_baja', $today );
 			return;
 		}
 
@@ -505,7 +505,7 @@ class CPT_Miembro {
 		$suspension_date = \Convoca\Core\Utils::format_date( $renewal_date . ' +15 days', 'Y-m-d' );
 		if ( $today > $suspension_date && $status !== 'suspendido' ) {
 			Estados::change( $post_id, 'suspendido', 'Suspendido automáticamente por falta de pago (15 días tras vencimiento).' );
-			update_post_meta( $post_id, '_conv_estado_cuota', 'vencida' );
+			update_post_meta( $post_id, '_convoca_estado_cuota', 'vencida' );
 			return;
 		}
 	}

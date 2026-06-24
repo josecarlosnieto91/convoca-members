@@ -25,11 +25,11 @@ class Process_Member {
 	 */
 	public static function ensure_wp_user( int $member_id ): array {
 		$member = get_post( $member_id );
-		$email  = get_post_meta( $member_id, '_conv_email', true );
+		$email  = get_post_meta( $member_id, '_convoca_email', true );
 		$nombre = $member ? $member->post_title : 'Miembro';
 
 		// Check if WP user already exists via meta link.
-		$existing_user_id = (int) get_post_meta( $member_id, '_conv_user_id', true );
+		$existing_user_id = (int) get_post_meta( $member_id, '_convoca_user_id', true );
 		if ( $existing_user_id && get_userdata( $existing_user_id ) ) {
 			// User exists — generate new password and send.
 			$new_password = wp_generate_password( 12, false );
@@ -80,13 +80,13 @@ class Process_Member {
 		);
 
 		// Link WP user to member.
-		update_post_meta( $member_id, '_conv_user_id', $user_id );
-		update_user_meta( $user_id, '_conv_member_id', $member_id );
+		update_post_meta( $member_id, '_convoca_user_id', $user_id );
+		update_user_meta( $user_id, '_convoca_member_id', $member_id );
 
 		// Copy member data to user meta.
-		update_user_meta( $user_id, '_conv_email', $email );
-		update_user_meta( $user_id, '_conv_dni', get_post_meta( $member_id, '_conv_dni', true ) );
-		update_user_meta( $user_id, '_conv_telefono', get_post_meta( $member_id, '_conv_telefono', true ) );
+		update_user_meta( $user_id, '_convoca_email', $email );
+		update_user_meta( $user_id, '_convoca_dni', get_post_meta( $member_id, '_convoca_dni', true ) );
+		update_user_meta( $user_id, '_convoca_telefono', get_post_meta( $member_id, '_convoca_telefono', true ) );
 
 		Logger::info( "Usuario WP creado para miembro #{$member_id}: {$username}", 'Members', $member_id );
 
@@ -106,7 +106,7 @@ class Process_Member {
 	 * @param string $password  Plain-text password.
 	 */
 	public static function send_credentials_email( int $member_id, string $username, string $password ): void {
-		$email = get_post_meta( $member_id, '_conv_email', true );
+		$email = get_post_meta( $member_id, '_convoca_email', true );
 
 		if ( ! $email || ! is_email( $email ) ) {
 			Logger::warning( "No se pueden enviar credenciales: email inválido para miembro #{$member_id}", 'Members' );
@@ -124,7 +124,7 @@ class Process_Member {
 			)
 		);
 
-		update_post_meta( $member_id, '_conv_credenciales_enviadas', current_time( 'mysql' ) );
+		update_post_meta( $member_id, '_convoca_credenciales_enviadas', current_time( 'mysql' ) );
 		Logger::info( "Credenciales enviadas a {$email} para miembro #{$member_id}", 'Members', $member_id );
 	}
 
@@ -200,8 +200,8 @@ class Process_Member {
                  JOIN {$wpdb->posts} p ON p.ID = pm.post_id
                  WHERE p.post_type = 'miembro' 
                    AND p.post_status = 'publish'
-                   AND ((pm.meta_key = '_conv_dni' AND pm.meta_value = %s)
-                        OR (pm.meta_key = '_conv_email' AND pm.meta_value = %s))
+                   AND ((pm.meta_key = '_convoca_dni' AND pm.meta_value = %s)
+                        OR (pm.meta_key = '_convoca_email' AND pm.meta_value = %s))
                   FOR UPDATE",
 					$dni,
 					$email
@@ -267,7 +267,7 @@ class Process_Member {
 			}
 
 			foreach ( $meta as $key => $value ) {
-				update_post_meta( $post_id, '_conv_' . $key, $value );
+				update_post_meta( $post_id, '_convoca_' . $key, $value );
 			}
 
 			// Log GDPR consent.
@@ -308,7 +308,7 @@ class Process_Member {
 			);
 
 			if ( ! is_wp_error( $payment ) ) {
-				update_post_meta( $post_id, '_conv_pago_id', $payment['pago_id'] );
+				update_post_meta( $post_id, '_convoca_pago_id', $payment['pago_id'] );
 				return array(
 					'id'       => $post_id,
 					'nombre'   => $nombre,
@@ -319,8 +319,8 @@ class Process_Member {
 				\Convoca\Core\Logger::error( 'Error al crear pago en pasarela: ' . $payment->get_error_message(), 'Members', $post_id );
 
 				// Flag for manual review since payment failed.
-				update_post_meta( $post_id, '_conv_needs_manual_review', '1' );
-				update_post_meta( $post_id, '_conv_review_note', 'Error pasarela: ' . $payment->get_error_message() );
+				update_post_meta( $post_id, '_convoca_needs_manual_review', '1' );
+				update_post_meta( $post_id, '_convoca_review_note', 'Error pasarela: ' . $payment->get_error_message() );
 
 				return array(
 					'id'            => $post_id,

@@ -346,9 +346,9 @@ add_action(
 add_action(
 	'convoca_voluntario_aprobado',
 	function ( int $user_id ): void {
-		$member_id = (int) get_user_meta( $user_id, '_conv_member_id', true );
+		$member_id = (int) get_user_meta( $user_id, '_convoca_member_id', true );
 		if ( $member_id ) {
-			$estado = get_post_meta( $member_id, '_conv_estado_miembro', true );
+			$estado = get_post_meta( $member_id, '_convoca_estado_miembro', true );
 			if ( $estado !== 'activo' ) {
 				\Convoca\Members\CPT_Miembro::approve_member( $member_id );
 				\Convoca\Core\Logger::info( "Voluntario #$user_id aprobado -> miembro #$member_id activado", 'Members/Admin' );
@@ -390,7 +390,7 @@ add_shortcode(
         </div>';
 		}
 
-		$estado = get_post_meta( $member_id, '_conv_estado_miembro', true );
+		$estado = get_post_meta( $member_id, '_convoca_estado_miembro', true );
 		if ( $estado !== 'activo' ) {
 			return '<div class="convoca-alert convoca-alert--warning" style="display:block;max-width:500px;margin:40px auto;text-align:center;">
             <p><strong>' . __( 'Membresía no activa', 'convoca-members' ) . '</strong></p>
@@ -398,13 +398,13 @@ add_shortcode(
         </div>';
 		}
 
-		$plan       = get_post_meta( $member_id, '_conv_plan', true );
+		$plan       = get_post_meta( $member_id, '_convoca_plan', true );
 		$plan_label = '';
 		if ( class_exists( '\\Convoca\\Members\\CPT_Miembro' ) ) {
 			$plans      = \Convoca\Members\CPT_Miembro::get_plans();
 			$plan_label = $plans[ $plan ]['label'] ?? $plan;
 		}
-		$num = get_post_meta( $member_id, '_conv_numero_socio', true );
+		$num = get_post_meta( $member_id, '_convoca_numero_socio', true );
 
 		return '<div style="max-width:500px;margin:40px auto;text-align:center;background:#fff;border-radius:16px;padding:40px;box-shadow:0 10px 25px rgba(0,0,0,0.05);">
         <div style="font-size:64px;margin-bottom:20px;">✅</div>

@@ -59,7 +59,7 @@ class Member_Auth {
 		}
 
 		// Verify the user has a linked member (miembro CPT).
-		$member_id = (int) get_user_meta( $user->ID, '_conv_member_id', true );
+		$member_id = (int) get_user_meta( $user->ID, '_convoca_member_id', true );
 		if ( ! $member_id ) {
 			Logger::warning( "Usuario {$username} no tiene un perfil de socio vinculado.", 'Members/Members' );
 			return new \WP_Error(
@@ -216,10 +216,10 @@ class Member_Auth {
 		return array(
 			'id'            => $member_id,
 			'name'          => $post->post_title,
-			'email'         => get_post_meta( $member_id, '_conv_email', true ),
-			'phone'         => get_post_meta( $member_id, '_conv_telefono', true ),
-			'dni'           => get_post_meta( $member_id, '_conv_dni', true ),
-			'member_status' => get_post_meta( $member_id, '_conv_estado_miembro', true ),
+			'email'         => get_post_meta( $member_id, '_convoca_email', true ),
+			'phone'         => get_post_meta( $member_id, '_convoca_telefono', true ),
+			'dni'           => get_post_meta( $member_id, '_convoca_dni', true ),
+			'member_status' => get_post_meta( $member_id, '_convoca_estado_miembro', true ),
 		);
 	}
 
@@ -242,7 +242,7 @@ class Member_Auth {
 		if ( ! $member_id ) {
 			return false;
 		}
-		$status = get_post_meta( $member_id, '_conv_estado_miembro', true );
+		$status = get_post_meta( $member_id, '_convoca_estado_miembro', true );
 		return $status === 'activo';
 	}
 

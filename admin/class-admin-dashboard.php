@@ -140,7 +140,7 @@ class Admin_Dashboard {
 				"SELECT COUNT(*) FROM {$wpdb->posts} p
                  JOIN {$wpdb->postmeta} pm ON p.ID = pm.post_id
                  WHERE p.post_type = 'miembro' AND p.post_status = 'publish'
-                 AND pm.meta_key = '_conv_estado_miembro' AND pm.meta_value = 'activo'"
+                 AND pm.meta_key = '_convoca_estado_miembro' AND pm.meta_value = 'activo'"
 			);
 
 			// Pending payment.
@@ -148,15 +148,15 @@ class Admin_Dashboard {
 				"SELECT COUNT(*) FROM {$wpdb->posts} p
                  JOIN {$wpdb->postmeta} pm ON p.ID = pm.post_id
                  WHERE p.post_type = 'miembro' AND p.post_status = 'publish'
-                 AND pm.meta_key = '_conv_estado_miembro' AND pm.meta_value = 'pendiente_pago'"
+                 AND pm.meta_key = '_convoca_estado_miembro' AND pm.meta_value = 'pendiente_pago'"
 			);
 
 			// Expiring within 7 days.
 			$expiring_soon = (int) $wpdb->get_var(
 				$wpdb->prepare(
 					"SELECT COUNT(*) FROM {$wpdb->posts} p
-                 JOIN {$wpdb->postmeta} pm_e ON p.ID = pm_e.post_id AND pm_e.meta_key = '_conv_estado_miembro' AND pm_e.meta_value = 'activo'
-                 JOIN {$wpdb->postmeta} pm_r ON p.ID = pm_r.post_id AND pm_r.meta_key = '_conv_fecha_renovacion'
+                 JOIN {$wpdb->postmeta} pm_e ON p.ID = pm_e.post_id AND pm_e.meta_key = '_convoca_estado_miembro' AND pm_e.meta_value = 'activo'
+                 JOIN {$wpdb->postmeta} pm_r ON p.ID = pm_r.post_id AND pm_r.meta_key = '_convoca_fecha_renovacion'
                  WHERE p.post_type = 'miembro' AND p.post_status = 'publish'
                  AND CAST(pm_r.meta_value AS DATE) BETWEEN %s AND %s",
 					$today,
@@ -168,7 +168,7 @@ class Admin_Dashboard {
 			$hours_month = (float) $wpdb->get_var(
 				$wpdb->prepare(
 					"SELECT COALESCE(SUM(pm.meta_value), 0) FROM {$wpdb->posts} p
-                 JOIN {$wpdb->postmeta} pm ON p.ID = pm.post_id AND pm.meta_key = '_conv_horas'
+                 JOIN {$wpdb->postmeta} pm ON p.ID = pm.post_id AND pm.meta_key = '_convoca_horas'
                  WHERE p.post_type = 'registro_hora' AND p.post_status = 'publish'
                  AND p.post_date >= %s",
 					$month_ago . ' 00:00:00'
@@ -190,7 +190,7 @@ class Admin_Dashboard {
 				"SELECT COUNT(*) FROM {$wpdb->posts} p
                  JOIN {$wpdb->postmeta} pm ON p.ID = pm.post_id
                  WHERE p.post_type = 'miembro' AND p.post_status = 'publish'
-                 AND pm.meta_key = '_conv_estado_miembro' AND pm.meta_value = 'pendiente_documentacion'"
+                 AND pm.meta_key = '_convoca_estado_miembro' AND pm.meta_value = 'pendiente_documentacion'"
 			);
 
 			// System errors (last 24h).

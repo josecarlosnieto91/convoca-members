@@ -390,7 +390,7 @@ class Email_Manager {
 			return;
 		}
 
-		$email = get_post_meta( $post_id, '_conv_email', true ) ?: get_the_author_meta( 'user_email', get_post_field( 'post_author', $post_id ) );
+		$email = get_post_meta( $post_id, '_convoca_email', true ) ?: get_the_author_meta( 'user_email', get_post_field( 'post_author', $post_id ) );
 		if ( empty( $email ) ) {
 			\Convoca\Core\Logger::warning( "Email vacío para miembro #{$post_id}, no se envía {$template_slug}.", 'Members/Emails' );
 			return;
@@ -401,7 +401,7 @@ class Email_Manager {
 		}
 
 		// Dedup: prevent sending the same email template to the same member within 5 minutes.
-		$dedup_key = '_conv_last_email_sent_' . $template_slug;
+		$dedup_key = '_convoca_last_email_sent_' . $template_slug;
 		$last_sent = (int) get_post_meta( $post_id, $dedup_key, true );
 		if ( $last_sent && ( time() - $last_sent ) < 300 ) {
 			\Convoca\Core\Logger::info( "Email $template_slug ya enviado recientemente a miembro #$post_id, omitiendo.", 'Members/Emails' );
@@ -445,8 +445,8 @@ class Email_Manager {
 		if ( $sent ) {
 			// Update tracking and Audit Log.
 			$now = current_time( 'mysql' );
-			update_post_meta( $post_id, '_conv_ultimo_contacto_email', $now );
-			update_post_meta( $post_id, '_conv_ultimo_contacto', $now );
+			update_post_meta( $post_id, '_convoca_ultimo_contacto_email', $now );
+			update_post_meta( $post_id, '_convoca_ultimo_contacto', $now );
 			update_post_meta( $post_id, $dedup_key, time() );
 
 			\Convoca\Core\Logger::info(
@@ -480,7 +480,7 @@ class Email_Manager {
 	 * Build variable replacements from post meta.
 	 */
 	private function build_variables( int $post_id ): array {
-		$meta = fn( string $key ) => get_post_meta( $post_id, '_conv_' . $key, true );
+		$meta = fn( string $key ) => get_post_meta( $post_id, '_convoca_' . $key, true );
 
 		$plan_key  = $meta( 'plan' ) ?: $meta( 'sub_plan' );
 		$plan_data = CPT_Miembro::get_plan( $plan_key );
@@ -525,11 +525,11 @@ class Email_Manager {
 				'fields'         => 'ids',
 				'meta_query'     => array(
 					array(
-						'key'   => '_conv_member_id',
+						'key'   => '_convoca_member_id',
 						'value' => $post_id,
 					),
 					array(
-						'key'   => '_conv_estado',
+						'key'   => '_convoca_estado',
 						'value' => 'aprobada',
 					),
 				),
@@ -538,7 +538,7 @@ class Email_Manager {
 		if ( ! empty( $proyecto_ids ) ) {
 			$nombres_proyecto = array();
 			foreach ( $proyecto_ids as $pid ) {
-				$proy_id = get_post_meta( $pid, '_conv_proyecto_id', true );
+				$proy_id = get_post_meta( $pid, '_convoca_proyecto_id', true );
 				if ( $proy_id && ( $titulo = get_the_title( $proy_id ) ) ) {
 					$nombres_proyecto[ $proy_id ] = $titulo;
 				}

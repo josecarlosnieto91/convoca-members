@@ -53,9 +53,9 @@ class Payment_Listener {
 		}
 
 		// Fetch specific meta fields individually to avoid array-vs-string comparison issues.
-		$current_member_state = get_post_meta( $origin_id, '_conv_estado_miembro', true );
-		$old_renewal_date     = get_post_meta( $origin_id, '_conv_fecha_renovacion', true );
-		$last_pago_id         = (int) get_post_meta( $origin_id, '_conv_pago_id', true );
+		$current_member_state = get_post_meta( $origin_id, '_convoca_estado_miembro', true );
+		$old_renewal_date     = get_post_meta( $origin_id, '_convoca_fecha_renovacion', true );
+		$last_pago_id         = (int) get_post_meta( $origin_id, '_convoca_pago_id', true );
 
 		if ( $last_pago_id === (int) $pago_id ) {
 			\Convoca\Core\Logger::info( "Member payment $pago_id already applied to member #$origin_id, skipping.", 'Members/Payment' );
@@ -63,13 +63,13 @@ class Payment_Listener {
 		}
 
 		// Update fee information.
-		update_post_meta( $origin_id, '_conv_estado_cuota', 'activa' );
-		update_post_meta( $origin_id, '_conv_metodo_pago', $meta['method'] ?? '' );
-		update_post_meta( $origin_id, '_conv_pago_id', $pago_id );
-		update_post_meta( $origin_id, '_conv_forma_pago', 'cuota' );
+		update_post_meta( $origin_id, '_convoca_estado_cuota', 'activa' );
+		update_post_meta( $origin_id, '_convoca_metodo_pago', $meta['method'] ?? '' );
+		update_post_meta( $origin_id, '_convoca_pago_id', $pago_id );
+		update_post_meta( $origin_id, '_convoca_forma_pago', 'cuota' );
 
 		// Validate plan existence before renewal.
-		$plan_key  = get_post_meta( $origin_id, '_conv_plan', true );
+		$plan_key  = get_post_meta( $origin_id, '_convoca_plan', true );
 		$plan_data = CPT_Miembro::get_plan( $plan_key );
 		if ( ! $plan_data ) {
 			\Convoca\Core\Logger::error( "No se pudo procesar renovación: el plan '$plan_key' no existe para el miembro #$origin_id.", 'Members/Payment', $origin_id );
@@ -88,9 +88,9 @@ class Payment_Listener {
 			$new_renewal = \Convoca\Core\Utils::format_date( $today . ' +1 year', 'Y-m-d' );
 		}
 
-		update_post_meta( $origin_id, '_conv_fecha_renovacion', $new_renewal );
-		delete_post_meta( $origin_id, '_conv_last_renewal_notice' );
-		delete_post_meta( $origin_id, '_conv_msg_renovacion_proxima' );
+		update_post_meta( $origin_id, '_convoca_fecha_renovacion', $new_renewal );
+		delete_post_meta( $origin_id, '_convoca_last_renewal_notice' );
+		delete_post_meta( $origin_id, '_convoca_msg_renovacion_proxima' );
 
 		$email_manager = new Email_Manager();
 
@@ -144,11 +144,11 @@ class Payment_Listener {
 
 		\Convoca\Core\Logger::warning( "Pago fallido (ID: $pago_id) para el miembro #$miembro_id. Código Redsys: $response_code", 'Members/Payment', $miembro_id );
 
-		$current_status = get_post_meta( $miembro_id, '_conv_estado_cuota', true );
+		$current_status = get_post_meta( $miembro_id, '_convoca_estado_cuota', true );
 
 		// Update status: 'vencida' (or 'pendiente' if it's the first attempt).
 		$new_status = ( ! $current_status || $current_status === 'pendiente' ) ? 'pendiente' : 'vencida';
-		update_post_meta( $miembro_id, '_conv_estado_cuota', $new_status );
+		update_post_meta( $miembro_id, '_convoca_estado_cuota', $new_status );
 
 		// Send email with new link.
 		if ( ! \Convoca\Core\Features::is_gateway_active() ) {

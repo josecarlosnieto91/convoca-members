@@ -60,7 +60,7 @@ class Admin_Metaboxes {
 				'post_type'      => 'convoca_documento',
 				'post_status'    => 'any',
 				'posts_per_page' => -1,
-				'meta_key'       => '_conv_usuario_id',
+				'meta_key'       => '_convoca_usuario_id',
 				'meta_value'     => $user->ID,
 			)
 		);
@@ -76,7 +76,7 @@ class Admin_Metaboxes {
 					<?php else : ?>
 						<ul>
 							<?php foreach ( $docs as $doc ) : ?>
-								<?php $url = get_post_meta( $doc->ID, '_conv_documento_url', true ); ?>
+								<?php $url = get_post_meta( $doc->ID, '_convoca_documento_url', true ); ?>
 								<li style="margin-bottom: 5px;">
 									<strong><?php echo esc_html( get_the_title( $doc ) ); ?></strong>
 									<?php if ( $url ) : ?>
@@ -96,13 +96,13 @@ class Admin_Metaboxes {
 	}
 
 	public function render_actions_metabox( \WP_Post $post ): void {
-		$pago_id   = get_post_meta( $post->ID, '_conv_pago_id', true );
+		$pago_id   = get_post_meta( $post->ID, '_convoca_pago_id', true );
 		$pago_link = '';
 		if ( $pago_id ) {
 			$pago_link = Payment_Handler::get_payment_link( (int) $pago_id );
 		}
 
-		$estado_cuota = get_post_meta( $post->ID, '_conv_estado_cuota', true );
+		$estado_cuota = get_post_meta( $post->ID, '_convoca_estado_cuota', true );
 		?>
 		<div class="conv-actions-panel">
 			<p><strong>Estado Cuota:</strong> <?php echo esc_html( ucfirst( $estado_cuota ?: 'pendiente' ) ); ?></p>
@@ -259,7 +259,7 @@ class Admin_Metaboxes {
 	public function render_metabox( \WP_Post $post ): void {
 		wp_nonce_field( 'convoca_save_miembro', 'convoca_miembro_nonce' );
 
-		$get   = fn( $k ) => get_post_meta( $post->ID, '_conv_' . $k, true );
+		$get   = fn( $k ) => get_post_meta( $post->ID, '_convoca_' . $k, true );
 		$plans = CPT_Miembro::get_plans();
 		?>
 		<div class="convoca-grid-2">
@@ -405,7 +405,7 @@ class Admin_Metaboxes {
 		$post_id = (int) $data['post_id'];
 
 		// Get Plan and Price.
-		$plan_key = get_post_meta( $post_id, '_conv_plan', true );
+		$plan_key = get_post_meta( $post_id, '_convoca_plan', true );
 		$plan     = CPT_Miembro::get_plan( $plan_key );
 
 		if ( ! $plan ) {
@@ -436,8 +436,8 @@ class Admin_Metaboxes {
 		}
 
 		// Save Payment ID to Member.
-		update_post_meta( $post_id, '_conv_pago_id', $result['pago_id'] );
-		update_post_meta( $post_id, '_conv_estado_cuota', 'pendiente' );
+		update_post_meta( $post_id, '_convoca_pago_id', $result['pago_id'] );
+		update_post_meta( $post_id, '_convoca_estado_cuota', 'pendiente' );
 
 		// Send Email.
 		$email_manager = new Email_Manager();
@@ -456,7 +456,7 @@ class Admin_Metaboxes {
 		$data    = wp_unslash( $_POST );
 		$post_id = (int) $data['post_id'];
 
-		$pago_id = get_post_meta( $post_id, '_conv_pago_id', true );
+		$pago_id = get_post_meta( $post_id, '_convoca_pago_id', true );
 		if ( ! $pago_id ) {
 			wp_send_json_error( array( 'message' => 'No hay un pago activo. Genera uno primero.' ) );
 		}
@@ -519,28 +519,28 @@ class Admin_Metaboxes {
 			} else {
 				$val = isset( $data[ 'convoca_' . $field ] ) ? sanitize_text_field( $data[ 'convoca_' . $field ] ) : '';
 			}
-			update_post_meta( $post_id, '_conv_' . $field, $val );
+			update_post_meta( $post_id, '_convoca_' . $field, $val );
 		}
 
 		// Handle State Change via State Machine.
 		$new_state = isset( $data['convoca_estado_miembro'] ) ? sanitize_text_field( $data['convoca_estado_miembro'] ) : '';
-		$old_state = get_post_meta( $post_id, '_conv_estado_miembro', true );
+		$old_state = get_post_meta( $post_id, '_convoca_estado_miembro', true );
 
 		if ( $new_state && $new_state !== $old_state ) {
 			Estados::change( $post_id, $new_state, __( 'Cambio manual desde edición de miembro.', 'convoca-members' ) );
 
 			// If activating, ensure they have a number and cuota is active.
 			if ( $new_state === 'activo' ) {
-				$num = get_post_meta( $post_id, '_conv_numero_socio', true );
+				$num = get_post_meta( $post_id, '_convoca_numero_socio', true );
 				if ( ! $num ) {
 					$num = CPT_Miembro::get_next_member_number( $post_id );
-					update_post_meta( $post_id, '_conv_numero_socio', $num );
+					update_post_meta( $post_id, '_convoca_numero_socio', $num );
 					\Convoca\Core\Logger::info( "Número de socio #$num asignado automáticamente al activar.", 'Members/Admin', $post_id );
 				}
 
-				$estado_cuota = get_post_meta( $post_id, '_conv_estado_cuota', true );
+				$estado_cuota = get_post_meta( $post_id, '_convoca_estado_cuota', true );
 				if ( $estado_cuota !== 'activa' ) {
-					update_post_meta( $post_id, '_conv_estado_cuota', 'activa' );
+					update_post_meta( $post_id, '_convoca_estado_cuota', 'activa' );
 					\Convoca\Core\Logger::info( "Estado de cuota marcado como 'Activa' al activar miembro manualmente.", 'Members/Admin', $post_id );
 				}
 			}
@@ -571,11 +571,11 @@ class Admin_Metaboxes {
 			'member'          => array(
 				'id'         => $member->ID,
 				'name'       => $member->post_title,
-				'email'      => get_post_meta( $member_id, '_conv_email', true ),
-				'dni'        => get_post_meta( $member_id, '_conv_dni', true ),
-				'telefono'   => get_post_meta( $member_id, '_conv_telefono', true ),
-				'estado'     => get_post_meta( $member_id, '_conv_estado_miembro', true ),
-				'plan'       => get_post_meta( $member_id, '_conv_plan', true ),
+				'email'      => get_post_meta( $member_id, '_convoca_email', true ),
+				'dni'        => get_post_meta( $member_id, '_convoca_dni', true ),
+				'telefono'   => get_post_meta( $member_id, '_convoca_telefono', true ),
+				'estado'     => get_post_meta( $member_id, '_convoca_estado_miembro', true ),
+				'plan'       => get_post_meta( $member_id, '_convoca_plan', true ),
 				'fecha_alta' => $member->post_date,
 			),
 			'inscriptions'    => array(),
@@ -587,15 +587,15 @@ class Admin_Metaboxes {
 			array(
 				'post_type'      => 'inscripcion',
 				'posts_per_page' => -1,
-				'meta_key'       => '_conv_email',
-				'meta_value'     => get_post_meta( $member_id, '_conv_email', true ),
+				'meta_key'       => '_convoca_email',
+				'meta_value'     => get_post_meta( $member_id, '_convoca_email', true ),
 			)
 		);
 		foreach ( $inscriptions as $insc ) {
 			$data['inscriptions'][] = array(
 				'id'        => $insc->ID,
-				'actividad' => get_the_title( get_post_meta( $insc->ID, '_conv_actividad_id', true ) ),
-				'estado'    => get_post_meta( $insc->ID, '_conv_estado', true ),
+				'actividad' => get_the_title( get_post_meta( $insc->ID, '_convoca_actividad_id', true ) ),
+				'estado'    => get_post_meta( $insc->ID, '_convoca_estado', true ),
 				'fecha'     => $insc->post_date,
 			);
 		}
@@ -604,18 +604,18 @@ class Admin_Metaboxes {
 			array(
 				'post_type'      => 'registro_hora',
 				'posts_per_page' => -1,
-				'meta_key'       => '_conv_member_id',
+				'meta_key'       => '_convoca_member_id',
 				'meta_value'     => $member_id,
 			)
 		);
 		foreach ( $hours as $hour ) {
-			$proyecto_id               = \get_post_meta( $hour->ID, '_conv_proyecto_id', true );
+			$proyecto_id               = \get_post_meta( $hour->ID, '_convoca_proyecto_id', true );
 			$data['volunteer_hours'][] = array(
 				'id'          => $hour->ID,
-				'horas'       => \get_post_meta( $hour->ID, '_conv_horas', true ),
+				'horas'       => \get_post_meta( $hour->ID, '_convoca_horas', true ),
 				'proyecto'    => $proyecto_id ? \get_the_title( $proyecto_id ) : '',
-				'descripcion' => \get_post_meta( $hour->ID, '_conv_descripcion', true ),
-				'estado'      => \get_post_meta( $hour->ID, '_conv_estado', true ),
+				'descripcion' => \get_post_meta( $hour->ID, '_convoca_descripcion', true ),
+				'estado'      => \get_post_meta( $hour->ID, '_convoca_estado', true ),
 				'fecha'       => $hour->post_date,
 			);
 		}
@@ -640,13 +640,13 @@ class Admin_Metaboxes {
 
 		global $wpdb;
 
-		$email = get_post_meta( $member_id, '_conv_email', true );
+		$email = get_post_meta( $member_id, '_convoca_email', true );
 
 		$inscriptions = get_posts(
 			array(
 				'post_type'      => 'inscripcion',
 				'posts_per_page' => -1,
-				'meta_key'       => '_conv_email',
+				'meta_key'       => '_convoca_email',
 				'meta_value'     => $email,
 			)
 		);
@@ -658,7 +658,7 @@ class Admin_Metaboxes {
 			array(
 				'post_type'      => 'registro_hora',
 				'posts_per_page' => -1,
-				'meta_key'       => '_conv_member_id',
+				'meta_key'       => '_convoca_member_id',
 				'meta_value'     => $member_id,
 			)
 		);

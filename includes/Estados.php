@@ -94,7 +94,7 @@ class Estados {
 			return new \WP_Error( 'invalid_state', __( 'Estado no válido.', 'convoca-members' ) );
 		}
 
-		$old = get_post_meta( $post_id, '_conv_estado_miembro', true );
+		$old = get_post_meta( $post_id, '_convoca_estado_miembro', true );
 
 		if ( $old === $new && ! empty( $old ) ) {
 			delete_transient( $lock_key );
@@ -121,11 +121,11 @@ class Estados {
 		$old_log = ! empty( $old ) ? $old : 'NUEVO';
 
 		// Save new state.
-		update_post_meta( $post_id, '_conv_estado_miembro', $new );
+		update_post_meta( $post_id, '_convoca_estado_miembro', $new );
 
 		// Record timestamp for pending payment state (for cron reminders).
 		if ( $new === 'pendiente_pago' ) {
-			update_post_meta( $post_id, '_conv_fecha_pendiente_pago', current_time( 'mysql' ) );
+			update_post_meta( $post_id, '_convoca_fecha_pendiente_pago', current_time( 'mysql' ) );
 		}
 
 		// Audit log.
@@ -147,7 +147,7 @@ class Estados {
 	}
 
 	private static function log( int $post_id, string $old, string $new, string $note ): void {
-		$history   = get_post_meta( $post_id, '_conv_historial', true );
+		$history   = get_post_meta( $post_id, '_convoca_historial', true );
 		$history   = is_array( $history ) ? $history : array();
 		$history[] = array(
 			'de'      => $old,
@@ -156,7 +156,7 @@ class Estados {
 			'usuario' => get_current_user_id(),
 			'nota'    => $note,
 		);
-		update_post_meta( $post_id, '_conv_historial', $history );
+		update_post_meta( $post_id, '_convoca_historial', $history );
 
 		// Also write to the members audit log table.
 		\Convoca\Core\Logger::info(
@@ -191,7 +191,7 @@ class Estados {
 	 * @return array<array{de:string, a:string, fecha:string, usuario:int, nota:string}>
 	 */
 	public static function get_history( int $post_id ): array {
-		$history = get_post_meta( $post_id, '_conv_historial', true );
+		$history = get_post_meta( $post_id, '_convoca_historial', true );
 		return is_array( $history ) ? $history : array();
 	}
 

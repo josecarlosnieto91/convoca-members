@@ -91,7 +91,7 @@ class CSV_Exporter {
 	 * @return array<string>|null  Null means "never saved" (show all).
 	 */
 	public static function get_user_columns(): ?array {
-		$saved = get_user_meta( get_current_user_id(), '_conv_csv_columns', true );
+		$saved = get_user_meta( get_current_user_id(), '_convoca_csv_columns', true );
 		if ( ! is_array( $saved ) || empty( $saved ) ) {
 			return null;
 		}
@@ -151,7 +151,7 @@ class CSV_Exporter {
 		if ( $estado ) {
 			$args['meta_query'] = array(
 				array(
-					'key'   => '_conv_estado_miembro',
+					'key'   => '_convoca_estado_miembro',
 					'value' => $estado,
 				),
 			);
@@ -195,7 +195,7 @@ class CSV_Exporter {
 	 * @return array<string>
 	 */
 	private function build_row( \WP_Post $post, array $columns ): array {
-		$meta  = fn( string $key ) => get_post_meta( $post->ID, '_conv_' . $key, true );
+		$meta  = fn( string $key ) => get_post_meta( $post->ID, '_convoca_' . $key, true );
 		$esc   = fn( $v ) => \Convoca\Core\Utils::escape_csv_field( $v );
 		$terms = wp_get_object_terms( $post->ID, 'tipo_miembro', array( 'fields' => 'names' ) );
 		$tipo  = is_wp_error( $terms ) ? '' : implode( ', ', $terms );
@@ -265,7 +265,7 @@ class CSV_Exporter {
 		$all_keys = array_keys( self::get_available_columns() );
 		$valid    = array_values( array_intersect( $columns, $all_keys ) );
 
-		update_user_meta( get_current_user_id(), '_conv_csv_columns', $valid );
+		update_user_meta( get_current_user_id(), '_convoca_csv_columns', $valid );
 
 		wp_send_json_success( array( 'columns' => $valid ) );
 	}

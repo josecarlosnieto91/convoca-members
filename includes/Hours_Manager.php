@@ -86,7 +86,7 @@ class Hours_Manager {
 
 		if ( $record_id ) {
 			$post_data['ID'] = $record_id;
-			$old_status      = get_post_meta( $record_id, '_conv_estado', true );
+			$old_status      = get_post_meta( $record_id, '_convoca_estado', true );
 			$post_id         = wp_update_post( $post_data );
 		} else {
 			$post_id    = wp_insert_post( $post_data );
@@ -97,20 +97,20 @@ class Hours_Manager {
 			return $post_id;
 		}
 
-		update_post_meta( $post_id, '_conv_member_id', $miembro_id );
-		update_post_meta( $post_id, '_conv_fecha', $fecha );
-		update_post_meta( $post_id, '_conv_horas', $horas );
-		update_post_meta( $post_id, '_conv_proyecto_id', $proyecto_id );
-		update_post_meta( $post_id, '_conv_tareas', substr( $tareas, 0, 500 ) );
+		update_post_meta( $post_id, '_convoca_member_id', $miembro_id );
+		update_post_meta( $post_id, '_convoca_fecha', $fecha );
+		update_post_meta( $post_id, '_convoca_horas', $horas );
+		update_post_meta( $post_id, '_convoca_proyecto_id', $proyecto_id );
+		update_post_meta( $post_id, '_convoca_tareas', substr( $tareas, 0, 500 ) );
 
 		if ( $actividad_id ) {
-			update_post_meta( $post_id, '_conv_actividad_id', $actividad_id );
+			update_post_meta( $post_id, '_convoca_actividad_id', $actividad_id );
 		} else {
-			delete_post_meta( $post_id, '_conv_actividad_id' );
+			delete_post_meta( $post_id, '_convoca_actividad_id' );
 		}
 
 		if ( $is_admin ) {
-			update_post_meta( $post_id, '_conv_nota_admin', $nota_admin );
+			update_post_meta( $post_id, '_convoca_nota_admin', $nota_admin );
 		}
 
 		// Handle state changes.
@@ -135,18 +135,18 @@ class Hours_Manager {
 			$new_status = $new_status ? 'aprobada' : 'rechazada';
 		}
 
-		$miembro_id = (int) get_post_meta( $record_id, '_conv_member_id', true );
+		$miembro_id = (int) get_post_meta( $record_id, '_convoca_member_id', true );
 		if ( ! $miembro_id ) {
 			return false;
 		}
 
-		$old_status = get_post_meta( $record_id, '_conv_estado', true );
+		$old_status = get_post_meta( $record_id, '_convoca_estado', true );
 		if ( $old_status === $new_status ) {
 			return true;
 		}
 
-		update_post_meta( $record_id, '_conv_estado', $new_status );
-		update_post_meta( $record_id, '_conv_aprobada_por', $admin_id );
+		update_post_meta( $record_id, '_convoca_estado', $new_status );
+		update_post_meta( $record_id, '_convoca_aprobada_por', $admin_id );
 
 		if ( $new_status === 'aprobada' ) {
 			do_action( 'convoca_members_hora_aprobada', $record_id, $miembro_id );

@@ -46,8 +46,8 @@ class Certificate_Generator {
 		}
 
 		$nombre     = $miembro->post_title;
-		$email      = get_post_meta( $miembro_id, '_conv_email', true );
-		$plan       = get_post_meta( $miembro_id, '_conv_plan', true );
+		$email      = get_post_meta( $miembro_id, '_convoca_email', true );
+		$plan       = get_post_meta( $miembro_id, '_convoca_plan', true );
 		$plan_data  = CPT_Miembro::get_plan( $plan );
 		$plan_label = ( $plan_data && isset( $plan_data['label'] ) ) ? $plan_data['label'] : $plan;
 
@@ -72,8 +72,8 @@ class Certificate_Generator {
 		}
 
 		// Update meta only if PDF generated successfully.
-		update_post_meta( $miembro_id, '_conv_certificado_id', $cert_id );
-		update_post_meta( $miembro_id, '_conv_certificado_emitido', current_time( 'mysql' ) );
+		update_post_meta( $miembro_id, '_convoca_certificado_id', $cert_id );
+		update_post_meta( $miembro_id, '_convoca_certificado_emitido', current_time( 'mysql' ) );
 
 		return array(
 			'id'     => $cert_id,
@@ -87,11 +87,11 @@ class Certificate_Generator {
 	}
 
 	private static function render_pdf_to_buffer( string $html ): string|\WP_Error {
-		if ( ! class_exists( '\\Convoca\\Core\\CONV_Signature' ) ) {
+		if ( ! class_exists( '\\Convoca\\Core\\Signature' ) ) {
 			return new \WP_Error( 'signature_missing', 'El componente de firma/PDF no está disponible.' );
 		}
 
-		$signature = new \Convoca\Core\CONV_Signature();
+		$signature = new \Convoca\Core\Signature();
 
 		// Since generate_pdf usually saves to file, but Certificate_Generator::generate() wants binary content,.
 		// we use a temporary file.
@@ -126,10 +126,10 @@ class Certificate_Generator {
 				"SELECT p.ID, p.post_title, p.post_content, 
                     SUM(CAST(hm.meta_value AS DECIMAL(10,2))) as horas
              FROM {$wpdb->posts} p
-             INNER JOIN {$wpdb->postmeta} ph ON ph.post_id = p.ID AND ph.meta_key = '_conv_proyecto_id'
-             INNER JOIN {$wpdb->postmeta} hm ON hm.post_id = p.ID AND hm.meta_key = '_conv_horas'
-             INNER JOIN {$wpdb->postmeta} he ON he.post_id = p.ID AND he.meta_key = '_conv_estado' AND he.meta_value = 'aprobada'
-             INNER JOIN {$wpdb->postmeta} hm2 ON hm2.post_id = p.ID AND hm2.meta_key = '_conv_member_id' AND hm2.meta_value = %d
+             INNER JOIN {$wpdb->postmeta} ph ON ph.post_id = p.ID AND ph.meta_key = '_convoca_proyecto_id'
+             INNER JOIN {$wpdb->postmeta} hm ON hm.post_id = p.ID AND hm.meta_key = '_convoca_horas'
+             INNER JOIN {$wpdb->postmeta} he ON he.post_id = p.ID AND he.meta_key = '_convoca_estado' AND he.meta_value = 'aprobada'
+             INNER JOIN {$wpdb->postmeta} hm2 ON hm2.post_id = p.ID AND hm2.meta_key = '_convoca_member_id' AND hm2.meta_value = %d
              WHERE p.post_type = 'registro_hora'
              GROUP BY p.ID
              ORDER BY horas DESC",
@@ -140,10 +140,10 @@ class Certificate_Generator {
 
 		$proyectos = array();
 		foreach ( $results as $r ) {
-			$proyecto_id = get_post_meta( $r['ID'], '_conv_proyecto_id', true );
+			$proyecto_id = get_post_meta( $r['ID'], '_convoca_proyecto_id', true );
 			$proyecto    = $proyecto_id ? get_post( $proyecto_id ) : null;
-			$tareas      = get_post_meta( $r['ID'], '_conv_tareas', true );
-			$fecha       = get_post_meta( $r['ID'], '_conv_fecha', true );
+			$tareas      = get_post_meta( $r['ID'], '_convoca_tareas', true );
+			$fecha       = get_post_meta( $r['ID'], '_convoca_fecha', true );
 
 			if ( $proyecto ) {
 				if ( ! isset( $proyectos[ $proyecto->ID ] ) ) {
@@ -225,7 +225,7 @@ class Certificate_Generator {
 	}
 
 	public static function serve_pdf( int $miembro_id ): void {
-		$cert_id = get_post_meta( $miembro_id, '_conv_certificado_id', true );
+		$cert_id = get_post_meta( $miembro_id, '_convoca_certificado_id', true );
 
 		if ( ! $cert_id ) {
 			$result = self::generate( $miembro_id );
@@ -250,7 +250,7 @@ class Certificate_Generator {
 
 		$miembro_id = $wpdb->get_var(
 			$wpdb->prepare(
-				"SELECT post_id FROM {$wpdb->postmeta} WHERE meta_key = '_conv_certificado_id' AND meta_value = %s LIMIT 1",
+				"SELECT post_id FROM {$wpdb->postmeta} WHERE meta_key = '_convoca_certificado_id' AND meta_value = %s LIMIT 1",
 				$cert_id
 			)
 		);
@@ -265,7 +265,7 @@ class Certificate_Generator {
 			'nombre'         => $miembro->post_title,
 			'horas'          => Voluntariado_Manager::get_horas_aprobadas( $miembro_id ),
 			'certificado_id' => $cert_id,
-			'emitido'        => get_post_meta( $miembro_id, '_conv_certificado_emitido', true ),
+			'emitido'        => get_post_meta( $miembro_id, '_convoca_certificado_emitido', true ),
 		);
 	}
 }

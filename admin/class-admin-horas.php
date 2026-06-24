@@ -104,11 +104,11 @@ class Admin_Horas extends \WP_List_Table {
 			$record_user_id = 0;
 			$record_id      = $data['id'];
 			if ( $record_id ) {
-				$record_user_id = (int) get_post_meta( $record_id, '_conv_usuario_id', true );
+				$record_user_id = (int) get_post_meta( $record_id, '_convoca_usuario_id', true );
 			}
 			if ( ! $record_user_id ) {
 				// Nuevo registro — buscar el user_id a partir del miembro_id.
-				$member_email = get_post_meta( $data['miembro_id'], '_conv_email', true );
+				$member_email = get_post_meta( $data['miembro_id'], '_convoca_email', true );
 				if ( $member_email ) {
 					$user = get_user_by( 'email', $member_email );
 					if ( $user ) {
@@ -146,15 +146,15 @@ class Admin_Horas extends \WP_List_Table {
 		$record_id = isset( $_GET['id'] ) ? (int) $_GET['id'] : 0;
 		$record    = $record_id ? get_post( $record_id ) : null;
 
-		$miembro_id   = $record ? (int) get_post_meta( $record_id, '_conv_member_id', true ) : 0;
-		$fecha        = $record ? get_post_meta( $record_id, '_conv_fecha', true ) : current_time( 'Y-m-d' );
-		$horas        = $record ? get_post_meta( $record_id, '_conv_horas', true ) : '';
-		$proyecto_id  = $record ? (int) get_post_meta( $record_id, '_conv_proyecto_id', true ) : 0;
-		$actividad_id = $record ? (int) get_post_meta( $record_id, '_conv_actividad_id', true ) : 0;
-		$tareas       = $record ? get_post_meta( $record_id, '_conv_tareas', true ) : '';
+		$miembro_id   = $record ? (int) get_post_meta( $record_id, '_convoca_member_id', true ) : 0;
+		$fecha        = $record ? get_post_meta( $record_id, '_convoca_fecha', true ) : current_time( 'Y-m-d' );
+		$horas        = $record ? get_post_meta( $record_id, '_convoca_horas', true ) : '';
+		$proyecto_id  = $record ? (int) get_post_meta( $record_id, '_convoca_proyecto_id', true ) : 0;
+		$actividad_id = $record ? (int) get_post_meta( $record_id, '_convoca_actividad_id', true ) : 0;
+		$tareas       = $record ? get_post_meta( $record_id, '_convoca_tareas', true ) : '';
 		$descripcion  = $record ? $record->post_content : '';
-		$estado       = $record ? get_post_meta( $record_id, '_conv_estado', true ) : 'pendiente';
-		$nota_admin   = $record ? get_post_meta( $record_id, '_conv_nota_admin', true ) : '';
+		$estado       = $record ? get_post_meta( $record_id, '_convoca_estado', true ) : 'pendiente';
+		$nota_admin   = $record ? get_post_meta( $record_id, '_convoca_nota_admin', true ) : '';
 
 		// Fetch options.
 		$members  = get_posts(
@@ -182,7 +182,7 @@ class Admin_Horas extends \WP_List_Table {
 				'post_type'      => 'actividad',
 				'posts_per_page' => 30,
 				'post_status'    => 'publish',
-				'meta_key'       => '_conv_fecha_inicio',
+				'meta_key'       => '_convoca_fecha_inicio',
 				'orderby'        => 'meta_value',
 				'order'          => 'DESC',
 			)
@@ -249,7 +249,7 @@ class Admin_Horas extends \WP_List_Table {
 								<option value="0"><?php esc_html_e( '— Ninguna actividad específica —', 'convoca-members' ); ?></option>
 								<?php foreach ( $activities as $a ) : ?>
 									<option value="<?php echo (int) $a->ID; ?>" <?php selected( $actividad_id, $a->ID ); ?>>
-										<?php echo esc_html( $a->post_title ); ?> (<?php echo esc_html( \Convoca\Core\Utils::format_date( get_post_meta( $a->ID, '_conv_fecha_inicio', true ), 'd/m/Y' ) ); ?>)
+										<?php echo esc_html( $a->post_title ); ?> (<?php echo esc_html( \Convoca\Core\Utils::format_date( get_post_meta( $a->ID, '_convoca_fecha_inicio', true ), 'd/m/Y' ) ); ?>)
 									</option>
 								<?php endforeach; ?>
 							</select>
@@ -371,7 +371,7 @@ class Admin_Horas extends \WP_List_Table {
 		if ( $filter_proyecto > 0 ) {
 			$args['meta_query'] = array(
 				array(
-					'key'   => '_conv_proyecto_id',
+					'key'   => '_convoca_proyecto_id',
 					'value' => $filter_proyecto,
 				),
 			);
@@ -403,26 +403,26 @@ class Admin_Horas extends \WP_List_Table {
 		);
 
 		foreach ( $query->posts as $post ) {
-			$socio_id = get_post_meta( $post->ID, '_conv_member_id', true );
+			$socio_id = get_post_meta( $post->ID, '_convoca_member_id', true );
 			$socio    = $socio_id ? ( get_post( $socio_id )?->post_title ?? '' ) : '';
 
-			$proyecto_id = get_post_meta( $post->ID, '_conv_proyecto_id', true );
+			$proyecto_id = get_post_meta( $post->ID, '_convoca_proyecto_id', true );
 			$proyecto    = $proyecto_id ? ( get_post( $proyecto_id )?->post_title ?? '' ) : '';
 
-			$act_id    = get_post_meta( $post->ID, '_conv_actividad_id', true );
+			$act_id    = get_post_meta( $post->ID, '_convoca_actividad_id', true );
 			$actividad = $act_id ? ( get_post( $act_id )?->post_title ?? '' ) : '';
 
 			fputcsv(
 				$out,
 				array(
-					get_post_meta( $post->ID, '_conv_fecha', true ) ?: get_the_date( 'Y-m-d', $post->ID ),
+					get_post_meta( $post->ID, '_convoca_fecha', true ) ?: get_the_date( 'Y-m-d', $post->ID ),
 					\Convoca\Core\Utils::escape_csv_field( $socio ),
 					\Convoca\Core\Utils::escape_csv_field( $proyecto ),
-					\Convoca\Core\Utils::escape_csv_field( get_post_meta( $post->ID, '_conv_tareas', true ) ),
+					\Convoca\Core\Utils::escape_csv_field( get_post_meta( $post->ID, '_convoca_tareas', true ) ),
 					\Convoca\Core\Utils::escape_csv_field( $actividad ),
-					get_post_meta( $post->ID, '_conv_horas', true ),
+					get_post_meta( $post->ID, '_convoca_horas', true ),
 					\Convoca\Core\Utils::escape_csv_field( $post->post_content ),
-					get_post_meta( $post->ID, '_conv_estado', true ) ?: 'pendiente',
+					get_post_meta( $post->ID, '_convoca_estado', true ) ?: 'pendiente',
 				)
 			);
 		}
@@ -476,7 +476,7 @@ class Admin_Horas extends \WP_List_Table {
 		if ( $filter_proyecto > 0 ) {
 			$args['meta_query'] = array(
 				array(
-					'key'   => '_conv_proyecto_id',
+					'key'   => '_convoca_proyecto_id',
 					'value' => $filter_proyecto,
 				),
 			);
@@ -499,12 +499,12 @@ class Admin_Horas extends \WP_List_Table {
 	}
 
 	public function column_fecha( $item ) {
-		$fecha = get_post_meta( $item->ID, '_conv_fecha', true );
+		$fecha = get_post_meta( $item->ID, '_convoca_fecha', true );
 		return $fecha ?: get_the_date( '', $item->ID );
 	}
 
 	public function column_socio( $item ) {
-		$socio_id = get_post_meta( $item->ID, '_conv_member_id', true );
+		$socio_id = get_post_meta( $item->ID, '_convoca_member_id', true );
 		if ( ! $socio_id ) {
 			return '—';
 		}
@@ -521,7 +521,7 @@ class Admin_Horas extends \WP_List_Table {
 	}
 
 	public function column_actividad( $item ) {
-		$act_id = get_post_meta( $item->ID, '_conv_actividad_id', true );
+		$act_id = get_post_meta( $item->ID, '_convoca_actividad_id', true );
 		if ( ! $act_id ) {
 			return 'General/Otros';
 		}
@@ -538,7 +538,7 @@ class Admin_Horas extends \WP_List_Table {
 	}
 
 	public function column_proyecto( $item ) {
-		$proyecto_id = get_post_meta( $item->ID, '_conv_proyecto_id', true );
+		$proyecto_id = get_post_meta( $item->ID, '_convoca_proyecto_id', true );
 		if ( ! $proyecto_id ) {
 			return '—';
 		}
@@ -551,7 +551,7 @@ class Admin_Horas extends \WP_List_Table {
 	}
 
 	public function column_tareas( $item ) {
-		$tareas = get_post_meta( $item->ID, '_conv_tareas', true );
+		$tareas = get_post_meta( $item->ID, '_convoca_tareas', true );
 		if ( ! $tareas ) {
 			return '—';
 		}
@@ -559,7 +559,7 @@ class Admin_Horas extends \WP_List_Table {
 	}
 
 	public function column_horas( $item ) {
-		return get_post_meta( $item->ID, '_conv_horas', true ) . 'h';
+		return get_post_meta( $item->ID, '_convoca_horas', true ) . 'h';
 	}
 
 	public function column_descripcion( $item ) {
@@ -567,7 +567,7 @@ class Admin_Horas extends \WP_List_Table {
 	}
 
 	public function column_estado( $item ) {
-		$estado = get_post_meta( $item->ID, '_conv_estado', true ) ?: 'pendiente';
+		$estado = get_post_meta( $item->ID, '_convoca_estado', true ) ?: 'pendiente';
 		$class  = 'status-' . $estado;
 		$label  = ucfirst( $estado );
 
@@ -575,7 +575,7 @@ class Admin_Horas extends \WP_List_Table {
 	}
 
 	public function column_acciones( $item ) {
-		$estado  = get_post_meta( $item->ID, '_conv_estado', true ) ?: 'pendiente';
+		$estado  = get_post_meta( $item->ID, '_convoca_estado', true ) ?: 'pendiente';
 		$actions = array();
 
 		if ( $estado !== 'aprobada' ) {
@@ -605,15 +605,15 @@ class Admin_Horas extends \WP_List_Table {
 		check_admin_referer( 'process_horas_' . $record_id );
 
 		if ( $record_id && in_array( $new_status, array( 'aprobada', 'rechazada' ) ) ) {
-			$miembro_id      = (int) get_post_meta( $record_id, '_conv_member_id', true );
+			$miembro_id      = (int) get_post_meta( $record_id, '_convoca_member_id', true );
 			$current_user_id = get_current_user_id();
 
 			// Robust identification of the volunteer user ID.
-			$volunteer_user_id = (int) get_post_meta( $record_id, '_conv_usuario_id', true );
+			$volunteer_user_id = (int) get_post_meta( $record_id, '_convoca_usuario_id', true );
 
 			// Fallback: Check linked member profile for an email/user.
 			if ( ! $volunteer_user_id && $miembro_id ) {
-				$member_email = get_post_meta( $miembro_id, '_conv_email', true );
+				$member_email = get_post_meta( $miembro_id, '_convoca_email', true );
 				if ( $member_email ) {
 					$user = get_user_by( 'email', $member_email );
 					if ( $user ) {
@@ -673,8 +673,8 @@ class Admin_Horas extends \WP_List_Table {
 				}
 			}
 
-			update_post_meta( $record_id, '_conv_estado', $new_status );
-			update_post_meta( $record_id, '_conv_aprobada_por', get_current_user_id() );
+			update_post_meta( $record_id, '_convoca_estado', $new_status );
+			update_post_meta( $record_id, '_convoca_aprobada_por', get_current_user_id() );
 
 			if ( $new_status === 'aprobada' ) {
 				do_action( 'convoca_members_hora_aprobada', $record_id, $miembro_id );
@@ -683,7 +683,7 @@ class Admin_Horas extends \WP_List_Table {
 			}
 
 			// Log activity.
-			$socio_id = get_post_meta( $record_id, '_conv_member_id', true );
+			$socio_id = get_post_meta( $record_id, '_convoca_member_id', true );
 			\Convoca\Core\Logger::log( "Registro de horas $record_id marcado como $new_status por admin " . get_current_user_id(), 'Members/Hours', $socio_id );
 		}
 

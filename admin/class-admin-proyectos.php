@@ -178,16 +178,16 @@ class Admin_Proyectos extends \WP_List_Table {
 		);
 
 		foreach ( $query->posts as $post ) {
-			$responsable_id = (int) get_post_meta( $post->ID, '_conv_responsable', true );
+			$responsable_id = (int) get_post_meta( $post->ID, '_convoca_responsable', true );
 			$responsable    = $responsable_id ? ( get_userdata( $responsable_id )?->display_name ?? '' ) : '';
 			fputcsv(
 				$out,
 				array(
 					\Convoca\Core\Utils::escape_csv_field( $post->post_title ),
-					get_post_meta( $post->ID, '_conv_fecha_inicio', true ),
-					get_post_meta( $post->ID, '_conv_fecha_fin', true ),
+					get_post_meta( $post->ID, '_convoca_fecha_inicio', true ),
+					get_post_meta( $post->ID, '_convoca_fecha_fin', true ),
 					$responsable,
-					get_post_meta( $post->ID, '_conv_activo', true ) === '1' ? __( 'Sí', 'convoca-members' ) : __( 'No', 'convoca-members' ),
+					get_post_meta( $post->ID, '_convoca_activo', true ) === '1' ? __( 'Sí', 'convoca-members' ) : __( 'No', 'convoca-members' ),
 					\Convoca\Core\Utils::escape_csv_field( wp_trim_words( $post->post_content, 30 ) ),
 				)
 			);
@@ -423,10 +423,10 @@ class Admin_Proyectos extends \WP_List_Table {
 		}
 
 		// Save Meta.
-		update_post_meta( $post_id, '_conv_fecha_inicio', sanitize_text_field( $_POST['fecha_inicio'] ) );
-		update_post_meta( $post_id, '_conv_fecha_fin', sanitize_text_field( $_POST['fecha_fin'] ) );
-		update_post_meta( $post_id, '_conv_responsable', (int) $_POST['responsable'] );
-		update_post_meta( $post_id, '_conv_activo', isset( $_POST['activo'] ) ? '1' : '0' );
+		update_post_meta( $post_id, '_convoca_fecha_inicio', sanitize_text_field( $_POST['fecha_inicio'] ) );
+		update_post_meta( $post_id, '_convoca_fecha_fin', sanitize_text_field( $_POST['fecha_fin'] ) );
+		update_post_meta( $post_id, '_convoca_responsable', (int) $_POST['responsable'] );
+		update_post_meta( $post_id, '_convoca_activo', isset( $_POST['activo'] ) ? '1' : '0' );
 
 		wp_redirect( admin_url( 'admin.php?page=conv-proyectos&message=saved' ) );
 		exit;

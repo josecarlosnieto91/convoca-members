@@ -108,37 +108,37 @@ class Admin_List extends \WP_List_Table {
 			$args['meta_query'] = array(
 				'relation' => 'OR',
 				array(
-					'key'     => '_conv_email',
+					'key'     => '_convoca_email',
 					'value'   => $search,
 					'compare' => 'LIKE',
 				),
 				array(
-					'key'     => '_conv_dni',
+					'key'     => '_convoca_dni',
 					'value'   => $search,
 					'compare' => 'LIKE',
 				),
 				array(
-					'key'     => '_conv_dni',
+					'key'     => '_convoca_dni',
 					'value'   => $cleaned_search,
 					'compare' => 'LIKE',
 				),
 				array(
-					'key'     => '_conv_telefono',
+					'key'     => '_convoca_telefono',
 					'value'   => $search,
 					'compare' => 'LIKE',
 				),
 				array(
-					'key'     => '_conv_numero_socio',
+					'key'     => '_convoca_numero_socio',
 					'value'   => $search,
 					'compare' => 'LIKE',
 				),
 				array(
-					'key'     => '_conv_access_code',
+					'key'     => '_convoca_access_code',
 					'value'   => $search,
 					'compare' => 'LIKE',
 				),
 				array(
-					'key'     => '_conv_nombre',
+					'key'     => '_convoca_nombre',
 					'value'   => $search,
 					'compare' => 'LIKE',
 				),
@@ -154,7 +154,7 @@ class Admin_List extends \WP_List_Table {
 				$args['meta_query'] ?? array(),
 				array(
 					array(
-						'key'   => '_conv_estado_miembro',
+						'key'   => '_convoca_estado_miembro',
 						'value' => $estado_filter,
 					),
 				)
@@ -179,7 +179,7 @@ class Admin_List extends \WP_List_Table {
 				$args['meta_query'] ?? array(),
 				array(
 					array(
-						'key'   => '_conv_es_voluntario',
+						'key'   => '_convoca_es_voluntario',
 						'value' => '1',
 					),
 				)
@@ -193,7 +193,7 @@ class Admin_List extends \WP_List_Table {
 				$args['meta_query'] ?? array(),
 				array(
 					array(
-						'key'   => '_conv_plan',
+						'key'   => '_convoca_plan',
 						'value' => $plan_filter,
 					),
 				)
@@ -207,7 +207,7 @@ class Admin_List extends \WP_List_Table {
 				$args['meta_query'] ?? array(),
 				array(
 					array(
-						'key'   => '_conv_estado_cuota',
+						'key'   => '_convoca_estado_cuota',
 						'value' => $cuota_filter,
 					),
 				)
@@ -315,7 +315,7 @@ class Admin_List extends \WP_List_Table {
 	/* ── Column renderers ──────────────────────── */
 
 	public function column_default( $item, $column_name ): string {
-		return get_post_meta( $item->ID, '_conv_' . $column_name, true ) ?: '—';
+		return get_post_meta( $item->ID, '_convoca_' . $column_name, true ) ?: '—';
 	}
 
 	public function column_cb( $item ): string {
@@ -323,12 +323,12 @@ class Admin_List extends \WP_List_Table {
 	}
 
 	public function column_numero( $item ): string {
-		$num = get_post_meta( $item->ID, '_conv_numero_socio', true );
+		$num = get_post_meta( $item->ID, '_convoca_numero_socio', true );
 		if ( $num ) {
 			return '<strong>' . str_pad( $num, 4, '0', STR_PAD_LEFT ) . '</strong>';
 		}
 
-		$status = get_post_meta( $item->ID, '_conv_estado_miembro', true );
+		$status = get_post_meta( $item->ID, '_convoca_estado_miembro', true );
 		$html   = '<span style="color:#999;font-style:italic">' . __( 'Sin asignar', 'convoca-members' ) . '</span>';
 
 		if ( $status === 'activo' && current_user_can( 'convoca_export_members' ) ) {
@@ -352,7 +352,7 @@ class Admin_List extends \WP_List_Table {
 		);
 
 		// Approval action.
-		$status = get_post_meta( $item->ID, '_conv_estado_miembro', true );
+		$status = get_post_meta( $item->ID, '_convoca_estado_miembro', true );
 		if ( $status !== 'activo' ) {
 			$approve_url        = wp_nonce_url(
 				admin_url( 'admin-post.php?action=conv_approve_member&member_id=' . $item->ID ),
@@ -375,7 +375,7 @@ class Admin_List extends \WP_List_Table {
 	}
 
 	public function column_email( $item ): string {
-		$email = get_post_meta( $item->ID, '_conv_email', true );
+		$email = get_post_meta( $item->ID, '_convoca_email', true );
 		if ( ! $email ) {
 			return '—';
 		}
@@ -383,7 +383,7 @@ class Admin_List extends \WP_List_Table {
 	}
 
 	public function column_telefono( $item ): string {
-		$tel = get_post_meta( $item->ID, '_conv_telefono', true );
+		$tel = get_post_meta( $item->ID, '_convoca_telefono', true );
 		if ( ! $tel ) {
 			return '—';
 		}
@@ -391,7 +391,7 @@ class Admin_List extends \WP_List_Table {
 	}
 
 	public function column_whatsapp( $item ): string {
-		$has_wa = get_post_meta( $item->ID, '_conv_whatsapp', true );
+		$has_wa = get_post_meta( $item->ID, '_convoca_whatsapp', true );
 		if ( $has_wa === 'no' ) {
 			return '<span style="color:#999">No</span>';
 		}
@@ -414,21 +414,21 @@ class Admin_List extends \WP_List_Table {
 	}
 
 	public function column_estado( $item ): string {
-		$estado = get_post_meta( $item->ID, '_conv_estado_miembro', true ) ?: 'pendiente_documentacion';
+		$estado = get_post_meta( $item->ID, '_convoca_estado_miembro', true ) ?: 'pendiente_documentacion';
 		return Estados::badge_html( $estado );
 	}
 
 	public function column_plan( $item ): string {
-		$plan = get_post_meta( $item->ID, '_conv_plan', true );
-		$sub  = get_post_meta( $item->ID, '_conv_sub_plan', true );
+		$plan = get_post_meta( $item->ID, '_convoca_plan', true );
+		$sub  = get_post_meta( $item->ID, '_convoca_sub_plan', true );
 		$key  = $sub ?: $plan;
 		$data = CPT_Miembro::get_plan( $key );
 		return esc_html( ( $data && isset( $data['label'] ) ) ? $data['label'] : ucfirst( $key ?: '—' ) );
 	}
 
 	public function column_cuota( $item ): string {
-		$importe = get_post_meta( $item->ID, '_conv_importe_cuota', true );
-		$estado  = get_post_meta( $item->ID, '_conv_estado_cuota', true );
+		$importe = get_post_meta( $item->ID, '_convoca_importe_cuota', true );
+		$estado  = get_post_meta( $item->ID, '_convoca_estado_cuota', true );
 		$label   = CPT_Miembro::ESTADO_CUOTA[ $estado ] ?? '—';
 		$amount  = $importe ? number_format( (float) $importe, 0 ) . '€' : '—';
 
@@ -446,7 +446,7 @@ class Admin_List extends \WP_List_Table {
 	}
 
 	public function column_recurrente( $item ): string {
-		$recurrente = get_post_meta( $item->ID, '_conv_pago_recurrente', true );
+		$recurrente = get_post_meta( $item->ID, '_convoca_pago_recurrente', true );
 		if ( $recurrente === '1' ) {
 			return '<span class="dashicons dashicons-yes" style="color:#2271b1"></span> ' . __( 'Sí', 'convoca-members' );
 		}

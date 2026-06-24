@@ -22,13 +22,13 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Cron_Manager {
 
 	/** Meta key to track last reminder sent. */
-	private const META_LAST_REMINDER = '_conv_last_reminder';
+	private const META_LAST_REMINDER = '_convoca_last_reminder';
 
 	/** Meta key to track last renewal notice sent. */
-	private const META_LAST_RENEWAL_NOTICE = '_conv_last_renewal_notice';
+	private const META_LAST_RENEWAL_NOTICE = '_convoca_last_renewal_notice';
 
 	/** Meta key to track volunteer reminder quarter. */
-	private const META_VOLUNTARIADO_REMINDER_Q = '_conv_voluntariado_reminder_q';
+	private const META_VOLUNTARIADO_REMINDER_Q = '_convoca_voluntariado_reminder_q';
 
 	public function __construct() {
 		// Daily cron.
@@ -88,7 +88,7 @@ class Cron_Manager {
 			'post_type'      => 'miembro',
 			'meta_query'     => array(
 				array(
-					'key'   => '_conv_estado_miembro',
+					'key'   => '_convoca_estado_miembro',
 					'value' => 'pendiente_pago',
 				),
 			),
@@ -108,14 +108,14 @@ class Cron_Manager {
 
 		foreach ( $ids as $post_id ) {
 			// Use the timestamp when the member moved to pending payment state.
-			$pending_date = get_post_meta( $post_id, '_conv_fecha_pendiente_pago', true );
+			$pending_date = get_post_meta( $post_id, '_convoca_fecha_pendiente_pago', true );
 
 			// Fallback to post_modified if meta is missing.
 			if ( empty( $pending_date ) ) {
 				$post = get_post( $post_id );
 				if ( $post ) {
 					$pending_date = $post->post_modified;
-					update_post_meta( $post_id, '_conv_fecha_pendiente_pago', $pending_date );
+					update_post_meta( $post_id, '_convoca_fecha_pendiente_pago', $pending_date );
 					\Convoca\Core\Logger::warning( "Member $post_id had no pending payment date, fallback set to post_modified", 'Members/Cron' );
 				} else {
 					continue;
@@ -138,7 +138,7 @@ class Cron_Manager {
 
 			try {
 				// Re-check state to avoid race condition: member may have paid while this cron runs.
-				$current_state = get_post_meta( $post_id, '_conv_estado_miembro', true );
+				$current_state = get_post_meta( $post_id, '_convoca_estado_miembro', true );
 				if ( $current_state !== 'pendiente_pago' ) {
 					continue;
 				}
@@ -160,7 +160,7 @@ class Cron_Manager {
 				}
 
 				if ( $template && $reminder_key ) {
-					$pago_id = (int) get_post_meta( $post_id, '_conv_pago_id', true );
+					$pago_id = (int) get_post_meta( $post_id, '_convoca_pago_id', true );
 					$link    = '';
 					if ( $pago_id ) {
 						$link = $this->get_payment_link( $pago_id );
@@ -214,8 +214,8 @@ class Cron_Manager {
 			$query = "
                 SELECT p.ID 
                 FROM {$wpdb->posts} p
-                JOIN {$wpdb->postmeta} pm_ren ON p.ID = pm_ren.post_id AND pm_ren.meta_key = '_conv_fecha_renovacion' AND pm_ren.meta_value IS NOT NULL AND pm_ren.meta_value != ''
-                JOIN {$wpdb->postmeta} pm_est ON p.ID = pm_est.post_id AND pm_est.meta_key = '_conv_estado_miembro' AND pm_est.meta_value = 'activo'
+                JOIN {$wpdb->postmeta} pm_ren ON p.ID = pm_ren.post_id AND pm_ren.meta_key = '_convoca_fecha_renovacion' AND pm_ren.meta_value IS NOT NULL AND pm_ren.meta_value != ''
+                JOIN {$wpdb->postmeta} pm_est ON p.ID = pm_est.post_id AND pm_est.meta_key = '_convoca_estado_miembro' AND pm_est.meta_value = 'activo'
                 WHERE p.post_type = 'miembro' 
                   AND p.post_status = 'publish'
                   AND CAST(pm_ren.meta_value AS DATE) = %s
@@ -274,11 +274,11 @@ class Cron_Manager {
 			'meta_query'     => array(
 				'relation' => 'AND',
 				array(
-					'key'   => '_conv_estado_miembro',
+					'key'   => '_convoca_estado_miembro',
 					'value' => 'activo',
 				),
 				array(
-					'key'   => '_conv_forma_pago',
+					'key'   => '_convoca_forma_pago',
 					'value' => 'voluntariado',
 				),
 				array(
@@ -335,9 +335,9 @@ class Cron_Manager {
 		$query = "
             SELECT p.ID 
             FROM {$wpdb->posts} p
-            JOIN {$wpdb->postmeta} pm_rec ON p.ID = pm_rec.post_id AND pm_rec.meta_key = '_conv_pago_recurrente' AND pm_rec.meta_value = '1'
-            JOIN {$wpdb->postmeta} pm_est ON p.ID = pm_est.post_id AND pm_est.meta_key = '_conv_estado_miembro' AND pm_est.meta_value = 'activo'
-            JOIN {$wpdb->postmeta} pm_ren ON p.ID = pm_ren.post_id AND pm_ren.meta_key = '_conv_fecha_renovacion'
+            JOIN {$wpdb->postmeta} pm_rec ON p.ID = pm_rec.post_id AND pm_rec.meta_key = '_convoca_pago_recurrente' AND pm_rec.meta_value = '1'
+            JOIN {$wpdb->postmeta} pm_est ON p.ID = pm_est.post_id AND pm_est.meta_key = '_convoca_estado_miembro' AND pm_est.meta_value = 'activo'
+            JOIN {$wpdb->postmeta} pm_ren ON p.ID = pm_ren.post_id AND pm_ren.meta_key = '_convoca_fecha_renovacion'
             WHERE p.post_type = 'miembro' 
               AND p.post_status = 'publish'
               AND CAST(pm_ren.meta_value AS DATE) <= %s
@@ -360,7 +360,7 @@ class Cron_Manager {
 				continue;
 			}
 
-			$plan_key  = get_post_meta( $member_id, '_conv_plan', true ) ?: get_post_meta( $member_id, '_conv_sub_plan', true );
+			$plan_key  = get_post_meta( $member_id, '_convoca_plan', true ) ?: get_post_meta( $member_id, '_convoca_sub_plan', true );
 			$plan_data = CPT_Miembro::get_plan( $plan_key );
 
 			if ( ! $plan_data || (float) $plan_data['price'] <= 0 ) {
@@ -426,8 +426,8 @@ class Cron_Manager {
 
 			$pago_id = $payment_result['pago_id'];
 
-			update_post_meta( $member_id, '_conv_last_auto_renewal', $today );
-			update_post_meta( $member_id, '_conv_pago_id', $pago_id );
+			update_post_meta( $member_id, '_convoca_last_auto_renewal', $today );
+			update_post_meta( $member_id, '_convoca_pago_id', $pago_id );
 
 			\Convoca\Core\Logger::info(
 				"Procesando renovación automática para el miembro #$member_id (Pago: #$pago_id).",
@@ -454,8 +454,8 @@ class Cron_Manager {
 		$query = "
             SELECT p.ID 
             FROM {$wpdb->posts} p
-            JOIN {$wpdb->postmeta} pm_est ON p.ID = pm_est.post_id AND pm_est.meta_key = '_conv_estado_miembro' AND pm_est.meta_value = 'activo'
-            JOIN {$wpdb->postmeta} pm_ren ON p.ID = pm_ren.post_id AND pm_ren.meta_key = '_conv_fecha_renovacion' AND pm_ren.meta_value IS NOT NULL AND pm_ren.meta_value != ''
+            JOIN {$wpdb->postmeta} pm_est ON p.ID = pm_est.post_id AND pm_est.meta_key = '_convoca_estado_miembro' AND pm_est.meta_value = 'activo'
+            JOIN {$wpdb->postmeta} pm_ren ON p.ID = pm_ren.post_id AND pm_ren.meta_key = '_convoca_fecha_renovacion' AND pm_ren.meta_value IS NOT NULL AND pm_ren.meta_value != ''
             WHERE p.post_type = 'miembro' 
               AND p.post_status = 'publish'
               AND CAST(pm_ren.meta_value AS DATE) < %s
@@ -569,7 +569,7 @@ class Cron_Manager {
                  JOIN {$wpdb->postmeta} pm ON p.ID = pm.post_id
                  WHERE p.post_type = 'miembro'
                  AND p.post_status = 'publish'
-                 AND pm.meta_key = '_conv_estado_miembro'
+                 AND pm.meta_key = '_convoca_estado_miembro'
                  AND pm.meta_value = %s",
 					$state
 				)
@@ -580,8 +580,8 @@ class Cron_Manager {
 		$expiring_soon = (int) $wpdb->get_var(
 			$wpdb->prepare(
 				"SELECT COUNT(*) FROM {$wpdb->posts} p
-             JOIN {$wpdb->postmeta} pm_est ON p.ID = pm_est.post_id AND pm_est.meta_key = '_conv_estado_miembro' AND pm_est.meta_value = 'activo'
-            JOIN {$wpdb->postmeta} pm_ren ON p.ID = pm_ren.post_id AND pm_ren.meta_key = '_conv_fecha_renovacion' AND pm_ren.meta_value IS NOT NULL AND pm_ren.meta_value != ''
+             JOIN {$wpdb->postmeta} pm_est ON p.ID = pm_est.post_id AND pm_est.meta_key = '_convoca_estado_miembro' AND pm_est.meta_value = 'activo'
+            JOIN {$wpdb->postmeta} pm_ren ON p.ID = pm_ren.post_id AND pm_ren.meta_key = '_convoca_fecha_renovacion' AND pm_ren.meta_value IS NOT NULL AND pm_ren.meta_value != ''
             WHERE p.post_type = 'miembro'
              AND p.post_status = 'publish'
              AND CAST(pm_ren.meta_value AS DATE) BETWEEN %s AND %s",
@@ -597,7 +597,7 @@ class Cron_Manager {
 		$hours_logged = (float) $wpdb->get_var(
 			$wpdb->prepare(
 				"SELECT COALESCE(SUM(pm.meta_value), 0) FROM {$wpdb->posts} p
-             JOIN {$wpdb->postmeta} pm ON p.ID = pm.post_id AND pm.meta_key = '_conv_horas'
+             JOIN {$wpdb->postmeta} pm ON p.ID = pm.post_id AND pm.meta_key = '_convoca_horas'
              WHERE p.post_type = 'registro_hora'
              AND p.post_status = 'publish'
              AND p.post_date >= %s",
@@ -718,10 +718,10 @@ class Cron_Manager {
 	private function get_payment_link( int $pago_id ): string {
 		if ( \Convoca\Core\Features::is_gateway_active() ) {
 			// Get or create persistent token for long-lived links.
-			$token = get_post_meta( $pago_id, '_conv_link_key', true );
+			$token = get_post_meta( $pago_id, '_convoca_link_key', true );
 			if ( empty( $token ) ) {
 				$token = wp_generate_password( 32, false, false );
-				update_post_meta( $pago_id, '_conv_link_key', $token );
+				update_post_meta( $pago_id, '_convoca_link_key', $token );
 			}
 			return \Convoca\Gateway\Payment_Handler::get_payment_link( $pago_id, $token );
 		}
@@ -733,13 +733,13 @@ class Cron_Manager {
 	 */
 	private function get_renewal_link( int $post_id ): string {
 		// If recurrent, create payment automatically.
-		$es_recurrente = get_post_meta( $post_id, '_conv_pago_recurrente', true );
-		$forma_pago    = get_post_meta( $post_id, '_conv_forma_pago', true );
+		$es_recurrente = get_post_meta( $post_id, '_convoca_pago_recurrente', true );
+		$forma_pago    = get_post_meta( $post_id, '_convoca_forma_pago', true );
 
 		if ( $es_recurrente && in_array( $forma_pago, array( 'tarjeta', 'bizum', 'cuota' ), true ) ) {
-			$plan_key  = get_post_meta( $post_id, '_conv_plan', true );
+			$plan_key  = get_post_meta( $post_id, '_convoca_plan', true );
 			$plan_data = CPT_Miembro::get_plan( $plan_key );
-			$importe   = (float) ( get_post_meta( $post_id, '_conv_importe_cuota', true ) ?: ( $plan_data ? $plan_data['price'] : 0 ) );
+			$importe   = (float) ( get_post_meta( $post_id, '_convoca_importe_cuota', true ) ?: ( $plan_data ? $plan_data['price'] : 0 ) );
 
 			if ( $importe > 0 && \Convoca\Core\Features::is_gateway_active() && function_exists( 'Convoca\Gateway\conv_gateway_create_payment' ) ) {
 				$payment = \Convoca\Gateway\conv_gateway_create_payment(
@@ -753,7 +753,7 @@ class Cron_Manager {
 				);
 
 				if ( ! is_wp_error( $payment ) ) {
-					update_post_meta( $post_id, '_conv_pago_id', $payment['pago_id'] );
+					update_post_meta( $post_id, '_convoca_pago_id', $payment['pago_id'] );
 					\Convoca\Core\Logger::info(
 						"Renovación automática generada (Pago #{$payment['pago_id']}) para el miembro #$post_id.",
 						'Members/Renewal',
@@ -765,7 +765,7 @@ class Cron_Manager {
 		}
 
 		// Fallback: try existing payment link.
-		$pago_id = (int) get_post_meta( $post_id, '_conv_pago_id', true );
+		$pago_id = (int) get_post_meta( $post_id, '_convoca_pago_id', true );
 		if ( $pago_id ) {
 			return $this->get_payment_link( $pago_id );
 		}
@@ -786,9 +786,9 @@ class Cron_Manager {
 			$wpdb->prepare(
 				"SELECT COALESCE(SUM(pm_h.meta_value), 0)
              FROM {$wpdb->posts} p
-             JOIN {$wpdb->postmeta} pm_m ON p.ID = pm_m.post_id AND pm_m.meta_key = '_conv_member_id' AND pm_m.meta_value = %d
-             JOIN {$wpdb->postmeta} pm_h ON p.ID = pm_h.post_id AND pm_h.meta_key = '_conv_horas'
-             JOIN {$wpdb->postmeta} pm_e ON p.ID = pm_e.post_id AND pm_e.meta_key = '_conv_estado' AND pm_e.meta_value = 'aprobada'
+             JOIN {$wpdb->postmeta} pm_m ON p.ID = pm_m.post_id AND pm_m.meta_key = '_convoca_member_id' AND pm_m.meta_value = %d
+             JOIN {$wpdb->postmeta} pm_h ON p.ID = pm_h.post_id AND pm_h.meta_key = '_convoca_horas'
+             JOIN {$wpdb->postmeta} pm_e ON p.ID = pm_e.post_id AND pm_e.meta_key = '_convoca_estado' AND pm_e.meta_value = 'aprobada'
              WHERE p.post_type = 'registro_hora'
              AND p.post_status = 'publish'
              AND YEAR(p.post_date) = %d",
@@ -798,7 +798,7 @@ class Cron_Manager {
 		);
 
 		// Get the objective from plan.
-		$plan_key  = get_post_meta( $post_id, '_conv_plan', true );
+		$plan_key  = get_post_meta( $post_id, '_convoca_plan', true );
 		$plan_data = CPT_Miembro::get_plan( $plan_key );
 		$objetivo  = (float) ( $plan_data ? $plan_data['hours'] : 40 );
 
@@ -831,7 +831,7 @@ class Cron_Manager {
 			return;
 		}
 
-		$email = get_post_meta( $post_id, '_conv_email', true );
+		$email = get_post_meta( $post_id, '_convoca_email', true );
 		if ( empty( $email ) ) {
 			return;
 		}
