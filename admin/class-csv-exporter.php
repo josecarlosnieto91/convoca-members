@@ -112,9 +112,9 @@ class CSV_Exporter {
 	 *   estado         – (optional) filter by member state
 	 */
 	public function export(): void {
-		check_ajax_referer( 'conv_export_csv', 'nonce' );
+		check_ajax_referer( 'convoca_export_csv', 'nonce' );
 
-		if ( ! current_user_can( 'conv_export_members' ) ) {
+		if ( ! current_user_can( 'convoca_export_members' ) ) {
 			wp_die(
 				esc_html__( 'No tienes permisos suficientes para exportar la lista de miembros.', 'convoca-members' ),
 				esc_html__( 'Acceso Denegado', 'convoca-members' ),
@@ -249,9 +249,9 @@ class CSV_Exporter {
 	 *   columns – JSON array of column key strings
 	 */
 	public function ajax_save_columns(): void {
-		check_ajax_referer( 'conv_export_csv', 'nonce' );
+		check_ajax_referer( 'convoca_export_csv', 'nonce' );
 
-		if ( ! current_user_can( 'conv_export_members' ) ) {
+		if ( ! current_user_can( 'convoca_export_members' ) ) {
 			wp_send_json_error( __( 'Sin permisos.', 'convoca-members' ) );
 		}
 

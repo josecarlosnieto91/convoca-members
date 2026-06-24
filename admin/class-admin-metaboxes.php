@@ -32,7 +32,7 @@ class Admin_Metaboxes {
 
 	public function add_metaboxes(): void {
 		add_meta_box(
-			'conv_miembro_details',
+			'convoca_miembro_details',
 			'Datos del Miembro',
 			array( $this, 'render_metabox' ),
 			'miembro',
@@ -41,7 +41,7 @@ class Admin_Metaboxes {
 		);
 
 		add_meta_box(
-			'conv_miembro_actions',
+			'convoca_miembro_actions',
 			'Acciones y Pagos',
 			array( $this, 'render_actions_metabox' ),
 			'miembro',
@@ -57,7 +57,7 @@ class Admin_Metaboxes {
 
 		$docs = get_posts(
 			array(
-				'post_type'      => 'conv_documento',
+				'post_type'      => 'convoca_documento',
 				'post_status'    => 'any',
 				'posts_per_page' => -1,
 				'meta_key'       => '_conv_usuario_id',
@@ -141,7 +141,7 @@ class Admin_Metaboxes {
 		<script>
 			document.addEventListener('DOMContentLoaded', function () {
 				var postId = <?php echo $post->ID; ?>;
-				var nonce = '<?php echo wp_create_nonce( 'conv_actions_' . $post->ID ); ?>';
+				var nonce = '<?php echo wp_create_nonce( 'convoca_actions_' . $post->ID ); ?>';
 				var msgBox = document.getElementById('conv-ajax-response');
 				var rgpdMsgBox = document.getElementById('conv-rgpd-response');
 
@@ -160,7 +160,7 @@ class Admin_Metaboxes {
 						body: fd
 					}).then(r => r.json()).then(res => {
 						btn.disabled = false;
-						btn.textContent = action === 'conv_send_payment_link' ? 'Generar y Enviar Link de Pago' : 'Enviar Recordatorio';
+						btn.textContent = action === 'convoca_send_payment_link' ? 'Generar y Enviar Link de Pago' : 'Enviar Recordatorio';
 						
 						if (res.success) {
 							msgBox.innerHTML = '<div class="notice notice-success inline"><p>' + res.data.message + '</p></div>';
@@ -179,7 +179,7 @@ class Admin_Metaboxes {
 				if (btnPaymentLink) {
 					btnPaymentLink.addEventListener('click', function () {
 						if (confirm('¿Generar un nuevo pago en Redsys y enviar email al socio?')) {
-							conv_ajax_action('conv_send_payment_link', this);
+							conv_ajax_action('convoca_send_payment_link', this);
 						}
 					});
 				}
@@ -188,7 +188,7 @@ class Admin_Metaboxes {
 				if (btnReminder) {
 					btnReminder.addEventListener('click', function () {
 						if (confirm('¿Reenviar el recordatorio de pago?')) {
-							conv_ajax_action('conv_send_reminder', this);
+							conv_ajax_action('convoca_send_reminder', this);
 						}
 					});
 				}
@@ -199,7 +199,7 @@ class Admin_Metaboxes {
 						if (!confirm('¿Exportar todos los datos de este miembro en formato JSON?')) return;
 						
 						var fd = new FormData();
-						fd.append('action', 'conv_export_member_data');
+						fd.append('action', 'convoca_export_member_data');
 						fd.append('post_id', postId);
 						fd.append('nonce', nonce);
 
@@ -232,7 +232,7 @@ class Admin_Metaboxes {
 						if (!confirm('¿Confirmas definitivamente la eliminación de todos los datos?')) return;
 						
 						var fd = new FormData();
-						fd.append('action', 'conv_delete_member_data');
+						fd.append('action', 'convoca_delete_member_data');
 						fd.append('post_id', postId);
 						fd.append('nonce', nonce);
 
@@ -257,7 +257,7 @@ class Admin_Metaboxes {
 	}
 
 	public function render_metabox( \WP_Post $post ): void {
-		wp_nonce_field( 'conv_save_miembro', 'conv_miembro_nonce' );
+		wp_nonce_field( 'convoca_save_miembro', 'convoca_miembro_nonce' );
 
 		$get   = fn( $k ) => get_post_meta( $post->ID, '_conv_' . $k, true );
 		$plans = CPT_Miembro::get_plans();
@@ -476,14 +476,14 @@ class Admin_Metaboxes {
 		if ( ! current_user_can( 'edit_post', $post_id ) ) {
 			wp_send_json_error( array( 'message' => 'Sin permisos sobre este registro.' ) );
 		}
-		if ( ! isset( $data['nonce'] ) || ! wp_verify_nonce( $data['nonce'], 'conv_actions_' . $post_id ) ) {
+		if ( ! isset( $data['nonce'] ) || ! wp_verify_nonce( $data['nonce'], 'convoca_actions_' . $post_id ) ) {
 			wp_send_json_error( array( 'message' => 'Nonce inválido.' ) );
 		}
 	}
 
 	public function save_metaboxes( int $post_id ): void {
 		$data = wp_unslash( $_POST );
-		if ( ! isset( $data['conv_miembro_nonce'] ) || ! wp_verify_nonce( $data['conv_miembro_nonce'], 'conv_save_miembro' ) ) {
+		if ( ! isset( $data['convoca_miembro_nonce'] ) || ! wp_verify_nonce( $data['convoca_miembro_nonce'], 'convoca_save_miembro' ) ) {
 			return;
 		}
 		if ( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE ) {
@@ -515,15 +515,15 @@ class Admin_Metaboxes {
 
 		foreach ( $fields as $field ) {
 			if ( $field === 'pago_recurrente' || $field === 'es_voluntario' ) {
-				$val = isset( $data[ 'conv_' . $field ] ) ? '1' : '0';
+				$val = isset( $data[ 'convoca_' . $field ] ) ? '1' : '0';
 			} else {
-				$val = isset( $data[ 'conv_' . $field ] ) ? sanitize_text_field( $data[ 'conv_' . $field ] ) : '';
+				$val = isset( $data[ 'convoca_' . $field ] ) ? sanitize_text_field( $data[ 'convoca_' . $field ] ) : '';
 			}
 			update_post_meta( $post_id, '_conv_' . $field, $val );
 		}
 
 		// Handle State Change via State Machine.
-		$new_state = isset( $data['conv_estado_miembro'] ) ? sanitize_text_field( $data['conv_estado_miembro'] ) : '';
+		$new_state = isset( $data['convoca_estado_miembro'] ) ? sanitize_text_field( $data['convoca_estado_miembro'] ) : '';
 		$old_state = get_post_meta( $post_id, '_conv_estado_miembro', true );
 
 		if ( $new_state && $new_state !== $old_state ) {
@@ -554,7 +554,7 @@ class Admin_Metaboxes {
 
 	public function ajax_export_member_data(): void {
 		$data = wp_unslash( $_POST );
-		check_ajax_referer( 'conv_actions_' . $data['post_id'], 'nonce' );
+		check_ajax_referer( 'convoca_actions_' . $data['post_id'], 'nonce' );
 
 		if ( ! current_user_can( 'manage_options' ) ) {
 			wp_send_json_error( array( 'message' => 'Sin permisos' ) );
@@ -625,7 +625,7 @@ class Admin_Metaboxes {
 
 	public function ajax_delete_member_data(): void {
 		$data = wp_unslash( $_POST );
-		check_ajax_referer( 'conv_actions_' . $data['post_id'], 'nonce' );
+		check_ajax_referer( 'convoca_actions_' . $data['post_id'], 'nonce' );
 
 		if ( ! current_user_can( 'manage_options' ) ) {
 			wp_send_json_error( array( 'message' => 'Sin permisos' ) );

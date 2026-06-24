@@ -22,7 +22,7 @@ class CPT_Documento {
 
 	public function redirect_default_editor(): void {
 		global $typenow;
-		if ( $typenow === 'conv_documento' ) {
+		if ( $typenow === 'convoca_documento' ) {
 			wp_safe_redirect( admin_url( 'admin.php?page=conv-members' ) );
 			exit;
 		}
@@ -65,11 +65,11 @@ class CPT_Documento {
 			'has_archive'         => false,
 			'exclude_from_search' => true,
 			'publicly_queryable'  => false,
-			'capability_type'     => 'conv_documento',
+			'capability_type'     => 'convoca_documento',
 			'map_meta_cap'        => true,
 		);
 
-		register_post_type( 'conv_documento', $args );
+		register_post_type( 'convoca_documento', $args );
 	}
 
 	/**

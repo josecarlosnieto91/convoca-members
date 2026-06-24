@@ -5,7 +5,7 @@
  * Handles database structure upgrades for the members plugin.
  *
  * To add a new upgrade:
- * 1. Increment CONV_MEMBERS_DB_VERSION in convoca-members.php
+ * 1. Increment CONVOCA_MEMBERS_DB_VERSION in convoca-members.php
  * 2. Add a callback: '1.0.1' => [$this, 'upgrade_to_1_0_1']
  * 3. Implement the private method with idempotent logic.
  *
@@ -27,15 +27,15 @@ class Members_Upgrade_Manager extends Upgrade_Manager {
 	}
 
 	protected function get_db_version(): string {
-		return defined( 'CONV_MEMBERS_DB_VERSION' ) ? CONV_MEMBERS_DB_VERSION : '0.0.0';
+		return defined( 'CONVOCA_MEMBERS_DB_VERSION' ) ? CONVOCA_MEMBERS_DB_VERSION : '0.0.0';
 	}
 
 	protected function get_option_name(): string {
-		return 'conv_members_db_version';
+		return 'convoca_members_db_version';
 	}
 
 	protected function get_transient_prefix(): string {
-		return 'conv_members';
+		return 'convoca_members';
 	}
 
 	protected function get_upgrade_callbacks(): array {
@@ -50,7 +50,7 @@ class Members_Upgrade_Manager extends Upgrade_Manager {
 	 */
 	protected function upgrade_to_1_0_3(): bool {
 		global $wpdb;
-		$table           = $wpdb->prefix . 'conv_member_sequence';
+		$table           = $wpdb->prefix . 'convoca_member_sequence';
 		$charset_collate = $wpdb->get_charset_collate();
 
 		// Table is now created in the common Installer, but ensure it exists.
@@ -66,7 +66,7 @@ class Members_Upgrade_Manager extends Upgrade_Manager {
 		// Idempotent: only initialize if empty.
 		$current_max_seq = (int) $wpdb->get_var( "SELECT MAX(id) FROM $table" );
 		if ( $current_max_seq === 0 ) {
-			$last_number = (int) get_option( 'conv_last_member_number', 0 );
+			$last_number = (int) get_option( 'convoca_last_member_number', 0 );
 
 			if ( $last_number > 0 ) {
 				// Initialize the AUTO_INCREMENT to the last known number.

@@ -156,7 +156,7 @@ $areas = \Convoca\Members\Form_Voluntariado::INTEREST_AREAS;
 
 		<!-- Dynamic Fields -->
 		<?php
-		$dynamic_fields = get_option( 'conv_volunteer_fields', array() );
+		$dynamic_fields = get_option( 'convoca_volunteer_fields', array() );
 		if ( ! empty( $dynamic_fields ) ) :
 			echo '<h3 style="margin-top:2rem">📋 Información adicional</h3>';
 			foreach ( $dynamic_fields as $field ) :
@@ -223,7 +223,7 @@ $areas = \Convoca\Members\Form_Voluntariado::INTEREST_AREAS;
 		</div>
 		
 		<?php
-		$legal_text = get_option( 'conv_volunteer_legal_text', '' );
+		$legal_text = get_option( 'convoca_volunteer_legal_text', '' );
 		if ( ! empty( $legal_text ) ) :
 			?>
 		<div style="margin-bottom: 10px; font-size: 0.9em; color: #555; padding: 15px; background: #f9f9f9; border-left: 4px solid #ff8700;">

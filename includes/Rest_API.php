@@ -543,7 +543,7 @@ class Rest_API {
 	 * Get active projects for dropdown.
 	 */
 	public function get_proyectos(): \WP_REST_Response {
-		if ( ! \Convoca\Core\Utils::check_rate_limit( 'conv_get_proyectos', 30, 60 ) ) {
+		if ( ! \Convoca\Core\Utils::check_rate_limit( 'convoca_get_proyectos', 30, 60 ) ) {
 			return new \WP_REST_Response( array( 'error' => __( 'Demasiadas peticiones.', 'convoca-members' ) ), 429 );
 		}
 
@@ -865,7 +865,7 @@ class Rest_API {
 		$id   = (int) $request['id'];
 		$post = get_post( $id );
 
-		if ( ! $post || $post->post_type !== 'conv_documento' ) {
+		if ( ! $post || $post->post_type !== 'convoca_documento' ) {
 			wp_die( 'Documento no encontrado.', 'Error', array( 'response' => 404 ) );
 		}
 

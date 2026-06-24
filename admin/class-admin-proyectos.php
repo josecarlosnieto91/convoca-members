@@ -32,7 +32,7 @@ class Admin_Proyectos extends \WP_List_Table {
 	 */
 	public function enqueue_assets( $hook ) {
 		if ( strpos( $hook, 'conv-proyecto-editor' ) !== false ) {
-			wp_enqueue_style( 'convoca-core', CONV_COMMON_URL . 'assets/css/convoca-common.css', array(), CONV_COMMON_VERSION );
+			wp_enqueue_style( 'convoca-core', CONVOCA_COMMON_URL . 'assets/css/convoca-common.css', array(), CONVOCA_COMMON_VERSION );
 		}
 	}
 
@@ -111,7 +111,7 @@ class Admin_Proyectos extends \WP_List_Table {
 			<a href="<?php echo admin_url( 'post-new.php?post_type=proyecto' ); ?>" class="page-title-action">
 				<?php _e( 'Añadir nuevo', 'convoca-members' ); ?>
 			</a>
-			<a href="<?php echo esc_url( wp_nonce_url( admin_url( 'admin-post.php?action=conv_export_proyectos_csv' ), 'conv_export_proyectos' ) ); ?>" class="convoca-btn convoca-btn-outline" style="margin-left:10px;">
+			<a href="<?php echo esc_url( wp_nonce_url( admin_url( 'admin-post.php?action=conv_export_proyectos_csv' ), 'convoca_export_proyectos' ) ); ?>" class="convoca-btn convoca-btn-outline" style="margin-left:10px;">
 				📥 <?php _e( 'Exportar CSV', 'convoca-members' ); ?>
 			</a>
 			<hr class="wp-header-end">
@@ -134,7 +134,7 @@ class Admin_Proyectos extends \WP_List_Table {
 	}
 
 	public function handle_export_csv(): void {
-		if ( ! wp_verify_nonce( $_GET['_wpnonce'] ?? '', 'conv_export_proyectos' ) ) {
+		if ( ! wp_verify_nonce( $_GET['_wpnonce'] ?? '', 'convoca_export_proyectos' ) ) {
 			wp_die( __( 'Nonce inválido.', 'convoca-members' ) );
 		}
 		if ( ! current_user_can( 'gestionar_miembros' ) ) {
@@ -324,7 +324,7 @@ class Admin_Proyectos extends \WP_List_Table {
 			<form method="post" action="<?php echo admin_url( 'admin-post.php' ); ?>" class="conv-form-custom">
 				<input type="hidden" name="action" value="conv_save_proyecto_admin">
 				<input type="hidden" name="id" value="<?php echo $post_id; ?>">
-				<?php wp_nonce_field( 'conv_save_proyecto_nonce' ); ?>
+				<?php wp_nonce_field( 'convoca_save_proyecto_nonce' ); ?>
 
 				<div class="conv-grid conv-grid--2">
 					<div class="conv-card">
@@ -393,7 +393,7 @@ class Admin_Proyectos extends \WP_List_Table {
 	 * Handle save from admin form.
 	 */
 	public function handle_save_admin() {
-		check_admin_referer( 'conv_save_proyecto_nonce' );
+		check_admin_referer( 'convoca_save_proyecto_nonce' );
 
 		if ( ! current_user_can( 'gestionar_miembros' ) ) {
 			wp_die( __( 'No tienes permisos para realizar esta acción.', 'convoca-members' ) );

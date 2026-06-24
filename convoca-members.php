@@ -47,20 +47,20 @@ if ( ! class_exists( '\\Convoca\\Core\\Utils' ) ) {
 }
 
 /* ── Constants ────────────────────────────────────────────── */
-if ( ! defined( 'CONV_MEMBERS_VERSION' ) ) {
-	define( 'CONV_MEMBERS_VERSION', '2.6.1' );
+if ( ! defined( 'CONVOCA_MEMBERS_VERSION' ) ) {
+	define( 'CONVOCA_MEMBERS_VERSION', '2.6.1' );
 }
-if ( ! defined( 'CONV_MEMBERS_DB_VERSION' ) ) {
-	define( 'CONV_MEMBERS_DB_VERSION', '1.0.3' );
+if ( ! defined( 'CONVOCA_MEMBERS_DB_VERSION' ) ) {
+	define( 'CONVOCA_MEMBERS_DB_VERSION', '1.0.3' );
 }
-if ( ! defined( 'CONV_MEMBERS_FILE' ) ) {
-	define( 'CONV_MEMBERS_FILE', __FILE__ );
+if ( ! defined( 'CONVOCA_MEMBERS_FILE' ) ) {
+	define( 'CONVOCA_MEMBERS_FILE', __FILE__ );
 }
-if ( ! defined( 'CONV_MEMBERS_DIR' ) ) {
-	define( 'CONV_MEMBERS_DIR', plugin_dir_path( __FILE__ ) );
+if ( ! defined( 'CONVOCA_MEMBERS_DIR' ) ) {
+	define( 'CONVOCA_MEMBERS_DIR', plugin_dir_path( __FILE__ ) );
 }
-if ( ! defined( 'CONV_MEMBERS_URL' ) ) {
-	define( 'CONV_MEMBERS_URL', plugin_dir_url( __FILE__ ) );
+if ( ! defined( 'CONVOCA_MEMBERS_URL' ) ) {
+	define( 'CONVOCA_MEMBERS_URL', plugin_dir_url( __FILE__ ) );
 }
 
 /* ── Autoloader ───────────────────────────────────────────── */
@@ -81,15 +81,15 @@ register_activation_hook(
 		\Convoca\Core\Installer::db_init();
 
 		// Schedule Daily Cron.
-		if ( ! wp_next_scheduled( 'conv_daily_event' ) ) {
-			wp_schedule_event( time(), 'daily', 'conv_daily_event' );
+		if ( ! wp_next_scheduled( 'convoca_daily_event' ) ) {
+			wp_schedule_event( time(), 'daily', 'convoca_daily_event' );
 		}
 
 		// Schedule Weekly Cron (admin digest).
-		if ( ! wp_next_scheduled( 'conv_weekly_event' ) ) {
+		if ( ! wp_next_scheduled( 'convoca_weekly_event' ) ) {
 			// Next Monday at 08:00.
 			$next_monday = strtotime( 'next monday 08:00:00' );
-			wp_schedule_event( $next_monday, 'weekly', 'conv_weekly_event' );
+			wp_schedule_event( $next_monday, 'weekly', 'convoca_weekly_event' );
 		}
 
 		flush_rewrite_rules();
@@ -98,9 +98,9 @@ register_activation_hook(
 		\Convoca\Members\Email_Manager::install_defaults();
 
 		// Default settings.
-		if ( false === get_option( 'conv_members_settings' ) ) {
+		if ( false === get_option( 'convoca_members_settings' ) ) {
 			update_option(
-				'conv_members_settings',
+				'convoca_members_settings',
 				array(
 					'admin_email'  => get_option( 'admin_email' ),
 					'iban'         => '',
@@ -118,14 +118,14 @@ register_activation_hook(
 			$role->add_cap( 'convoca_shifts_manage_turnos' );
 			$role->add_cap( 'convoca_shifts_view_stats' );
 			$role->add_cap( 'convoca_shifts_audit_hours' );
-			$role->add_cap( 'conv_manage_checkin' );
-			$role->add_cap( 'conv_manage_evaluations' );
-			$role->add_cap( 'conv_view_reports' );
-			$role->add_cap( 'conv_manage_hours' );
-			$role->add_cap( 'conv_export_members' );
-			$role->add_cap( 'conv_manage_webhooks' );
-			$role->add_cap( 'conv_view_payments' );
-			$role->add_cap( 'conv_manage_payments' );
+			$role->add_cap( 'convoca_manage_checkin' );
+			$role->add_cap( 'convoca_manage_evaluations' );
+			$role->add_cap( 'convoca_view_reports' );
+			$role->add_cap( 'convoca_manage_hours' );
+			$role->add_cap( 'convoca_export_members' );
+			$role->add_cap( 'convoca_manage_webhooks' );
+			$role->add_cap( 'convoca_view_payments' );
+			$role->add_cap( 'convoca_manage_payments' );
 			$role->add_cap( 'common_view_logs' );
 			$role->add_cap( 'common_manage_backup' );
 		}
@@ -155,10 +155,10 @@ register_activation_hook(
 					$r->add_cap( 'convoca_shifts_manage_turnos' );
 					$r->add_cap( 'convoca_shifts_view_stats' );
 					$r->add_cap( 'convoca_shifts_audit_hours' );
-					$r->add_cap( 'conv_manage_checkin' );
-					$r->add_cap( 'conv_manage_evaluations' );
-					$r->add_cap( 'conv_view_reports' );
-					$r->add_cap( 'conv_manage_hours' );
+					$r->add_cap( 'convoca_manage_checkin' );
+					$r->add_cap( 'convoca_manage_evaluations' );
+					$r->add_cap( 'convoca_view_reports' );
+					$r->add_cap( 'convoca_manage_hours' );
 				}
 			}
 		}
@@ -194,7 +194,7 @@ register_activation_hook(
 		}
 
 		// Save initial DB version.
-		add_option( 'conv_members_db_version', CONV_MEMBERS_DB_VERSION, '', false );
+		add_option( 'convoca_members_db_version', CONVOCA_MEMBERS_DB_VERSION, '', false );
 	}
 );
 
@@ -202,8 +202,8 @@ register_activation_hook(
 register_deactivation_hook(
 	__FILE__,
 	function () {
-		wp_clear_scheduled_hook( 'conv_daily_event' );
-		wp_clear_scheduled_hook( 'conv_weekly_event' );
+		wp_clear_scheduled_hook( 'convoca_daily_event' );
+		wp_clear_scheduled_hook( 'convoca_weekly_event' );
 		flush_rewrite_rules();
 	}
 );
@@ -282,7 +282,7 @@ add_action(
 		}
 
 		$id = (int) ( $_GET['member_id'] ?? 0 );
-		check_admin_referer( 'conv_approve_member_' . $id );
+		check_admin_referer( 'convoca_approve_member_' . $id );
 
 		if ( $id && \Convoca\Members\CPT_Miembro::approve_member( $id ) ) {
 			// Generate WP user + send credentials.
@@ -305,7 +305,7 @@ add_action(
 		}
 
 		$id = (int) ( $_GET['member_id'] ?? 0 );
-		check_admin_referer( 'conv_delete_member_' . $id );
+		check_admin_referer( 'convoca_delete_member_' . $id );
 
 		if ( $id && wp_trash_post( $id ) ) {
 			wp_redirect( admin_url( 'admin.php?page=conv-members&msg=deleted' ) );
@@ -327,7 +327,7 @@ add_action(
 			wp_die( esc_html__( 'ID de miembro no válido.', 'convoca-members' ) );
 		}
 
-		check_admin_referer( 'conv_pdf_card_' . $id );
+		check_admin_referer( 'convoca_pdf_card_' . $id );
 
 		if ( ! current_user_can( 'edit_post', $id ) ) {
 			wp_die( esc_html__( 'No tienes permisos para ver la tarjeta de este miembro.', 'convoca-members' ) );
@@ -344,7 +344,7 @@ add_action(
  */
 // Activar miembro del voluntario cuando se aprueba desde Centro Social.
 add_action(
-	'conv_voluntario_aprobado',
+	'convoca_voluntario_aprobado',
 	function ( int $user_id ): void {
 		$member_id = (int) get_user_meta( $user_id, '_conv_member_id', true );
 		if ( $member_id ) {

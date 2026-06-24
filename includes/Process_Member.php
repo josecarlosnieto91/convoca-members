@@ -229,7 +229,7 @@ class Process_Member {
 			}
 
 			// 8. Save Meta
-			$settings = get_option( 'conv_members_settings', array() );
+			$settings = get_option( 'convoca_members_settings', array() );
 
 			$meta = array(
 				'estado_miembro'    => $estado,
@@ -375,7 +375,7 @@ class Process_Member {
 				// Minimum age validation (Task 45).
 				$today    = new \DateTime();
 				$age      = $today->diff( $dob )->y;
-				$settings = get_option( 'conv_members_settings', array() );
+				$settings = get_option( 'convoca_members_settings', array() );
 				$min_age  = (int) ( $settings['min_age'] ?? 0 );
 
 				if ( $age < $min_age ) {

@@ -32,10 +32,10 @@ class Cron_Manager {
 
 	public function __construct() {
 		// Daily cron.
-		add_action( 'conv_daily_event', array( $this, 'run_daily' ) );
+		add_action( 'convoca_daily_event', array( $this, 'run_daily' ) );
 
 		// Weekly cron (admin digest).
-		add_action( 'conv_weekly_event', array( $this, 'run_weekly' ) );
+		add_action( 'convoca_weekly_event', array( $this, 'run_weekly' ) );
 	}
 
 	/**
@@ -43,7 +43,7 @@ class Cron_Manager {
 	 */
 	public function run_daily(): void {
 		// 0. Acquire lock to prevent concurrent runs
-		if ( ! \Convoca\Core\Utils::acquire_lock( 'conv_members_daily_lock', 7200 ) ) {
+		if ( ! \Convoca\Core\Utils::acquire_lock( 'convoca_members_daily_lock', 7200 ) ) {
 			return;
 		}
 
@@ -54,7 +54,7 @@ class Cron_Manager {
 			$this->process_expirations();
 			$this->process_volunteer_reminders();
 		} finally {
-			\Convoca\Core\Utils::release_lock( 'conv_members_daily_lock' );
+			\Convoca\Core\Utils::release_lock( 'convoca_members_daily_lock' );
 		}
 	}
 
@@ -63,14 +63,14 @@ class Cron_Manager {
 	 */
 	public function run_weekly(): void {
 		// 0. Acquire lock to prevent concurrent runs
-		if ( ! \Convoca\Core\Utils::acquire_lock( 'conv_members_weekly_lock', 14400 ) ) {
+		if ( ! \Convoca\Core\Utils::acquire_lock( 'convoca_members_weekly_lock', 14400 ) ) {
 			return;
 		}
 
 		try {
 			$this->send_admin_digest();
 		} finally {
-			\Convoca\Core\Utils::release_lock( 'conv_members_weekly_lock' );
+			\Convoca\Core\Utils::release_lock( 'convoca_members_weekly_lock' );
 		}
 	}
 
@@ -131,7 +131,7 @@ class Cron_Manager {
 			$days_diff = (int) floor( ( $today - $base_ts ) / DAY_IN_SECONDS );
 
 			// Per-member lock to prevent duplicate sends if cron overlaps.
-			$lock_key = 'conv_reminder_' . $post_id;
+			$lock_key = 'convoca_reminder_' . $post_id;
 			if ( ! \Convoca\Core\Utils::acquire_lock( $lock_key, 600 ) ) {
 				continue;
 			}
@@ -353,7 +353,7 @@ class Cron_Manager {
 
 		foreach ( $member_ids as $member_id ) {
 			$member_id = (int) $member_id;
-			$lock_key  = 'conv_autorenewal_' . $member_id;
+			$lock_key  = 'convoca_autorenewal_' . $member_id;
 
 			// Prevent concurrent/double processing via atomic lock.
 			if ( ! \Convoca\Core\Utils::acquire_lock( $lock_key, 300 ) ) {
@@ -484,7 +484,7 @@ class Cron_Manager {
 	 * Send a weekly summary email to administrators.
 	 */
 	private function send_admin_digest(): void {
-		$settings    = get_option( 'conv_members_settings', array() );
+		$settings    = get_option( 'convoca_members_settings', array() );
 		$admin_email = $settings['admin_email'] ?? get_option( 'admin_email' );
 
 		// Fallback if admin_email is empty.
@@ -849,7 +849,7 @@ class Cron_Manager {
 		$subject = str_replace( array_keys( $vars ), array_values( $vars ), $tpl['subject'] );
 		$body    = str_replace( array_keys( $vars ), array_values( $vars ), $tpl['body'] );
 
-		$settings    = get_option( 'conv_members_settings', array() );
+		$settings    = get_option( 'convoca_members_settings', array() );
 		$sender_name = $settings['sender_name'] ?? get_bloginfo( 'name' );
 		$admin_email = $settings['admin_email'] ?? get_option( 'admin_email' );
 

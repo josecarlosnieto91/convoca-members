@@ -100,7 +100,7 @@ class Admin_Page {
 			'conv-members-status',
 			function () {
 				if ( ! class_exists( '\\Convoca\\Members\\Admin_Status' ) ) {
-					require_once CONV_MEMBERS_DIR . 'includes/class-admin-status.php';
+					require_once CONVOCA_MEMBERS_DIR . 'includes/class-admin-status.php';
 				}
 				\Convoca\Members\Admin_Status::render_page();
 			}
@@ -115,15 +115,15 @@ class Admin_Page {
 		}
 		wp_enqueue_style(
 			'conv-members-admin',
-			CONV_MEMBERS_URL . 'assets/css/convoca-members-admin.css',
+			CONVOCA_MEMBERS_URL . 'assets/css/convoca-members-admin.css',
 			array(),
-			CONV_MEMBERS_VERSION
+			CONVOCA_MEMBERS_VERSION
 		);
 		wp_enqueue_script(
 			'conv-members-admin',
-			CONV_MEMBERS_URL . 'assets/js/convoca-members-admin.js',
+			CONVOCA_MEMBERS_URL . 'assets/js/convoca-members-admin.js',
 			array( 'convoca-common-admin-js' ),
-			CONV_MEMBERS_VERSION,
+			CONVOCA_MEMBERS_VERSION,
 			true
 		);
 		wp_localize_script(
@@ -131,12 +131,12 @@ class Admin_Page {
 			'convAdmin',
 			array(
 				'ajaxUrl'        => admin_url( 'admin-ajax.php' ),
-				'nonce'          => wp_create_nonce( 'conv_admin_nonce' ),
-				'csvNonce'       => wp_create_nonce( 'conv_export_csv' ),
+				'nonce'          => wp_create_nonce( 'convoca_admin_nonce' ),
+				'csvNonce'       => wp_create_nonce( 'convoca_export_csv' ),
 				'allColumns'     => CSV_Exporter::get_available_columns(),
 				'defaultColumns' => CSV_Exporter::get_default_columns(),
 				'userColumns'    => CSV_Exporter::get_user_columns(),
-				'columnsUrl'     => admin_url( 'admin-ajax.php?action=conv_export_csv&nonce=' . wp_create_nonce( 'conv_export_csv' ) ),
+				'columnsUrl'     => admin_url( 'admin-ajax.php?action=conv_export_csv&nonce=' . wp_create_nonce( 'convoca_export_csv' ) ),
 			)
 		);
 	}
@@ -190,7 +190,7 @@ class Admin_Page {
 					class="convoca-btn convoca-btn-outline">📥
 					<?php esc_html_e( 'Exportar CSV', 'convoca-members' ); ?>
 				</button>
-				<a href="<?php echo esc_url( wp_nonce_url( admin_url( 'admin-post.php?action=conv_export_members_pdf' ), 'conv_export_members_pdf' ) ); ?>"
+				<a href="<?php echo esc_url( wp_nonce_url( admin_url( 'admin-post.php?action=conv_export_members_pdf' ), 'convoca_export_members_pdf' ) ); ?>"
 					class="convoca-btn convoca-btn-outline" style="margin-left:5px;">📄
 					<?php esc_html_e( 'Exportar PDF', 'convoca-members' ); ?>
 				</a>
@@ -258,7 +258,7 @@ class Admin_Page {
 				<?php echo esc_html( $post->post_title ); ?>
 				<?php echo Estados::badge_html( $estado ); ?>
 				&nbsp;
-				<a href="<?php echo esc_url( wp_nonce_url( admin_url( 'admin-post.php?action=conv_pdf_card&member_id=' . $post_id ), 'conv_pdf_card_' . $post_id ) ); ?>" 
+				<a href="<?php echo esc_url( wp_nonce_url( admin_url( 'admin-post.php?action=conv_pdf_card&member_id=' . $post_id ), 'convoca_pdf_card_' . $post_id ) ); ?>" 
 					class="convoca-btn convoca-btn-outline" target="_blank">🪪 <?php esc_html_e( 'Ver Tarjeta', 'convoca-members' ); ?></a>
 				<a href="<?php echo esc_url( admin_url( 'admin.php?page=' . Admin_Member_Editor::SLUG . '&id=' . $post_id ) ); ?>" 
 					class="convoca-btn convoca-btn-primary"><?php esc_html_e( '✏️ Editar', 'convoca-members' ); ?></a>
@@ -462,7 +462,7 @@ class Admin_Page {
 
 	public function dashboard_widget(): void {
 		wp_add_dashboard_widget(
-			'conv_members_widget',
+			'convoca_members_widget',
 			__( '🍁 Miembros Convoca', 'convoca-members' ),
 			function () {
 				global $wpdb;
@@ -487,7 +487,7 @@ class Admin_Page {
 	/* ── AJAX: Quick state change ──────────────── */
 
 	public function ajax_change_state(): void {
-		check_ajax_referer( 'conv_admin_nonce', 'nonce' );
+		check_ajax_referer( 'convoca_admin_nonce', 'nonce' );
 
 		if ( ! current_user_can( 'gestionar_miembros' ) ) {
 			wp_send_json_error( __( 'Sin permisos.', 'convoca-members' ) );
@@ -514,7 +514,7 @@ class Admin_Page {
 
 
 	public function ajax_log_whatsapp(): void {
-		check_ajax_referer( 'conv_admin_nonce', 'nonce' );
+		check_ajax_referer( 'convoca_admin_nonce', 'nonce' );
 		$post_id = (int) ( wp_unslash( $_POST['post_id'] ) ?? 0 );
 		if ( ! $post_id || ! current_user_can( 'edit_post', $post_id ) ) {
 			wp_die( __( 'No tienes permisos.', 'convoca-members' ) );
@@ -573,7 +573,7 @@ class Admin_Page {
 	}
 
 	public function handle_export_members_pdf(): void {
-		if ( ! wp_verify_nonce( $_GET['_wpnonce'] ?? '', 'conv_export_members_pdf' ) ) {
+		if ( ! wp_verify_nonce( $_GET['_wpnonce'] ?? '', 'convoca_export_members_pdf' ) ) {
 			wp_die( __( 'Nonce inválido.', 'convoca-members' ) );
 		}
 		if ( ! current_user_can( 'gestionar_miembros' ) ) {

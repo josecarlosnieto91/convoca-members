@@ -22,7 +22,7 @@ class Email_Manager {
 
 
 	/** Option key for templates. */
-	private const OPTION = 'conv_email_templates';
+	private const OPTION = 'convoca_email_templates';
 
 	/** Available template slugs. */
 	public const TEMPLATES = array(
@@ -417,7 +417,7 @@ class Email_Manager {
 		$headers = array( 'Content-Type: text/html; charset=UTF-8' );
 
 		// Get Sender Name from settings.
-		$settings     = get_option( 'conv_members_settings', array() );
+		$settings     = get_option( 'convoca_members_settings', array() );
 		$sender_name  = $settings['sender_name'] ?? get_bloginfo( 'name' );
 		$system_email = $settings['system_email'] ?? get_option( 'admin_email' );
 

@@ -142,7 +142,7 @@ class Voluntariado_Gamification {
 
 	const DEFAULT_TRACK = 'busgosu';
 
-	const OPTION_KEY = 'conv_gamification_tracks';
+	const OPTION_KEY = 'convoca_gamification_tracks';
 
 	/**
 	 * Initialize hooks.

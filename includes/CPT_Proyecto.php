@@ -167,7 +167,7 @@ class CPT_Proyecto {
 		$meta    = self::get_meta( $post_id );
 		?>
 		<div class="conv-proyecto-metabox">
-			<?php wp_nonce_field( 'conv_save_proyecto', 'conv_proyecto_nonce' ); ?>
+			<?php wp_nonce_field( 'convoca_save_proyecto', 'convoca_proyecto_nonce' ); ?>
 			<p>
 				<label for="conv_fecha_inicio"><?php esc_html_e( 'Fecha de inicio:', 'convoca-members' ); ?></label>
 				<input type="date" id="conv_fecha_inicio" name="conv_fecha_inicio" 
@@ -217,7 +217,7 @@ class CPT_Proyecto {
 			return;
 		}
 
-		if ( ! isset( $_POST['conv_proyecto_nonce'] ) || ! wp_verify_nonce( $_POST['conv_proyecto_nonce'], 'conv_save_proyecto' ) ) {
+		if ( ! isset( $_POST['convoca_proyecto_nonce'] ) || ! wp_verify_nonce( $_POST['convoca_proyecto_nonce'], 'convoca_save_proyecto' ) ) {
 			return;
 		}
 
@@ -229,10 +229,10 @@ class CPT_Proyecto {
 			return;
 		}
 
-		update_post_meta( $post_id, '_conv_fecha_inicio', sanitize_text_field( $_POST['conv_fecha_inicio'] ?? '' ) );
-		update_post_meta( $post_id, '_conv_fecha_fin', sanitize_text_field( $_POST['conv_fecha_fin'] ?? '' ) );
-		update_post_meta( $post_id, '_conv_fecha_baja', sanitize_text_field( $_POST['conv_fecha_baja'] ?? '' ) );
-		update_post_meta( $post_id, '_conv_responsable', sanitize_text_field( $_POST['conv_responsable'] ?? '' ) );
-		update_post_meta( $post_id, '_conv_activo', ! empty( $_POST['conv_activo'] ) ? '1' : '0' );
+		update_post_meta( $post_id, '_conv_fecha_inicio', sanitize_text_field( $_POST['convoca_fecha_inicio'] ?? '' ) );
+		update_post_meta( $post_id, '_conv_fecha_fin', sanitize_text_field( $_POST['convoca_fecha_fin'] ?? '' ) );
+		update_post_meta( $post_id, '_conv_fecha_baja', sanitize_text_field( $_POST['convoca_fecha_baja'] ?? '' ) );
+		update_post_meta( $post_id, '_conv_responsable', sanitize_text_field( $_POST['convoca_responsable'] ?? '' ) );
+		update_post_meta( $post_id, '_conv_activo', ! empty( $_POST['convoca_activo'] ) ? '1' : '0' );
 	}
 }

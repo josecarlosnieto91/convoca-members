@@ -68,17 +68,17 @@ class Admin_Member_Editor {
 		<div class="wrap" style="max-width: 960px; margin: 20px auto;">
 			<h1><?php echo $is_edit ? esc_html__( 'Editar Miembro', 'convoca-members' ) : esc_html__( 'Añadir nuevo miembro', 'convoca-members' ); ?></h1>
 
-			<?php if ( $saved = get_transient( 'conv_member_saved_' . get_current_user_id() ) ) : ?>
+			<?php if ( $saved = get_transient( 'convoca_member_saved_' . get_current_user_id() ) ) : ?>
 				<div class="convoca-alert convoca-alert--success" style="display:block;margin-bottom:20px;">
 					<p><?php echo esc_html( $saved ); ?></p>
 				</div>
-				<?php delete_transient( 'conv_member_saved_' . get_current_user_id() ); ?>
+				<?php delete_transient( 'convoca_member_saved_' . get_current_user_id() ); ?>
 			<?php endif; ?>
 
 			<form method="post" action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>" class="convoca-box" style="background:#fff;border-radius:12px;box-shadow:0 10px 25px rgba(0,0,0,0.05);padding:40px;margin-top:20px;">
 				<input type="hidden" name="action" value="conv_save_member">
 				<input type="hidden" name="post_id" value="<?php echo $is_edit ? $post_id : 0; ?>">
-				<?php wp_nonce_field( 'conv_save_member_' . $post_id, '_conv_nonce' ); ?>
+				<?php wp_nonce_field( 'convoca_save_member_' . $post_id, '_conv_nonce' ); ?>
 
 				<div class="convoca-grid-2">
 
@@ -242,14 +242,14 @@ class Admin_Member_Editor {
 		$is_edit = $post_id > 0;
 
 		if ( $is_edit ) {
-			if ( ! wp_verify_nonce( $data['_conv_nonce'], 'conv_save_member_' . $post_id ) ) {
+			if ( ! wp_verify_nonce( $data['_conv_nonce'], 'convoca_save_member_' . $post_id ) ) {
 				wp_die( __( 'Nonce inválido.', 'convoca-members' ) );
 			}
 			if ( ! current_user_can( 'edit_post', $post_id ) ) {
 				wp_die( __( 'No tienes permisos.', 'convoca-members' ) );
 			}
 		} else {
-			if ( ! wp_verify_nonce( $data['_conv_nonce'], 'conv_save_member_0' ) ) {
+			if ( ! wp_verify_nonce( $data['_conv_nonce'], 'convoca_save_member_0' ) ) {
 				wp_die( __( 'Nonce inválido.', 'convoca-members' ) );
 			}
 			if ( ! current_user_can( 'edit_posts' ) ) {
@@ -258,7 +258,7 @@ class Admin_Member_Editor {
 		}
 
 		// Get the full name (used as post title).
-		$nombre = sanitize_text_field( $data['conv_nombre'] ?? '' );
+		$nombre = sanitize_text_field( $data['convoca_nombre'] ?? '' );
 		if ( empty( $nombre ) ) {
 			wp_die( __( 'El nombre es obligatorio.', 'convoca-members' ) );
 		}
@@ -309,7 +309,7 @@ class Admin_Member_Editor {
 		);
 
 		foreach ( $fields as $key => $sanitizer ) {
-			$raw = $data[ 'conv_' . $key ] ?? '';
+			$raw = $data[ 'convoca_' . $key ] ?? '';
 			$val = is_callable( $sanitizer ) ? $sanitizer( $raw ) : $raw;
 			update_post_meta( $post_id, '_conv_' . $key, $val );
 		}
@@ -317,12 +317,12 @@ class Admin_Member_Editor {
 		// Boolean checkboxes.
 		$bool_fields = array( 'pago_recurrente', 'es_voluntario' );
 		foreach ( $bool_fields as $key ) {
-			$val = isset( $data[ 'conv_' . $key ] ) ? '1' : '0';
+			$val = isset( $data[ 'convoca_' . $key ] ) ? '1' : '0';
 			update_post_meta( $post_id, '_conv_' . $key, $val );
 		}
 
 		// Handle state change via state machine.
-		$new_state = $data['conv_estado_miembro'] ?? '';
+		$new_state = $data['convoca_estado_miembro'] ?? '';
 		$old_state = get_post_meta( $post_id, '_conv_estado_miembro', true );
 
 		if ( $new_state && $new_state !== $old_state ) {
@@ -346,7 +346,7 @@ class Admin_Member_Editor {
 			? __( 'Miembro actualizado correctamente.', 'convoca-members' )
 			: __( 'Miembro creado correctamente.', 'convoca-members' );
 
-		set_transient( 'conv_member_saved_' . get_current_user_id(), $message, 30 );
+		set_transient( 'convoca_member_saved_' . get_current_user_id(), $message, 30 );
 
 		wp_safe_redirect( admin_url( 'admin.php?page=' . self::SLUG . '&id=' . $post_id ) );
 		exit;
@@ -359,7 +359,7 @@ class Admin_Member_Editor {
 		$data    = wp_unslash( $_POST );
 		$post_id = (int) ( $data['post_id'] ?? 0 );
 
-		if ( ! $post_id || ! wp_verify_nonce( $data['_conv_nonce'] ?? '', 'conv_delete_member_' . $post_id ) ) {
+		if ( ! $post_id || ! wp_verify_nonce( $data['_conv_nonce'] ?? '', 'convoca_delete_member_' . $post_id ) ) {
 			wp_die( __( 'Acceso denegado.', 'convoca-members' ) );
 		}
 		if ( ! current_user_can( 'delete_post', $post_id ) ) {

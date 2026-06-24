@@ -13,11 +13,11 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class PDF_Document {
 
-	private const ERROR_TRANSIENT = 'conv_pdf_gen_error_';
+	private const ERROR_TRANSIENT = 'convoca_pdf_gen_error_';
 
 	public static function init(): void {
-		add_action( 'conv_voluntario_aprobado', array( self::class, 'handle_approval' ) );
-		add_filter( 'conv_voluntario_aprobado_attachments', array( self::class, 'add_pdf_to_email' ), 10, 2 );
+		add_action( 'convoca_voluntario_aprobado', array( self::class, 'handle_approval' ) );
+		add_filter( 'convoca_voluntario_aprobado_attachments', array( self::class, 'add_pdf_to_email' ), 10, 2 );
 		add_action( 'admin_notices', array( self::class, 'show_pdf_error_notice' ) );
 	}
 
@@ -44,7 +44,7 @@ class PDF_Document {
 	public static function add_pdf_to_email( array $attachments, int $user_id ): array {
 		$existing = get_posts(
 			array(
-				'post_type'      => 'conv_documento',
+				'post_type'      => 'convoca_documento',
 				'meta_key'       => '_conv_usuario_id',
 				'meta_value'     => $user_id,
 				'posts_per_page' => 1,
@@ -74,7 +74,7 @@ class PDF_Document {
 			$wpdb->prepare(
 				"SELECT p.ID FROM {$wpdb->posts} p 
              INNER JOIN {$wpdb->postmeta} pm ON p.ID = pm.post_id 
-             WHERE p.post_type = 'conv_documento' 
+             WHERE p.post_type = 'convoca_documento' 
              AND pm.meta_key = '_conv_usuario_id' AND pm.meta_value = %d 
              AND p.post_status = 'publish' LIMIT 1",
 				$user_id
@@ -89,7 +89,7 @@ class PDF_Document {
 		$nombre       = $user->first_name ?: $user->display_name;
 		$temp_post_id = wp_insert_post(
 			array(
-				'post_type'   => 'conv_documento',
+				'post_type'   => 'convoca_documento',
 				'post_title'  => 'Acuerdo Voluntariado - ' . $nombre,
 				'post_status' => 'draft',
 				'post_author' => 1, // System.
@@ -108,7 +108,7 @@ class PDF_Document {
 				$wpdb->prepare(
 					"SELECT p.ID FROM {$wpdb->posts} p 
                  INNER JOIN {$wpdb->postmeta} pm ON p.ID = pm.post_id 
-                 WHERE p.post_type = 'conv_documento' 
+                 WHERE p.post_type = 'convoca_documento' 
                  AND pm.meta_key = '_conv_usuario_id' AND pm.meta_value = %d 
                  AND p.post_status = 'publish' 
                  FOR UPDATE",
@@ -138,14 +138,14 @@ class PDF_Document {
 			$direccion = get_user_meta( $user_id, '_convoca_shifts_direccion', true );
 			$municipio = get_user_meta( $user_id, '_convoca_shifts_municipio', true );
 
-			$legal_text = get_option( 'conv_volunteer_legal_text', '' );
+			$legal_text = get_option( 'convoca_volunteer_legal_text', '' );
 			$date       = wp_date( 'd/m/Y' );
 
 			$timestamp = time();
 			$ip        = filter_var( $_SERVER['REMOTE_ADDR'] ?? '', FILTER_VALIDATE_IP ) ?: 'Desconocida';
 
 			// Dynamic fields.
-			$dynamic_fields = get_option( 'conv_volunteer_fields', array() );
+			$dynamic_fields = get_option( 'convoca_volunteer_fields', array() );
 			$dynamic_html   = '';
 			if ( ! empty( $dynamic_fields ) ) {
 				$dynamic_html .= '<h3>Información Adicional</h3><table style="width:100%; border-collapse: collapse; margin-bottom: 20px;">';
@@ -163,7 +163,7 @@ class PDF_Document {
 				$dynamic_html .= '</table>';
 			}
 
-			$templates     = get_option( 'conv_pdf_templates', array() );
+			$templates     = get_option( 'convoca_pdf_templates', array() );
 			$template_html = isset( $templates['acuerdo_incorporacion'] ) ? $templates['acuerdo_incorporacion']['content'] : '<h1>Acuerdo de Incorporación</h1><p>Nombre: {{nombre}}</p><p>DNI: {{dni}}</p>{{dynamic_fields}}{{declaracion}}';
 
 			// Append digital stamp.

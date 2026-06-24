@@ -19,8 +19,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Member_Auth {
 
-	private const SESSION_COOKIE        = 'conv_member_session';
-	private const TRANSIENT_PREFIX      = 'conv_member_session_';
+	private const SESSION_COOKIE        = 'convoca_member_session';
+	private const TRANSIENT_PREFIX      = 'convoca_member_session_';
 	private const SESSION_EXPIRATION    = 6 * HOUR_IN_SECONDS;
 	private const MAX_LOGIN_ATTEMPTS    = 5;
 	private const LOGIN_LOCKOUT_SECONDS = 15 * MINUTE_IN_SECONDS;
@@ -254,8 +254,8 @@ class Member_Auth {
 	public static function get_current_token(): string {
 		$token = sanitize_text_field( $_COOKIE[ self::SESSION_COOKIE ] ?? '' );
 
-		if ( ! $token && isset( $_SERVER['HTTP_X_CONV_AUTH'] ) ) {
-			$token = sanitize_text_field( $_SERVER['HTTP_X_CONV_AUTH'] );
+		if ( ! $token && isset( $_SERVER['HTTP_X_CONVOCA_AUTH'] ) ) {
+			$token = sanitize_text_field( $_SERVER['HTTP_X_CONVOCA_AUTH'] );
 		}
 
 		return (string) $token;

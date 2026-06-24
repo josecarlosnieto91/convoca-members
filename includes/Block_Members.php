@@ -22,16 +22,16 @@ class Block_Members {
 	public function register_assets(): void {
 		wp_register_style(
 			'convoca-mi-area',
-			CONV_MEMBERS_URL . 'public/assets/mi-area.css',
+			CONVOCA_MEMBERS_URL . 'public/assets/mi-area.css',
 			array(),
-			CONV_MEMBERS_VERSION
+			CONVOCA_MEMBERS_VERSION
 		);
 
 		wp_register_script(
 			'conv-blocks-editor',
-			CONV_MEMBERS_URL . 'assets/js/blocks-editor.js',
+			CONVOCA_MEMBERS_URL . 'assets/js/blocks-editor.js',
 			array( 'wp-blocks', 'wp-element', 'wp-server-side-render' ),
-			CONV_MEMBERS_VERSION,
+			CONVOCA_MEMBERS_VERSION,
 			true
 		);
 	}

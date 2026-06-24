@@ -32,7 +32,7 @@ class Admin_Dashboard {
 		}
 
 		wp_add_dashboard_widget(
-			'conv_dashboard_alerts',
+			'convoca_dashboard_alerts',
 			'🌿 ' . get_bloginfo('name') . ' — ' . __('Panel de control', 'convoca-members'),
 			array( $this, 'render_widget' )
 		);

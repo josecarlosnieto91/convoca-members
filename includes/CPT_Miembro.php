@@ -280,7 +280,7 @@ class CPT_Miembro {
 	 * Get all membership plans (merged with DB settings).
 	 */
 	public static function get_plans(): array {
-		$db_plans = get_option( 'conv_members_plans', array() );
+		$db_plans = get_option( 'convoca_members_plans', array() );
 
 		// If DB is empty, use defaults (legacy mode).
 		$plans = empty( $db_plans ) ? self::PLANS : $db_plans;
@@ -356,7 +356,7 @@ class CPT_Miembro {
 
 			// Fallback: atomic increment using MySQL's LAST_INSERT_ID.
 			global $wpdb;
-			$option_name = 'conv_last_member_number_fallback';
+			$option_name = 'convoca_last_member_number_fallback';
 			$wpdb->query( 'START TRANSACTION' );
 			try {
 				// Atomic increment with row-level lock to prevent duplicates.
@@ -390,7 +390,7 @@ class CPT_Miembro {
 	 */
 	private static function get_next_member_number_internal( int $post_id = 0 ): int {
 		global $wpdb;
-		$table = $wpdb->prefix . 'conv_member_sequence';
+		$table = $wpdb->prefix . 'convoca_member_sequence';
 
 		// Verify table exists before using it (handles incomplete upgrades).
 		if ( $wpdb->get_var( "SHOW TABLES LIKE '$table'" ) !== $table ) {
@@ -421,7 +421,7 @@ class CPT_Miembro {
 		// Update legacy option for compatibility - use SELECT MAX to ensure consistency under concurrency.
 		$max_from_db = (int) $wpdb->get_var( "SELECT MAX(member_number) FROM $table" );
 		if ( $max_from_db > 0 ) {
-			update_option( 'conv_last_member_number', $max_from_db, false );
+			update_option( 'convoca_last_member_number', $max_from_db, false );
 		}
 
 		return $next_number;
@@ -462,7 +462,7 @@ class CPT_Miembro {
 			$wpdb->query( 'COMMIT' );
 
 			// Clear cache to ensure subsequent get_option calls see the new value.
-			wp_cache_delete( 'conv_last_member_number', 'options' );
+			wp_cache_delete( 'convoca_last_member_number', 'options' );
 
 			return true;
 		} catch ( \Throwable $e ) {

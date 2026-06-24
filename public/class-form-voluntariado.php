@@ -39,24 +39,24 @@ class Form_Voluntariado {
 	public function render(): string {
 		wp_enqueue_style(
 			'conv-members-public',
-			CONV_MEMBERS_URL . 'assets/css/convoca-members-public.css',
+			CONVOCA_MEMBERS_URL . 'assets/css/convoca-members-public.css',
 			array(),
-			CONV_MEMBERS_VERSION
+			CONVOCA_MEMBERS_VERSION
 		);
 		wp_enqueue_script(
 			'conv-members-public',
-			CONV_MEMBERS_URL . 'assets/js/convoca-members-public.js',
+			CONVOCA_MEMBERS_URL . 'assets/js/convoca-members-public.js',
 			array( 'convoca-common-js' ),
-			CONV_MEMBERS_VERSION,
+			CONVOCA_MEMBERS_VERSION,
 			true
 		);
 		$config = array(
 			'ajaxUrl'  => admin_url( 'admin-ajax.php' ),
-			'volNonce' => wp_create_nonce( 'conv_voluntariado_nonce' ),
+			'volNonce' => wp_create_nonce( 'convoca_voluntariado_nonce' ),
 		);
 
 		ob_start();
-		include CONV_MEMBERS_DIR . 'templates/form-voluntariado.php';
+		include CONVOCA_MEMBERS_DIR . 'templates/form-voluntariado.php';
 		$html = ob_get_clean();
 
 		// Inject data-config into the wrapper.
@@ -70,10 +70,10 @@ class Form_Voluntariado {
 	}
 
 	public function handle_submit(): void {
-		check_ajax_referer( 'conv_voluntariado_nonce', 'nonce' );
+		check_ajax_referer( 'convoca_voluntariado_nonce', 'nonce' );
 
 		// Rate limit: max 3 volunteer registrations per hour per IP.
-		if ( ! \Convoca\Core\Utils::check_rate_limit( 'conv_voluntariado_submit', 3, 3600 ) ) {
+		if ( ! \Convoca\Core\Utils::check_rate_limit( 'convoca_voluntariado_submit', 3, 3600 ) ) {
 			wp_send_json_error( array( 'errors' => array( 'Demasiados intentos. Inténtalo de nuevo en una hora.' ) ), 429 );
 		}
 
@@ -161,7 +161,7 @@ class Form_Voluntariado {
 		}
 
 		// Dynamic fields validation.
-		$dynamic_fields = get_option( 'conv_volunteer_fields', array() );
+		$dynamic_fields = get_option( 'convoca_volunteer_fields', array() );
 		$dynamic_data   = array();
 		foreach ( $dynamic_fields as $field ) {
 			$name = 'dyn_' . $field['name'];
@@ -235,7 +235,7 @@ class Form_Voluntariado {
 				'forma_pago'        => 'voluntariado',
 				'plan'              => 'voluntariado',
 				'access_code'       => \Convoca\Core\Utils::generate_access_code(),
-				'rgpd_version'      => ( get_option( 'conv_members_settings', array() )['rgpd_version'] ?? '1.0' ),
+				'rgpd_version'      => ( get_option( 'convoca_members_settings', array() )['rgpd_version'] ?? '1.0' ),
 				'rgpd_timestamp'    => current_time( 'mysql' ),
 				'comunicaciones_ok' => $comunicaciones ? '1' : '0',
 			);
@@ -249,7 +249,7 @@ class Form_Voluntariado {
 			update_user_meta( $user_id, '_conv_member_id', $member_post_id );
 		}
 
-		$settings = get_option( 'conv_members_settings', array() );
+		$settings = get_option( 'convoca_members_settings', array() );
 
 		$meta_map = array(
 			'_convoca_shifts_aprobado'                => 0, // Pending approval.
@@ -290,7 +290,7 @@ class Form_Voluntariado {
 			"Se ha recibido una nueva solicitud de voluntariado de {$nombre} ({$email}).\nRevisa la pantalla de 'Gestionar Voluntarios' para aprobarla."
 		);
 
-		do_action( 'conv_voluntario_pendiente', $user_id );
+		do_action( 'convoca_voluntario_pendiente', $user_id );
 
 		wp_send_json_success(
 			array(

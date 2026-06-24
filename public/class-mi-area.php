@@ -22,8 +22,8 @@ class Mi_Area {
 	 * Enqueue CSS/JS.
 	 */
 	public function enqueue_assets(): void {
-		wp_enqueue_style( 'convoca-mi-area', CONV_MEMBERS_URL . 'public/assets/mi-area.css', array(), CONV_MEMBERS_VERSION );
-		wp_enqueue_script( 'convoca-mi-area', CONV_MEMBERS_URL . 'public/assets/mi-area.js', array( 'convoca-common-js' ), CONV_MEMBERS_VERSION, true );
+		wp_enqueue_style( 'convoca-mi-area', CONVOCA_MEMBERS_URL . 'public/assets/mi-area.css', array(), CONVOCA_MEMBERS_VERSION );
+		wp_enqueue_script( 'convoca-mi-area', CONVOCA_MEMBERS_URL . 'public/assets/mi-area.js', array( 'convoca-common-js' ), CONVOCA_MEMBERS_VERSION, true );
 
 		$member_id = Member_Auth::get_current_member_id();
 		wp_localize_script(

@@ -17,7 +17,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Certificate_Generator {
 
-	private const ERROR_TRANSIENT = 'conv_cert_gen_error_';
+	private const ERROR_TRANSIENT = 'convoca_cert_gen_error_';
 
 	public static function init(): void {
 		add_action( 'admin_notices', array( self::class, 'show_pdf_error_notice' ) );
@@ -95,7 +95,7 @@ class Certificate_Generator {
 
 		// Since generate_pdf usually saves to file, but Certificate_Generator::generate() wants binary content,.
 		// we use a temporary file.
-		$tmp_file = tempnam( sys_get_temp_dir(), 'conv_cert_' );
+		$tmp_file = tempnam( sys_get_temp_dir(), 'convoca_cert_' );
 
 		try {
 			$result = $signature->generate_pdf( $html, array(), $tmp_file );

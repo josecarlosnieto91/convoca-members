@@ -13,7 +13,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Admin_Settings {
 
-	private const CACHE_KEY = 'conv_members_diagnostic_cache';
+	private const CACHE_KEY = 'convoca_members_diagnostic_cache';
 
 	public function __construct() {
 		add_action( 'admin_init', array( $this, 'register_settings' ) );
@@ -24,20 +24,20 @@ class Admin_Settings {
 		if ( ! isset( $_POST['_conv_settings_nonce'] ) ) {
 			return;
 		}
-		if ( ! wp_verify_nonce( $_POST['_conv_settings_nonce'], 'conv_members_settings_save' ) ) {
+		if ( ! wp_verify_nonce( $_POST['_conv_settings_nonce'], 'convoca_members_settings_save' ) ) {
 			return;
 		}
 		if ( ! current_user_can( 'manage_options' ) ) {
 			wp_die( __( 'No tienes permisos.', 'convoca-members' ) );
 		}
 
-		if ( isset( $_POST['conv_save_settings'] ) && $_POST['conv_save_settings'] === 'general' ) {
-			$raw      = wp_unslash( $_POST['conv_members_settings'] ?? array() );
-			$settings = get_option( 'conv_members_settings', array() );
+		if ( isset( $_POST['convoca_save_settings'] ) && $_POST['convoca_save_settings'] === 'general' ) {
+			$raw      = wp_unslash( $_POST['convoca_members_settings'] ?? array() );
+			$settings = get_option( 'convoca_members_settings', array() );
 			foreach ( $raw as $key => $val ) {
 				$settings[ $key ] = sanitize_text_field( $val );
 			}
-			update_option( 'conv_members_settings', $settings );
+			update_option( 'convoca_members_settings', $settings );
 			wp_safe_redirect( add_query_arg( 'updated', '1', wp_get_referer() ) );
 			exit;
 		}
@@ -45,36 +45,36 @@ class Admin_Settings {
 
 	public function register_settings(): void {
 		register_setting(
-			'conv_members_settings_group',
-			'conv_members_settings',
+			'convoca_members_settings_group',
+			'convoca_members_settings',
 			array(
 				'sanitize_callback' => array( $this, 'sanitize_settings' ),
 			)
 		);
 		register_setting(
-			'conv_members_plans_group',
-			'conv_members_plans',
+			'convoca_members_plans_group',
+			'convoca_members_plans',
 			array(
 				'sanitize_callback' => array( $this, 'sanitize_plans' ),
 			)
 		);
 		register_setting(
-			'conv_members_volunteers_group',
-			'conv_volunteer_fields',
+			'convoca_members_volunteers_group',
+			'convoca_volunteer_fields',
 			array(
 				'sanitize_callback' => array( $this, 'sanitize_volunteer_fields' ),
 			)
 		);
 		register_setting(
-			'conv_members_volunteers_group',
-			'conv_volunteer_legal_text',
+			'convoca_members_volunteers_group',
+			'convoca_volunteer_legal_text',
 			array(
 				'sanitize_callback' => 'wp_kses_post',
 			)
 		);
 		register_setting(
-			'conv_members_gamification_group',
-			'conv_gamification_tracks',
+			'convoca_members_gamification_group',
+			'convoca_gamification_tracks',
 			array(
 				'sanitize_callback' => array( $this, 'sanitize_gamification_tracks' ),
 			)
@@ -273,10 +273,10 @@ class Admin_Settings {
 	}
 
 	public function render_general_tab(): void {
-		$settings = get_option( 'conv_members_settings', array() );
+		$settings = get_option( 'convoca_members_settings', array() );
 		?>
 		<form method="post">
-			<?php wp_nonce_field( 'conv_members_settings_save', '_conv_settings_nonce' ); ?>
+			<?php wp_nonce_field( 'convoca_members_settings_save', '_conv_settings_nonce' ); ?>
 			<input type="hidden" name="conv_save_settings" value="general">
 
 			<div class="convoca-field">
@@ -327,7 +327,7 @@ class Admin_Settings {
 		// that serves to create a new key.
 		?>
 		<form method="post" action="options.php">
-			<?php settings_fields( 'conv_members_plans_group' ); ?>
+			<?php settings_fields( 'convoca_members_plans_group' ); ?>
 
 			<div id="conv-plans-container">
 				<?php foreach ( $plans as $key => $plan ) : ?>
@@ -512,7 +512,7 @@ class Admin_Settings {
 		// THE PREVIOUS CODE handled this manually via POST check.
 		// We will keep that manual saving logic but integrate it into the flow.
 
-		if ( isset( $_POST['conv_save_templates'] ) && check_admin_referer( 'conv_templates_nonce' ) ) {
+		if ( isset( $_POST['convoca_save_templates'] ) && check_admin_referer( 'convoca_templates_nonce' ) ) {
 			$data      = wp_unslash( $_POST );
 			$templates = array();
 			foreach ( Email_Manager::TEMPLATES as $slug ) {
@@ -538,7 +538,7 @@ class Admin_Settings {
 
 		?>
 		<form method="post">
-			<?php wp_nonce_field( 'conv_templates_nonce' ); ?>
+			<?php wp_nonce_field( 'convoca_templates_nonce' ); ?>
 			<p class="description">
 				<?php esc_html_e( 'Variables disponibles:', 'convoca-members' ); ?>
 				<code>{nombre}</code>, <code>{plan}</code>, <code>{importe}</code>, <code>{link_pago}</code>,
@@ -576,11 +576,11 @@ class Admin_Settings {
 		<?php
 	}
 	private function render_volunteers_tab(): void {
-		$fields     = get_option( 'conv_volunteer_fields', array() );
-		$legal_text = get_option( 'conv_volunteer_legal_text', '' );
+		$fields     = get_option( 'convoca_volunteer_fields', array() );
+		$legal_text = get_option( 'convoca_volunteer_legal_text', '' );
 		?>
 		<form method="post" action="options.php">
-			<?php settings_fields( 'conv_members_volunteers_group' ); ?>
+			<?php settings_fields( 'convoca_members_volunteers_group' ); ?>
 
 			<h2><?php esc_html_e( 'Texto Legal (Declaración Responsable)', 'convoca-members' ); ?></h2>
 			<p class="description"><?php esc_html_e( 'Este texto se mostrará junto a un checkbox obligatorio al final del formulario de voluntariado.', 'convoca-members' ); ?></p>
@@ -728,8 +728,8 @@ class Admin_Settings {
 		$tracks = \Convoca\Members\Voluntariado_Gamification::get_tracks_config();
 
 		// Handle POST save.
-		if ( isset( $_POST['conv_save_gamification'] ) && check_admin_referer( 'conv_gamification_nonce' ) ) {
-			$raw       = wp_unslash( $_POST['conv_gamification_tracks'] ?? array() );
+		if ( isset( $_POST['convoca_save_gamification'] ) && check_admin_referer( 'convoca_gamification_nonce' ) ) {
+			$raw       = wp_unslash( $_POST['convoca_gamification_tracks'] ?? array() );
 			$sanitized = $this->sanitize_gamification_tracks( $raw );
 			update_option( \Convoca\Members\Voluntariado_Gamification::OPTION_KEY, $sanitized );
 			echo '<div class="updated"><p>' . esc_html__( 'Badges guardados correctamente.', 'convoca-members' ) . '</p></div>';
@@ -756,7 +756,7 @@ class Admin_Settings {
 			</div>
 
 			<form method="post">
-				<?php wp_nonce_field( 'conv_gamification_nonce' ); ?>
+				<?php wp_nonce_field( 'convoca_gamification_nonce' ); ?>
 				<input type="hidden" name="conv_save_gamification" value="1">
 
 				<?php foreach ( $tracks as $track_key => $track ) : ?>
@@ -943,8 +943,8 @@ class Admin_Settings {
 		}
 
 		// 3. Database
-		$db_version = get_option( 'conv_members_db_version', '0' );
-		$is_db_ok   = version_compare( $db_version, CONV_MEMBERS_DB_VERSION, '>=' );
+		$db_version = get_option( 'convoca_members_db_version', '0' );
+		$is_db_ok   = version_compare( $db_version, CONVOCA_MEMBERS_DB_VERSION, '>=' );
 		$checks[]   = array(
 			'title'   => __( 'Base de Datos', 'convoca-members' ),
 			'status'  => $is_db_ok ? 'ok' : 'warning',

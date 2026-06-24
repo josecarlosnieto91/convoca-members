@@ -31,7 +31,7 @@ class Admin_Webhooks {
 			'conv-members',
 			__( 'Webhooks', 'convoca-members' ),
 			'🔗 Webhooks',
-			'conv_manage_webhooks',
+			'convoca_manage_webhooks',
 			'conv-webhooks',
 			array( $this, 'render_page' )
 		);
@@ -41,20 +41,20 @@ class Admin_Webhooks {
 	 * Handle form submissions and actions.
 	 */
 	public function handle_actions(): void {
-		if ( ! isset( $_POST['conv_webhook_action'] ) && ! isset( $_GET['conv_wh_action'] ) ) {
+		if ( ! isset( $_POST['convoca_webhook_action'] ) && ! isset( $_GET['convoca_wh_action'] ) ) {
 			return;
 		}
 
-		if ( ! current_user_can( 'conv_manage_webhooks' ) ) {
+		if ( ! current_user_can( 'convoca_manage_webhooks' ) ) {
 			return;
 		}
 
 		// Handle POST actions (create/update).
-		if ( isset( $_POST['conv_webhook_action'] ) ) {
-			check_admin_referer( 'conv_webhook_nonce' );
+		if ( isset( $_POST['convoca_webhook_action'] ) ) {
+			check_admin_referer( 'convoca_webhook_nonce' );
 
 			$post_data = wp_unslash( $_POST );
-			$action    = sanitize_text_field( $post_data['conv_webhook_action'] );
+			$action    = sanitize_text_field( $post_data['convoca_webhook_action'] );
 
 			if ( $action === 'create' ) {
 				$events = isset( $post_data['webhook_events'] ) ? array_map( 'sanitize_text_field', $post_data['webhook_events'] ) : array();
@@ -93,12 +93,12 @@ class Admin_Webhooks {
 		}
 
 		// Handle GET actions (delete, test, toggle).
-		if ( isset( $_GET['conv_wh_action'] ) ) {
+		if ( isset( $_GET['convoca_wh_action'] ) ) {
 			$get_data = wp_unslash( $_GET );
-			$action   = sanitize_text_field( $get_data['conv_wh_action'] );
+			$action   = sanitize_text_field( $get_data['convoca_wh_action'] );
 			$id       = sanitize_text_field( $get_data['webhook_id'] ?? '' );
 
-			check_admin_referer( 'conv_wh_action_' . $id );
+			check_admin_referer( 'convoca_wh_action_' . $id );
 
 			if ( $action === 'delete' ) {
 				Webhook_Manager::delete_webhook( $id );
@@ -223,7 +223,7 @@ class Admin_Webhooks {
 			// Test.
 			$test_url = wp_nonce_url(
 				admin_url( 'admin.php?page=conv-webhooks&conv_wh_action=test&webhook_id=' . $id ),
-				'conv_wh_action_' . $id
+				'convoca_wh_action_' . $id
 			);
 			echo '<a href="' . esc_url( $test_url ) . '" class="button button-small">🔔 Test</a> ';
 
@@ -233,14 +233,14 @@ class Admin_Webhooks {
 			// Toggle.
 			$toggle_url = wp_nonce_url(
 				admin_url( 'admin.php?page=conv-webhooks&conv_wh_action=toggle&webhook_id=' . $id ),
-				'conv_wh_action_' . $id
+				'convoca_wh_action_' . $id
 			);
 			echo '<a href="' . esc_url( $toggle_url ) . '" class="button button-small">' . ( $active ? '⏸ Pausar' : '▶ Activar' ) . '</a> ';
 
 			// Delete.
 			$delete_url = wp_nonce_url(
 				admin_url( 'admin.php?page=conv-webhooks&conv_wh_action=delete&webhook_id=' . $id ),
-				'conv_wh_action_' . $id
+				'convoca_wh_action_' . $id
 			);
 			echo '<a href="' . esc_url( $delete_url ) . '" class="button button-small" onclick="return confirm(\'¿Eliminar este webhook?\')">🗑</a>';
 
@@ -270,7 +270,7 @@ class Admin_Webhooks {
 		echo '<a href="' . esc_url( admin_url( 'admin.php?page=conv-webhooks' ) ) . '" class="button" style="margin-bottom:15px;">← Volver a la lista</a>';
 
 		echo '<form method="post" action="">';
-		wp_nonce_field( 'conv_webhook_nonce' );
+		wp_nonce_field( 'convoca_webhook_nonce' );
 		echo '<input type="hidden" name="conv_webhook_action" value="' . esc_attr( $action ) . '">';
 
 		if ( $is_edit ) {
@@ -339,7 +339,7 @@ class Admin_Webhooks {
 
 		$clear_url = wp_nonce_url(
 			admin_url( 'admin.php?page=conv-webhooks&conv_wh_action=clear_logs&webhook_id=' . $webhook_id ),
-			'conv_wh_action_' . $webhook_id
+			'convoca_wh_action_' . $webhook_id
 		);
 		echo '<a href="' . esc_url( $clear_url ) . '" class="button" onclick="return confirm(\'¿Limpiar todos los registros?\')">🗑 Limpiar logs</a>';
 

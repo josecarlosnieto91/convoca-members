@@ -45,7 +45,7 @@ class Admin_Horas extends \WP_List_Table {
 	 */
 	public function enqueue_assets( $hook ) {
 		if ( strpos( $hook, 'conv-horas-editor' ) !== false ) {
-			wp_enqueue_style( 'convoca-core', CONV_COMMON_URL . 'assets/css/convoca-common.css', array(), CONV_COMMON_VERSION );
+			wp_enqueue_style( 'convoca-core', CONVOCA_COMMON_URL . 'assets/css/convoca-common.css', array(), CONVOCA_COMMON_VERSION );
 		}
 	}
 
@@ -72,7 +72,7 @@ class Admin_Horas extends \WP_List_Table {
 	 * Handle save from admin form.
 	 */
 	public function handle_save_admin() {
-		check_admin_referer( 'conv_save_hours_nonce' );
+		check_admin_referer( 'convoca_save_hours_nonce' );
 
 		if ( ! current_user_can( 'gestionar_miembros' ) ) {
 			wp_die( __( 'No tienes permisos para realizar esta acción.', 'convoca-members' ) );
@@ -205,7 +205,7 @@ class Admin_Horas extends \WP_List_Table {
 					<form action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>" method="post">
 						<input type="hidden" name="action" value="conv_save_hours_admin">
 						<input type="hidden" name="id" value="<?php echo (int) $record_id; ?>">
-						<?php wp_nonce_field( 'conv_save_hours_nonce' ); ?>
+						<?php wp_nonce_field( 'convoca_save_hours_nonce' ); ?>
 
 						<div class="convoca-grid-2">
 							<div class="convoca-field">
@@ -308,7 +308,7 @@ class Admin_Horas extends \WP_List_Table {
 			<a href="<?php echo admin_url( 'post-new.php?post_type=registro_hora' ); ?>" class="page-title-action">
 				<?php _e( 'Añadir Registro', 'convoca-members' ); ?>
 			</a>
-			<a href="<?php echo esc_url( wp_nonce_url( admin_url( 'admin-post.php?action=conv_export_horas_csv&filter_proyecto=' . ( $filter_proyecto ?: '' ) ), 'conv_export_horas' ) ); ?>" class="convoca-btn convoca-btn-outline" style="margin-left:10px;">
+			<a href="<?php echo esc_url( wp_nonce_url( admin_url( 'admin-post.php?action=conv_export_horas_csv&filter_proyecto=' . ( $filter_proyecto ?: '' ) ), 'convoca_export_horas' ) ); ?>" class="convoca-btn convoca-btn-outline" style="margin-left:10px;">
 				📥 <?php _e( 'Exportar CSV', 'convoca-members' ); ?>
 			</a>
 			<hr class="wp-header-end">
@@ -348,7 +348,7 @@ class Admin_Horas extends \WP_List_Table {
 	}
 
 	public function handle_export_csv(): void {
-		if ( ! wp_verify_nonce( $_GET['_wpnonce'] ?? '', 'conv_export_horas' ) ) {
+		if ( ! wp_verify_nonce( $_GET['_wpnonce'] ?? '', 'convoca_export_horas' ) ) {
 			wp_die( __( 'Nonce inválido.', 'convoca-members' ) );
 		}
 		if ( ! current_user_can( 'gestionar_miembros' ) ) {

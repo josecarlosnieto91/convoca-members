@@ -82,7 +82,7 @@ class Admin_Status {
 	}
 
 	public static function check_cron(): array {
-		$hooks   = array( 'conv_daily_event', 'conv_weekly_event' );
+		$hooks   = array( 'convoca_daily_event', 'convoca_weekly_event' );
 		$missing = array();
 		foreach ( $hooks as $h ) {
 			$ts = wp_next_scheduled( $h );

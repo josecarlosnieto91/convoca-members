@@ -46,15 +46,15 @@ class Form_Handler {
 	public function render(): string {
 		wp_enqueue_style(
 			'conv-members-public',
-			CONV_MEMBERS_URL . 'assets/css/convoca-members-public.css',
+			CONVOCA_MEMBERS_URL . 'assets/css/convoca-members-public.css',
 			array(),
-			CONV_MEMBERS_VERSION
+			CONVOCA_MEMBERS_VERSION
 		);
 		wp_enqueue_script(
 			'conv-members-public',
-			CONV_MEMBERS_URL . 'assets/js/convoca-members-public.js',
+			CONVOCA_MEMBERS_URL . 'assets/js/convoca-members-public.js',
 			array( 'convoca-common-js' ),
-			CONV_MEMBERS_VERSION,
+			CONVOCA_MEMBERS_VERSION,
 			true
 		);
 		$raw_gateway    = function_exists( 'Convoca\\Gateway\\conv_get_gateway_settings' ) ? \Convoca\Gateway\conv_get_gateway_settings() : array();
@@ -64,13 +64,13 @@ class Form_Handler {
 			'restUrl'   => rest_url( 'convoca-members/v1/alta' ),
 			'restNonce' => wp_create_nonce( 'wp_rest' ),
 			'ajaxUrl'   => admin_url( 'admin-ajax.php' ),
-			'nonce'     => wp_create_nonce( 'conv_alta_nonce' ),
+			'nonce'     => wp_create_nonce( 'convoca_alta_nonce' ),
 			'plans'     => CPT_Miembro::get_plans(),
 			'gateway'   => $public_gateway,
 		);
 
 		ob_start();
-		include CONV_MEMBERS_DIR . 'templates/form-alta.php';
+		include CONVOCA_MEMBERS_DIR . 'templates/form-alta.php';
 		$html = ob_get_clean();
 
 		// Inject data-config into the wrapper.
@@ -90,7 +90,7 @@ class Form_Handler {
 	public static function handle_submit_rest( \WP_REST_Request $request ): \WP_REST_Response {
 		// 1. Validate custom nonce (works for public users)
 		$nonce = $request->get_header( 'X-Conv-Nonce' ) ?: $request->get_param( 'nonce' );
-		if ( ! $nonce || ! wp_verify_nonce( $nonce, 'conv_alta_nonce' ) ) {
+		if ( ! $nonce || ! wp_verify_nonce( $nonce, 'convoca_alta_nonce' ) ) {
 			return new \WP_REST_Response(
 				array(
 					'success' => false,
@@ -140,7 +140,7 @@ class Form_Handler {
 	 * AJAX form submission handler (legacy — kept for backward compat).
 	 */
 	public function handle_submit(): void {
-		check_ajax_referer( 'conv_alta_nonce', 'nonce' );
+		check_ajax_referer( 'convoca_alta_nonce', 'nonce' );
 
 		if ( ! \Convoca\Core\Utils::check_rate_limit( 'alta_socio', 3, 3600 ) ) {
 			wp_send_json_error( array( 'errors' => array( 'Demasiados intentos de registro. Inténtalo de nuevo en una hora.' ) ), 429 );
@@ -152,7 +152,7 @@ class Form_Handler {
 			wp_send_json_error( array( 'errors' => array( $result->get_error_message() ) ) );
 		}
 
-		do_action( 'conv_member_created', $result['member_id'], $result );
+		do_action( 'convoca_member_created', $result['member_id'], $result );
 
 		wp_send_json_success( $result );
 	}
@@ -163,7 +163,7 @@ class Form_Handler {
 	 */
 	public function ajax_get_nonce(): void {
 		// Rate limit: max 30 requests per hour per IP.
-		if ( ! \Convoca\Core\Utils::check_rate_limit( 'conv_get_nonce', 30, 3600 ) ) {
+		if ( ! \Convoca\Core\Utils::check_rate_limit( 'convoca_get_nonce', 30, 3600 ) ) {
 			wp_send_json_error( array( 'message' => __( 'Demasiadas peticiones. Inténtalo de nuevo más tarde.', 'convoca-members' ) ), 429 );
 		}
 
@@ -173,7 +173,7 @@ class Form_Handler {
 
 		wp_send_json_success(
 			array(
-				'nonce'      => wp_create_nonce( 'conv_alta_nonce' ),
+				'nonce'      => wp_create_nonce( 'convoca_alta_nonce' ),
 				'rest_nonce' => wp_create_nonce( 'wp_rest' ),
 				'plans'      => CPT_Miembro::get_plans(),
 			)
