@@ -31,11 +31,11 @@
     },
     "autoload": {
         "psr-4": {
-            "Convoca\\Members\\": [
-                "includes/",
-                "admin/",
-                "public/"
-            ]
-        }
+            "Convoca\\Members\\": "includes/"
+        },
+        "classmap": [
+            "admin/",
+            "public/"
+        ]
     }
 }
