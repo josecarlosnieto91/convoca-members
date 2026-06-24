@@ -30,14 +30,7 @@ if ( file_exists( $composer_autoload ) ) {
 }
 
 /* ── Convoca Core fallback ────────────────────────── */
-if ( ! class_exists( '\\Convoca\\Core\\Utils' ) ) {
-	$core_path = WP_PLUGIN_DIR . '/convoca-core/includes';
-	if ( is_dir( $core_path ) ) {
-		foreach ( glob( $core_path . '/class-*.php' ) as $file ) {
-			require_once $file;
-		}
-	}
-}
+// Core classes auto-loaded via Convoca Core's Composer PSR-4
 
 // Compatibility Check: Ensure Convoca Common is loaded.
 if ( ! class_exists( '\\Convoca\\Core\\Utils' ) ) {
@@ -71,30 +64,7 @@ if ( ! defined( 'CONV_MEMBERS_URL' ) ) {
 }
 
 /* ── Autoloader ───────────────────────────────────────────── */
-spl_autoload_register(
-	function ( string $class ): void {
-		$prefix = 'Convoca\\Members\\';
-		if ( ! str_starts_with( $class, $prefix ) ) {
-			return;
-		}
-		$relative = str_replace( $prefix, '', $class );
-		$relative = strtolower( str_replace( '_', '-', $relative ) );
-
-		$maps = array(
-			'includes/',
-			'admin/',
-			'public/',
-		);
-
-		foreach ( $maps as $dir ) {
-			$file = CONV_MEMBERS_DIR . $dir . 'class-' . $relative . '.php';
-			if ( file_exists( $file ) ) {
-				require_once $file;
-				return;
-			}
-		}
-	}
-);
+// PSR-4 autoloading handled by Composer (vendor/autoload.php)
 
 /*
 ── Activation / Deactivation ────────────────────────────── */

@@ -1,7 +1,7 @@
 {
     "name": "convoca/convoca-members",
     "license": "GPL-2.0-or-later",
-	"description": "Convoca Plugin",
+    "description": "Convoca Plugin",
     "type": "wordpress-plugin",
     "require": {
         "php": ">=8.1"
@@ -31,7 +31,11 @@
     },
     "autoload": {
         "psr-4": {
-            "Convoca\\Members\\": "includes/"
+            "Convoca\\Members\\": [
+                "includes/",
+                "admin/",
+                "public/"
+            ]
         }
     }
 }
