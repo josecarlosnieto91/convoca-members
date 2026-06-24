@@ -20,9 +20,9 @@ class Admin_Page {
 		add_action( 'wp_dashboard_setup', array( $this, 'dashboard_widget' ) );
 
 		// Quick state-change AJAX.
-		add_action( 'wp_ajax_conv_change_state', array( $this, 'ajax_change_state' ) );
-		add_action( 'wp_ajax_conv_log_whatsapp', array( $this, 'ajax_log_whatsapp' ) );
-		add_action( 'admin_post_conv_export_members_pdf', array( $this, 'handle_export_members_pdf' ) );
+		add_action( 'wp_ajax_convoca_change_state', array( $this, 'ajax_change_state' ) );
+		add_action( 'wp_ajax_convoca_log_whatsapp', array( $this, 'ajax_log_whatsapp' ) );
+		add_action( 'admin_post_convoca_export_members_pdf', array( $this, 'handle_export_members_pdf' ) );
 	}
 
 	/* ── Menu ──────────────────────────────────── */
@@ -136,7 +136,7 @@ class Admin_Page {
 				'allColumns'     => CSV_Exporter::get_available_columns(),
 				'defaultColumns' => CSV_Exporter::get_default_columns(),
 				'userColumns'    => CSV_Exporter::get_user_columns(),
-				'columnsUrl'     => admin_url( 'admin-ajax.php?action=conv_export_csv&nonce=' . wp_create_nonce( 'convoca_export_csv' ) ),
+				'columnsUrl'     => admin_url( 'admin-ajax.php?action=convoca_export_csv&nonce=' . wp_create_nonce( 'convoca_export_csv' ) ),
 			)
 		);
 	}
@@ -190,7 +190,7 @@ class Admin_Page {
 					class="convoca-btn convoca-btn-outline">📥
 					<?php esc_html_e( 'Exportar CSV', 'convoca-members' ); ?>
 				</button>
-				<a href="<?php echo esc_url( wp_nonce_url( admin_url( 'admin-post.php?action=conv_export_members_pdf' ), 'convoca_export_members_pdf' ) ); ?>"
+				<a href="<?php echo esc_url( wp_nonce_url( admin_url( 'admin-post.php?action=convoca_export_members_pdf' ), 'convoca_export_members_pdf' ) ); ?>"
 					class="convoca-btn convoca-btn-outline" style="margin-left:5px;">📄
 					<?php esc_html_e( 'Exportar PDF', 'convoca-members' ); ?>
 				</a>
@@ -258,7 +258,7 @@ class Admin_Page {
 				<?php echo esc_html( $post->post_title ); ?>
 				<?php echo Estados::badge_html( $estado ); ?>
 				&nbsp;
-				<a href="<?php echo esc_url( wp_nonce_url( admin_url( 'admin-post.php?action=conv_pdf_card&member_id=' . $post_id ), 'convoca_pdf_card_' . $post_id ) ); ?>" 
+				<a href="<?php echo esc_url( wp_nonce_url( admin_url( 'admin-post.php?action=convoca_pdf_card&member_id=' . $post_id ), 'convoca_pdf_card_' . $post_id ) ); ?>" 
 					class="convoca-btn convoca-btn-outline" target="_blank">🪪 <?php esc_html_e( 'Ver Tarjeta', 'convoca-members' ); ?></a>
 				<a href="<?php echo esc_url( admin_url( 'admin.php?page=' . Admin_Member_Editor::SLUG . '&id=' . $post_id ) ); ?>" 
 					class="convoca-btn convoca-btn-primary"><?php esc_html_e( '✏️ Editar', 'convoca-members' ); ?></a>

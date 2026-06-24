@@ -169,24 +169,24 @@ class CPT_Proyecto {
 		<div class="conv-proyecto-metabox">
 			<?php wp_nonce_field( 'convoca_save_proyecto', 'convoca_proyecto_nonce' ); ?>
 			<p>
-				<label for="conv_fecha_inicio"><?php esc_html_e( 'Fecha de inicio:', 'convoca-members' ); ?></label>
-				<input type="date" id="conv_fecha_inicio" name="conv_fecha_inicio" 
+				<label for="convoca_fecha_inicio"><?php esc_html_e( 'Fecha de inicio:', 'convoca-members' ); ?></label>
+				<input type="date" id="convoca_fecha_inicio" name="convoca_fecha_inicio" 
 						value="<?php echo esc_attr( $meta['fecha_inicio'] ?? '' ); ?>" class="widefat">
 			</p>
 			<p>
-				<label for="conv_fecha_fin"><?php esc_html_e( 'Fecha de fin:', 'convoca-members' ); ?></label>
-				<input type="date" id="conv_fecha_fin" name="conv_fecha_fin" 
+				<label for="convoca_fecha_fin"><?php esc_html_e( 'Fecha de fin:', 'convoca-members' ); ?></label>
+				<input type="date" id="convoca_fecha_fin" name="convoca_fecha_fin" 
 						value="<?php echo esc_attr( $meta['fecha_fin'] ?? '' ); ?>" class="widefat">
 			</p>
 			<p>
-				<label for="conv_fecha_baja"><?php esc_html_e( 'Fecha de baja (archivo):', 'convoca-members' ); ?></label>
-				<input type="date" id="conv_fecha_baja" name="conv_fecha_baja" 
+				<label for="convoca_fecha_baja"><?php esc_html_e( 'Fecha de baja (archivo):', 'convoca-members' ); ?></label>
+				<input type="date" id="convoca_fecha_baja" name="convoca_fecha_baja" 
 						value="<?php echo esc_attr( $meta['fecha_baja'] ?? '' ); ?>" class="widefat">
 				<small><?php esc_html_e( 'Fecha en la que el proyecto se considera archivado definitivamente.', 'convoca-members' ); ?></small>
 			</p>
 			<p>
-				<label for="conv_responsable"><?php esc_html_e( 'Responsable:', 'convoca-members' ); ?></label>
-				<select id="conv_responsable" name="conv_responsable" class="widefat">
+				<label for="convoca_responsable"><?php esc_html_e( 'Responsable:', 'convoca-members' ); ?></label>
+				<select id="convoca_responsable" name="convoca_responsable" class="widefat">
 					<option value=""><?php esc_html_e( '— Seleccionar —', 'convoca-members' ); ?></option>
 					<?php
 					$users = get_users( array( 'role__in' => array( 'administrator', 'editor' ) ) );
@@ -200,7 +200,7 @@ class CPT_Proyecto {
 			</p>
 			<p>
 				<label>
-					<input type="checkbox" name="conv_activo" value="1" 
+					<input type="checkbox" name="convoca_activo" value="1" 
 							<?php checked( $meta['activo'] ?? '', '1' ); ?>>
 					<?php esc_html_e( 'Proyecto activo (visible para voluntarios)', 'convoca-members' ); ?>
 				</label>

@@ -77,13 +77,13 @@ class CPT_Documento {
 	 */
 	public function map_documento_caps( $caps, $cap, $user_id, $args ) {
 		$documento_caps = array(
-			'edit_conv_documento',
-			'read_conv_documento',
-			'delete_conv_documento',
-			'edit_conv_documentos',
-			'edit_others_conv_documentos',
-			'publish_conv_documentos',
-			'read_private_conv_documentos',
+			'edit_convoca_documento',
+			'read_convoca_documento',
+			'delete_convoca_documento',
+			'edit_convoca_documentos',
+			'edit_others_convoca_documentos',
+			'publish_convoca_documentos',
+			'read_private_convoca_documentos',
 		);
 
 		if ( in_array( $cap, $documento_caps ) ) {

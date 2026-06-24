@@ -154,7 +154,7 @@ class Voluntariado_Gamification {
 	/**
 	 * Get the track key for a given member.
 	 *
-	 * Examines _conv_sub_plan then _conv_plan and extracts the
+	 * Examines _convoca_sub_plan then _convoca_plan and extracts the
 	 * track name from the suffix (e.g. fam-busgosu → busgosu).
 	 *
 	 * @param  int $member_id Post ID of the member.

@@ -19,8 +19,8 @@ class Admin_Member_Editor {
 	const SLUG = 'conv-member-editor';
 
 	public function __construct() {
-		add_action( 'admin_post_conv_save_member', array( $this, 'handle_save' ) );
-		add_action( 'admin_post_conv_delete_member', array( $this, 'handle_delete' ) );
+		add_action( 'admin_post_convoca_save_member', array( $this, 'handle_save' ) );
+		add_action( 'admin_post_convoca_delete_member', array( $this, 'handle_delete' ) );
 		// Redirect from WP default editor.
 		add_action( 'load-post-new.php', array( $this, 'redirect_from_default' ) );
 		add_action( 'load-post.php', array( $this, 'redirect_from_default' ) );
@@ -76,7 +76,7 @@ class Admin_Member_Editor {
 			<?php endif; ?>
 
 			<form method="post" action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>" class="convoca-box" style="background:#fff;border-radius:12px;box-shadow:0 10px 25px rgba(0,0,0,0.05);padding:40px;margin-top:20px;">
-				<input type="hidden" name="action" value="conv_save_member">
+				<input type="hidden" name="action" value="convoca_save_member">
 				<input type="hidden" name="post_id" value="<?php echo $is_edit ? $post_id : 0; ?>">
 				<?php wp_nonce_field( 'convoca_save_member_' . $post_id, '_convoca_nonce' ); ?>
 
@@ -84,15 +84,15 @@ class Admin_Member_Editor {
 
 					<!-- Full Name -->
 					<div class="convoca-field" style="grid-column:1/-1;">
-						<label for="conv_nombre"><?php esc_html_e( 'Nombre completo *', 'convoca-members' ); ?></label>
-						<input type="text" id="conv_nombre" name="conv_nombre" value="<?php echo $is_edit ? esc_attr( $post->post_title ) : ''; ?>" required>
+						<label for="convoca_nombre"><?php esc_html_e( 'Nombre completo *', 'convoca-members' ); ?></label>
+						<input type="text" id="convoca_nombre" name="convoca_nombre" value="<?php echo $is_edit ? esc_attr( $post->post_title ) : ''; ?>" required>
 					</div>
 
 					<h3 style="grid-column:1/-1;margin-top:1rem;padding-bottom:.5rem;border-bottom:1px solid var(--convoca-border,#ccc);"><?php esc_html_e( 'Estado y Plan', 'convoca-members' ); ?></h3>
 
 					<div class="convoca-field">
-						<label for="conv_estado_miembro"><?php esc_html_e( 'Estado', 'convoca-members' ); ?></label>
-						<select id="conv_estado_miembro" name="conv_estado_miembro">
+						<label for="convoca_estado_miembro"><?php esc_html_e( 'Estado', 'convoca-members' ); ?></label>
+						<select id="convoca_estado_miembro" name="convoca_estado_miembro">
 							<?php foreach ( Estados::LABELS as $slug => $label ) : ?>
 								<option value="<?php echo esc_attr( $slug ); ?>" <?php selected( $m( 'estado_miembro' ), $slug ); ?>>
 									<?php echo esc_html( $label ); ?>
@@ -102,8 +102,8 @@ class Admin_Member_Editor {
 					</div>
 
 					<div class="convoca-field">
-						<label for="conv_plan"><?php esc_html_e( 'Plan', 'convoca-members' ); ?></label>
-						<select id="conv_plan" name="conv_plan">
+						<label for="convoca_plan"><?php esc_html_e( 'Plan', 'convoca-members' ); ?></label>
+						<select id="convoca_plan" name="convoca_plan">
 							<option value="">— <?php esc_html_e( 'Seleccionar', 'convoca-members' ); ?> —</option>
 							<?php foreach ( $plans as $slug => $data ) : ?>
 								<option value="<?php echo esc_attr( $slug ); ?>" <?php selected( $m( 'plan' ), $slug ); ?>>
@@ -114,13 +114,13 @@ class Admin_Member_Editor {
 					</div>
 
 					<div class="convoca-field">
-						<label for="conv_sub_plan"><?php esc_html_e( 'Sub-plan', 'convoca-members' ); ?></label>
-						<input type="text" id="conv_sub_plan" name="conv_sub_plan" value="<?php echo esc_attr( $m( 'sub_plan' ) ); ?>" placeholder="e.g. fam-busgosu">
+						<label for="convoca_sub_plan"><?php esc_html_e( 'Sub-plan', 'convoca-members' ); ?></label>
+						<input type="text" id="convoca_sub_plan" name="convoca_sub_plan" value="<?php echo esc_attr( $m( 'sub_plan' ) ); ?>" placeholder="e.g. fam-busgosu">
 					</div>
 
 					<div class="convoca-field">
-						<label for="conv_forma_pago"><?php esc_html_e( 'Forma de pago', 'convoca-members' ); ?></label>
-						<select id="conv_forma_pago" name="conv_forma_pago">
+						<label for="convoca_forma_pago"><?php esc_html_e( 'Forma de pago', 'convoca-members' ); ?></label>
+						<select id="convoca_forma_pago" name="convoca_forma_pago">
 							<option value="cuota" <?php selected( $m( 'forma_pago' ), 'cuota' ); ?>><?php esc_html_e( 'Cuota económica', 'convoca-members' ); ?></option>
 							<option value="voluntariado" <?php selected( $m( 'forma_pago' ), 'voluntariado' ); ?>><?php esc_html_e( 'Voluntariado', 'convoca-members' ); ?></option>
 						</select>
@@ -128,8 +128,8 @@ class Admin_Member_Editor {
 
 					<div class="convoca-field" style="display:flex;align-items:flex-end;padding-bottom:10px;">
 						<div class="convoca-check-group">
-							<input type="checkbox" id="conv_pago_recurrente" name="conv_pago_recurrente" value="1" <?php checked( $m( 'pago_recurrente' ), '1' ); ?>>
-							<label for="conv_pago_recurrente"><?php esc_html_e( 'Renovación automática anual', 'convoca-members' ); ?></label>
+							<input type="checkbox" id="convoca_pago_recurrente" name="convoca_pago_recurrente" value="1" <?php checked( $m( 'pago_recurrente' ), '1' ); ?>>
+							<label for="convoca_pago_recurrente"><?php esc_html_e( 'Renovación automática anual', 'convoca-members' ); ?></label>
 						</div>
 					</div>
 
@@ -141,30 +141,30 @@ class Admin_Member_Editor {
 					</div>
 
 					<div class="convoca-field">
-						<label for="conv_dni"><?php esc_html_e( 'DNI / NIE', 'convoca-members' ); ?></label>
-						<input type="text" id="conv_dni" name="conv_dni" value="<?php echo esc_attr( $m( 'dni' ) ); ?>">
+						<label for="convoca_dni"><?php esc_html_e( 'DNI / NIE', 'convoca-members' ); ?></label>
+						<input type="text" id="convoca_dni" name="convoca_dni" value="<?php echo esc_attr( $m( 'dni' ) ); ?>">
 					</div>
 
 					<div class="convoca-field">
-						<label for="conv_telefono"><?php esc_html_e( 'Teléfono', 'convoca-members' ); ?></label>
-						<input type="tel" id="conv_telefono" name="conv_telefono" value="<?php echo esc_attr( $m( 'telefono' ) ); ?>">
+						<label for="convoca_telefono"><?php esc_html_e( 'Teléfono', 'convoca-members' ); ?></label>
+						<input type="tel" id="convoca_telefono" name="convoca_telefono" value="<?php echo esc_attr( $m( 'telefono' ) ); ?>">
 					</div>
 
 					<div class="convoca-field">
-						<label for="conv_fecha_nacimiento"><?php esc_html_e( 'Fecha de nacimiento', 'convoca-members' ); ?></label>
-						<input type="date" id="conv_fecha_nacimiento" name="conv_fecha_nacimiento" value="<?php echo esc_attr( $m( 'fecha_nacimiento' ) ); ?>">
+						<label for="convoca_fecha_nacimiento"><?php esc_html_e( 'Fecha de nacimiento', 'convoca-members' ); ?></label>
+						<input type="date" id="convoca_fecha_nacimiento" name="convoca_fecha_nacimiento" value="<?php echo esc_attr( $m( 'fecha_nacimiento' ) ); ?>">
 					</div>
 
 					<h3 style="grid-column:1/-1;margin-top:1rem;padding-bottom:.5rem;border-bottom:1px solid var(--convoca-border,#ccc);"><?php esc_html_e( 'Dirección', 'convoca-members' ); ?></h3>
 
 					<div class="convoca-field">
-						<label for="conv_direccion"><?php esc_html_e( 'Dirección', 'convoca-members' ); ?></label>
-						<input type="text" id="conv_direccion" name="conv_direccion" value="<?php echo esc_attr( $m( 'direccion' ) ); ?>">
+						<label for="convoca_direccion"><?php esc_html_e( 'Dirección', 'convoca-members' ); ?></label>
+						<input type="text" id="convoca_direccion" name="convoca_direccion" value="<?php echo esc_attr( $m( 'direccion' ) ); ?>">
 					</div>
 
 					<div class="convoca-field">
-						<label for="conv_municipio"><?php esc_html_e( 'Municipio', 'convoca-members' ); ?></label>
-						<input type="text" id="conv_municipio" name="conv_municipio" value="<?php echo esc_attr( $m( 'municipio' ) ); ?>">
+						<label for="convoca_municipio"><?php esc_html_e( 'Municipio', 'convoca-members' ); ?></label>
+						<input type="text" id="convoca_municipio" name="convoca_municipio" value="<?php echo esc_attr( $m( 'municipio' ) ); ?>">
 					</div>
 
 					<h3 style="grid-column:1/-1;margin-top:1rem;padding-bottom:.5rem;border-bottom:1px solid var(--convoca-border,#ccc);"><?php esc_html_e( 'Voluntariado', 'convoca-members' ); ?></h3>
@@ -177,18 +177,18 @@ class Admin_Member_Editor {
 					</div>
 
 					<div class="convoca-field">
-						<label for="conv_tipo_voluntariado"><?php esc_html_e( 'Tipo de voluntariado', 'convoca-members' ); ?></label>
-						<input type="text" id="conv_tipo_voluntariado" name="conv_tipo_voluntariado" value="<?php echo esc_attr( $m( 'tipo_voluntariado' ) ); ?>">
+						<label for="convoca_tipo_voluntariado"><?php esc_html_e( 'Tipo de voluntariado', 'convoca-members' ); ?></label>
+						<input type="text" id="convoca_tipo_voluntariado" name="convoca_tipo_voluntariado" value="<?php echo esc_attr( $m( 'tipo_voluntariado' ) ); ?>">
 					</div>
 
 					<div class="convoca-field">
-						<label for="conv_intereses"><?php esc_html_e( 'Intereses', 'convoca-members' ); ?></label>
-						<input type="text" id="conv_intereses" name="conv_intereses" value="<?php echo esc_attr( $m( 'intereses' ) ); ?>">
+						<label for="convoca_intereses"><?php esc_html_e( 'Intereses', 'convoca-members' ); ?></label>
+						<input type="text" id="convoca_intereses" name="convoca_intereses" value="<?php echo esc_attr( $m( 'intereses' ) ); ?>">
 					</div>
 
 					<div class="convoca-field">
-						<label for="conv_disponibilidad"><?php esc_html_e( 'Disponibilidad', 'convoca-members' ); ?></label>
-						<input type="text" id="conv_disponibilidad" name="conv_disponibilidad" value="<?php echo esc_attr( $m( 'disponibilidad' ) ); ?>">
+						<label for="convoca_disponibilidad"><?php esc_html_e( 'Disponibilidad', 'convoca-members' ); ?></label>
+						<input type="text" id="convoca_disponibilidad" name="convoca_disponibilidad" value="<?php echo esc_attr( $m( 'disponibilidad' ) ); ?>">
 					</div>
 
 					<div class="convoca-field">
@@ -197,20 +197,20 @@ class Admin_Member_Editor {
 					</div>
 
 					<div class="convoca-field">
-						<label for="conv_motivacion"><?php esc_html_e( 'Motivación', 'convoca-members' ); ?></label>
-						<textarea id="conv_motivacion" name="conv_motivacion" rows="3"><?php echo esc_textarea( $m( 'motivacion' ) ); ?></textarea>
+						<label for="convoca_motivacion"><?php esc_html_e( 'Motivación', 'convoca-members' ); ?></label>
+						<textarea id="convoca_motivacion" name="convoca_motivacion" rows="3"><?php echo esc_textarea( $m( 'motivacion' ) ); ?></textarea>
 					</div>
 
 					<h3 style="grid-column:1/-1;margin-top:1rem;padding-bottom:.5rem;border-bottom:1px solid var(--convoca-border,#ccc);"><?php esc_html_e( 'Notas Internas', 'convoca-members' ); ?></h3>
 
 					<div class="convoca-field" style="grid-column:1/-1;">
-						<label for="conv_observaciones"><?php esc_html_e( 'Observaciones', 'convoca-members' ); ?></label>
-						<textarea id="conv_observaciones" name="conv_observaciones" rows="4"><?php echo esc_textarea( $m( 'observaciones' ) ); ?></textarea>
+						<label for="convoca_observaciones"><?php esc_html_e( 'Observaciones', 'convoca-members' ); ?></label>
+						<textarea id="convoca_observaciones" name="convoca_observaciones" rows="4"><?php echo esc_textarea( $m( 'observaciones' ) ); ?></textarea>
 					</div>
 
 					<div class="convoca-field" style="grid-column:1/-1;">
-						<label for="conv_incidencias"><?php esc_html_e( 'Incidencias', 'convoca-members' ); ?></label>
-						<textarea id="conv_incidencias" name="conv_incidencias" rows="4"><?php echo esc_textarea( $m( 'incidencias' ) ); ?></textarea>
+						<label for="convoca_incidencias"><?php esc_html_e( 'Incidencias', 'convoca-members' ); ?></label>
+						<textarea id="convoca_incidencias" name="convoca_incidencias" rows="4"><?php echo esc_textarea( $m( 'incidencias' ) ); ?></textarea>
 					</div>
 
 				</div>

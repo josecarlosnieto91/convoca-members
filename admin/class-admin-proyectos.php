@@ -19,12 +19,12 @@ class Admin_Proyectos extends \WP_List_Table {
 
 	public function __construct() {
 		add_action( 'admin_menu', array( $this, 'add_menu' ) );
-		add_action( 'admin_post_conv_save_proyecto_admin', array( $this, 'handle_save_admin' ) );
+		add_action( 'admin_post_convoca_save_proyecto_admin', array( $this, 'handle_save_admin' ) );
 		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_assets' ) );
 		add_action( 'load-post-new.php', array( $this, 'redirect_to_custom_editor' ) );
 		add_action( 'load-post.php', array( $this, 'redirect_to_custom_editor' ) );
 		add_action( 'admin_bar_menu', array( $this, 'customize_admin_bar' ), 80 );
-		add_action( 'admin_post_conv_export_proyectos_csv', array( $this, 'handle_export_csv' ) );
+		add_action( 'admin_post_convoca_export_proyectos_csv', array( $this, 'handle_export_csv' ) );
 	}
 
 	/**
@@ -111,7 +111,7 @@ class Admin_Proyectos extends \WP_List_Table {
 			<a href="<?php echo admin_url( 'post-new.php?post_type=proyecto' ); ?>" class="page-title-action">
 				<?php _e( 'Añadir nuevo', 'convoca-members' ); ?>
 			</a>
-			<a href="<?php echo esc_url( wp_nonce_url( admin_url( 'admin-post.php?action=conv_export_proyectos_csv' ), 'convoca_export_proyectos' ) ); ?>" class="convoca-btn convoca-btn-outline" style="margin-left:10px;">
+			<a href="<?php echo esc_url( wp_nonce_url( admin_url( 'admin-post.php?action=convoca_export_proyectos_csv' ), 'convoca_export_proyectos' ) ); ?>" class="convoca-btn convoca-btn-outline" style="margin-left:10px;">
 				📥 <?php _e( 'Exportar CSV', 'convoca-members' ); ?>
 			</a>
 			<hr class="wp-header-end">
@@ -322,7 +322,7 @@ class Admin_Proyectos extends \WP_List_Table {
 			<h1><?php echo esc_html( $title ); ?></h1>
 
 			<form method="post" action="<?php echo admin_url( 'admin-post.php' ); ?>" class="conv-form-custom">
-				<input type="hidden" name="action" value="conv_save_proyecto_admin">
+				<input type="hidden" name="action" value="convoca_save_proyecto_admin">
 				<input type="hidden" name="id" value="<?php echo $post_id; ?>">
 				<?php wp_nonce_field( 'convoca_save_proyecto_nonce' ); ?>
 

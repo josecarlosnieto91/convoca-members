@@ -275,7 +275,7 @@ add_action( 'save_post_proyecto', array( \Convoca\Members\CPT_Proyecto::class, '
 
 /* ── Admin Actions ────────────────────────────────────────── */
 add_action(
-	'admin_post_conv_approve_member',
+	'admin_post_convoca_approve_member',
 	function () {
 		if ( ! current_user_can( 'edit_users' ) ) {
 			wp_die( 'No tienes permisos.' );
@@ -298,7 +298,7 @@ add_action(
 );
 
 add_action(
-	'admin_post_conv_delete_member',
+	'admin_post_convoca_delete_member',
 	function () {
 		if ( ! current_user_can( 'delete_posts' ) ) {
 			wp_die( 'No tienes permisos.' );
@@ -318,7 +318,7 @@ add_action(
 );
 
 add_action(
-	'admin_post_conv_pdf_card',
+	'admin_post_convoca_pdf_card',
 	function () {
 		$id = (int) ( $_GET['member_id'] ?? 0 );
 

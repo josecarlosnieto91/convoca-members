@@ -294,10 +294,10 @@ class Process_Member {
 
 		// 10. Handle Gateway Redirection
 		$importe = (float) ( $plan_data['price'] ?? 0 );
-		if ( in_array( $forma_pago, array( 'tarjeta', 'bizum', 'transferencia' ), true ) && $importe > 0 && \Convoca\Core\Features::is_gateway_active() && function_exists( 'Convoca\Gateway\conv_gateway_create_payment' ) ) {
+		if ( in_array( $forma_pago, array( 'tarjeta', 'bizum', 'transferencia' ), true ) && $importe > 0 && \Convoca\Core\Features::is_gateway_active() && function_exists( 'Convoca\Gateway\convoca_gateway_create_payment' ) ) {
 			$amount_cents = (int) round( $importe * 100 );
 
-			$payment = \Convoca\Gateway\conv_gateway_create_payment(
+			$payment = \Convoca\Gateway\convoca_gateway_create_payment(
 				array(
 					'amount_cents' => $amount_cents,
 					'method'       => $forma_pago,

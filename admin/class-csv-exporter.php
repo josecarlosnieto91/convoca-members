@@ -99,8 +99,8 @@ class CSV_Exporter {
 	}
 
 	public function __construct() {
-		add_action( 'wp_ajax_conv_export_csv', array( $this, 'export' ) );
-		add_action( 'wp_ajax_conv_save_csv_columns', array( $this, 'ajax_save_columns' ) );
+		add_action( 'wp_ajax_convoca_export_csv', array( $this, 'export' ) );
+		add_action( 'wp_ajax_convoca_save_csv_columns', array( $this, 'ajax_save_columns' ) );
 	}
 
 	/**

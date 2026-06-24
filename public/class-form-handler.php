@@ -16,12 +16,12 @@ class Form_Handler {
 
 	public function __construct() {
 		add_shortcode( 'convoca_alta_socio', array( $this, 'render' ) );
-		add_action( 'wp_ajax_conv_alta_submit', array( $this, 'handle_submit' ) );
-		add_action( 'wp_ajax_nopriv_conv_alta_submit', array( $this, 'handle_submit' ) );
+		add_action( 'wp_ajax_convoca_alta_submit', array( $this, 'handle_submit' ) );
+		add_action( 'wp_ajax_nopriv_convoca_alta_submit', array( $this, 'handle_submit' ) );
 
 		// Dynamic nonce endpoint (bypass cache) + plans data.
-		add_action( 'wp_ajax_conv_get_nonce', array( $this, 'ajax_get_nonce' ) );
-		add_action( 'wp_ajax_nopriv_conv_get_nonce', array( $this, 'ajax_get_nonce' ) );
+		add_action( 'wp_ajax_convoca_get_nonce', array( $this, 'ajax_get_nonce' ) );
+		add_action( 'wp_ajax_nopriv_convoca_get_nonce', array( $this, 'ajax_get_nonce' ) );
 
 		// Register REST route for form submission.
 		add_action(
@@ -57,7 +57,7 @@ class Form_Handler {
 			CONVOCA_MEMBERS_VERSION,
 			true
 		);
-		$raw_gateway    = function_exists( 'Convoca\\Gateway\\conv_get_gateway_settings' ) ? \Convoca\Gateway\conv_get_gateway_settings() : array();
+		$raw_gateway    = function_exists( 'Convoca\\Gateway\\convoca_get_gateway_settings' ) ? \Convoca\Gateway\convoca_get_gateway_settings() : array();
 		$public_gateway = array_intersect_key( $raw_gateway, array_flip( array( 'iban', 'beneficiary', 'instructions' ) ) );
 
 		$config = array(

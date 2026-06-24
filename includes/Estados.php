@@ -69,7 +69,7 @@ class Estados {
 	 */
 	public static function change( int $post_id, string $new, string $note = '' ): bool|\WP_Error {
 		// Prevent concurrent state changes with transient lock.
-		$lock_key = "conv_state_change_{$post_id}";
+		$lock_key = "convoca_state_change_{$post_id}";
 		if ( get_transient( $lock_key ) ) {
 			\Convoca\Core\Logger::warning(
 				"Intento de cambio de estado concurrente bloqueado para miembro #$post_id",

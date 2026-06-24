@@ -61,7 +61,7 @@ class Admin_Status {
 		$tables  = array(
 			"{$wpdb->prefix}convoca_logs",
 			"{$wpdb->prefix}convoca_locks",
-			"{$wpdb->prefix}conv_member_sequence",
+			"{$wpdb->prefix}convoca_member_sequence",
 		);
 		$missing = array();
 		foreach ( $tables as $t ) {

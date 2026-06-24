@@ -333,7 +333,7 @@ class Admin_List extends \WP_List_Table {
 
 		if ( $status === 'activo' && current_user_can( 'convoca_export_members' ) ) {
 			$repair_url = wp_nonce_url(
-				admin_url( 'admin-post.php?action=conv_approve_member&member_id=' . $item->ID ),
+				admin_url( 'admin-post.php?action=convoca_approve_member&member_id=' . $item->ID ),
 				'convoca_approve_member_' . $item->ID
 			);
 			$html      .= ' <a href="' . esc_url( $repair_url ) . '" style="font-size:10px;text-decoration:none" title="' . esc_attr__( 'Asignar número ahora', 'convoca-members' ) . '">🔧</a>';
@@ -355,18 +355,18 @@ class Admin_List extends \WP_List_Table {
 		$status = get_post_meta( $item->ID, '_convoca_estado_miembro', true );
 		if ( $status !== 'activo' ) {
 			$approve_url        = wp_nonce_url(
-				admin_url( 'admin-post.php?action=conv_approve_member&member_id=' . $item->ID ),
+				admin_url( 'admin-post.php?action=convoca_approve_member&member_id=' . $item->ID ),
 				'convoca_approve_member_' . $item->ID
 			);
 			$actions['approve'] = '<a href="' . esc_url( $approve_url ) . '" style="color:#00a32a" aria-label="' . esc_attr( sprintf( __( 'Aprobar alta de %s', 'convoca-members' ), $item->post_title ) ) . '">' . __( 'Aprobar alta', 'convoca-members' ) . '</a>';
 		}
 
 		// PDF Card action.
-		$actions['card'] = '<a href="' . esc_url( wp_nonce_url( admin_url( 'admin-post.php?action=conv_pdf_card&member_id=' . $item->ID ), 'convoca_pdf_card_' . $item->ID ) ) . '" target="_blank" aria-label="' . esc_attr( sprintf( __( 'Ver tarjeta de %s', 'convoca-members' ), $item->post_title ) ) . '">🪪 ' . __( 'Tarjeta', 'convoca-members' ) . '</a>';
+		$actions['card'] = '<a href="' . esc_url( wp_nonce_url( admin_url( 'admin-post.php?action=convoca_pdf_card&member_id=' . $item->ID ), 'convoca_pdf_card_' . $item->ID ) ) . '" target="_blank" aria-label="' . esc_attr( sprintf( __( 'Ver tarjeta de %s', 'convoca-members' ), $item->post_title ) ) . '">🪪 ' . __( 'Tarjeta', 'convoca-members' ) . '</a>';
 
 		// Delete action.
 		$delete_url        = wp_nonce_url(
-			admin_url( 'admin-post.php?action=conv_delete_member&member_id=' . $item->ID ),
+			admin_url( 'admin-post.php?action=convoca_delete_member&member_id=' . $item->ID ),
 			'convoca_delete_member_' . $item->ID
 		);
 		$actions['delete'] = '<a href="' . esc_url( $delete_url ) . '" style="color:#a00" onclick="return confirm(\'¿Estás seguro de que quieres enviar este miembro a la papelera?\')" aria-label="' . esc_attr( sprintf( __( 'Eliminar a %s', 'convoca-members' ), $item->post_title ) ) . '">' . __( 'Eliminar', 'convoca-members' ) . '</a>';

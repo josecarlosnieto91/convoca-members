@@ -90,7 +90,7 @@ class Members_Upgrade_Manager extends Upgrade_Manager {
 	}
 
 	/**
-	 * Normalize _conv_fecha_renovacion to Y-m-d.
+	 * Normalize _convoca_fecha_renovacion to Y-m-d.
 	 * Prevents issues with time components in cron queries.
 	 */
 	protected function upgrade_to_1_0_2(): bool {

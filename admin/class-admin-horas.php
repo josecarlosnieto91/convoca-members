@@ -19,12 +19,12 @@ class Admin_Horas extends \WP_List_Table {
 
 	public function __construct() {
 		add_action( 'admin_menu', array( $this, 'add_menu' ) );
-		add_action( 'admin_post_conv_process_horas', array( $this, 'process_action' ) );
-		add_action( 'admin_post_conv_save_hours_admin', array( $this, 'handle_save_admin' ) );
+		add_action( 'admin_post_convoca_process_horas', array( $this, 'process_action' ) );
+		add_action( 'admin_post_convoca_save_hours_admin', array( $this, 'handle_save_admin' ) );
 		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_assets' ) );
 		add_action( 'load-post-new.php', array( $this, 'redirect_to_custom_editor' ) );
 		add_action( 'load-post.php', array( $this, 'redirect_to_custom_editor' ) );
-		add_action( 'admin_post_conv_export_horas_csv', array( $this, 'handle_export_csv' ) );
+		add_action( 'admin_post_convoca_export_horas_csv', array( $this, 'handle_export_csv' ) );
 	}
 
 	/**
@@ -203,7 +203,7 @@ class Admin_Horas extends \WP_List_Table {
 
 				<div class="convoca-diagnostic-results" style="padding: 20px;">
 					<form action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>" method="post">
-						<input type="hidden" name="action" value="conv_save_hours_admin">
+						<input type="hidden" name="action" value="convoca_save_hours_admin">
 						<input type="hidden" name="id" value="<?php echo (int) $record_id; ?>">
 						<?php wp_nonce_field( 'convoca_save_hours_nonce' ); ?>
 
@@ -308,7 +308,7 @@ class Admin_Horas extends \WP_List_Table {
 			<a href="<?php echo admin_url( 'post-new.php?post_type=registro_hora' ); ?>" class="page-title-action">
 				<?php _e( 'Añadir Registro', 'convoca-members' ); ?>
 			</a>
-			<a href="<?php echo esc_url( wp_nonce_url( admin_url( 'admin-post.php?action=conv_export_horas_csv&filter_proyecto=' . ( $filter_proyecto ?: '' ) ), 'convoca_export_horas' ) ); ?>" class="convoca-btn convoca-btn-outline" style="margin-left:10px;">
+			<a href="<?php echo esc_url( wp_nonce_url( admin_url( 'admin-post.php?action=convoca_export_horas_csv&filter_proyecto=' . ( $filter_proyecto ?: '' ) ), 'convoca_export_horas' ) ); ?>" class="convoca-btn convoca-btn-outline" style="margin-left:10px;">
 				📥 <?php _e( 'Exportar CSV', 'convoca-members' ); ?>
 			</a>
 			<hr class="wp-header-end">
@@ -579,13 +579,13 @@ class Admin_Horas extends \WP_List_Table {
 		$actions = array();
 
 		if ( $estado !== 'aprobada' ) {
-			$url       = admin_url( 'admin-post.php?action=conv_process_horas&record_id=' . $item->ID . '&new_status=aprobada' );
+			$url       = admin_url( 'admin-post.php?action=convoca_process_horas&record_id=' . $item->ID . '&new_status=aprobada' );
 			$url       = wp_nonce_url( $url, 'process_horas_' . $item->ID );
 			$actions[] = sprintf( '<a href="%s" style="color: green;">%s</a>', esc_url( $url ), esc_html__( 'Aprobar', 'convoca-members' ) );
 		}
 
 		if ( $estado !== 'rechazada' ) {
-			$url       = admin_url( 'admin-post.php?action=conv_process_horas&record_id=' . $item->ID . '&new_status=rechazada' );
+			$url       = admin_url( 'admin-post.php?action=convoca_process_horas&record_id=' . $item->ID . '&new_status=rechazada' );
 			$url       = wp_nonce_url( $url, 'process_horas_' . $item->ID );
 			$actions[] = sprintf( '<a href="%s" style="color: red;">%s</a>', esc_url( $url ), esc_html__( 'Rechazar', 'convoca-members' ) );
 		}

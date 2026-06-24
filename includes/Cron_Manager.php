@@ -741,8 +741,8 @@ class Cron_Manager {
 			$plan_data = CPT_Miembro::get_plan( $plan_key );
 			$importe   = (float) ( get_post_meta( $post_id, '_convoca_importe_cuota', true ) ?: ( $plan_data ? $plan_data['price'] : 0 ) );
 
-			if ( $importe > 0 && \Convoca\Core\Features::is_gateway_active() && function_exists( 'Convoca\Gateway\conv_gateway_create_payment' ) ) {
-				$payment = \Convoca\Gateway\conv_gateway_create_payment(
+			if ( $importe > 0 && \Convoca\Core\Features::is_gateway_active() && function_exists( 'Convoca\Gateway\convoca_gateway_create_payment' ) ) {
+				$payment = \Convoca\Gateway\convoca_gateway_create_payment(
 					array(
 						'amount_cents' => (int) round( $importe * 100 ),
 						'method'       => ( $forma_pago === 'cuota' ) ? 'tarjeta' : $forma_pago,

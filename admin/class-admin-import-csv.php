@@ -15,10 +15,10 @@ class Admin_Import_CSV {
 
 	public function __construct() {
 		add_action( 'admin_menu', array( $this, 'register_page' ) );
-		add_action( 'admin_post_conv_import_csv_preview', array( $this, 'handle_preview' ) );
-		add_action( 'admin_post_conv_import_csv_run', array( $this, 'handle_import' ) );
-		add_action( 'admin_post_conv_import_csv_template', array( $this, 'handle_template_download' ) );
-		add_action( 'admin_post_conv_import_csv_continue', array( $this, 'handle_batch_continue' ) );
+		add_action( 'admin_post_convoca_import_csv_preview', array( $this, 'handle_preview' ) );
+		add_action( 'admin_post_convoca_import_csv_run', array( $this, 'handle_import' ) );
+		add_action( 'admin_post_convoca_import_csv_template', array( $this, 'handle_template_download' ) );
+		add_action( 'admin_post_convoca_import_csv_continue', array( $this, 'handle_batch_continue' ) );
 	}
 
 	public function register_page(): void {
@@ -63,7 +63,7 @@ class Admin_Import_CSV {
 				<p><?php esc_html_e( 'El archivo debe incluir una fila de cabeceras. Columnas esperadas: nombre, email, dni, plan, teléfono, dirección, municipio.', 'convoca-members' ); ?></p>
 				<form method="post" enctype="multipart/form-data" action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>" style="margin-bottom:16px;">
 					<?php wp_nonce_field( 'convoca_import_csv' ); ?>
-					<input type="hidden" name="action" value="conv_import_csv_preview">
+					<input type="hidden" name="action" value="convoca_import_csv_preview">
 					<div class="convoca-field">
 						<input type="file" name="csv_file" accept=".csv" required>
 					</div>
@@ -71,7 +71,7 @@ class Admin_Import_CSV {
 				</form>
 				<form method="post" action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>">
 					<?php wp_nonce_field( 'convoca_import_csv_template' ); ?>
-					<input type="hidden" name="action" value="conv_import_csv_template">
+					<input type="hidden" name="action" value="convoca_import_csv_template">
 					<button type="submit" class="convoca-btn convoca-btn-secondary"><?php esc_html_e( '📄 Descargar plantilla CSV', 'convoca-members' ); ?></button>
 				</form>
 			</div>
@@ -100,7 +100,7 @@ class Admin_Import_CSV {
 					</div>
 					<form method="post" action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>">
 						<?php wp_nonce_field( 'convoca_import_csv_continue' ); ?>
-						<input type="hidden" name="action" value="conv_import_csv_continue">
+						<input type="hidden" name="action" value="convoca_import_csv_continue">
 						<button type="submit" class="convoca-btn convoca-btn-primary">
 							<?php esc_html_e( '▶ Continuar importación', 'convoca-members' ); ?>
 						</button>
@@ -113,7 +113,7 @@ class Admin_Import_CSV {
 					<h2><?php printf( __( '2. Vista previa (%d filas detectadas)', 'convoca-members' ), $preview['total'] ); ?></h2>
 					<form method="post" action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>">
 						<?php wp_nonce_field( 'convoca_import_csv_run' ); ?>
-						<input type="hidden" name="action" value="conv_import_csv_run">
+						<input type="hidden" name="action" value="convoca_import_csv_run">
 						<input type="hidden" name="filename" value="<?php echo esc_attr( $preview['filename'] ); ?>">
 						<input type="hidden" name="total_rows" value="<?php echo esc_attr( $preview['total'] ); ?>">
 

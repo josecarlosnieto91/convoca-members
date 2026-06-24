@@ -32,8 +32,8 @@ class Form_Voluntariado {
 
 	public function __construct() {
 		add_shortcode( 'convoca_voluntariado', array( $this, 'render' ) );
-		add_action( 'wp_ajax_conv_voluntariado_submit', array( $this, 'handle_submit' ) );
-		add_action( 'wp_ajax_nopriv_conv_voluntariado_submit', array( $this, 'handle_submit' ) );
+		add_action( 'wp_ajax_convoca_voluntariado_submit', array( $this, 'handle_submit' ) );
+		add_action( 'wp_ajax_nopriv_convoca_voluntariado_submit', array( $this, 'handle_submit' ) );
 	}
 
 	public function render(): string {

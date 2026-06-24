@@ -277,36 +277,36 @@ class Admin_Settings {
 		?>
 		<form method="post">
 			<?php wp_nonce_field( 'convoca_members_settings_save', '_convoca_settings_nonce' ); ?>
-			<input type="hidden" name="conv_save_settings" value="general">
+			<input type="hidden" name="convoca_save_settings" value="general">
 
 			<div class="convoca-field">
 				<label for="admin_email"><?php esc_html_e( 'Email administrador', 'convoca-members' ); ?></label>
-				<input type="email" id="admin_email" name="conv_members_settings[admin_email]"
+				<input type="email" id="admin_email" name="convoca_members_settings[admin_email]"
 					value="<?php echo esc_attr( $settings['admin_email'] ?? '' ); ?>">
 				<small class="convoca-small"><?php esc_html_e( 'Recibe notificaciones de nuevas altas.', 'convoca-members' ); ?></small>
 			</div>
 
 			<div class="convoca-field">
 				<label for="sender_name"><?php esc_html_e( 'Nombre remitente emails', 'convoca-members' ); ?></label>
-				<input type="text" id="sender_name" name="conv_members_settings[sender_name]"
+				<input type="text" id="sender_name" name="convoca_members_settings[sender_name]"
 					value="<?php echo esc_attr( $settings['sender_name'] ?? get_bloginfo( 'name' ) ); ?>">
 			</div>
 
 			<div class="convoca-field">
 				<label for="iban"><?php esc_html_e( 'IBAN para transferencias', 'convoca-members' ); ?></label>
-				<input type="text" id="iban" name="conv_members_settings[iban]"
+				<input type="text" id="iban" name="convoca_members_settings[iban]"
 					value="<?php echo esc_attr( $settings['iban'] ?? '' ); ?>" placeholder="ES00 0000 0000 0000 0000 0000">
 			</div>
 
 			<div class="convoca-field">
 				<label for="rgpd_version"><?php esc_html_e( 'Versión texto legal RGPD', 'convoca-members' ); ?></label>
-				<input type="text" id="rgpd_version" name="conv_members_settings[rgpd_version]"
+				<input type="text" id="rgpd_version" name="convoca_members_settings[rgpd_version]"
 					value="<?php echo esc_attr( $settings['rgpd_version'] ?? '1.0' ); ?>">
 			</div>
 
 			<div class="convoca-field">
 				<label for="min_age"><?php esc_html_e( 'Edad mínima de registro', 'convoca-members' ); ?></label>
-				<input type="number" id="min_age" name="conv_members_settings[min_age]"
+				<input type="number" id="min_age" name="convoca_members_settings[min_age]"
 					value="<?php echo esc_attr( $settings['min_age'] ?? '0' ); ?>" min="0">
 				<small class="convoca-small"><?php esc_html_e( 'Edad mínima permitida para el alta de socios (0 para desactivar).', 'convoca-members' ); ?></small>
 			</div>
@@ -378,7 +378,7 @@ class Admin_Settings {
 					key = key.toLowerCase().replace(/[^a-z0-9-]/g, '-');
 
 					var container = document.getElementById('conv-plans-container');
-					if (document.querySelector('input[name="conv_members_plans[' + key + '][label]"]')) {
+					if (document.querySelector('input[name="convoca_members_plans[' + key + '][label]"]')) {
 						alert('<?php echo esc_js( __( 'Este ID ya existe.', 'convoca-members' ) ); ?>');
 						return;
 					}
@@ -413,7 +413,7 @@ class Admin_Settings {
 				</h2>
 				<div>
 					<label>
-						<input type="checkbox" name="conv_members_plans[<?php echo esc_attr( $key ); ?>][active]" value="1" <?php checked( $active ); ?>>
+						<input type="checkbox" name="convoca_members_plans[<?php echo esc_attr( $key ); ?>][active]" value="1" <?php checked( $active ); ?>>
 						<?php esc_html_e( 'Activo', 'convoca-members' ); ?>
 					</label>
 					<button type="button" class="button-link-delete" style="color: #b32d2e; margin-left: 15px;"
@@ -427,24 +427,24 @@ class Admin_Settings {
 					<div>
 						<p>
 							<label><strong><?php esc_html_e( 'Nombre visible:', 'convoca-members' ); ?></strong></label>
-							<input type="text" name="conv_members_plans[<?php echo esc_attr( $key ); ?>][label]"
+							<input type="text" name="convoca_members_plans[<?php echo esc_attr( $key ); ?>][label]"
 								value="<?php echo esc_attr( $plan['label'] ); ?>" class="large-text">
 						</p>
 						<div style="display: flex; gap: 10px;">
 							<p style="flex:1;">
 								<label><strong><?php esc_html_e( 'Emoji:', 'convoca-members' ); ?></strong></label>
-								<input type="text" name="conv_members_plans[<?php echo esc_attr( $key ); ?>][emoji]"
+								<input type="text" name="convoca_members_plans[<?php echo esc_attr( $key ); ?>][emoji]"
 									value="<?php echo esc_attr( $plan['emoji'] ?? '' ); ?>" class="small-text">
 							</p>
 							<p style="flex:1;">
 								<label><strong><?php esc_html_e( 'Orden:', 'convoca-members' ); ?></strong></label>
-								<input type="number" name="conv_members_plans[<?php echo esc_attr( $key ); ?>][order]"
+								<input type="number" name="convoca_members_plans[<?php echo esc_attr( $key ); ?>][order]"
 									value="<?php echo esc_attr( $plan['order'] ?? 0 ); ?>" class="small-text">
 							</p>
 						</div>
 						<p>
 							<label><strong><?php esc_html_e( 'Descripción:', 'convoca-members' ); ?></strong></label>
-							<textarea name="conv_members_plans[<?php echo esc_attr( $key ); ?>][description]" rows="2"
+							<textarea name="convoca_members_plans[<?php echo esc_attr( $key ); ?>][description]" rows="2"
 								class="large-text"><?php echo esc_textarea( $plan['description'] ?? '' ); ?></textarea>
 						</p>
 					</div>
@@ -452,17 +452,17 @@ class Admin_Settings {
 						<div style="display: flex; gap: 10px;">
 							<p style="flex:1;">
 								<label><strong><?php esc_html_e( 'Precio (€):', 'convoca-members' ); ?></strong></label>
-								<input type="number" step="0.01" name="conv_members_plans[<?php echo esc_attr( $key ); ?>][price]"
+								<input type="number" step="0.01" name="convoca_members_plans[<?php echo esc_attr( $key ); ?>][price]"
 									value="<?php echo esc_attr( $plan['price'] ); ?>" class="small-text">
 							</p>
 							<p style="flex:1;">
 								<label><strong><?php esc_html_e( 'Horas Voluntariado:', 'convoca-members' ); ?></strong></label>
-								<input type="number" step="0.5" name="conv_members_plans[<?php echo esc_attr( $key ); ?>][hours]"
+								<input type="number" step="0.5" name="convoca_members_plans[<?php echo esc_attr( $key ); ?>][hours]"
 									value="<?php echo esc_attr( $plan['hours'] ); ?>" class="small-text">
 							</p>
 							<p style="flex:1;">
 								<label><strong><?php esc_html_e( 'Modalidad:', 'convoca-members' ); ?></strong></label><br>
-								<select name="conv_members_plans[<?php echo esc_attr( $key ); ?>][modalidad]">
+								<select name="convoca_members_plans[<?php echo esc_attr( $key ); ?>][modalidad]">
 									<?php foreach ( array( 'Numerario', 'Familiar', 'Juvenil' ) as $m ) : ?>
 										<option value="<?php echo esc_attr( $m ); ?>" <?php selected( $plan['modalidad'], $m ); ?>>
 											<?php echo esc_html( $m ); ?>
@@ -476,13 +476,13 @@ class Admin_Settings {
 							<p style="margin-top:0;"><strong><?php esc_html_e( 'Pagos:', 'convoca-members' ); ?></strong></p>
 							<?php $methods = $plan['payment_methods'] ?? array(); ?>
 							<label><input type="checkbox"
-									name="conv_members_plans[<?php echo esc_attr( $key ); ?>][payment_methods][]" value="bizum"
+									name="convoca_members_plans[<?php echo esc_attr( $key ); ?>][payment_methods][]" value="bizum"
 									<?php checked( in_array( 'bizum', $methods ) ); ?>> Bizum</label>
 							<label><input type="checkbox"
-									name="conv_members_plans[<?php echo esc_attr( $key ); ?>][payment_methods][]" value="tarjeta"
+									name="convoca_members_plans[<?php echo esc_attr( $key ); ?>][payment_methods][]" value="tarjeta"
 									<?php checked( in_array( 'tarjeta', $methods ) ); ?>> Tarjeta</label>
 							<label><input type="checkbox"
-									name="conv_members_plans[<?php echo esc_attr( $key ); ?>][payment_methods][]"
+									name="convoca_members_plans[<?php echo esc_attr( $key ); ?>][payment_methods][]"
 									value="transferencia" <?php checked( in_array( 'transferencia', $methods ) ); ?>>
 								<?php esc_html_e( 'Transferencia', 'convoca-members' ); ?></label>
 						</div>
@@ -491,7 +491,7 @@ class Admin_Settings {
 
 				<p>
 					<label><strong><?php esc_html_e( 'Ventajas (una por línea):', 'convoca-members' ); ?></strong></label>
-					<textarea name="conv_members_plans[<?php echo esc_attr( $key ); ?>][advantages_raw]" rows="4"
+					<textarea name="convoca_members_plans[<?php echo esc_attr( $key ); ?>][advantages_raw]" rows="4"
 						class="large-text">
 						<?php
 						$adv = $plan['advantages'] ?? array();
@@ -584,7 +584,7 @@ class Admin_Settings {
 
 			<h2><?php esc_html_e( 'Texto Legal (Declaración Responsable)', 'convoca-members' ); ?></h2>
 			<p class="description"><?php esc_html_e( 'Este texto se mostrará junto a un checkbox obligatorio al final del formulario de voluntariado.', 'convoca-members' ); ?></p>
-			<textarea name="conv_volunteer_legal_text" rows="10"><?php echo esc_textarea( $legal_text ); ?></textarea>
+			<textarea name="convoca_volunteer_legal_text" rows="10"><?php echo esc_textarea( $legal_text ); ?></textarea>
 
 			<h2 style="margin-top: 40px;"><?php esc_html_e( 'Campos Personalizados', 'convoca-members' ); ?></h2>
 			<p class="description"><?php esc_html_e( 'Estos campos se solicitarán en el formulario de registro de voluntarios. Los campos base (Nombre, DNI, Email, Teléfono) ya están incluidos y no necesitan añadirse aquí.', 'convoca-members' ); ?></p>
@@ -624,7 +624,7 @@ class Admin_Settings {
 					name = name.toLowerCase().replace(/[^a-z0-9-]/g, '-');
 
 					var container = document.getElementById('conv-fields-container');
-					if (document.querySelector('input[name="conv_volunteer_fields[' + name + '][label]"]')) {
+					if (document.querySelector('input[name="convoca_volunteer_fields[' + name + '][label]"]')) {
 						alert('Este ID ya existe.');
 						return;
 					}
@@ -673,17 +673,17 @@ class Admin_Settings {
 				</button>
 			</div>
 			<div class="inside" style="padding: 10px;">
-				<input type="hidden" class="field-name-input" name="conv_volunteer_fields[<?php echo $index; ?>][name]" value="<?php echo $name; ?>">
+				<input type="hidden" class="field-name-input" name="convoca_volunteer_fields[<?php echo $index; ?>][name]" value="<?php echo $name; ?>">
 				
 				<div style="display: flex; gap: 20px; align-items: flex-start;">
 					<div style="flex: 1;">
 						<p>
 							<label><strong><?php esc_html_e( 'Etiqueta (Label):', 'convoca-members' ); ?></strong></label><br>
-							<input type="text" name="conv_volunteer_fields[<?php echo $index; ?>][label]" value="<?php echo esc_attr( $field['label'] ?? '' ); ?>" class="large-text">
+							<input type="text" name="convoca_volunteer_fields[<?php echo $index; ?>][label]" value="<?php echo esc_attr( $field['label'] ?? '' ); ?>" class="large-text">
 						</p>
 						<p>
 							<label><strong><?php esc_html_e( 'Tipo de campo:', 'convoca-members' ); ?></strong></label><br>
-							<select name="conv_volunteer_fields[<?php echo $index; ?>][type]">
+							<select name="convoca_volunteer_fields[<?php echo $index; ?>][type]">
 								<?php
 								$types = array(
 									'text'     => 'Texto corto',
@@ -703,7 +703,7 @@ class Admin_Settings {
 						</p>
 						<p>
 							<label>
-								<input type="checkbox" name="conv_volunteer_fields[<?php echo $index; ?>][required]" value="1" <?php checked( ! empty( $field['required'] ) ); ?>>
+								<input type="checkbox" name="convoca_volunteer_fields[<?php echo $index; ?>][required]" value="1" <?php checked( ! empty( $field['required'] ) ); ?>>
 								<strong><?php esc_html_e( 'Campo obligatorio', 'convoca-members' ); ?></strong>
 							</label>
 						</p>
@@ -712,7 +712,7 @@ class Admin_Settings {
 						<p>
 							<label><strong><?php esc_html_e( 'Opciones (solo para Select):', 'convoca-members' ); ?></strong></label><br>
 							<span class="description">Una opción por línea. Ej: Sí \n No \n Tal vez</span><br>
-							<textarea name="conv_volunteer_fields[<?php echo $index; ?>][options]" rows="4" class="large-text"><?php echo esc_textarea( $field['options'] ?? '' ); ?></textarea>
+							<textarea name="convoca_volunteer_fields[<?php echo $index; ?>][options]" rows="4" class="large-text"><?php echo esc_textarea( $field['options'] ?? '' ); ?></textarea>
 						</p>
 					</div>
 				</div>
@@ -757,7 +757,7 @@ class Admin_Settings {
 
 			<form method="post">
 				<?php wp_nonce_field( 'convoca_gamification_nonce' ); ?>
-				<input type="hidden" name="conv_save_gamification" value="1">
+				<input type="hidden" name="convoca_save_gamification" value="1">
 
 				<?php foreach ( $tracks as $track_key => $track ) : ?>
 					<div class="conv-gami-track-panel" id="conv-gami-track-<?php echo esc_attr( $track_key ); ?>"
@@ -771,7 +771,7 @@ class Admin_Settings {
 								<p>
 									<label><strong><?php esc_html_e( 'Nombre visible del track:', 'convoca-members' ); ?></strong></label>
 									<input type="text"
-											name="conv_gamification_tracks[<?php echo esc_attr( $track_key ); ?>][label]"
+											name="convoca_gamification_tracks[<?php echo esc_attr( $track_key ); ?>][label]"
 											value="<?php echo esc_attr( $track['label'] ); ?>"
 											class="regular-text">
 								</p>
@@ -795,32 +795,32 @@ class Admin_Settings {
 												<td><?php echo $i + 1; ?></td>
 												<td>
 													<input type="text"
-															name="conv_gamification_tracks[<?php echo esc_attr( $track_key ); ?>][levels][<?php echo $i; ?>][name]"
+															name="convoca_gamification_tracks[<?php echo esc_attr( $track_key ); ?>][levels][<?php echo $i; ?>][name]"
 															value="<?php echo esc_attr( $level['name'] ); ?>"
 															class="regular-text" style="width:100%;">
 												</td>
 												<td>
 													<input type="text"
-															name="conv_gamification_tracks[<?php echo esc_attr( $track_key ); ?>][levels][<?php echo $i; ?>][emoji]"
+															name="convoca_gamification_tracks[<?php echo esc_attr( $track_key ); ?>][levels][<?php echo $i; ?>][emoji]"
 															value="<?php echo esc_attr( $level['emoji'] ); ?>"
 															style="width:60px; text-align:center; font-size:1.2em;"
 															class="conv-emoji-input">
 												</td>
 												<td>
 													<input type="number" step="0.5" min="0"
-															name="conv_gamification_tracks[<?php echo esc_attr( $track_key ); ?>][levels][<?php echo $i; ?>][hours]"
+															name="convoca_gamification_tracks[<?php echo esc_attr( $track_key ); ?>][levels][<?php echo $i; ?>][hours]"
 															value="<?php echo esc_attr( $level['hours'] ); ?>"
 															style="width:80px;">
 												</td>
 												<td>
 													<input type="color"
-															name="conv_gamification_tracks[<?php echo esc_attr( $track_key ); ?>][levels][<?php echo $i; ?>][color]"
+															name="convoca_gamification_tracks[<?php echo esc_attr( $track_key ); ?>][levels][<?php echo $i; ?>][color]"
 															value="<?php echo esc_attr( $level['color'] ); ?>"
 															style="width:60px; height:30px; padding:0; border:none; cursor:pointer;">
 												</td>
 												<td>
 													<input type="text"
-															name="conv_gamification_tracks[<?php echo esc_attr( $track_key ); ?>][levels][<?php echo $i; ?>][desc]"
+															name="convoca_gamification_tracks[<?php echo esc_attr( $track_key ); ?>][levels][<?php echo $i; ?>][desc]"
 															value="<?php echo esc_attr( $level['desc'] ?? '' ); ?>"
 															class="regular-text" style="width:100%;">
 												</td>

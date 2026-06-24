@@ -55,7 +55,7 @@ if ( ! is_wp_error( $terms ) ) {
 
 // Drop custom table.
 global $wpdb;
-$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}conv_member_sequence" );
+$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}convoca_member_sequence" );
 
 // Clear cron.
 wp_clear_scheduled_hook( 'convoca_members_reminder_week' );
