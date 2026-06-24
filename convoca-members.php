@@ -209,12 +209,16 @@ register_deactivation_hook(
 );
 
 /* ── Boot ─────────────────────────────────────────────────── */
+/* ── Script translations (JS i18n) ──────────────────────── */
+add_action( 'init', function() {
+	wp_set_script_translations( 'convoca-members-scripts', 'convoca-members', plugin_dir_path( __FILE__ ) . 'languages/' );
+}, 20 );
+
 add_action(
 	'plugins_loaded',
 	function (): void {
 
 		// Load translations.
-		wp_set_script_translations( 'convoca-members-scripts', 'convoca-members', plugin_dir_path( __FILE__ ) . 'languages/' );
 	load_plugin_textdomain( 'convoca-members', false, dirname( plugin_basename( __FILE__ ) ) . '/languages' );
 
 		// Core.
