@@ -290,7 +290,7 @@ class Admin_Webhooks {
 		// Secret.
 		echo '<tr><th><label for="webhook_secret">Secreto HMAC (opcional)</label></th>';
 		echo '<td><input type="text" id="webhook_secret" name="webhook_secret" value="' . esc_attr( $webhook['secret'] ?? '' ) . '" class="regular-text" placeholder="Se usa para firmar los payloads">';
-		echo '<p class="description">Si se configura, cada entrega incluirá un header <code>X-Assoc-Signature</code> con el HMAC-SHA256.</p></td></tr>';
+		echo '<p class="description">Si se configura, cada entrega incluirá un header <code>X-Convoca-Signature</code> con el HMAC-SHA256.</p></td></tr>';
 
 		// Active (only for edit).
 		if ( $is_edit ) {
