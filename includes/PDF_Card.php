@@ -62,7 +62,7 @@ class PDF_Card {
                     width: 450px; 
                     height: 280px;
                     border-radius: 20px;
-                    background: linear-gradient(135deg, #4b0082 0%, #320028 100%);
+                    background: #320028;
                     color: #fff;
                     position: relative;
                     box-shadow: 0 15px 35px rgba(50, 0, 40, 0.4);
@@ -169,7 +169,7 @@ class PDF_Card {
             </div>
             
             <button class="btn-print no-print" onclick="window.print()">
-                📄 ' . esc_html__( 'Imprimir / Guardar como PDF', 'convoca-members' ) . '
+                ' . esc_html__( 'IMPRIMIR / GUARDAR PDF', 'convoca-members' ) . '
             </button>
             <p class="no-print" style="margin-top:15px; color:#666; font-size:13px;">
                 ' . esc_html__( 'Se abrirá el diálogo de impresión. Elige "Guardar como PDF" como destino.', 'convoca-members' ) . '
