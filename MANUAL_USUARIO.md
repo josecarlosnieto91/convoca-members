@@ -1,4 +1,4 @@
-# MANUAL_USUARIO.md — Convoca Members v2.6.1
+# MANUAL_USUARIO.md — Convoca Members v2.6.2
 
 > Guía para administradores: gestión de socios, membresías, cuotas y voluntariado.
 
