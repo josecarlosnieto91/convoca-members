@@ -76,7 +76,7 @@ class Estados {
 				'Members/Estados',
 				$post_id
 			);
-			return new \WP_Error( 'concurrent_change', 'Ya hay un cambio de estado en proceso para este miembro.' );
+			return new \WP_Error( 'concurrent_change', __( 'Ya hay un cambio de estado en proceso para este miembro.', 'convoca-members' ) );
 		}
 
 		// Set lock for 10 seconds.

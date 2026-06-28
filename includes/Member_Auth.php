@@ -36,14 +36,14 @@ class Member_Auth {
 		$username = sanitize_user( $username );
 
 		if ( ! $username || ! $password ) {
-			return new \WP_Error( 'missing_params', 'Usuario y contraseña son obligatorios.' );
+			return new \WP_Error( 'missing_params', __( 'Usuario y contraseña son obligatorios.', 'convoca-members' ) );
 		}
 
 		// Rate limiting: prevent brute-force attacks.
 		if ( ! Utils::check_rate_limit( 'login', self::MAX_LOGIN_ATTEMPTS, self::LOGIN_LOCKOUT_SECONDS ) ) {
 			return new \WP_Error(
 				'rate_limited',
-				'Demasiados intentos de acceso. Por favor, espera 15 minutos e inténtalo de nuevo.'
+				__( 'Demasiados intentos de acceso. Por favor, espera 15 minutos e inténtalo de nuevo.', 'convoca-members' )
 			);
 		}
 
@@ -54,7 +54,7 @@ class Member_Auth {
 			Logger::warning( "Intento de inicio de sesión fallido: {$username}", 'Members/Members' );
 			return new \WP_Error(
 				'login_failed',
-				'Usuario o contraseña incorrectos.'
+				__( 'Usuario o contraseña incorrectos.', 'convoca-members' )
 			);
 		}
 
@@ -64,7 +64,7 @@ class Member_Auth {
 			Logger::warning( "Usuario {$username} no tiene un perfil de socio vinculado.", 'Members/Members' );
 			return new \WP_Error(
 				'not_found',
-				'Tu usuario no está vinculado a un perfil de socio. Contacta con coordinación.'
+				__( 'Tu usuario no está vinculado a un perfil de socio. Contacta con coordinación.', 'convoca-members' )
 			);
 		}
 
@@ -72,7 +72,7 @@ class Member_Auth {
 		if ( ! $member || $member->post_type !== 'miembro' ) {
 			return new \WP_Error(
 				'not_found',
-				'No se encontró tu perfil de socio. Contacta con coordinación.'
+				__( 'No se encontró tu perfil de socio. Contacta con coordinación.', 'convoca-members' )
 			);
 		}
 

@@ -246,7 +246,7 @@ class Rest_API {
 		if ( ! Member_Auth::is_active() ) {
 			return new \WP_Error(
 				'inactive_member',
-				'Tu cuenta no está activa. Contacta con coordinación si crees que es un error.',
+				__( 'Tu cuenta no está activa. Contacta con coordinación si crees que es un error.', 'convoca-members' ),
 				array( 'status' => 403 )
 			);
 		}
@@ -866,7 +866,7 @@ class Rest_API {
 		$post = get_post( $id );
 
 		if ( ! $post || $post->post_type !== 'convoca_documento' ) {
-			wp_die( 'Documento no encontrado.', 'Error', array( 'response' => 404 ) );
+			wp_die( __( 'Documento no encontrado.', 'convoca-members' ), __( 'Error', 'convoca-members' ), array( 'response' => 404 ) );
 		}
 
 		$user_id         = (int) get_post_meta( $id, '_convoca_usuario_id', true );
@@ -874,13 +874,13 @@ class Rest_API {
 
 		// Security check: Admin OR Owner.
 		if ( ! current_user_can( 'manage_options' ) && $user_id !== $current_user_id ) {
-			wp_die( 'No tienes permiso para ver este documento.', 'Acceso Denegado', array( 'response' => 403 ) );
+			wp_die( __( 'No tienes permiso para ver este documento.', 'convoca-members' ), __( 'Acceso Denegado', 'convoca-members' ), array( 'response' => 403 ) );
 		}
 
 		$filepath = get_post_meta( $id, '_convoca_documento_path', true );
 
 		if ( ! $filepath || ! file_exists( $filepath ) ) {
-			wp_die( 'El archivo físico no existe en el servidor.', 'Error', array( 'response' => 404 ) );
+			wp_die( __( 'El archivo físico no existe en el servidor.', 'convoca-members' ), __( 'Error', 'convoca-members' ), array( 'response' => 404 ) );
 		}
 
 		// Path traversal protection: ensure file is within the safe documents directory.
@@ -888,7 +888,7 @@ class Rest_API {
 		$safe_base = realpath( wp_upload_dir()['basedir'] . '/convoca-documentos' );
 		if ( $real_path === false || $safe_base === false || ! str_starts_with( $real_path, $safe_base ) ) {
 			\Convoca\Core\Logger::warning( "Intento de path traversal detectado: $filepath", 'Members/Security' );
-			wp_die( 'Archivo no válido.', 'Acceso Denegado', array( 'response' => 403 ) );
+			wp_die( __( 'Archivo no válido.', 'convoca-members' ), __( 'Acceso Denegado', 'convoca-members' ), array( 'response' => 403 ) );
 		}
 
 		// Clear output buffer to avoid corruption.

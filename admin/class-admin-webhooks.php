@@ -245,7 +245,7 @@ class Admin_Webhooks {
 				admin_url( 'admin.php?page=convoca-webhooks&convoca_wh_action=delete&webhook_id=' . $id ),
 				'convoca_wh_action_' . $id
 			);
-			echo '<a href="' . esc_url( $delete_url ) . '" class="button button-small" onclick="return confirm(\'¿Eliminar este webhook?\')">🗑</a>';
+			echo '<a href="' . esc_url( $delete_url ) . '" class="button button-small" onclick="return confirm(\'' . esc_js( __( '¿Eliminar este webhook?', 'convoca-members' ) ) . '\')">🗑</a>';
 
 			echo '</td>';
 			echo '</tr>';
@@ -344,7 +344,7 @@ class Admin_Webhooks {
 			admin_url( 'admin.php?page=convoca-webhooks&convoca_wh_action=clear_logs&webhook_id=' . $webhook_id ),
 			'convoca_wh_action_' . $webhook_id
 		);
-		echo '<a href="' . esc_url( $clear_url ) . '" class="button" onclick="return confirm(\'¿Limpiar todos los registros?\')">🗑 Limpiar logs</a>';
+		echo '<a href="' . esc_url( $clear_url ) . '" class="button" onclick="return confirm(\'' . esc_js( __( '¿Limpiar todos los registros?', 'convoca-members' ) ) . '\')">🗑 Limpiar logs</a>';
 
 		$logs = Webhook_Manager::get_delivery_logs( $webhook_id, 30 );
 

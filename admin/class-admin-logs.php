@@ -68,7 +68,7 @@ class Admin_Logs {
 			<p>
 				<a href="<?php echo wp_nonce_url( admin_url( 'admin.php?page=conv-members-logs&action=clear' ), 'convoca_clear_members_logs' ); ?>" 
 					class="button button-secondary"
-					onclick="return confirm('¿Estás seguro de que quieres borrar todos los logs de Members?');">
+					onclick="return confirm('<?php echo esc_js( __( '¿Estás seguro de que quieres borrar todos los logs de Members?', 'convoca-members' ) ); ?>');">
 					Borrar logs de Members
 				</a>
 			</p>

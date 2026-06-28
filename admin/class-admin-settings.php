@@ -697,7 +697,7 @@ class Admin_Settings {
 					<code style="opacity: 0.5;">(<?php echo $name; ?>)</code>
 				</h3>
 				<button type="button" class="button-link-delete" style="color: #b32d2e;"
-					onclick="if(confirm('¿Eliminar este campo al guardar?')) { this.closest('.conv-field-card').remove(); }">
+					onclick="if(confirm('<?php echo esc_js( __( '¿Eliminar este campo al guardar?', 'convoca-members' ) ); ?>')) { this.closest('.conv-field-card').remove(); }">
 					<?php esc_html_e( 'Eliminar', 'convoca-members' ); ?>
 				</button>
 			</div>

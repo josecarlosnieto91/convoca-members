@@ -170,7 +170,7 @@ class Process_Member {
 		$plan_key  = ( in_array( $plan, array( 'familiar', 'juvenil' ), true ) && $sub_plan ) ? $sub_plan : $plan;
 		$plan_data = CPT_Miembro::get_plan( $plan_key );
 		if ( ! $plan_data ) {
-			return new \WP_Error( 'invalid_plan', 'El plan seleccionado no es válido.' );
+			return new \WP_Error( 'invalid_plan', __( 'El plan seleccionado no es válido.', 'convoca-members' ) );
 		}
 
 		// 5. Calculate age/minor status
@@ -211,7 +211,7 @@ class Process_Member {
 			if ( ! empty( $exists ) ) {
 				$wpdb->query( 'ROLLBACK' );
 				\Convoca\Core\Logger::warning( "Intento de registro duplicado detectado en transacción: $dni_masked / $email", 'Members' );
-				return new \WP_Error( 'duplicate', 'Ya existe un miembro registrado con este DNI o email.' );
+				return new \WP_Error( 'duplicate', __( 'Ya existe un miembro registrado con este DNI o email.', 'convoca-members' ) );
 			}
 
 			$post_id = wp_insert_post(
@@ -225,7 +225,7 @@ class Process_Member {
 			if ( is_wp_error( $post_id ) ) {
 				$wpdb->query( 'ROLLBACK' );
 				\Convoca\Core\Logger::error( 'Error al insertar post de miembro: ' . $post_id->get_error_message(), 'Members' );
-				return new \WP_Error( 'create_failed', 'Error al crear el registro en la base de datos.' );
+				return new \WP_Error( 'create_failed', __( 'Error al crear el registro en la base de datos.', 'convoca-members' ) );
 			}
 
 			// 8. Save Meta
@@ -285,7 +285,7 @@ class Process_Member {
 		} catch ( \Throwable $e ) {
 			$wpdb->query( 'ROLLBACK' );
 			\Convoca\Core\Logger::error( 'Excepción durante registro de miembro: ' . $e->getMessage(), 'Members' );
-			return new \WP_Error( 'create_failed', 'Error inesperado al crear el registro.' );
+			return new \WP_Error( 'create_failed', __( 'Error inesperado al crear el registro.', 'convoca-members' ) );
 		}
 
 		// 9. Notifications

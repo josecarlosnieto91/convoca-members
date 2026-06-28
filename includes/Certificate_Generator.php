@@ -42,7 +42,7 @@ class Certificate_Generator {
 	public static function generate( int $miembro_id ): array|\WP_Error {
 		$miembro = get_post( $miembro_id );
 		if ( ! $miembro || $miembro->post_type !== 'miembro' ) {
-			return new \WP_Error( 'invalid_member', 'Miembro no encontrado' );
+			return new \WP_Error( 'invalid_member', __( 'Miembro no encontrado', 'convoca-members' ) );
 		}
 
 		$nombre     = $miembro->post_title;
@@ -88,7 +88,7 @@ class Certificate_Generator {
 
 	private static function render_pdf_to_buffer( string $html ): string|\WP_Error {
 		if ( ! class_exists( '\\Convoca\\Core\\Signature' ) ) {
-			return new \WP_Error( 'signature_missing', 'El componente de firma/PDF no está disponible.' );
+			return new \WP_Error( 'signature_missing', __( 'El componente de firma/PDF no está disponible.', 'convoca-members' ) );
 		}
 
 		$signature = new \Convoca\Core\Signature();
@@ -107,7 +107,7 @@ class Certificate_Generator {
 
 			$pdf_content = @file_get_contents( $tmp_file );
 			if ( $pdf_content === false ) {
-				return new \WP_Error( 'read_error', 'No se pudo leer el archivo temporal generado.' );
+				return new \WP_Error( 'read_error', __( 'No se pudo leer el archivo temporal generado.', 'convoca-members' ) );
 			}
 
 			return $pdf_content;

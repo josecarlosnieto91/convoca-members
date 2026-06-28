@@ -595,7 +595,7 @@ class Admin_Horas extends \WP_List_Table {
 
 	public function process_action() {
 		if ( ! current_user_can( 'gestionar_miembros' ) ) {
-			wp_die( 'No tienes permisos.' );
+			wp_die( __( 'No tienes permisos.', 'convoca-members' ) );
 		}
 
 		$get_data   = wp_unslash( $_GET );

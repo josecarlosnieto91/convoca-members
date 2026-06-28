@@ -178,7 +178,7 @@ class Admin_Metaboxes {
 				var btnPaymentLink = document.getElementById('conv-send-payment-link');
 				if (btnPaymentLink) {
 					btnPaymentLink.addEventListener('click', function () {
-						if (confirm('¿Generar un nuevo pago en Redsys y enviar email al socio?')) {
+						if (confirm('<?php echo esc_js( __( '¿Generar un nuevo pago en Redsys y enviar email al socio?', 'convoca-members' ) ); ?>')) {
 							convoca_ajax_action('convoca_send_payment_link', this);
 						}
 					});
@@ -187,7 +187,7 @@ class Admin_Metaboxes {
 				var btnReminder = document.getElementById('conv-send-reminder');
 				if (btnReminder) {
 					btnReminder.addEventListener('click', function () {
-						if (confirm('¿Reenviar el recordatorio de pago?')) {
+						if (confirm('<?php echo esc_js( __( '¿Reenviar el recordatorio de pago?', 'convoca-members' ) ); ?>')) {
 							convoca_ajax_action('convoca_send_reminder', this);
 						}
 					});
@@ -196,7 +196,7 @@ class Admin_Metaboxes {
 				var btnExportData = document.getElementById('conv-export-data');
 				if (btnExportData) {
 					btnExportData.addEventListener('click', function () {
-						if (!confirm('¿Exportar todos los datos de este miembro en formato JSON?')) return;
+						if (!confirm('<?php echo esc_js( __( '¿Exportar todos los datos de este miembro en formato JSON?', 'convoca-members' ) ); ?>')) return;
 						
 						var fd = new FormData();
 						fd.append('action', 'convoca_export_member_data');
@@ -228,8 +228,8 @@ class Admin_Metaboxes {
 				var btnDeleteData = document.getElementById('conv-delete-data');
 				if (btnDeleteData) {
 					btnDeleteData.addEventListener('click', function () {
-						if (!confirm('⚠️ ¿Estás seguro? Esta acción eliminará PERMANENTEMENTE todos los datos del miembro (incluyendo inscripciones, pagos y logs). Esta acción no se puede deshacer.')) return;
-						if (!confirm('¿Confirmas definitivamente la eliminación de todos los datos?')) return;
+						if (!confirm('<?php echo esc_js( __( '⚠️ ¿Estás seguro? Esta acción eliminará PERMANENTEMENTE todos los datos del miembro (incluyendo inscripciones, pagos y logs). Esta acción no se puede deshacer.', 'convoca-members' ) ); ?>')) return;
+						if (!confirm('<?php echo esc_js( __( '¿Confirmas definitivamente la eliminación de todos los datos?', 'convoca-members' ) ); ?>')) return;
 						
 						var fd = new FormData();
 						fd.append('action', 'convoca_delete_member_data');
