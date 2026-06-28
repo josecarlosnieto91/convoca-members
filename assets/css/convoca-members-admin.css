@@ -248,3 +248,30 @@ body.conv-modal-open {
         width: 100%;
         text-align: center;
     }
+/* ── Table row height fix ─────────────────────── */
+.conv-members-page .wp-list-table td {
+    max-height: 60px;
+    overflow: hidden;
+    vertical-align: middle;
+    text-overflow: ellipsis;
+}
+.conv-members-page .column-email a {
+    word-break: keep-all;
+    overflow-wrap: break-word;
+    max-width: 220px;
+    display: inline-block;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.conv-members-page .column-whatsapp a {
+    white-space: nowrap;
+}
+.conv-members-page .wp-list-table td.column-historial,
+.conv-members-page .wp-list-table td.column-notas,
+.conv-members-page .wp-list-table td.column-observaciones {
+    max-width: 200px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}

@@ -164,7 +164,7 @@ class Admin_Page {
 		$list->prepare_items();
 		$is_voluntarios = ! empty( $_GET['voluntarios'] ) || ( isset( $_GET['page'] ) && $_GET['page'] === 'conv-members-voluntarios' );
 		?>
-		<div class="wrap">
+		<div class="wrap conv-members-page">
 			<h1 class="wp-heading-inline">
 				<?php if ( $is_voluntarios ) : echo esc_html( get_bloginfo( 'name' ) ) . ' — '; esc_html_e( 'Voluntarios', 'convoca-members' ); else : esc_html_e( 'Miembros Convoca', 'convoca-members' ); endif; ?>
 			</h1>
@@ -218,6 +218,23 @@ class Admin_Page {
 				)
 			);
 		}
+
+		// Members without any estado meta are treated as "pendiente_documentacion".
+		$sin_estado = (int) $wpdb->get_var(
+			"SELECT COUNT(*) FROM {$wpdb->posts} p
+			 WHERE p.post_type = 'miembro' AND p.post_status = 'publish'
+			   AND NOT EXISTS (
+				   SELECT 1 FROM {$wpdb->postmeta} pm
+				    WHERE pm.post_id = p.ID AND pm.meta_key = '_convoca_estado_miembro'
+			   )"
+		);
+		$counts['pendiente_documentacion'] += $sin_estado;
+
+		// Total = all published members.
+		$total = (int) $wpdb->get_var(
+			"SELECT COUNT(*) FROM {$wpdb->posts}
+			 WHERE post_type = 'miembro' AND post_status = 'publish'"
+		);
 		?>
 		<div class="conv-stats-bar">
 			<div class="conv-stat"><span class="conv-stat-num">
@@ -230,7 +247,7 @@ class Admin_Page {
 					<?php echo $counts['baja']; ?>
 				</span> <?php esc_html_e( 'Bajas', 'convoca-members' ); ?></div>
 			<div class="conv-stat"><span class="conv-stat-num">
-					<?php echo array_sum( $counts ); ?>
+					<?php echo $total; ?>
 				</span> <?php esc_html_e( 'Total', 'convoca-members' ); ?></div>
 		</div>
 		<?php
@@ -241,7 +258,7 @@ class Admin_Page {
 	private function render_detail( int $post_id ): void {
 		$post = get_post( $post_id );
 		if ( ! $post || $post->post_type !== 'miembro' ) {
-			echo '<div class="wrap"><p>Miembro no encontrado.</p></div>';
+			echo '<div class="wrap conv-members-page"><p>Miembro no encontrado.</p></div>';
 			return;
 		}
 
@@ -251,7 +268,7 @@ class Admin_Page {
 		$terms        = wp_get_object_terms( $post_id, 'tipo_miembro', array( 'fields' => 'names' ) );
 		$tipo_miembro = is_wp_error( $terms ) ? '—' : implode( ', ', $terms );
 		?>
-		<div class="wrap">
+		<div class="wrap conv-members-page">
 			<h1>
 				<a href="<?php echo esc_url( admin_url( 'admin.php?page=conv-members' ) ); ?>">← <?php esc_html_e( 'Listado', 'convoca-members' ); ?></a>
 				&nbsp;
