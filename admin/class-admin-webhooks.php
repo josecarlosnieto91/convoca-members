@@ -27,6 +27,9 @@ class Admin_Webhooks {
 	 * Register submenu under Convoca Members.
 	 */
 	public function add_menu(): void {
+		if ( ! \Convoca\Core\License_Manager::has_pro( 'webhooks' ) ) {
+			return;
+		}
 		add_submenu_page(
 			'conv-members',
 			__( 'Webhooks', 'convoca-members' ),

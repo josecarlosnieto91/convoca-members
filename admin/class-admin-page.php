@@ -190,10 +190,17 @@ class Admin_Page {
 					class="convoca-btn convoca-btn-outline">📥
 					<?php esc_html_e( 'Exportar CSV', 'convoca-members' ); ?>
 				</button>
+				<?php if ( \Convoca\Core\License_Manager::has_pro( 'pdf_memories' ) ) : ?>
 				<a href="<?php echo esc_url( wp_nonce_url( admin_url( 'admin-post.php?action=convoca_export_members_pdf' ), 'convoca_export_members_pdf' ) ); ?>"
 					class="convoca-btn convoca-btn-outline" style="margin-left:5px;">📄
 					<?php esc_html_e( 'Exportar PDF', 'convoca-members' ); ?>
 				</a>
+				<?php else : ?>
+				<a href="<?php echo esc_url( admin_url( 'admin.php?page=convoca-license' ) ); ?>"
+					class="convoca-btn convoca-btn-outline" style="margin-left:5px;opacity:0.6;" title="<?php esc_attr_e( 'Disponible en PRO', 'convoca-members' ); ?>">🔒
+					<?php esc_html_e( 'Exportar PDF (PRO)', 'convoca-members' ); ?>
+				</a>
+				<?php endif; ?>
 			</p>
 
 			<?php $this->render_csv_modal(); ?>
@@ -275,8 +282,13 @@ class Admin_Page {
 				<?php echo esc_html( $post->post_title ); ?>
 				<?php echo Estados::badge_html( $estado ); ?>
 				&nbsp;
+				<?php if ( \Convoca\Core\License_Manager::has_pro( 'pdf_memories' ) ) : ?>
 				<a href="<?php echo esc_url( wp_nonce_url( admin_url( 'admin-post.php?action=convoca_pdf_card&member_id=' . $post_id ), 'convoca_pdf_card_' . $post_id ) ); ?>" 
 					class="convoca-btn convoca-btn-outline" target="_blank">🪪 <?php esc_html_e( 'Ver Tarjeta', 'convoca-members' ); ?></a>
+				<?php else : ?>
+				<a href="<?php echo esc_url( admin_url( 'admin.php?page=convoca-license' ) ); ?>" 
+					class="convoca-btn convoca-btn-outline" target="_blank" style="opacity:0.6;" title="<?php esc_attr_e( 'Disponible en PRO', 'convoca-members' ); ?>">🔒 <?php esc_html_e( 'Ver Tarjeta (PRO)', 'convoca-members' ); ?></a>
+				<?php endif; ?>
 				<a href="<?php echo esc_url( admin_url( 'admin.php?page=' . Admin_Member_Editor::SLUG . '&id=' . $post_id ) ); ?>" 
 					class="convoca-btn convoca-btn-primary"><?php esc_html_e( '✏️ Editar', 'convoca-members' ); ?></a>
 			</h1>

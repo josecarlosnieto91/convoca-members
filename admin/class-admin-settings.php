@@ -231,10 +231,12 @@ class Admin_Settings {
 					class="nav-tab <?php echo $active_tab === 'volunteers' ? 'nav-tab-active' : ''; ?>">
 					<?php esc_html_e( 'Campos Voluntariado', 'convoca-members' ); ?>
 				</a>
+				<?php if ( \Convoca\Core\License_Manager::has_pro( 'gamification' ) ) : ?>
 				<a href="?page=conv-members-settings&tab=gamification"
 					class="nav-tab <?php echo $active_tab === 'gamification' ? 'nav-tab-active' : ''; ?>">
 					🏆 <?php esc_html_e( 'Gamificación', 'convoca-members' ); ?>
 				</a>
+				<?php endif; ?>
 				<a href="?page=conv-members-settings&tab=status"
 					class="nav-tab <?php echo $active_tab === 'status' ? 'nav-tab-active' : ''; ?>">
 					<?php esc_html_e( 'Estado', 'convoca-members' ); ?>
@@ -256,7 +258,11 @@ class Admin_Settings {
 						$this->render_volunteers_tab();
 						break;
 					case 'gamification':
-						$this->render_gamification_tab();
+						if ( \Convoca\Core\License_Manager::has_pro( 'gamification' ) ) {
+							$this->render_gamification_tab();
+						} else {
+							echo '<div class="convoca-alert convoca-alert--info" style="display:block;margin:20px 0;"><p>🔒 <strong>Gamificación</strong> es una funcionalidad PRO. <a href="' . esc_url( admin_url( 'admin.php?page=convoca-license' ) ) . '">Activa tu licencia</a> para desbloquear badges, niveles y puntos de voluntariado.</p></div>';
+						}
 						break;
 					case 'status':
 						$this->render_status_tab();
@@ -315,6 +321,29 @@ class Admin_Settings {
 				<button type="submit" class="convoca-btn convoca-btn-primary"><?php esc_html_e( 'Guardar ajustes', 'convoca-members' ); ?></button>
 			</div>
 		</form>
+
+		<!-- PRO Features Section -->
+		<div class="conv-pro-section" style="margin-top:40px;padding:25px;background:#fefce8;border:2px dashed #eab308;border-radius:12px;">
+			<h2 style="margin-top:0;color:#a16207;">✨ Funcionalidades PRO</h2>
+			<p style="color:#713f12;">Las siguientes funcionalidades están disponibles con una licencia PRO. <a href="<?php echo esc_url( admin_url( 'admin.php?page=convoca-license' ) ); ?>">Activa tu licencia</a> para desbloquearlas.</p>
+			<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:12px;margin-top:15px;">
+				<div style="background:#fff;border-radius:8px;padding:15px;border:1px solid #e2e8f0;opacity:0.7;">
+					<span style="font-size:1.2rem;">🏆</span>
+					<span style="font-weight:600;margin-left:8px;">Gamificación</span>
+					<span style="display:block;font-size:11px;color:#94a3b8;margin-top:4px;">Badges, niveles y puntos de voluntariado</span>
+				</div>
+				<div style="background:#fff;border-radius:8px;padding:15px;border:1px solid #e2e8f0;opacity:0.7;">
+					<span style="font-size:1.2rem;">📄</span>
+					<span style="font-weight:600;margin-left:8px;">PDF Memories</span>
+					<span style="display:block;font-size:11px;color:#94a3b8;margin-top:4px;">Exportación PDF y tarjetas de socio</span>
+				</div>
+				<div style="background:#fff;border-radius:8px;padding:15px;border:1px solid #e2e8f0;opacity:0.7;">
+					<span style="font-size:1.2rem;">🔗</span>
+					<span style="font-weight:600;margin-left:8px;">Webhooks salientes</span>
+					<span style="display:block;font-size:11px;color:#94a3b8;margin-top:4px;">Integración con sistemas externos</span>
+				</div>
+			</div>
+		</div>
 		<?php
 	}
 
