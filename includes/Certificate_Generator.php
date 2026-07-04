@@ -168,7 +168,25 @@ class Certificate_Generator {
 	}
 
 	private static function generate_qr_data( string $url ): string {
-		return $url;
+	    return $url;
+	}
+
+	private static function build_qr_svg( string $data ): string {
+	    // Generate a simple QR code using a free API
+	    $api_url = 'https://api.qrserver.com/v1/create-qr-code/?size=120x120&data=' . rawurlencode($data);
+	    // Use base64 to embed the image (Dompdf supports external URLs)
+	    $ch = curl_init();
+	    curl_setopt($ch, CURLOPT_URL, $api_url);
+	    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+	    curl_setopt($ch, CURLOPT_TIMEOUT, 5);
+	    $img_data = curl_exec($ch);
+	    curl_close($ch);
+	    if ($img_data) {
+	        $b64 = base64_encode($img_data);
+	        return '<img src="data:image/png;base64,' . $b64 . '" alt="QR" style="width:120px;height:120px;" />';
+	    }
+	    // Fallback: text QR
+	    return '<div style="width:120px;height:120px;background:#2d5a27;color:#fff;display:flex;align-items:center;justify-content:center;font-size:10px;text-align:center;">Escanee para verificar<br><small>' . esc_html($data) . '</small></div>';
 	}
 
 	private static function build_html( string $nombre, float $horas, string $plan, array $proyectos, string $cert_id, string $qr_data, string $verify_url ): string {
@@ -179,49 +197,51 @@ class Certificate_Generator {
 		}
 
 		return '<!DOCTYPE html>
-<html>
-<head>
-    <meta charset="UTF-8">
-    <style>
-        body { font-family: Arial, sans-serif; margin: 40px; color: #333; }
-        .certificado { border: 3px solid #2d5a27; padding: 40px; max-width: 800px; margin: 0 auto; background: #f9fff9; }
-        .header { text-align: center; border-bottom: 2px solid #2d5a27; padding-bottom: 20px; margin-bottom: 30px; }
-        .logo { font-size: 48px; }
-        h1 { color: #2d5a27; margin: 10px 0; }
-        .contenido { font-size: 18px; line-height: 1.8; }
-        .nombre { font-size: 24px; font-weight: bold; color: #1a3a15; }
-        .horas { font-size: 20px; color: #2d5a27; font-weight: bold; }
-        .proyectos { margin: 20px 0; padding: 15px; background: #e8f5e9; border-radius: 8px; }
-        .proyecto { margin: 10px 0; }
-        .footer { margin-top: 40px; text-align: center; border-top: 1px solid #ccc; padding-top: 20px; }
-        .qr { margin: 20px auto; width: 120px; height: 120px; background: #2d5a27; color: white; display: flex; align-items: center; justify-content: center; font-size: 10px; }
-        .cert-id { font-size: 12px; color: #666; }
-    </style>
-</head>
-<body>
-    <div class="certificado">
-        <div class="header">
-            <div class="logo">🌿</div>
-            <h1>Certificado de Voluntariado</h1>
-            <p>" . esc_html(get_bloginfo("name")) . "</p>
-        </div>
-        <div class="contenido">
-            <p>Certificamos que <span class="nombre">' . esc_html( $nombre ) . '</span></p>
-            <p>ha completado un total de <span class="horas">' . number_format( $horas, 1 ) . ' horas</span> de voluntariado</p>
-            <p>como parte del plan <strong>' . esc_html( $plan ) . '</strong></p>
+		<html>
+		<head>
+		<meta charset="UTF-8">
+		<style>
+		body { font-family: Arial, sans-serif; margin: 20px; color: #333; }
+		.certificado { border: 3px solid #2d5a27; padding: 25px; max-width: 750px; margin: 0 auto; background: #f9fff9; }
+		.header { text-align: center; border-bottom: 2px solid #2d5a27; padding-bottom: 15px; margin-bottom: 20px; }
+		.logo { font-size: 36px; color: #2d5a27; font-weight: bold; letter-spacing: 2px; }
+		h1 { color: #2d5a27; margin: 10px 0; }
+		h3 { color: #2d5a27; margin-top: 25px; }
+		.contenido { font-size: 18px; line-height: 1.5; }
+		.nombre { font-size: 22px; font-weight: bold; color: #1a3a15; }
+		.horas { font-size: 18px; color: #2d5a27; font-weight: bold; }
+		.proyectos { margin: 15px 0; padding: 12px; background: #e8f5e9; border-radius: 8px; }
+		.proyecto { margin: 8px 0; }
+		.footer { margin-top: 25px; text-align: center; border-top: 1px solid #ccc; padding-top: 15px; }
+		.qr { margin: 20px auto; width: 120px; height: 120px; }
+		.cert-id { font-size: 12px; color: #666; }
+		.sin-proyectos { color: #888; font-style: italic; }
+		</style>
+		</head>
+		<body>
+		<div class="certificado">
+		<div class="header">
+		    <div class="logo">' . esc_html(get_bloginfo("name")) . '</div>
+		    <h1>Certificado de Voluntariado</h1>
+		    <p>' . esc_html(get_bloginfo("name")) . '</p>
+		</div>
+		<div class="contenido">
+		    <p>Certificamos que <span class="nombre">' . esc_html( $nombre ) . '</span></p>
+		    <p>ha completado un total de <span class="horas">' . number_format( $horas, 1 ) . ' horas</span> de voluntariado</p>
+		    <p>como parte del plan <strong>' . ( $plan ? esc_html( $plan ) : 'Voluntariado General' ) . '</strong></p>
             
-            <h3>Proyectos Participados</h3>
-            <div class="proyectos">' . $proyectos_html . '</div>
-        </div>
-        <div class="footer">
-            <p>Fecha de emisión: ' . wp_date( 'd/m/Y' ) . '</p>
-            <p class="cert-id">ID: ' . esc_html( $cert_id ) . '</p>
-            <div class="qr">QR</div>
-            <p><small>Verificar en: ' . esc_html( $verify_url ) . '</small></p>
-        </div>
-    </div>
-</body>
-</html>';
+		    <h3>Proyectos Participados</h3>
+		    <div class="proyectos">' . ( $proyectos_html ?: '<p class="sin-proyectos">Voluntariado en diversas actividades</p>' ) . '</div>
+		</div>
+		<div class="footer">
+		    <p>Fecha de emisión: ' . wp_date( 'd/m/Y' ) . '</p>
+		    <p class="cert-id">ID: ' . esc_html( $cert_id ) . '</p>
+		    <div class="qr">' . self::build_qr_svg( $verify_url ) . '</div>
+		    <p><small>Verificar en: ' . esc_html( $verify_url ) . '</small></p>
+		</div>
+		</div>
+		</body>
+		</html>';
 	}
 
 	public static function serve_pdf( int $miembro_id ): void {
