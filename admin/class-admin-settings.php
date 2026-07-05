@@ -1010,8 +1010,8 @@ class Admin_Settings {
 
 	private function find_page_by_shortcode( string $shortcode ) {
 		global $wpdb;
-		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared -- Statement is prepared via $wpdb->prepare() above.
 		$query = $wpdb->prepare( "SELECT ID FROM $wpdb->posts WHERE post_content LIKE %s AND post_status = 'publish' AND post_type = 'page' LIMIT 1", '%' . $wpdb->esc_like( $shortcode ) . '%' );
+		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared -- Statement is already prepared via $wpdb->prepare() above.
 		return $wpdb->get_var( $query );
 	}
 }

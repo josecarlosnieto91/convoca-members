@@ -374,6 +374,8 @@ class CPT_Miembro {
 			global $wpdb;
 			$option_name = 'convoca_last_member_number_fallback';
 			$wpdb->query( 'START TRANSACTION' );
+
+			// phpcs:disable WordPress.DB.PreparedSQL.InterpolatedNotPrepared,WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching,PluginCheck.Security.DirectDB.UnescapedDBParameter -- Fallback atomic sequence using wp_options table. $option_name is a hardcoded constant, not user input.
 			try {
 				// Atomic increment with row-level lock to prevent duplicates.
 				$wpdb->query( "SELECT option_value FROM {$wpdb->options} WHERE option_name = '{$option_name}' FOR UPDATE" );
@@ -391,6 +393,7 @@ class CPT_Miembro {
 					);
 					$next = 1;
 				}
+				// phpcs:enable WordPress.DB.PreparedSQL.InterpolatedNotPrepared,WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching,PluginCheck.Security.DirectDB.UnescapedDBParameter
 				$wpdb->query( 'COMMIT' );
 				return $next;
 			} catch ( \Throwable $e2 ) {
