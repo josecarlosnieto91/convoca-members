@@ -69,7 +69,7 @@ class Admin_Member_Editor {
 		$is_edit = $post_id > 0 && get_post_type( $post_id ) === CPT_Miembro::SLUG;
 
 		if ( $is_edit && ! current_user_can( 'edit_post', $post_id ) ) {
-			wp_die( __( 'No tienes permisos para editar este miembro.', 'convoca-members' ) );
+			wp_die( esc_html__( 'No tienes permisos para editar este miembro.', 'convoca-members' ) );
 		}
 
 		$post = $is_edit ? get_post( $post_id ) : null;
@@ -251,7 +251,7 @@ class Admin_Member_Editor {
 		$data = wp_unslash( $_POST );
 
 		if ( ! isset( $data['_convoca_nonce'] ) ) {
-			wp_die( __( 'Acceso denegado.', 'convoca-members' ) );
+			wp_die( esc_html__( 'Acceso denegado.', 'convoca-members' ) );
 		}
 
 		$post_id = (int) ( $data['post_id'] ?? 0 );
@@ -259,14 +259,14 @@ class Admin_Member_Editor {
 
 		if ( $is_edit ) {
 			if ( ! wp_verify_nonce( $data['_convoca_nonce'], 'convoca_save_member_' . $post_id ) ) {
-				wp_die( __( 'Nonce inválido.', 'convoca-members' ) );
+				wp_die( esc_html__( 'Nonce inválido.', 'convoca-members' ) );
 			}
 			if ( ! current_user_can( 'edit_post', $post_id ) ) {
 				wp_die( esc_html__( 'No tienes permisos.', 'convoca-members' ) );
 			}
 		} else {
 			if ( ! wp_verify_nonce( $data['_convoca_nonce'], 'convoca_save_member_0' ) ) {
-				wp_die( __( 'Nonce inválido.', 'convoca-members' ) );
+				wp_die( esc_html__( 'Nonce inválido.', 'convoca-members' ) );
 			}
 			if ( ! current_user_can( 'edit_posts' ) ) {
 				wp_die( esc_html__( 'No tienes permisos.', 'convoca-members' ) );
@@ -276,7 +276,7 @@ class Admin_Member_Editor {
 		// Get the full name (used as post title).
 		$nombre = sanitize_text_field( $data['convoca_nombre'] ?? '' );
 		if ( empty( $nombre ) ) {
-			wp_die( __( 'El nombre es obligatorio.', 'convoca-members' ) );
+			wp_die( esc_html__( 'El nombre es obligatorio.', 'convoca-members' ) );
 		}
 
 		if ( $is_edit ) {
@@ -299,7 +299,7 @@ class Admin_Member_Editor {
 			);
 
 			if ( is_wp_error( $post_id ) ) {
-				wp_die( __( 'Error al crear el miembro.', 'convoca-members' ) );
+				wp_die( esc_html__( 'Error al crear el miembro.', 'convoca-members' ) );
 			}
 		}
 
@@ -342,7 +342,7 @@ class Admin_Member_Editor {
 		$old_state = get_post_meta( $post_id, '_convoca_estado_miembro', true );
 
 		if ( $new_state && $new_state !== $old_state ) {
-			Estados::change( $post_id, $new_state, __( 'Cambio manual desde editor de miembro.', 'convoca-members' ) );
+			Estados::change( $post_id, $new_state, esc_html__( 'Cambio manual desde editor de miembro.', 'convoca-members' ) );
 
 			if ( $new_state === 'activo' ) {
 				$num = get_post_meta( $post_id, '_convoca_numero_socio', true );
@@ -376,7 +376,7 @@ class Admin_Member_Editor {
 		$post_id = (int) ( $data['post_id'] ?? 0 );
 
 		if ( ! $post_id || ! wp_verify_nonce( $data['_convoca_nonce'] ?? '', 'convoca_delete_member_' . $post_id ) ) {
-			wp_die( __( 'Acceso denegado.', 'convoca-members' ) );
+			wp_die( esc_html__( 'Acceso denegado.', 'convoca-members' ) );
 		}
 		if ( ! current_user_can( 'delete_post', $post_id ) ) {
 			wp_die( esc_html__( 'No tienes permisos.', 'convoca-members' ) );

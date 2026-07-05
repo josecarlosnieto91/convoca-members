@@ -718,7 +718,7 @@ class Admin_Settings {
 				</button>
 			</div>
 			<div class="inside" style="padding: 10px;">
-				<input type="hidden" class="field-name-input" name="convoca_volunteer_fields[<?php echo esc_attr( $index ); ?>][name]" value="<?php echo $name; ?>">
+				<input type="hidden" class="field-name-input" name="convoca_volunteer_fields[<?php echo esc_attr( $index ); ?>][name]" value="<?php echo esc_attr( $name ); ?>">
 				
 				<div style="display: flex; gap: 20px; align-items: flex-start;">
 					<div style="flex: 1;">
@@ -1010,6 +1010,7 @@ class Admin_Settings {
 
 	private function find_page_by_shortcode( string $shortcode ) {
 		global $wpdb;
+		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared -- Statement is prepared via $wpdb->prepare() above.
 		$query = $wpdb->prepare( "SELECT ID FROM $wpdb->posts WHERE post_content LIKE %s AND post_status = 'publish' AND post_type = 'page' LIMIT 1", '%' . $wpdb->esc_like( $shortcode ) . '%' );
 		return $wpdb->get_var( $query );
 	}

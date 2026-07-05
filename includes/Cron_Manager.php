@@ -238,7 +238,7 @@ class Cron_Manager {
                 LIMIT 50
             ";
 
-			$ids = $wpdb->get_col( $wpdb->prepare( $query, $target_date ) );
+			$ids = $wpdb->get_col( $wpdb->prepare( $query, $target_date ) ); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared -- Statement prepared above via $wpdb->prepare().
 
 			if ( empty( $ids ) ) {
 				continue;
@@ -359,7 +359,7 @@ class Cron_Manager {
               AND CAST(pm_ren.meta_value AS DATE) <= %s
         ";
 
-		$member_ids = $wpdb->get_col( $wpdb->prepare( $query, $today ) );
+		$member_ids = $wpdb->get_col( $wpdb->prepare( $query, $today ) ); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared -- Statement prepared above via $wpdb->prepare().
 
 		if ( empty( $member_ids ) ) {
 			return;
@@ -477,7 +477,7 @@ class Cron_Manager {
               AND CAST(pm_ren.meta_value AS DATE) < %s
         ";
 
-		$member_ids = $wpdb->get_col( $wpdb->prepare( $query, $today ) );
+		$member_ids = $wpdb->get_col( $wpdb->prepare( $query, $today ) ); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared -- Statement prepared above via $wpdb->prepare().
 
 		foreach ( $member_ids as $member_id ) {
 			$member_id = (int) $member_id;

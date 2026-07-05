@@ -401,7 +401,7 @@ class Admin_Horas extends \WP_List_Table {
 		header( 'Pragma: no-cache' );
 		header( 'Expires: 0' );
 
-		$out = fopen( 'php://output', 'w' );
+		$out = fopen( 'php://output', 'w' ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_fopen -- CSV streaming to php://output.
 		fprintf( $out, chr( 0xEF ) . chr( 0xBB ) . chr( 0xBF ) );
 
 		fputcsv(
@@ -443,7 +443,7 @@ class Admin_Horas extends \WP_List_Table {
 			);
 		}
 
-		fclose( $out );
+		fclose( $out ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_fclose -- CSV streaming to php://output.
 		exit;
 	}
 

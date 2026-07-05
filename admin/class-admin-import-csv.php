@@ -214,6 +214,7 @@ class Admin_Import_CSV {
 		}
 
 		$filename = $_FILES['csv_file']['tmp_name'];
+		// phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_fopen -- CSV parsing requires direct file access.
 		$handle   = fopen( $filename, 'r' );
 		if ( ! $handle ) {
 			wp_die( esc_html__( 'No se pudo leer el archivo.', 'convoca-members' ) );
@@ -221,7 +222,7 @@ class Admin_Import_CSV {
 
 		$headers = fgetcsv( $handle, 0, ',', '"', '' );
 		if ( ! $headers ) {
-			fclose( $handle );
+			fclose( $handle ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_fclose
 			wp_die( esc_html__( 'CSV vacío o sin cabeceras.', 'convoca-members' ) ); }
 		$headers = array_map( 'trim', $headers );
 
@@ -235,7 +236,7 @@ class Admin_Import_CSV {
 		while ( fgetcsv( $handle, 0, ',', '"', '' ) !== false ) {
 			++$total;
 		}
-		fclose( $handle );
+		fclose( $handle ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_fclose
 
 		$target_filename = 'convoca_import_' . uniqid() . '.csv';
 		copy( $filename, sys_get_temp_dir() . '/' . $target_filename );
@@ -270,12 +271,12 @@ class Admin_Import_CSV {
 		header( 'Pragma: no-cache' );
 		header( 'Expires: 0' );
 
-		$out = fopen( 'php://output', 'w' );
+		$out = fopen( 'php://output', 'w' ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_fopen -- CSV streaming to php://output.
 		// BOM for Excel.
 		fprintf( $out, chr( 0xEF ) . chr( 0xBB ) . chr( 0xBF ) );
 		fputcsv( $out, $headers );
 		fputcsv( $out, $example );
-		fclose( $out );
+		fclose( $out ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_fclose
 		exit;
 	}
 
@@ -296,10 +297,11 @@ class Admin_Import_CSV {
 		$update_existing = isset( $_POST['update_existing'] );
 
 		// Read all rows into memory.
+		// phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_fopen -- CSV parsing requires direct file access.
 		$handle  = fopen( $filepath, 'r' );
 		$headers = fgetcsv( $handle, 0, ',', '"', '' );
 		if ( ! $headers ) {
-			fclose( $handle );
+			fclose( $handle ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_fclose
 			wp_die( esc_html__( 'Error al leer cabeceras.', 'convoca-members' ) ); }
 
 		$rows = array();
@@ -317,7 +319,7 @@ class Admin_Import_CSV {
 			}
 			$rows[] = $row;
 		}
-		fclose( $handle );
+		fclose( $handle ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_fclose
 
 		$total      = count( $rows );
 		$batch_size = 25;
@@ -368,7 +370,7 @@ class Admin_Import_CSV {
 			@set_time_limit( 30 );
 		}
 
-		unlink( $filepath );
+		unlink( $filepath ); // phpcs:ignore WordPress.WP.AlternativeFunctions.unlink_unlink -- Temporary import file cleanup.
 		delete_transient( 'convoca_csv_preview_' . get_current_user_id() );
 
 		\Convoca\Core\Logger::info(
@@ -443,7 +445,7 @@ class Admin_Import_CSV {
 			// Batch complete.
 			delete_transient( $batch_key );
 			if ( ! empty( $state['filepath'] ) && file_exists( $state['filepath'] ) ) {
-				unlink( $state['filepath'] );
+				unlink( $state['filepath'] ); // phpcs:ignore WordPress.WP.AlternativeFunctions.unlink_unlink -- Temporary import file cleanup.
 			}
 
 			\Convoca\Core\Logger::info(

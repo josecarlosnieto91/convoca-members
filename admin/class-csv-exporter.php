@@ -182,7 +182,7 @@ class CSV_Exporter {
 		header( 'Pragma: no-cache' );
 		header( 'Expires: 0' );
 
-		$out = fopen( 'php://output', 'w' );
+		$out = fopen( 'php://output', 'w' ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_fopen -- CSV streaming to php://output.
 
 		// Write BOM for Excel.
 		fprintf( $out, chr( 0xEF ) . chr( 0xBB ) . chr( 0xBF ) );
@@ -199,7 +199,7 @@ class CSV_Exporter {
 			fputcsv( $out, $row, ';' );
 		}
 
-		fclose( $out );
+		fclose( $out ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_fclose -- CSV streaming to php://output.
 		exit;
 	}
 

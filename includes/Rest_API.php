@@ -918,6 +918,7 @@ class Rest_API {
 		header( 'Cache-Control: private, max-age=0, must-revalidate' );
 		header( 'Pragma: public' );
 
+		// phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_readfile -- PDF binary output, no WP_Filesystem equivalent.
 		readfile( $filepath );
 		exit;
 	}

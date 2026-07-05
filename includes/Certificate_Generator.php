@@ -172,15 +172,13 @@ class Certificate_Generator {
 	}
 
 	private static function build_qr_svg( string $data ): string {
-	    // Generate a simple QR code using a free API
+	    // Generate a simple QR code using a free API.
 	    $api_url = 'https://api.qrserver.com/v1/create-qr-code/?size=120x120&data=' . rawurlencode($data);
-	    // Use base64 to embed the image (Dompdf supports external URLs)
-	    $ch = curl_init();
-	    curl_setopt($ch, CURLOPT_URL, $api_url);
-	    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-	    curl_setopt($ch, CURLOPT_TIMEOUT, 5);
-	    $img_data = curl_exec($ch);
-	    curl_close($ch);
+	    $response = wp_remote_get( $api_url, array( 'timeout' => 5 ) );
+	    $img_data = null;
+	    if ( ! is_wp_error( $response ) && wp_remote_retrieve_response_code( $response ) === 200 ) {
+	        $img_data = wp_remote_retrieve_body( $response );
+	    }
 	    if ($img_data) {
 	        $b64 = base64_encode($img_data);
 	        return '<img src="data:image/png;base64,' . $b64 . '" alt="QR" style="width:120px;height:120px;" />';
@@ -260,6 +258,7 @@ class Certificate_Generator {
 
 		$result = self::generate( $miembro_id );
 		if ( ! is_wp_error( $result ) ) {
+			// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Binary PDF content, cannot be escaped.
 			echo $result['pdf'];
 		}
 		exit;

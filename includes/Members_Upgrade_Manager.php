@@ -86,6 +86,7 @@ class Members_Upgrade_Manager extends Upgrade_Manager {
 
 			if ( $last_number > 0 ) {
 				// Initialize the AUTO_INCREMENT to the last known number.
+				// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared -- ALTER TABLE with numeric value from option, no user input.
 				$wpdb->query( "ALTER TABLE $table AUTO_INCREMENT = " . ( $last_number + 1 ) );
 			} else {
 				// Sync with existing postmeta if option is missing.
@@ -97,6 +98,7 @@ class Members_Upgrade_Manager extends Upgrade_Manager {
                 "
 				);
 				if ( $max_postmeta > 0 ) {
+					// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared -- ALTER TABLE with numeric value, no user input.
 					$wpdb->query( "ALTER TABLE $table AUTO_INCREMENT = " . ( $max_postmeta + 1 ) );
 				}
 			}
