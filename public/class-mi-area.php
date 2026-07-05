@@ -87,19 +87,19 @@ class Mi_Area {
 		?>
 		<div class="conv-login-container card-glass">
 			<h2 class="text-gradient">Acceso Socios</h2>
-			<p><?php _e( 'Introduce tu usuario y contraseña para acceder a tu área privada.', 'convoca-members' ); ?></p>
+			<p><?php esc_html_e( 'Introduce tu usuario y contraseña para acceder a tu área privada.', 'convoca-members' ); ?></p>
 			<form id="conv-login-form" class="conv-login-form">
 				<div class="form-group">
-					<label for="username"><?php _e( 'Usuario o Email', 'convoca-members' ); ?></label>
+					<label for="username"><?php esc_html_e( 'Usuario o Email', 'convoca-members' ); ?></label>
 					<input type="text" id="username" name="username" required placeholder="ejemplo@getconvoca.app">
 				</div>
 				<div class="form-group">
-					<label for="password"><?php _e( 'Contraseña', 'convoca-members' ); ?></label>
+					<label for="password"><?php esc_html_e( 'Contraseña', 'convoca-members' ); ?></label>
 					<input type="password" id="password" name="password" required minlength="4">
-					<small><?php _e( 'Las credenciales las recibiste por email al ser aprobado.', 'convoca-members' ); ?></small>
-					<br><small><a href="mailto:coordinacion@getconvoca.app"><?php _e( '¿No tienes acceso? Escribe a coordinación.', 'convoca-members' ); ?></a></small>
+					<small><?php esc_html_e( 'Las credenciales las recibiste por email al ser aprobado.', 'convoca-members' ); ?></small>
+					<br><small><a href="mailto:coordinacion@getconvoca.app"><?php esc_html_e( '¿No tienes acceso? Escribe a coordinación.', 'convoca-members' ); ?></a></small>
 				</div>
-				<button type="submit" class="btn-primary"><?php _e( 'Entrar', 'convoca-members' ); ?></button>
+				<button type="submit" class="btn-primary"><?php esc_html_e( 'Entrar', 'convoca-members' ); ?></button>
 				<div class="form-result"></div>
 			</form>
 		</div>
@@ -116,22 +116,22 @@ class Mi_Area {
 			<header class="conv-panel-header">
 				<div>
 					<h1>¡Hola, <span><?php echo esc_html( $post->post_title ); ?></span>!</h1>
-					<p class="subtitle"><?php _e( 'Bienvenido a tu panel de socio de Convoca.', 'convoca-members' ); ?></p>
+					<p class="subtitle"><?php esc_html_e( 'Bienvenido a tu panel de socio de Convoca.', 'convoca-members' ); ?></p>
 				</div>
-				<button id="conv-logout-btn" class="btn-link"><?php _e( 'Cerrar sesión', 'convoca-members' ); ?></button>
+				<button id="conv-logout-btn" class="btn-link"><?php esc_html_e( 'Cerrar sesión', 'convoca-members' ); ?></button>
 			</header>
 
 			<div class="conv-panel-grid">
 				<!-- Navigation -->
 				<nav class="conv-panel-nav card-glass">
 					<ul>
-						<li class="active" data-tab="profile">👤 <?php _e( 'Mis Datos', 'convoca-members' ); ?></li>
-						<li data-tab="membership">🪪 <?php _e( 'Carnet Digital', 'convoca-members' ); ?></li>
-						<li data-tab="inscriptions">📝 <?php _e( 'Inscripciones', 'convoca-members' ); ?></li>
-						<li data-tab="hours">⏳ <?php _e( 'Voluntariado', 'convoca-members' ); ?></li>
-						<li data-tab="payments">💳 <?php _e( 'Pagos y Cuotas', 'convoca-members' ); ?></li>
-						<li data-tab="search">🔍 <?php _e( 'Buscar', 'convoca-members' ); ?></li>
-						<li data-tab="notifications" class="conv-notif-tab">🔔 <?php _e( 'Notificaciones', 'convoca-members' ); ?> <span class="conv-notif-badge" id="conv-notif-count" style="display:none">0</span></li>
+						<li class="active" data-tab="profile">👤 <?php esc_html_e( 'Mis Datos', 'convoca-members' ); ?></li>
+						<li data-tab="membership">🪪 <?php esc_html_e( 'Carnet Digital', 'convoca-members' ); ?></li>
+						<li data-tab="inscriptions">📝 <?php esc_html_e( 'Inscripciones', 'convoca-members' ); ?></li>
+						<li data-tab="hours">⏳ <?php esc_html_e( 'Voluntariado', 'convoca-members' ); ?></li>
+						<li data-tab="payments">💳 <?php esc_html_e( 'Pagos y Cuotas', 'convoca-members' ); ?></li>
+						<li data-tab="search">🔍 <?php esc_html_e( 'Buscar', 'convoca-members' ); ?></li>
+						<li data-tab="notifications" class="conv-notif-tab">🔔 <?php esc_html_e( 'Notificaciones', 'convoca-members' ); ?> <span class="conv-notif-badge" id="conv-notif-count" style="display:none">0</span></li>
 					</ul>
 				</nav>
 

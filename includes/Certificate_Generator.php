@@ -113,7 +113,7 @@ class Certificate_Generator {
 			return $pdf_content;
 		} finally {
 			if ( file_exists( $tmp_file ) ) {
-				@unlink( $tmp_file );
+				wp_delete_file( $tmp_file );
 			}
 		}
 	}

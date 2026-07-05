@@ -19,7 +19,7 @@ namespace Convoca\Core {
             }
 
             public static function format_date(string $modify, string $format = 'Y-m-d'): string {
-                return \date($format, \strtotime($modify));
+                return \gmdate($format, \strtotime($modify));
             }
 
             public static function clear_fired(): void { self::$actions_fired = []; }

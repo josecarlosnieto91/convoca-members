@@ -87,7 +87,7 @@ class Hours_Manager {
 		$nota_admin   = isset( $data['nota_admin'] ) ? sanitize_textarea_field( $data['nota_admin'] ) : '';
 
 		$post_title = sprintf(
-			__( 'Registro Socio %1$d — %2$s — %3$gh', 'convoca-members' ),
+			/* translators: 1: member ID, 2: date, 3: hours */ __( 'Registro Socio %1$d — %2$s — %3$gh', 'convoca-members' ),
 			$miembro_id,
 			$fecha,
 			$horas

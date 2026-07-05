@@ -337,24 +337,24 @@ class Admin_Proyectos extends \WP_List_Table {
 		<div class="wrap convoca-admin">
 			<h1><?php echo esc_html( $title ); ?></h1>
 
-			<form method="post" action="<?php echo admin_url( 'admin-post.php' ); ?>" class="conv-form-custom">
+			<form method="post" action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>" class="conv-form-custom">
 				<input type="hidden" name="action" value="convoca_save_proyecto_admin">
-				<input type="hidden" name="id" value="<?php echo $post_id; ?>">
+				<input type="hidden" name="id" value="<?php echo esc_attr( $post_id ); ?>">
 				<?php wp_nonce_field( 'convoca_save_proyecto_nonce' ); ?>
 
 				<div class="conv-grid conv-grid--2">
 					<div class="conv-card">
 						<div class="conv-card-header">
-							<h2><?php _e( 'Información General', 'convoca-members' ); ?></h2>
+							<h2><?php esc_html_e( 'Información General', 'convoca-members' ); ?></h2>
 						</div>
 						<div class="conv-card-body">
 							<div class="conv-field">
-								<label for="title"><?php _e( 'Nombre del Proyecto', 'convoca-members' ); ?> *</label>
+								<label for="title"><?php esc_html_e( 'Nombre del Proyecto', 'convoca-members' ); ?> *</label>
 								<input type="text" name="post_title" id="title" value="<?php echo $proyecto ? esc_attr( $proyecto->post_title ) : ''; ?>" required class="widefat">
 							</div>
 
 							<div class="convoca-field">
-								<label for="description"><?php _e( 'Descripción / Objetivos', 'convoca-members' ); ?></label>
+								<label for="description"><?php esc_html_e( 'Descripción / Objetivos', 'convoca-members' ); ?></label>
 								<textarea name="post_content" id="description" rows="10"><?php echo $proyecto ? esc_textarea( $proyecto->post_content ) : ''; ?></textarea>
 							</div>
 						</div>
@@ -362,24 +362,24 @@ class Admin_Proyectos extends \WP_List_Table {
 
 					<div class="conv-card">
 						<div class="conv-card-header">
-							<h2><?php _e( 'Configuración y Fechas', 'convoca-members' ); ?></h2>
+							<h2><?php esc_html_e( 'Configuración y Fechas', 'convoca-members' ); ?></h2>
 						</div>
 						<div class="conv-card-body">
 							<div class="conv-field">
-								<label for="fecha_inicio"><?php _e( 'Fecha de Inicio', 'convoca-members' ); ?> *</label>
+								<label for="fecha_inicio"><?php esc_html_e( 'Fecha de Inicio', 'convoca-members' ); ?> *</label>
 								<input type="date" name="fecha_inicio" id="fecha_inicio" value="<?php echo esc_attr( $meta['fecha_inicio'] ); ?>" required>
 							</div>
 
 							<div class="conv-field">
-								<label for="fecha_fin"><?php _e( 'Fecha de Fin (opcional)', 'convoca-members' ); ?></label>
+								<label for="fecha_fin"><?php esc_html_e( 'Fecha de Fin (opcional)', 'convoca-members' ); ?></label>
 								<input type="date" name="fecha_fin" id="fecha_fin" value="<?php echo esc_attr( $meta['fecha_fin'] ); ?>">
 							</div>
 
 							<div class="conv-field">
-								<label for="responsable"><?php _e( 'Responsable', 'convoca-members' ); ?></label>
+								<label for="responsable"><?php esc_html_e( 'Responsable', 'convoca-members' ); ?></label>
 								<select name="responsable" id="responsable">
 									<?php foreach ( $users as $user ) : ?>
-										<option value="<?php echo $user->ID; ?>" <?php selected( $meta['responsable'], $user->ID ); ?>>
+										<option value="<?php echo esc_attr( $user->ID ); ?>" <?php selected( $meta['responsable'], $user->ID ); ?>>
 											<?php echo esc_html( $user->display_name ); ?>
 										</option>
 									<?php endforeach; ?>
@@ -398,7 +398,7 @@ class Admin_Proyectos extends \WP_List_Table {
 
 				<div class="conv-form-actions">
 					<?php submit_button( __( 'Guardar Proyecto', 'convoca-members' ), 'primary', 'submit', false ); ?>
-					<a href="<?php echo admin_url( 'admin.php?page=conv-proyectos' ); ?>" class="button"><?php _e( 'Cancelar', 'convoca-members' ); ?></a>
+					<a href="<?php echo esc_url( admin_url( 'admin.php?page=conv-proyectos' ) ); ?>" class="button"><?php esc_html_e( 'Cancelar', 'convoca-members' ); ?></a>
 				</div>
 			</form>
 		</div>

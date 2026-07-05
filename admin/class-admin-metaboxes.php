@@ -322,7 +322,7 @@ class Admin_Metaboxes {
 			<div class="convoca-field">
 				<div class="convoca-check-group">
 					<input type="checkbox" name="convoca_pago_recurrente" value="1" <?php checked( $get( 'pago_recurrente' ), '1' ); ?>>
-					<label><?php _e( 'Renovación automática anual', 'convoca-members' ); ?></label>
+					<label><?php esc_html_e( 'Renovación automática anual', 'convoca-members' ); ?></label>
 				</div>
 			</div>
 

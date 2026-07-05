@@ -79,7 +79,7 @@ register_activation_hook(
 	function (): void {
 		if ( ! class_exists( '\\Convoca\\Core\\Utils' ) ) {
 			deactivate_plugins( plugin_basename( __FILE__ ) );
-			wp_die( __( 'Convoca Members requires Convoca Core to be active. Please activate Convoca Core first.', 'convoca-members' ) );
+			wp_die( esc_html__( 'Convoca Members requires Convoca Core to be active. Please activate Convoca Core first.', 'convoca-members' ) );
 		}
 		// Autoloader is already registered, no need to require these manually.
 		\Convoca\Members\CPT_Miembro::register();
@@ -283,7 +283,7 @@ add_action(
 	'admin_post_convoca_approve_member',
 	function () {
 		if ( ! current_user_can( 'edit_users' ) ) {
-			wp_die( __( 'No tienes permisos.', 'convoca-members' ) );
+			wp_die( esc_html__( 'No tienes permisos.', 'convoca-members' ) );
 		}
 
 		$id = (int) ( $_GET['member_id'] ?? 0 );
@@ -306,7 +306,7 @@ add_action(
 	'admin_post_convoca_delete_member',
 	function () {
 		if ( ! current_user_can( 'delete_posts' ) ) {
-			wp_die( __( 'No tienes permisos.', 'convoca-members' ) );
+			wp_die( esc_html__( 'No tienes permisos.', 'convoca-members' ) );
 		}
 
 		$id = (int) ( $_GET['member_id'] ?? 0 );
@@ -338,6 +338,7 @@ add_action(
 			wp_die( esc_html__( 'No tienes permisos para ver la tarjeta de este miembro.', 'convoca-members' ) );
 		}
 
+		// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- get_html returns safe HTML
 		echo \Convoca\Members\PDF_Card::get_html( $id );
 		exit;
 	}

@@ -182,14 +182,14 @@ $areas = \Convoca\Members\Form_Voluntariado::INTEREST_AREAS;
 				$req_mark = ! empty( $field['required'] ) ? ' *' : '';
 				?>
 				<div class="convoca-field">
-					<label for="<?php echo $id; ?>"><?php echo esc_html( $field['label'] ) . $req_mark; ?></label>
+					<label for="<?php echo esc_attr( $id ); ?>"><?php echo esc_html( $field['label'] ); ?><?php echo esc_html( $req_mark ); ?></label>
 					<?php if ( $field['type'] === 'textarea' ) : ?>
-						<textarea id="<?php echo $id; ?>" name="<?php echo $name; ?>" rows="3" <?php echo $required; ?>></textarea>
+						<textarea id="<?php echo esc_attr( $id ); ?>" name="<?php echo esc_attr( $name ); ?>" rows="3" <?php echo esc_attr( $required ); ?>></textarea>
 						<?php
 					elseif ( $field['type'] === 'select' ) :
 						$options = array_filter( array_map( 'trim', explode( "\n", $field['options'] ?? '' ) ) );
 						?>
-						<select id="<?php echo $id; ?>" name="<?php echo $name; ?>" <?php echo $required; ?>>
+						<select id="<?php echo esc_attr( $id ); ?>" name="<?php echo esc_attr( $name ); ?>" <?php echo esc_attr( $required ); ?>>
 							<option value="">Selecciona una opción</option>
 							<?php foreach ( $options as $opt ) : ?>
 								<option value="<?php echo esc_attr( $opt ); ?>"><?php echo esc_html( $opt ); ?></option>
@@ -197,11 +197,11 @@ $areas = \Convoca\Members\Form_Voluntariado::INTEREST_AREAS;
 						</select>
 					<?php elseif ( $field['type'] === 'checkbox' ) : ?>
 						<div class="convoca-check-group">
-							<input type="checkbox" id="<?php echo $id; ?>" name="<?php echo $name; ?>" <?php echo $required; ?>>
-							<label for="<?php echo $id; ?>">Sí</label>
+							<input type="checkbox" id="<?php echo esc_attr( $id ); ?>" name="<?php echo esc_attr( $name ); ?>" <?php echo esc_attr( $required ); ?>>
+							<label for="<?php echo esc_attr( $id ); ?>">Sí</label>
 						</div>
 					<?php else : ?>
-						<input type="<?php echo esc_attr( $field['type'] ); ?>" id="<?php echo $id; ?>" name="<?php echo $name; ?>" <?php echo $required; ?>>
+						<input type="<?php echo esc_attr( $field['type'] ); ?>" id="<?php echo esc_attr( $id ); ?>" name="<?php echo esc_attr( $name ); ?>" <?php echo esc_attr( $required ); ?>>
 					<?php endif; ?>
 				</div>
 				<?php

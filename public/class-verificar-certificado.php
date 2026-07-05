@@ -50,23 +50,23 @@ class Verificar_Certificado {
 				<div class="convoca-alert convoca-alert--ok convoca-card conv-cert-result">
 					<div class="conv-cert-header">
 						<span class="conv-cert-icon">✅</span>
-						<h2 class="text-gradient"><?php _e( 'Certificado Válido', 'convoca-members' ); ?></h2>
+						<h2 class="text-gradient"><?php esc_html_e( 'Certificado Válido', 'convoca-members' ); ?></h2>
 					</div>
 					<div class="conv-cert-details">
 						<div class="detail-row">
-							<span class="detail-label"><?php _e( 'Nombre:', 'convoca-members' ); ?></span>
+							<span class="detail-label"><?php esc_html_e( 'Nombre:', 'convoca-members' ); ?></span>
 							<span class="detail-value"><?php echo esc_html( $result['nombre'] ); ?></span>
 						</div>
 						<div class="detail-row">
-							<span class="detail-label"><?php _e( 'Horas:', 'convoca-members' ); ?></span>
+							<span class="detail-label"><?php esc_html_e( 'Horas:', 'convoca-members' ); ?></span>
 							<span class="detail-value"><?php echo number_format( $result['horas'], 1 ); ?>h</span>
 						</div>
 						<div class="detail-row">
-							<span class="detail-label"><?php _e( 'Emisión:', 'convoca-members' ); ?></span>
+							<span class="detail-label"><?php esc_html_e( 'Emisión:', 'convoca-members' ); ?></span>
 							<span class="detail-value"><?php echo wp_date( 'd/m/Y', strtotime( $result['emitido'] ) ); ?></span>
 						</div>
 						<div class="detail-row">
-							<span class="detail-label"><?php _e( 'ID:', 'convoca-members' ); ?></span>
+							<span class="detail-label"><?php esc_html_e( 'ID:', 'convoca-members' ); ?></span>
 							<span class="detail-value"><code><?php echo esc_html( $result['certificado_id'] ); ?></code></span>
 						</div>
 					</div>
@@ -77,9 +77,9 @@ class Verificar_Certificado {
 				<div class="convoca-alert convoca-alert--danger convoca-card">
 					<div class="conv-cert-header">
 						<span class="conv-cert-icon">❌</span>
-						<h2><?php _e( 'Certificado No Encontrado', 'convoca-members' ); ?></h2>
+						<h2><?php esc_html_e( 'Certificado No Encontrado', 'convoca-members' ); ?></h2>
 					</div>
-					<p><?php _e( 'El ID de certificado proporcionado no es válido o no existe en nuestros registros.', 'convoca-members' ); ?></p>
+					<p><?php esc_html_e( 'El ID de certificado proporcionado no es válido o no existe en nuestros registros.', 'convoca-members' ); ?></p>
 				</div>
 				<?php
 			}
@@ -87,19 +87,19 @@ class Verificar_Certificado {
 
 		?>
 		<div class="convoca-card convoca-form conv-verify-card">
-			<h2 class="text-gradient">🔍 <?php _e( 'Verificar Certificado', 'convoca-members' ); ?></h2>
-			<p class="subtitle"><?php _e( 'Introduce el ID del certificado para verificar su autenticidad y validez oficial.', 'convoca-members' ); ?></p>
+			<h2 class="text-gradient">🔍 <?php esc_html_e( 'Verificar Certificado', 'convoca-members' ); ?></h2>
+			<p class="subtitle"><?php esc_html_e( 'Introduce el ID del certificado para verificar su autenticidad y validez oficial.', 'convoca-members' ); ?></p>
 			
 			<form method="post" class="conv-verify-form">
 				<div class="form-group">
-					<label for="certificado_id"><?php _e( 'ID del Certificado', 'convoca-members' ); ?></label>
+					<label for="certificado_id"><?php esc_html_e( 'ID del Certificado', 'convoca-members' ); ?></label>
 					<input type="text" id="certificado_id" name="certificado_id" 
 							placeholder="Ej: VOL-2025-XXXXX" 
 							value="<?php echo esc_attr( $search ); ?>" required>
 				</div>
 				<div class="form-actions">
 					<button type="submit" class="wp-block-button__link">
-						<?php _e( 'Verificar Ahora', 'convoca-members' ); ?>
+						<?php esc_html_e( 'Verificar Ahora', 'convoca-members' ); ?>
 					</button>
 				</div>
 			</form>

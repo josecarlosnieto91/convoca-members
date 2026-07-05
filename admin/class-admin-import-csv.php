@@ -104,7 +104,7 @@ class Admin_Import_CSV {
 					<p style="font-size:1.2em;">
 						<?php
 						printf(
-							esc_html__( 'Procesados %1$d de %2$d registros...', 'convoca-members' ),
+							/* translators: 1: imported count, 2: total count */ esc_html__( 'Procesados %1$d de %2$d registros...', 'convoca-members' ),
 							(int) $batch_progress['imported'],
 							(int) $batch_progress['total']
 						);
@@ -126,7 +126,7 @@ class Admin_Import_CSV {
 
 			<?php if ( $preview ) : ?>
 				<div class="convoca-box" style="background:#fff;border-radius:12px;padding:30px;margin-top:20px;">
-					<h2><?php printf( esc_html__( '2. Vista previa (%d filas detectadas)', 'convoca-members' ), (int) $preview['total'] ); ?></h2>
+					<h2><?php printf( /* translators: %d: number of rows */ esc_html__( '2. Vista previa (%d filas detectadas)', 'convoca-members' ), (int) $preview['total'] ); ?></h2>
 					<form method="post" action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>">
 						<?php wp_nonce_field( 'convoca_import_csv_run' ); ?>
 						<input type="hidden" name="action" value="convoca_import_csv_run">
@@ -193,7 +193,7 @@ class Admin_Import_CSV {
 
 						<div style="margin-top:20px;">
 							<button type="submit" class="convoca-btn convoca-btn-primary" onclick="return confirm('<?php esc_attr_e( '¿Importar todos los socios? Esta acción no se puede deshacer.', 'convoca-members' ); ?>');">
-								🚀 <?php printf( esc_html__( 'Importar %d socios', 'convoca-members' ), (int) $preview['total'] ); ?>
+								🚀 <?php printf( /* translators: %d: number of members */ esc_html__( 'Importar %d socios', 'convoca-members' ), (int) $preview['total'] ); ?>
 							</button>
 						</div>
 					</form>
@@ -376,9 +376,9 @@ class Admin_Import_CSV {
 			'Members/Admin'
 		);
 
-		$message = sprintf( __( '%d socios importados correctamente.', 'convoca-members' ), $imported );
+		$message = sprintf( /* translators: %d: number of members */ __( '%d socios importados correctamente.', 'convoca-members' ), $imported );
 		if ( ! empty( $errors ) ) {
-			$message .= ' ' . sprintf( __( '%d errores:', 'convoca-members' ), count( $errors ) ) . ' ' . implode( ' | ', array_slice( $errors, 0, 10 ) );
+			$message .= ' ' . sprintf( /* translators: %d: error count */ __( '%d errores:', 'convoca-members' ), count( $errors ) ) . ' ' . implode( ' | ', array_slice( $errors, 0, 10 ) );
 		}
 
 		wp_safe_redirect( admin_url( 'admin.php?page=conv-import-csv&import_result=' . urlencode( $message ) ) );
@@ -451,9 +451,9 @@ class Admin_Import_CSV {
 				'Members/Admin'
 			);
 
-			$message = sprintf( __( '🎉 Importación completada. %d socios importados.', 'convoca-members' ), $imported );
+			$message = sprintf( /* translators: %d: number of members */ __( '🎉 Importación completada. %d socios importados.', 'convoca-members' ), $imported );
 			if ( ! empty( $errors ) ) {
-				$message .= ' ' . sprintf( __( '%d errores:', 'convoca-members' ), count( $errors ) ) . ' ' . implode( ' | ', array_slice( $errors, 0, 10 ) );
+				$message .= ' ' . sprintf( /* translators: %d: error count */ __( '%d errores:', 'convoca-members' ), count( $errors ) ) . ' ' . implode( ' | ', array_slice( $errors, 0, 10 ) );
 			}
 
 			// Store result message and redirect.
@@ -480,18 +480,18 @@ class Admin_Import_CSV {
 
 		// Validate required fields.
 		if ( empty( $nombre ) || empty( $email ) ) {
-			$errors[] = sprintf( __( 'Fila %d: nombre y email obligatorios.', 'convoca-members' ), $line );
+			$errors[] = sprintf( /* translators: %d: line number */ __( 'Fila %d: nombre y email obligatorios.', 'convoca-members' ), $line );
 			return false;
 		}
 
 		if ( ! is_email( $email ) ) {
-			$errors[] = sprintf( __( 'Fila %1$d: email inválido (%2$s).', 'convoca-members' ), $line, $email );
+			$errors[] = sprintf( /* translators: 1: line number, 2: email address */ __( 'Fila %1$d: email inválido (%2$s).', 'convoca-members' ), $line, $email );
 			return false;
 		}
 
 		// Validate DNI.
 		if ( ! empty( $dni ) && ! \Convoca\Core\Utils::validar_dni( $dni ) ) {
-			$errors[] = sprintf( __( 'Fila %1$d: DNI inválido (%2$s).', 'convoca-members' ), $line, $dni );
+			$errors[] = sprintf( /* translators: 1: line number, 2: DNI value */ __( 'Fila %1$d: DNI inválido (%2$s).', 'convoca-members' ), $line, $dni );
 			return false;
 		}
 
@@ -501,8 +501,10 @@ class Admin_Import_CSV {
 		if ( $existing_id ) {
 			if ( ! $update_existing ) {
 				if ( $dni ) {
+					/* translators: 1: line number, 2: email, 3: DNI */
 					$errors[] = sprintf( __( 'Fila %1$d: socio ya existe (email: %2$s, DNI: %3$s).', 'convoca-members' ), $line, $email, $dni );
 				} else {
+					/* translators: 1: line number, 2: email */
 					$errors[] = sprintf( __( 'Fila %1$d: socio ya existe (email: %2$s).', 'convoca-members' ), $line, $email );
 				}
 				return false;
@@ -527,6 +529,7 @@ class Admin_Import_CSV {
 			);
 
 			if ( is_wp_error( $post_id ) ) {
+				/* translators: 1: line number, 2: error message */
 				$errors[] = sprintf( __( 'Fila %1$d: error al crear (%2$s).', 'convoca-members' ), $line, $post_id->get_error_message() );
 				return $post_id;
 			}

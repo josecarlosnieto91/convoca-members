@@ -668,7 +668,7 @@ class Admin_Horas extends \WP_List_Table {
 						'Members/Hours',
 						$miembro_id
 					);
-					wp_die( __( 'No puedes aprobar tus propias horas de voluntariado.', 'convoca-members' ) );
+					wp_die( esc_html__( 'No puedes aprobar tus propias horas de voluntariado.', 'convoca-members' ) );
 				}
 				// Monitor no puede aprobar horas de otro monitor.
 				if ( $vol_is_monitor ) {
@@ -677,15 +677,15 @@ class Admin_Horas extends \WP_List_Table {
 						'Members/Hours',
 						$miembro_id
 					);
-					wp_die( __( 'Solo un administrador puede aprobar las horas de los monitores.', 'convoca-members' ) );
+					wp_die( esc_html__( 'Solo un administrador puede aprobar las horas de los monitores.', 'convoca-members' ) );
 				}
 			} else {
 				// Otros roles con gestionar_miembros (p.ej. shop_manager) → mismo límite que monitor.
 				if ( $volunteer_user_id > 0 && $volunteer_user_id === $current_user_id ) {
-					wp_die( __( 'No puedes aprobar tus propias horas de voluntariado.', 'convoca-members' ) );
+					wp_die( esc_html__( 'No puedes aprobar tus propias horas de voluntariado.', 'convoca-members' ) );
 				}
 				if ( $vol_is_monitor ) {
-					wp_die( __( 'Solo un administrador puede aprobar las horas de los monitores.', 'convoca-members' ) );
+					wp_die( esc_html__( 'Solo un administrador puede aprobar las horas de los monitores.', 'convoca-members' ) );
 				}
 			}
 

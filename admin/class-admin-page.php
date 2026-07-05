@@ -520,7 +520,8 @@ class Admin_Page {
 					   AND p.post_type = 'miembro' AND p.post_status = 'publish'"
 				);
 				echo '<p>' . sprintf(
-					__( '<strong>%1$d</strong> activos de <strong>%2$d</strong> registrados.', 'convoca-members' ),
+					// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- inline HTML in translatable string, variables escaped separately
+					/* translators: 1: active count, 2: total count */ __( '<strong>%1$d</strong> activos de <strong>%2$d</strong> registrados.', 'convoca-members' ),
 					esc_html( $activos ),
 					esc_html( $total )
 				) . '</p>';
@@ -562,7 +563,7 @@ class Admin_Page {
 		check_ajax_referer( 'convoca_admin_nonce', 'nonce' );
 		$post_id = (int) ( wp_unslash( $_POST['post_id'] ) ?? 0 );
 		if ( ! $post_id || ! current_user_can( 'edit_post', $post_id ) ) {
-			wp_die( __( 'No tienes permisos.', 'convoca-members' ) );
+			wp_die( esc_html__( 'No tienes permisos.', 'convoca-members' ) );
 		}
 
 		$now = current_time( 'mysql' );
@@ -619,10 +620,10 @@ class Admin_Page {
 
 	public function handle_export_members_pdf(): void {
 		if ( ! wp_verify_nonce( wp_unslash( $_GET['_wpnonce'] ?? '' ), 'convoca_export_members_pdf' ) ) {
-			wp_die( __( 'Nonce inválido.', 'convoca-members' ) );
+			wp_die( esc_html__( 'Nonce inválido.', 'convoca-members' ) );
 		}
 		if ( ! current_user_can( 'gestionar_miembros' ) ) {
-			wp_die( __( 'No tienes permisos.', 'convoca-members' ) );
+			wp_die( esc_html__( 'No tienes permisos.', 'convoca-members' ) );
 		}
 
 		$args  = array(

@@ -114,7 +114,7 @@ class Audit_Logger {
 		// 3. Generic log for other Convoca fields (only track that it changed, not the value)
 		if ( str_starts_with( $meta_key, '_convoca_' ) ) {
 			\Convoca\Core\Logger::info(
-				sprintf( __( 'Metadato "%s" actualizado.', 'convoca-members' ), $meta_key ),
+				sprintf( /* translators: %s: meta key name */ __( 'Metadato "%s" actualizado.', 'convoca-members' ), $meta_key ),
 				'Members/Audit',
 				$post_id
 			);

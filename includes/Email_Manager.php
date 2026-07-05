@@ -466,13 +466,13 @@ class Email_Manager {
 			update_post_meta( $post_id, $dedup_key, time() );
 
 			\Convoca\Core\Logger::info(
-				sprintf( __( 'Email enviado: %s', 'convoca-members' ), $subject ),
+				sprintf( /* translators: %s: email subject */ __( 'Email enviado: %s', 'convoca-members' ), $subject ),
 				'Members/Emails',
 				$post_id
 			);
 		} else {
 			\Convoca\Core\Logger::error(
-				sprintf( __( 'Error al enviar email: %s', 'convoca-members' ), $subject ),
+				sprintf( /* translators: %s: email subject */ __( 'Error al enviar email: %s', 'convoca-members' ), $subject ),
 				'Members/Emails',
 				$post_id
 			);

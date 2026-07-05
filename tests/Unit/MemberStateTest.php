@@ -46,9 +46,9 @@ class MemberStateTest extends TestCase
 
     public function test_expired_renewal_extends_date(): void
     {
-        $renewed = date('Y-m-d', strtotime('+1 year'));
+        $renewed = gmdate('Y-m-d', strtotime('+1 year'));
         $this->assertNotEmpty($renewed);
-        $next_year = (int)date('Y') + 1;
+        $next_year = (int)gmdate('Y') + 1;
         $this->assertStringContainsString((string)$next_year, $renewed);
     }
 

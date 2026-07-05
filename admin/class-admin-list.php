@@ -335,7 +335,9 @@ class Admin_List extends \WP_List_Table {
 	}
 
 	public function column_cb( $item ): string {
-		return '<input type="checkbox" name="miembros[]" value="' . esc_attr( $item->ID ) . '" aria-label="' . esc_attr( sprintf( __( 'Seleccionar %s', 'convoca-members' ), get_the_title( $item->ID ) ) ) . '">';
+		return '<input type="checkbox" name="miembros[]" value="' . esc_attr( $item->ID ) . '" aria-label="' . esc_attr( sprintf( 
+					/* translators: %s: member name */
+					__( 'Seleccionar %s', 'convoca-members' ), get_the_title( $item->ID ) ) ) . '">';
 	}
 
 	public function column_numero( $item ): string {
@@ -364,7 +366,9 @@ class Admin_List extends \WP_List_Table {
 
 		// Row actions.
 		$actions = array(
-			'edit' => '<a href="' . esc_url( $url ) . '" aria-label="' . esc_attr( sprintf( __( 'Ver ficha de %s', 'convoca-members' ), $item->post_title ) ) . '">' . __( 'Ver ficha', 'convoca-members' ) . '</a>',
+			'edit' => '<a href="' . esc_url( $url ) . '" aria-label="' . esc_attr( sprintf( 
+			/* translators: %s: member name */
+			__( 'Ver ficha de %s', 'convoca-members' ), $item->post_title ) ) . '">' . __( 'Ver ficha', 'convoca-members' ) . '</a>',
 		);
 
 		// Approval action.
@@ -374,18 +378,24 @@ class Admin_List extends \WP_List_Table {
 				admin_url( 'admin-post.php?action=convoca_approve_member&member_id=' . $item->ID ),
 				'convoca_approve_member_' . $item->ID
 			);
-			$actions['approve'] = '<a href="' . esc_url( $approve_url ) . '" style="color:#00a32a" aria-label="' . esc_attr( sprintf( __( 'Aprobar alta de %s', 'convoca-members' ), $item->post_title ) ) . '">' . __( 'Aprobar alta', 'convoca-members' ) . '</a>';
+			$actions['approve'] = '<a href="' . esc_url( $approve_url ) . '" style="color:#00a32a" aria-label="' . esc_attr( sprintf( 
+				/* translators: %s: member name */
+				__( 'Aprobar alta de %s', 'convoca-members' ), $item->post_title ) ) . '">' . __( 'Aprobar alta', 'convoca-members' ) . '</a>';
 		}
 
 		// PDF Card action.
-		$actions['card'] = '<a href="' . esc_url( wp_nonce_url( admin_url( 'admin-post.php?action=convoca_pdf_card&member_id=' . $item->ID ), 'convoca_pdf_card_' . $item->ID ) ) . '" target="_blank" aria-label="' . esc_attr( sprintf( __( 'Ver tarjeta de %s', 'convoca-members' ), $item->post_title ) ) . '">🪪 ' . __( 'Tarjeta', 'convoca-members' ) . '</a>';
+		$actions['card'] = '<a href="' . esc_url( wp_nonce_url( admin_url( 'admin-post.php?action=convoca_pdf_card&member_id=' . $item->ID ), 'convoca_pdf_card_' . $item->ID ) ) . '" target="_blank" aria-label="' . esc_attr( sprintf( 
+			/* translators: %s: member name */
+			__( 'Ver tarjeta de %s', 'convoca-members' ), $item->post_title ) ) . '">🪪 ' . __( 'Tarjeta', 'convoca-members' ) . '</a>';
 
 		// Delete action.
 		$delete_url        = wp_nonce_url(
 			admin_url( 'admin-post.php?action=convoca_delete_member&member_id=' . $item->ID ),
 			'convoca_delete_member_' . $item->ID
 		);
-		$actions['delete'] = '<a href="' . esc_url( $delete_url ) . '" style="color:#a00" onclick="return confirm(\'¿Estás seguro de que quieres enviar este miembro a la papelera?\')" aria-label="' . esc_attr( sprintf( __( 'Eliminar a %s', 'convoca-members' ), $item->post_title ) ) . '">' . __( 'Eliminar', 'convoca-members' ) . '</a>';
+		$actions['delete'] = '<a href="' . esc_url( $delete_url ) . '" style="color:#a00" onclick="return confirm(\'¿Estás seguro de que quieres enviar este miembro a la papelera?\')" aria-label="' . esc_attr( sprintf( 
+				/* translators: %s: member name */
+				__( 'Eliminar a %s', 'convoca-members' ), $item->post_title ) ) . '">' . __( 'Eliminar', 'convoca-members' ) . '</a>';
 
 		return $name_link . $this->row_actions( $actions );
 	}

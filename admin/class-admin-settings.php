@@ -609,7 +609,7 @@ class Admin_Settings {
 						</p>
 						<p>
 							<label><strong><?php esc_html_e( 'Cuerpo (HTML permitido):', 'convoca-members' ); ?></strong></label>
-							<textarea name="tpl_<?php echo $slug; ?>_body" rows="12"><?php echo esc_textarea( $tpl['body'] ); ?></textarea>
+							<textarea name="tpl_<?php echo esc_attr( $slug ); ?>_body" rows="12"><?php echo esc_textarea( $tpl['body'] ); ?></textarea>
 						</p>
 					</div>
 				</div>
@@ -710,7 +710,7 @@ class Admin_Settings {
 			<div class="postbox-header" style="padding: 10px; display: flex; justify-content: space-between; align-items: center;">
 				<h3 style="margin:0;">
 					<?php echo esc_html( $field['label'] ?? 'Nuevo Campo' ); ?>
-					<code style="opacity: 0.5;">(<?php echo $name; ?>)</code>
+					<code style="opacity: 0.5;">(<?php echo esc_html( $name ); ?>)</code>
 				</h3>
 				<button type="button" class="button-link-delete" style="color: #b32d2e;"
 					onclick="if(confirm('<?php echo esc_js( __( '¿Eliminar este campo al guardar?', 'convoca-members' ) ); ?>')) { this.closest('.conv-field-card').remove(); }">
@@ -718,17 +718,17 @@ class Admin_Settings {
 				</button>
 			</div>
 			<div class="inside" style="padding: 10px;">
-				<input type="hidden" class="field-name-input" name="convoca_volunteer_fields[<?php echo $index; ?>][name]" value="<?php echo $name; ?>">
+				<input type="hidden" class="field-name-input" name="convoca_volunteer_fields[<?php echo esc_attr( $index ); ?>][name]" value="<?php echo $name; ?>">
 				
 				<div style="display: flex; gap: 20px; align-items: flex-start;">
 					<div style="flex: 1;">
 						<p>
 							<label><strong><?php esc_html_e( 'Etiqueta (Label):', 'convoca-members' ); ?></strong></label><br>
-							<input type="text" name="convoca_volunteer_fields[<?php echo $index; ?>][label]" value="<?php echo esc_attr( $field['label'] ?? '' ); ?>" class="large-text">
+							<input type="text" name="convoca_volunteer_fields[<?php echo esc_attr( $index ); ?>][label]" value="<?php echo esc_attr( $field['label'] ?? '' ); ?>" class="large-text">
 						</p>
 						<p>
 							<label><strong><?php esc_html_e( 'Tipo de campo:', 'convoca-members' ); ?></strong></label><br>
-							<select name="convoca_volunteer_fields[<?php echo $index; ?>][type]">
+							<select name="convoca_volunteer_fields[<?php echo esc_attr( $index ); ?>][type]">
 								<?php
 								$types = array(
 									'text'     => 'Texto corto',
@@ -748,7 +748,7 @@ class Admin_Settings {
 						</p>
 						<p>
 							<label>
-								<input type="checkbox" name="convoca_volunteer_fields[<?php echo $index; ?>][required]" value="1" <?php checked( ! empty( $field['required'] ) ); ?>>
+								<input type="checkbox" name="convoca_volunteer_fields[<?php echo esc_attr( $index ); ?>][required]" value="1" <?php checked( ! empty( $field['required'] ) ); ?>>
 								<strong><?php esc_html_e( 'Campo obligatorio', 'convoca-members' ); ?></strong>
 							</label>
 						</p>
@@ -757,7 +757,7 @@ class Admin_Settings {
 						<p>
 							<label><strong><?php esc_html_e( 'Opciones (solo para Select):', 'convoca-members' ); ?></strong></label><br>
 							<span class="description">Una opción por línea. Ej: Sí \n No \n Tal vez</span><br>
-							<textarea name="convoca_volunteer_fields[<?php echo $index; ?>][options]" rows="4" class="large-text"><?php echo esc_textarea( $field['options'] ?? '' ); ?></textarea>
+							<textarea name="convoca_volunteer_fields[<?php echo esc_attr( $index ); ?>][options]" rows="4" class="large-text"><?php echo esc_textarea( $field['options'] ?? '' ); ?></textarea>
 						</p>
 					</div>
 				</div>
@@ -837,35 +837,35 @@ class Admin_Settings {
 									<tbody>
 										<?php foreach ( $track['levels'] as $i => $level ) : ?>
 											<tr>
-												<td><?php echo $i + 1; ?></td>
+												<td><?php echo (int) $i + 1; ?></td>
 												<td>
 													<input type="text"
-															name="convoca_gamification_tracks[<?php echo esc_attr( $track_key ); ?>][levels][<?php echo $i; ?>][name]"
+															name="convoca_gamification_tracks[<?php echo esc_attr( $track_key ); ?>][levels][<?php echo esc_attr( $i ); ?>][name]"
 															value="<?php echo esc_attr( $level['name'] ); ?>"
 															class="regular-text" style="width:100%;">
 												</td>
 												<td>
 													<input type="text"
-															name="convoca_gamification_tracks[<?php echo esc_attr( $track_key ); ?>][levels][<?php echo $i; ?>][emoji]"
+															name="convoca_gamification_tracks[<?php echo esc_attr( $track_key ); ?>][levels][<?php echo esc_attr( $i ); ?>][emoji]"
 															value="<?php echo esc_attr( $level['emoji'] ); ?>"
 															style="width:60px; text-align:center; font-size:1.2em;"
 															class="conv-emoji-input">
 												</td>
 												<td>
 													<input type="number" step="0.5" min="0"
-															name="convoca_gamification_tracks[<?php echo esc_attr( $track_key ); ?>][levels][<?php echo $i; ?>][hours]"
+															name="convoca_gamification_tracks[<?php echo esc_attr( $track_key ); ?>][levels][<?php echo esc_attr( $i ); ?>][hours]"
 															value="<?php echo esc_attr( $level['hours'] ); ?>"
 															style="width:80px;">
 												</td>
 												<td>
 													<input type="color"
-															name="convoca_gamification_tracks[<?php echo esc_attr( $track_key ); ?>][levels][<?php echo $i; ?>][color]"
+															name="convoca_gamification_tracks[<?php echo esc_attr( $track_key ); ?>][levels][<?php echo esc_attr( $i ); ?>][color]"
 															value="<?php echo esc_attr( $level['color'] ); ?>"
 															style="width:60px; height:30px; padding:0; border:none; cursor:pointer;">
 												</td>
 												<td>
 													<input type="text"
-															name="convoca_gamification_tracks[<?php echo esc_attr( $track_key ); ?>][levels][<?php echo $i; ?>][desc]"
+															name="convoca_gamification_tracks[<?php echo esc_attr( $track_key ); ?>][levels][<?php echo esc_attr( $i ); ?>][desc]"
 															value="<?php echo esc_attr( $level['desc'] ?? '' ); ?>"
 															class="regular-text" style="width:100%;">
 												</td>
@@ -941,10 +941,10 @@ class Admin_Settings {
 		foreach ( $plugin_definitions as $slug => $data ) {
 			$is_active = class_exists( $data['class'] );
 			$checks[]  = array(
-				'title'   => sprintf( __( 'Plugin: %s', 'convoca-members' ), $data['name'] ),
+				'title'   => sprintf( /* translators: %s: plugin name */ __( 'Plugin: %s', 'convoca-members' ), $data['name'] ),
 				'status'  => $is_active ? 'ok' : $data['severity'],
 				'message' => $is_active ? __( 'Activo y funcionando.', 'convoca-members' ) : __( 'Plugin no detectado o inactivo.', 'convoca-members' ),
-				'fix'     => ! $is_active ? sprintf( __( 'Instala y activa el plugin %s.', 'convoca-members' ), $data['name'] ) : '',
+				'fix'     => ! $is_active ? sprintf( /* translators: %s: plugin name */ __( 'Instala y activa el plugin %s.', 'convoca-members' ), $data['name'] ) : '',
 			);
 		}
 
@@ -982,7 +982,7 @@ class Admin_Settings {
 			$checks[] = array(
 				'title'   => $data['title'],
 				'status'  => $page ? 'ok' : 'error',
-				'message' => $page ? sprintf( __( 'Detectada: %s', 'convoca-members' ), get_the_title( $page ) ) : __( 'No se ha encontrado ninguna página con este shortcode.', 'convoca-members' ),
+				'message' => $page ? sprintf( /* translators: %s: page title */ __( 'Detectada: %s', 'convoca-members' ), get_the_title( $page ) ) : __( 'No se ha encontrado ninguna página con este shortcode.', 'convoca-members' ),
 				'fix'     => ! $page ? $data['fix'] : '',
 			);
 		}
@@ -993,7 +993,7 @@ class Admin_Settings {
 		$checks[]   = array(
 			'title'   => __( 'Base de Datos', 'convoca-members' ),
 			'status'  => $is_db_ok ? 'ok' : 'warning',
-			'message' => sprintf( __( 'Versión actual: %s', 'convoca-members' ), $db_version ),
+			'message' => sprintf( /* translators: %s: database version */ __( 'Versión actual: %s', 'convoca-members' ), $db_version ),
 			'fix'     => ! $is_db_ok ? __( 'La base de datos necesita actualizarse. Desactiva y vuelve a activar el plugin.', 'convoca-members' ) : '',
 		);
 

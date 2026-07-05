@@ -140,7 +140,7 @@ class Admin_Status {
 					</div>
 					<div class="convoca-diagnostic-summary">
 						<h3><?php echo $has_errors ? esc_html__( 'Se encontraron errores', 'convoca-members' ) : ( $has_warnings ? esc_html__( 'Atención: algunas comprobaciones requieren revisión', 'convoca-members' ) : esc_html__( 'Todo correcto', 'convoca-members' ) ); ?></h3>
-						<p><?php printf( esc_html__( '%d comprobaciones realizadas.', 'convoca-members' ), count( $results ) ); ?></p>
+						<p><?php printf( /* translators: %d: number of checks */ esc_html__( '%d comprobaciones realizadas.', 'convoca-members' ), count( $results ) ); ?></p>
 					</div>
 				</div>
 				<div class="convoca-diagnostic-results">
