@@ -1,4 +1,20 @@
 <?php
+
+/**
+ * Convoca Members
+ *
+ * @package    Convoca\Members
+ * @subpackage Admin
+ *
+ * @copyright  Copyright (C) 2026 Jose Carlos Nieto Ramos
+ * @license    GPL-2.0-or-later
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ */
+
 /**
  * Admin Logs page: visualize logs from the centralized Convoca logs table.
  *
@@ -66,7 +82,7 @@ class Admin_Logs {
 			<h1>Registros de Auditoría</h1>
 
 			<p>
-				<a href="<?php echo wp_nonce_url( admin_url( 'admin.php?page=conv-members-logs&action=clear' ), 'convoca_clear_members_logs' ); ?>" 
+				<a href="<?php echo esc_url( wp_nonce_url( admin_url( 'admin.php?page=conv-members-logs&action=clear' ), 'convoca_clear_members_logs' ) ); ?>" 
 					class="button button-secondary"
 					onclick="return confirm('<?php echo esc_js( __( '¿Estás seguro de que quieres borrar todos los logs de Members?', 'convoca-members' ) ); ?>');">
 					Borrar logs de Members
@@ -89,13 +105,13 @@ class Admin_Logs {
 							<tr>
 								<td><?php echo esc_html( $log->created_at ); ?></td>
 								<td>
-									<?php echo \Convoca\Core\Utils::render_log_level_badge( $log->level ); ?>
+									<?php echo wp_kses_post( \Convoca\Core\Utils::render_log_level_badge( $log->level ) ); ?>
 								</td>
 								<td><?php echo esc_html( $log->message ); ?></td>
 								<td><code><?php echo esc_html( $log->context ); ?></code></td>
 								<td>
 									<?php if ( $log->object_id ) : ?>
-										<a href="<?php echo admin_url( 'admin.php?page=conv-members&member_id=' . $log->object_id ); ?>">#<?php echo (int) $log->object_id; ?></a>
+										<a href="<?php echo esc_url( admin_url( 'admin.php?page=conv-members&member_id=' . $log->object_id ) ); ?>">#<?php echo (int) $log->object_id; ?></a>
 									<?php else : ?>
 										—
 									<?php endif; ?>
@@ -112,17 +128,17 @@ class Admin_Logs {
 				<div class="tablenav">
 					<div class="tablenav-pages">
 						<?php
-						echo paginate_links(
+						echo wp_kses_post( paginate_links(
 							array(
 								'base'      => add_query_arg( 'paged', '%#%' ),
 								'format'    => '',
 								'prev_text' => '&laquo;',
 								'next_text' => '&raquo;',
 								'total'     => $num_pages,
-								'current'   => $pagenum,
-							)
-						);
-						?>
+							'current'   => $pagenum,
+						)
+					) );
+					?>
 					</div>
 				</div>
 			<?php endif; ?>

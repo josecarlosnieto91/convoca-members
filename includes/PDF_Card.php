@@ -1,4 +1,20 @@
 <?php
+
+/**
+ * Convoca Members
+ *
+ * @package    Convoca\Members
+ * @subpackage Includes
+ *
+ * @copyright  Copyright (C) 2026 Jose Carlos Nieto Ramos
+ * @license    GPL-2.0-or-later
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ */
+
 /**
  * Generates Member Card (PDF/Printable).
  * Currently implements a high-fidelity HTML print view.
@@ -228,7 +244,7 @@ class PDF_Card {
 		);
 
 		if ( ! $result || ! file_exists( $result ) ) {
-			throw new \RuntimeException( $signature->get_last_error() ?: 'Error al generar el PDF.' );
+			throw new \RuntimeException( esc_html( $signature->get_last_error() ) ?: 'Error al generar el PDF.' );
 		}
 
 		$pdf_content = file_get_contents( $result );

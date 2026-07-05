@@ -1,4 +1,20 @@
 <?php
+
+/**
+ * Convoca Members
+ *
+ * @package    Convoca\Members
+ * @subpackage Admin
+ *
+ * @copyright  Copyright (C) 2026 Jose Carlos Nieto Ramos
+ * @license    GPL-2.0-or-later
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ */
+
 /**
  * Admin page for managing webhooks.
  *
@@ -136,8 +152,8 @@ class Admin_Webhooks {
 	 * Render the webhooks admin page.
 	 */
 	public function render_page(): void {
-		$view = sanitize_text_field( $_GET['view'] ?? 'list' );
-		$msg  = sanitize_text_field( $_GET['msg'] ?? '' );
+		$view = sanitize_text_field( wp_unslash( $_GET['view'] ?? 'list' ) );
+		$msg  = sanitize_text_field( wp_unslash( $_GET['msg'] ?? '' ) );
 
 		echo '<div class="wrap">';
 		echo '<h1>🔗 Webhooks — Convoca</h1>';
@@ -164,11 +180,11 @@ class Admin_Webhooks {
 				$this->render_form();
 				break;
 			case 'edit':
-				$id = sanitize_text_field( $_GET['webhook_id'] ?? '' );
+				$id = sanitize_text_field( wp_unslash( $_GET['webhook_id'] ?? '' ) );
 				$this->render_form( $id );
 				break;
 			case 'logs':
-				$id = sanitize_text_field( $_GET['webhook_id'] ?? '' );
+				$id = sanitize_text_field( wp_unslash( $_GET['webhook_id'] ?? '' ) );
 				$this->render_logs( $id );
 				break;
 			default:
@@ -216,7 +232,7 @@ class Admin_Webhooks {
 			echo '<td><strong>' . esc_html( $label ) . '</strong></td>';
 			echo '<td><code style="font-size:12px;">' . esc_html( mb_substr( $url, 0, 50 ) ) . '</code></td>';
 			echo '<td>' . esc_html( $event_count ) . '</td>';
-			echo '<td>' . $status_badge . '</td>';
+			echo '<td>' . wp_kses_post( $status_badge ) . '</td>';
 			echo '<td>' . esc_html( $created ? \Convoca\Core\Utils::format_date( $created, 'd/m/Y' ) : '—' ) . '</td>';
 			echo '<td>';
 
@@ -364,7 +380,7 @@ class Admin_Webhooks {
 			echo '<tr>';
 			echo '<td>' . esc_html( $log['time'] ?? '' ) . '</td>';
 			echo '<td><code style="font-size:11px;">' . esc_html( $log['event'] ?? '' ) . '</code></td>';
-			echo '<td>' . $status . '</td>';
+			echo '<td>' . esc_html( $status ) . '</td>';
 			echo '<td style="font-size:12px;">' . esc_html( mb_substr( $log['message'] ?? '', 0, 100 ) ) . '</td>';
 			echo '</tr>';
 		}

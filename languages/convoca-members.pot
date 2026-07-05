@@ -1,1885 +1,1639 @@
-# SOME DESCRIPTIVE TITLE.
-# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
-# This file is distributed under the same license as the PACKAGE package.
-# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
-#
-#, fuzzy
+# Copyright (C) 2026 Jose Carlos Nieto Ramos
+# This file is distributed under the GPL-2.0-or-later.
 msgid ""
 msgstr ""
-"Project-Id-Version: PACKAGE VERSION\n"
-"Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-06-29 00:32+0200\n"
-"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Project-Id-Version: convoca-members 2.6.2\n"
+"Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/convoca-members\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
-"Language: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"POT-Creation-Date: 2026-07-05T06:52:08+00:00\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"X-Generator: WP-CLI 2.12.0\n"
+"X-Domain: convoca-members\n"
 
-#: admin/class-admin-import-csv.php:27
-msgid "Importar Socios CSV"
+#. Plugin Name of the plugin
+#: convoca-members.php
+msgid "Convoca Members"
 msgstr ""
 
-#: admin/class-admin-import-csv.php:28
-msgid "Importar CSV"
+#. Plugin URI of the plugin
+#. Author URI of the plugin
+#: convoca-members.php
+msgid "https://getconvoca.app"
 msgstr ""
 
-#: admin/class-admin-import-csv.php:37 admin/class-admin-import-csv.php:193
-#: admin/class-admin-import-csv.php:244 admin/class-admin-import-csv.php:269
-#: admin/class-admin-import-csv.php:378 admin/class-admin-proyectos.php:141
-#: admin/class-admin-member-editor.php:249
-#: admin/class-admin-member-editor.php:256
-#: admin/class-admin-member-editor.php:366 admin/class-admin-page.php:549
-#: admin/class-admin-page.php:609 admin/class-admin-horas.php:355
-#: admin/class-admin-horas.php:598 admin/class-admin-settings.php:31
-#: convoca-members.php:281 convoca-members.php:304
+#. Description of the plugin
+#: convoca-members.php
+msgid "Members, volunteers and communications management."
+msgstr ""
+
+#. Author of the plugin
+#: convoca-members.php
+msgid "Jose Carlos Nieto Ramos"
+msgstr ""
+
+#: admin/class-admin-dashboard.php:52
+msgid "Panel de control"
+msgstr ""
+
+#: admin/class-admin-horas.php:94
+#: admin/class-admin-proyectos.php:415
+msgid "No tienes permisos para realizar esta acción."
+msgstr ""
+
+#: admin/class-admin-horas.php:143
+msgid "No puedes aprobar o rechazar tus propias horas de voluntariado."
+msgstr ""
+
+#: admin/class-admin-horas.php:146
+msgid "Solo un administrador puede aprobar o rechazar las horas de los monitores."
+msgstr ""
+
+#: admin/class-admin-horas.php:209
+msgid "Editar Registro de Horas"
+msgstr ""
+
+#: admin/class-admin-horas.php:209
+msgid "Añadir Registro de Horas"
+msgstr ""
+
+#: admin/class-admin-horas.php:215
+msgid "Datos del Registro"
+msgstr ""
+
+#: admin/class-admin-horas.php:216
+msgid "Introduce la información del voluntariado realizado."
+msgstr ""
+
+#: admin/class-admin-horas.php:228
+#: admin/class-admin-horas.php:411
+#: admin/class-admin-horas.php:454
+msgid "Socio"
+msgstr ""
+
+#: admin/class-admin-horas.php:230
+msgid "— Seleccionar socio —"
+msgstr ""
+
+#: admin/class-admin-horas.php:239
+#: admin/class-admin-horas.php:410
+#: admin/class-admin-horas.php:453
+#: admin/class-admin-page.php:417
+#: admin/class-admin-page.php:462
+msgid "Fecha"
+msgstr ""
+
+#: admin/class-admin-horas.php:246
+#: admin/class-admin-horas.php:412
+#: admin/class-admin-horas.php:455
+#: includes/CPT_Proyecto.php:51
+#: includes/CPT_Proyecto.php:78
+msgid "Proyecto"
+msgstr ""
+
+#: admin/class-admin-horas.php:248
+msgid "— Seleccionar proyecto —"
+msgstr ""
+
+#: admin/class-admin-horas.php:257
+#: admin/class-admin-horas.php:415
+#: admin/class-admin-horas.php:458
+msgid "Horas"
+msgstr ""
+
+#: admin/class-admin-horas.php:263
+msgid "Actividad (Opcional)"
+msgstr ""
+
+#: admin/class-admin-horas.php:265
+msgid "— Ninguna actividad específica —"
+msgstr ""
+
+#: admin/class-admin-horas.php:275
+msgid "Tareas realizadas"
+msgstr ""
+
+#: admin/class-admin-horas.php:276
+msgid "Ej: Limpieza de sendero, Atención en mesa..."
+msgstr ""
+
+#: admin/class-admin-horas.php:280
+msgid "Descripción detallada"
+msgstr ""
+
+#: admin/class-admin-horas.php:286
+#: admin/class-admin-horas.php:417
+#: admin/class-admin-horas.php:460
+#: admin/class-admin-list.php:63
+#: admin/class-admin-member-editor.php:110
+#: admin/class-admin-page.php:114
+#: admin/class-admin-page.php:638
+#: admin/class-admin-settings.php:258
+#: admin/class-csv-exporter.php:53
+msgid "Estado"
+msgstr ""
+
+#: admin/class-admin-horas.php:288
+msgid "Pendiente"
+msgstr ""
+
+#: admin/class-admin-horas.php:289
+msgid "Aprobada"
+msgstr ""
+
+#: admin/class-admin-horas.php:290
+msgid "Rechazada"
+msgstr ""
+
+#: admin/class-admin-horas.php:294
+msgid "Nota interna (Admin)"
+msgstr ""
+
+#: admin/class-admin-horas.php:301
+msgid "Guardar Cambios"
+msgstr ""
+
+#: admin/class-admin-horas.php:301
+msgid "Crear Registro"
+msgstr ""
+
+#: admin/class-admin-horas.php:304
+#: admin/class-admin-proyectos.php:401
+msgid "Cancelar"
+msgstr ""
+
+#: admin/class-admin-horas.php:323
+msgid "Horas de Voluntariado"
+msgstr ""
+
+#: admin/class-admin-horas.php:325
+msgid "Añadir Registro"
+msgstr ""
+
+#: admin/class-admin-horas.php:328
+#: admin/class-admin-page.php:207
+#: admin/class-admin-proyectos.php:131
+msgid "Exportar CSV"
+msgstr ""
+
+#: admin/class-admin-horas.php:339
+msgid "Todos los proyectos"
+msgstr ""
+
+#: admin/class-admin-horas.php:346
+#: admin/class-admin-list.php:326
+msgid "Filtrar"
+msgstr ""
+
+#: admin/class-admin-horas.php:348
+msgid "Buscar registros"
+msgstr ""
+
+#: admin/class-admin-horas.php:368
+#: admin/class-admin-member-editor.php:262
+#: admin/class-admin-member-editor.php:269
+#: admin/class-admin-page.php:622
+#: admin/class-admin-proyectos.php:154
+msgid "Nonce inválido."
+msgstr ""
+
+#: admin/class-admin-horas.php:371
+#: admin/class-admin-horas.php:614
+#: admin/class-admin-import-csv.php:53
+#: admin/class-admin-import-csv.php:209
+#: admin/class-admin-import-csv.php:260
+#: admin/class-admin-import-csv.php:285
+#: admin/class-admin-import-csv.php:394
+#: admin/class-admin-member-editor.php:265
+#: admin/class-admin-member-editor.php:272
+#: admin/class-admin-member-editor.php:382
+#: admin/class-admin-page.php:565
+#: admin/class-admin-page.php:625
+#: admin/class-admin-proyectos.php:157
+#: admin/class-admin-settings.php:47
+#: convoca-members.php:286
+#: convoca-members.php:309
 msgid "No tienes permisos."
 msgstr ""
 
-#: admin/class-admin-import-csv.php:42
+#: admin/class-admin-horas.php:413
+#: admin/class-admin-horas.php:456
+msgid "Tareas"
+msgstr ""
+
+#: admin/class-admin-horas.php:414
+#: admin/class-admin-horas.php:457
+msgid "Actividad"
+msgstr ""
+
+#: admin/class-admin-horas.php:416
+#: admin/class-admin-horas.php:459
+#: admin/class-admin-proyectos.php:192
+#: admin/class-admin-settings.php:833
+msgid "Descripción"
+msgstr ""
+
+#: admin/class-admin-horas.php:461
+msgid "Acciones"
+msgstr ""
+
+#: admin/class-admin-horas.php:600
+msgid "Aprobar"
+msgstr ""
+
+#: admin/class-admin-horas.php:606
+msgid "Rechazar"
+msgstr ""
+
+#: admin/class-admin-horas.php:671
+#: admin/class-admin-horas.php:685
+msgid "No puedes aprobar tus propias horas de voluntariado."
+msgstr ""
+
+#: admin/class-admin-horas.php:680
+#: admin/class-admin-horas.php:688
+msgid "Solo un administrador puede aprobar las horas de los monitores."
+msgstr ""
+
+#: admin/class-admin-import-csv.php:43
+msgid "Importar Socios CSV"
+msgstr ""
+
+#: admin/class-admin-import-csv.php:44
+msgid "Importar CSV"
+msgstr ""
+
+#: admin/class-admin-import-csv.php:58
 msgid "Importar Socios desde CSV"
 msgstr ""
 
-#: admin/class-admin-import-csv.php:62
+#: admin/class-admin-import-csv.php:78
 msgid "1. Sube el archivo CSV"
 msgstr ""
 
-#: admin/class-admin-import-csv.php:63
-msgid ""
-"El archivo debe incluir una fila de cabeceras. Columnas esperadas: nombre, "
-"email, dni, plan, teléfono, dirección, municipio."
+#: admin/class-admin-import-csv.php:79
+msgid "El archivo debe incluir una fila de cabeceras. Columnas esperadas: nombre, email, dni, plan, teléfono, dirección, municipio."
 msgstr ""
 
-#: admin/class-admin-import-csv.php:70
+#: admin/class-admin-import-csv.php:86
 msgid "Previsualizar"
 msgstr ""
 
-#: admin/class-admin-import-csv.php:75
+#: admin/class-admin-import-csv.php:91
 msgid "📄 Descargar plantilla CSV"
 msgstr ""
 
-#: admin/class-admin-import-csv.php:87
+#: admin/class-admin-import-csv.php:103
 msgid "⏳ Importación en curso"
 msgstr ""
 
-#: admin/class-admin-import-csv.php:91
+#: admin/class-admin-import-csv.php:107
 #, php-format
 msgid "Procesados %1$d de %2$d registros..."
 msgstr ""
 
-#: admin/class-admin-import-csv.php:105
+#: admin/class-admin-import-csv.php:121
 msgid "▶ Continuar importación"
 msgstr ""
 
-#: admin/class-admin-import-csv.php:113
+#: admin/class-admin-import-csv.php:129
 #, php-format
 msgid "2. Vista previa (%d filas detectadas)"
 msgstr ""
 
-#: admin/class-admin-import-csv.php:121
+#: admin/class-admin-import-csv.php:137
 msgid "Mapeo de columnas"
 msgstr ""
 
-#: admin/class-admin-import-csv.php:137
+#: admin/class-admin-import-csv.php:153
 msgid "Ignorar"
 msgstr ""
 
-#: admin/class-admin-import-csv.php:147
+#: admin/class-admin-import-csv.php:163
 msgid "Primeras filas:"
 msgstr ""
 
-#: admin/class-admin-import-csv.php:170
+#: admin/class-admin-import-csv.php:186
 msgid "Enviar email de bienvenida"
 msgstr ""
 
-#: admin/class-admin-import-csv.php:174
+#: admin/class-admin-import-csv.php:190
 msgid "Actualizar datos si el socio ya existe (por email o DNI)"
 msgstr ""
 
-#: admin/class-admin-import-csv.php:179
+#: admin/class-admin-import-csv.php:195
 msgid "¿Importar todos los socios? Esta acción no se puede deshacer."
 msgstr ""
 
-#: admin/class-admin-import-csv.php:180
+#: admin/class-admin-import-csv.php:196
 #, php-format
 msgid "Importar %d socios"
 msgstr ""
 
-#: admin/class-admin-import-csv.php:197
+#: admin/class-admin-import-csv.php:213
 msgid "No se ha subido ningún archivo."
 msgstr ""
 
-#: admin/class-admin-import-csv.php:203
+#: admin/class-admin-import-csv.php:219
 msgid "No se pudo leer el archivo."
 msgstr ""
 
-#: admin/class-admin-import-csv.php:209
+#: admin/class-admin-import-csv.php:225
 msgid "CSV vacío o sin cabeceras."
 msgstr ""
 
-#: admin/class-admin-import-csv.php:275
+#: admin/class-admin-import-csv.php:291
 msgid "Archivo temporal no encontrado. Vuelve a subir el CSV."
 msgstr ""
 
-#: admin/class-admin-import-csv.php:287
+#: admin/class-admin-import-csv.php:303
 msgid "Error al leer cabeceras."
 msgstr ""
 
-#: admin/class-admin-import-csv.php:363
+#: admin/class-admin-import-csv.php:379
 #, php-format
 msgid "%d socios importados correctamente."
 msgstr ""
 
-#: admin/class-admin-import-csv.php:365 admin/class-admin-import-csv.php:440
+#: admin/class-admin-import-csv.php:381
+#: admin/class-admin-import-csv.php:456
 #, php-format
 msgid "%d errores:"
 msgstr ""
 
-#: admin/class-admin-import-csv.php:438
+#: admin/class-admin-import-csv.php:454
 #, php-format
 msgid "🎉 Importación completada. %d socios importados."
 msgstr ""
 
-#: admin/class-admin-import-csv.php:467
+#: admin/class-admin-import-csv.php:483
 #, php-format
 msgid "Fila %d: nombre y email obligatorios."
 msgstr ""
 
-#: admin/class-admin-import-csv.php:472
+#: admin/class-admin-import-csv.php:488
 #, php-format
 msgid "Fila %1$d: email inválido (%2$s)."
 msgstr ""
 
-#: admin/class-admin-import-csv.php:478
+#: admin/class-admin-import-csv.php:494
 #, php-format
 msgid "Fila %1$d: DNI inválido (%2$s)."
 msgstr ""
 
-#: admin/class-admin-import-csv.php:488
+#: admin/class-admin-import-csv.php:504
 #, php-format
 msgid "Fila %1$d: socio ya existe (email: %2$s, DNI: %3$s)."
 msgstr ""
 
-#: admin/class-admin-import-csv.php:490
+#: admin/class-admin-import-csv.php:506
 #, php-format
 msgid "Fila %1$d: socio ya existe (email: %2$s)."
 msgstr ""
 
-#: admin/class-admin-import-csv.php:514
+#: admin/class-admin-import-csv.php:530
 #, php-format
 msgid "Fila %1$d: error al crear (%2$s)."
 msgstr ""
 
-#: admin/class-admin-proyectos.php:88 admin/class-admin-proyectos.php:89
-#: includes/CPT_Proyecto.php:34
-msgid "Proyectos"
-msgstr ""
-
-#: admin/class-admin-proyectos.php:97 admin/class-admin-proyectos.php:98
-msgid "Editor de Proyecto"
-msgstr ""
-
-#: admin/class-admin-proyectos.php:110
-msgid "Proyectos de Voluntariado"
-msgstr ""
-
-#: admin/class-admin-proyectos.php:112 admin/class-admin-page.php:53
-#: admin/class-admin-page.php:172 includes/CPT_Documento.php:42
-msgid "Añadir nuevo"
-msgstr ""
-
-#: admin/class-admin-proyectos.php:115 admin/class-admin-page.php:191
-#: admin/class-admin-horas.php:312
-msgid "Exportar CSV"
-msgstr ""
-
-#: admin/class-admin-proyectos.php:123
-msgid "Buscar proyectos"
-msgstr ""
-
-#: admin/class-admin-proyectos.php:138 admin/class-admin-member-editor.php:246
-#: admin/class-admin-member-editor.php:253 admin/class-admin-page.php:606
-#: admin/class-admin-horas.php:352
-msgid "Nonce inválido."
-msgstr ""
-
-#: admin/class-admin-proyectos.php:171 admin/class-admin-proyectos.php:203
-msgid "Título"
-msgstr ""
-
-#: admin/class-admin-proyectos.php:172 admin/class-admin-proyectos.php:204
-msgid "Inicio"
-msgstr ""
-
-#: admin/class-admin-proyectos.php:173 admin/class-admin-proyectos.php:205
-msgid "Fin"
-msgstr ""
-
-#: admin/class-admin-proyectos.php:174 admin/class-admin-proyectos.php:206
-#: admin/class-admin-proyectos.php:363
-msgid "Responsable"
-msgstr ""
-
-#: admin/class-admin-proyectos.php:175 admin/class-admin-proyectos.php:207
-#: admin/class-admin-settings.php:446
-msgid "Activo"
-msgstr ""
-
-#: admin/class-admin-proyectos.php:176 admin/class-admin-horas.php:400
-#: admin/class-admin-horas.php:443 admin/class-admin-settings.php:817
-msgid "Descripción"
-msgstr ""
-
-#: admin/class-admin-proyectos.php:190 admin/class-admin-proyectos.php:292
-#: admin/class-admin-list.php:451
-msgid "Sí"
-msgstr ""
-
-#: admin/class-admin-proyectos.php:190 admin/class-admin-list.php:453
-msgid "No"
-msgstr ""
-
-#: admin/class-admin-proyectos.php:301
-msgid "No se encontraron proyectos."
-msgstr ""
-
-#: admin/class-admin-proyectos.php:317 includes/CPT_Proyecto.php:43
-msgid "Editar Proyecto"
-msgstr ""
-
-#: admin/class-admin-proyectos.php:317 includes/CPT_Proyecto.php:42
-msgid "Nuevo Proyecto"
-msgstr ""
-
-#: admin/class-admin-proyectos.php:332
-msgid "Información General"
-msgstr ""
-
-#: admin/class-admin-proyectos.php:336
-msgid "Nombre del Proyecto"
-msgstr ""
-
-#: admin/class-admin-proyectos.php:341
-msgid "Descripción / Objetivos"
-msgstr ""
-
-#: admin/class-admin-proyectos.php:349
-msgid "Configuración y Fechas"
-msgstr ""
-
-#: admin/class-admin-proyectos.php:353
-msgid "Fecha de Inicio"
-msgstr ""
-
-#: admin/class-admin-proyectos.php:358
-msgid "Fecha de Fin (opcional)"
-msgstr ""
-
-#: admin/class-admin-proyectos.php:376
-msgid "Proyecto Activo"
-msgstr ""
-
-#: admin/class-admin-proyectos.php:384
-msgid "Guardar Proyecto"
-msgstr ""
-
-#: admin/class-admin-proyectos.php:385 admin/class-admin-horas.php:288
-msgid "Cancelar"
-msgstr ""
-
-#: admin/class-admin-proyectos.php:399 admin/class-admin-horas.php:78
-msgid "No tienes permisos para realizar esta acción."
-msgstr ""
-
-#: admin/class-csv-exporter.php:27 admin/class-admin-list.php:42
-#: admin/class-admin-page.php:622 admin/class-admin-settings.php:813
-msgid "Nombre"
-msgstr ""
-
-#: admin/class-csv-exporter.php:28 admin/class-admin-list.php:43
-#: admin/class-admin-member-editor.php:139 admin/class-admin-page.php:302
-#: admin/class-admin-page.php:622
-msgid "Email"
-msgstr ""
-
-#: admin/class-csv-exporter.php:29 admin/class-admin-page.php:308
-#: admin/class-admin-page.php:622
-msgid "DNI"
-msgstr ""
-
-#: admin/class-csv-exporter.php:30 admin/class-admin-list.php:44
-#: admin/class-admin-member-editor.php:149 admin/class-admin-page.php:314
-#: admin/class-admin-page.php:622
-msgid "Teléfono"
-msgstr ""
-
-#: admin/class-csv-exporter.php:31 admin/class-admin-list.php:45
-#: admin/class-admin-page.php:320
-msgid "WhatsApp"
-msgstr ""
-
-#: admin/class-csv-exporter.php:32 admin/class-admin-member-editor.php:158
-#: admin/class-admin-member-editor.php:161 admin/class-admin-page.php:326
-msgid "Dirección"
-msgstr ""
-
-#: admin/class-csv-exporter.php:33 admin/class-admin-member-editor.php:166
-msgid "Municipio"
-msgstr ""
-
-#: admin/class-csv-exporter.php:34
-msgid "Código Postal"
-msgstr ""
-
-#: admin/class-csv-exporter.php:35
-msgid "Provincia"
-msgstr ""
-
-#: admin/class-csv-exporter.php:36 admin/class-admin-list.php:46
-#: admin/class-admin-page.php:338
-msgid "Tipo"
-msgstr ""
-
-#: admin/class-csv-exporter.php:37 admin/class-admin-list.php:47
-#: admin/class-admin-member-editor.php:94 admin/class-admin-page.php:98
-#: admin/class-admin-page.php:622 admin/class-admin-horas.php:270
-#: admin/class-admin-horas.php:401 admin/class-admin-horas.php:444
-#: admin/class-admin-settings.php:242
-msgid "Estado"
-msgstr ""
-
-#: admin/class-csv-exporter.php:38 admin/class-admin-list.php:48
-#: admin/class-admin-member-editor.php:105 admin/class-admin-page.php:344
-#: admin/class-admin-page.php:622
-msgid "Plan"
-msgstr ""
-
-#: admin/class-csv-exporter.php:39
-msgid "Sub Plan"
-msgstr ""
-
-#: admin/class-csv-exporter.php:40
-msgid "Forma pago"
-msgstr ""
-
-#: admin/class-csv-exporter.php:41
-msgid "Menor edad"
-msgstr ""
-
-#: admin/class-csv-exporter.php:42
-msgid "RGPD versión"
-msgstr ""
-
-#: admin/class-csv-exporter.php:43
-msgid "RGPD fecha"
-msgstr ""
-
-#: admin/class-csv-exporter.php:44
-msgid "Comunicaciones"
-msgstr ""
-
-#: admin/class-csv-exporter.php:45 admin/class-admin-list.php:51
-msgid "Fecha alta"
-msgstr ""
-
-#: admin/class-csv-exporter.php:46
-msgid "Fecha renovación"
-msgstr ""
-
-#: admin/class-csv-exporter.php:47
-msgid "Recurrente"
-msgstr ""
-
-#: admin/class-csv-exporter.php:48
-msgid "Número socio"
-msgstr ""
-
-#: admin/class-csv-exporter.php:49
-msgid "Código acceso"
-msgstr ""
-
-#: admin/class-csv-exporter.php:50
-msgid "Voluntario"
-msgstr ""
-
-#: admin/class-csv-exporter.php:51
-msgid "Horas voluntariado"
-msgstr ""
-
-#: admin/class-csv-exporter.php:52
-msgid "Notas"
-msgstr ""
-
-#: admin/class-csv-exporter.php:53 admin/class-admin-member-editor.php:185
-msgid "Intereses"
-msgstr ""
-
-#: admin/class-csv-exporter.php:54 admin/class-admin-member-editor.php:190
-msgid "Disponibilidad"
-msgstr ""
-
-#: admin/class-csv-exporter.php:55
-msgid "Tipo voluntariado"
-msgstr ""
-
-#: admin/class-csv-exporter.php:119
-msgid "No tienes permisos suficientes para exportar la lista de miembros."
-msgstr ""
-
-#: admin/class-csv-exporter.php:120 includes/Rest_API.php:877
-#: includes/Rest_API.php:891
-msgid "Acceso Denegado"
-msgstr ""
-
-#: admin/class-csv-exporter.php:255 admin/class-admin-page.php:522
-msgid "Sin permisos."
-msgstr ""
-
-#: admin/class-csv-exporter.php:262
-msgid "Formato inválido."
-msgstr ""
-
-#: admin/class-admin-list.php:41
+#: admin/class-admin-list.php:57
 msgid "Nº"
 msgstr ""
 
-#: admin/class-admin-list.php:49
-msgid "Cuota"
+#: admin/class-admin-list.php:58
+#: admin/class-admin-page.php:638
+#: admin/class-admin-settings.php:829
+#: admin/class-csv-exporter.php:43
+msgid "Nombre"
 msgstr ""
 
-#: admin/class-admin-list.php:50
-msgid "Renov. Pago"
+#: admin/class-admin-list.php:59
+#: admin/class-admin-member-editor.php:155
+#: admin/class-admin-page.php:318
+#: admin/class-admin-page.php:638
+#: admin/class-csv-exporter.php:44
+msgid "Email"
+msgstr ""
+
+#: admin/class-admin-list.php:60
+#: admin/class-admin-member-editor.php:165
+#: admin/class-admin-page.php:330
+#: admin/class-admin-page.php:638
+#: admin/class-csv-exporter.php:46
+msgid "Teléfono"
+msgstr ""
+
+#: admin/class-admin-list.php:61
+#: admin/class-admin-page.php:336
+#: admin/class-csv-exporter.php:47
+msgid "WhatsApp"
+msgstr ""
+
+#: admin/class-admin-list.php:62
+#: admin/class-admin-page.php:354
+#: admin/class-csv-exporter.php:52
+msgid "Tipo"
 msgstr ""
 
 #: admin/class-admin-list.php:64
+#: admin/class-admin-member-editor.php:121
+#: admin/class-admin-page.php:360
+#: admin/class-admin-page.php:638
+#: admin/class-csv-exporter.php:54
+msgid "Plan"
+msgstr ""
+
+#: admin/class-admin-list.php:65
+msgid "Cuota"
+msgstr ""
+
+#: admin/class-admin-list.php:66
+msgid "Renov. Pago"
+msgstr ""
+
+#: admin/class-admin-list.php:67
+#: admin/class-csv-exporter.php:61
+msgid "Fecha alta"
+msgstr ""
+
+#: admin/class-admin-list.php:80
 msgid "Mover a la papelera"
 msgstr ""
 
-#: admin/class-admin-list.php:270
+#: admin/class-admin-list.php:286
 msgid "Todos los estados"
 msgstr ""
 
-#: admin/class-admin-list.php:283
+#: admin/class-admin-list.php:299
 msgid "Todos los tipos"
 msgstr ""
 
-#: admin/class-admin-list.php:292
+#: admin/class-admin-list.php:308
 msgid "Todos los planes"
 msgstr ""
 
-#: admin/class-admin-list.php:302
+#: admin/class-admin-list.php:318
 msgid "Estado cuota"
 msgstr ""
 
-#: admin/class-admin-list.php:310 admin/class-admin-horas.php:330
-msgid "Filtrar"
-msgstr ""
-
-#: admin/class-admin-list.php:322
+#: admin/class-admin-list.php:338
 #, php-format
 msgid "Seleccionar %s"
 msgstr ""
 
-#: admin/class-admin-list.php:332
+#: admin/class-admin-list.php:348
 msgid "Sin asignar"
 msgstr ""
 
-#: admin/class-admin-list.php:339
+#: admin/class-admin-list.php:355
 msgid "Asignar número ahora"
 msgstr ""
 
-#: admin/class-admin-list.php:351
+#: admin/class-admin-list.php:367
 #, php-format
 msgid "Ver ficha de %s"
 msgstr ""
 
-#: admin/class-admin-list.php:351
+#: admin/class-admin-list.php:367
 msgid "Ver ficha"
 msgstr ""
 
-#: admin/class-admin-list.php:361
+#: admin/class-admin-list.php:377
 #, php-format
 msgid "Aprobar alta de %s"
 msgstr ""
 
-#: admin/class-admin-list.php:361
+#: admin/class-admin-list.php:377
 msgid "Aprobar alta"
 msgstr ""
 
-#: admin/class-admin-list.php:365
+#: admin/class-admin-list.php:381
 #, php-format
 msgid "Ver tarjeta de %s"
 msgstr ""
 
-#: admin/class-admin-list.php:365
+#: admin/class-admin-list.php:381
 msgid "Tarjeta"
 msgstr ""
 
-#: admin/class-admin-list.php:372
+#: admin/class-admin-list.php:388
 #, php-format
 msgid "Eliminar a %s"
 msgstr ""
 
-#: admin/class-admin-list.php:372 admin/class-admin-settings.php:450
-#: admin/class-admin-settings.php:701
+#: admin/class-admin-list.php:388
+#: admin/class-admin-settings.php:466
+#: admin/class-admin-settings.php:717
 msgid "Eliminar"
 msgstr ""
 
-#: admin/class-admin-dashboard.php:36
-msgid "Panel de control"
+#: admin/class-admin-list.php:467
+#: admin/class-admin-proyectos.php:206
+#: admin/class-admin-proyectos.php:308
+msgid "Sí"
 msgstr ""
 
-#: admin/class-admin-member-editor.php:56
+#: admin/class-admin-list.php:469
+#: admin/class-admin-proyectos.php:206
+msgid "No"
+msgstr ""
+
+#: admin/class-admin-logs.php:87
+msgid "¿Estás seguro de que quieres borrar todos los logs de Members?"
+msgstr ""
+
+#: admin/class-admin-member-editor.php:72
 msgid "No tienes permisos para editar este miembro."
 msgstr ""
 
-#: admin/class-admin-member-editor.php:69
+#: admin/class-admin-member-editor.php:85
 msgid "Editar Miembro"
 msgstr ""
 
-#: admin/class-admin-member-editor.php:69
+#: admin/class-admin-member-editor.php:85
 msgid "Añadir nuevo miembro"
 msgstr ""
 
-#: admin/class-admin-member-editor.php:87
+#: admin/class-admin-member-editor.php:103
 msgid "Nombre completo *"
 msgstr ""
 
-#: admin/class-admin-member-editor.php:91
+#: admin/class-admin-member-editor.php:107
 msgid "Estado y Plan"
 msgstr ""
 
-#: admin/class-admin-member-editor.php:107
+#: admin/class-admin-member-editor.php:123
 msgid "Seleccionar"
 msgstr ""
 
-#: admin/class-admin-member-editor.php:117
+#: admin/class-admin-member-editor.php:133
 msgid "Sub-plan"
 msgstr ""
 
-#: admin/class-admin-member-editor.php:122 admin/class-admin-page.php:350
+#: admin/class-admin-member-editor.php:138
+#: admin/class-admin-page.php:366
 msgid "Forma de pago"
 msgstr ""
 
-#: admin/class-admin-member-editor.php:124
+#: admin/class-admin-member-editor.php:140
 msgid "Cuota económica"
 msgstr ""
 
-#: admin/class-admin-member-editor.php:125
-#: admin/class-admin-member-editor.php:170 public/class-mi-area.php:115
+#: admin/class-admin-member-editor.php:141
+#: admin/class-admin-member-editor.php:186
+#: public/class-mi-area.php:131
 msgid "Voluntariado"
 msgstr ""
 
-#: admin/class-admin-member-editor.php:132 admin/class-admin-metaboxes.php:309
+#: admin/class-admin-member-editor.php:148
+#: admin/class-admin-metaboxes.php:325
 msgid "Renovación automática anual"
 msgstr ""
 
-#: admin/class-admin-member-editor.php:136
+#: admin/class-admin-member-editor.php:152
 msgid "Datos Personales"
 msgstr ""
 
-#: admin/class-admin-member-editor.php:144
+#: admin/class-admin-member-editor.php:160
 msgid "DNI / NIE"
 msgstr ""
 
-#: admin/class-admin-member-editor.php:154
+#: admin/class-admin-member-editor.php:170
 msgid "Fecha de nacimiento"
 msgstr ""
 
-#: admin/class-admin-member-editor.php:175
+#: admin/class-admin-member-editor.php:174
+#: admin/class-admin-member-editor.php:177
+#: admin/class-admin-page.php:342
+#: admin/class-csv-exporter.php:48
+msgid "Dirección"
+msgstr ""
+
+#: admin/class-admin-member-editor.php:182
+#: admin/class-csv-exporter.php:49
+msgid "Municipio"
+msgstr ""
+
+#: admin/class-admin-member-editor.php:191
 msgid "Es voluntario"
 msgstr ""
 
-#: admin/class-admin-member-editor.php:180
+#: admin/class-admin-member-editor.php:196
 msgid "Tipo de voluntariado"
 msgstr ""
 
-#: admin/class-admin-member-editor.php:195
+#: admin/class-admin-member-editor.php:201
+#: admin/class-csv-exporter.php:69
+msgid "Intereses"
+msgstr ""
+
+#: admin/class-admin-member-editor.php:206
+#: admin/class-csv-exporter.php:70
+msgid "Disponibilidad"
+msgstr ""
+
+#: admin/class-admin-member-editor.php:211
 msgid "Experiencia"
 msgstr ""
 
-#: admin/class-admin-member-editor.php:200
+#: admin/class-admin-member-editor.php:216
 msgid "Motivación"
 msgstr ""
 
-#: admin/class-admin-member-editor.php:204
+#: admin/class-admin-member-editor.php:220
 msgid "Notas Internas"
 msgstr ""
 
-#: admin/class-admin-member-editor.php:207
+#: admin/class-admin-member-editor.php:223
 msgid "Observaciones"
 msgstr ""
 
-#: admin/class-admin-member-editor.php:212
+#: admin/class-admin-member-editor.php:228
 msgid "Incidencias"
 msgstr ""
 
-#: admin/class-admin-member-editor.php:220
+#: admin/class-admin-member-editor.php:236
 msgid "Volver al listado"
 msgstr ""
 
-#: admin/class-admin-member-editor.php:223 admin/class-admin-settings.php:873
+#: admin/class-admin-member-editor.php:239
+#: admin/class-admin-settings.php:889
 msgid "Guardar cambios"
 msgstr ""
 
-#: admin/class-admin-member-editor.php:223
+#: admin/class-admin-member-editor.php:239
 msgid "Crear miembro"
 msgstr ""
 
-#: admin/class-admin-member-editor.php:238
-#: admin/class-admin-member-editor.php:363
+#: admin/class-admin-member-editor.php:254
+#: admin/class-admin-member-editor.php:379
 msgid "Acceso denegado."
 msgstr ""
 
-#: admin/class-admin-member-editor.php:263
+#: admin/class-admin-member-editor.php:279
 msgid "El nombre es obligatorio."
 msgstr ""
 
-#: admin/class-admin-member-editor.php:286
+#: admin/class-admin-member-editor.php:302
 msgid "Error al crear el miembro."
 msgstr ""
 
-#: admin/class-admin-member-editor.php:329
+#: admin/class-admin-member-editor.php:345
 msgid "Cambio manual desde editor de miembro."
 msgstr ""
 
-#: admin/class-admin-member-editor.php:346
+#: admin/class-admin-member-editor.php:362
 msgid "Miembro actualizado correctamente."
 msgstr ""
 
-#: admin/class-admin-member-editor.php:347
+#: admin/class-admin-member-editor.php:363
 msgid "Miembro creado correctamente."
 msgstr ""
 
-#: admin/class-admin-page.php:32 admin/class-admin-page.php:169
-msgid "Miembros Convoca"
+#: admin/class-admin-metaboxes.php:85
+msgid "Documentos de Voluntariado"
 msgstr ""
 
-#: admin/class-admin-page.php:33
-msgid "Miembros"
+#: admin/class-admin-metaboxes.php:88
+msgid "Documentos Generados"
 msgstr ""
 
-#: admin/class-admin-page.php:43 admin/class-admin-page.php:44
-msgid "Todos los Miembros"
+#: admin/class-admin-metaboxes.php:91
+msgid "No hay documentos asociados a este usuario."
 msgstr ""
 
-#: admin/class-admin-page.php:52
-msgid "Añadir nuevo Miembro"
+#: admin/class-admin-metaboxes.php:99
+msgid "Ver PDF"
 msgstr ""
 
-#: admin/class-admin-page.php:61
-msgid "Gestionar Voluntarios"
-msgstr ""
-
-#: admin/class-admin-page.php:62 admin/class-admin-page.php:169
-msgid "Voluntarios"
-msgstr ""
-
-#: admin/class-admin-page.php:70
-msgid "Añadir nuevo Voluntario"
-msgstr ""
-
-#: admin/class-admin-page.php:71
-msgid "Añadir voluntario"
-msgstr ""
-
-#: admin/class-admin-page.php:79 admin/class-admin-page.php:80
-msgid "Ajustes"
-msgstr ""
-
-#: admin/class-admin-page.php:88 admin/class-admin-page.php:89
-msgid "Registros"
-msgstr ""
-
-#: admin/class-admin-page.php:97 admin/class-admin-settings.php:893
-msgid "Estado del Sistema"
-msgstr ""
-
-#: admin/class-admin-page.php:156
-msgid "Miembro aprobado correctamente."
-msgstr ""
-
-#: admin/class-admin-page.php:158
-msgid "Miembro enviado a la papelera."
-msgstr ""
-
-#: admin/class-admin-page.php:160
-msgid "Error al procesar la acción. Inténtalo de nuevo."
-msgstr ""
-
-#: admin/class-admin-page.php:183 public/class-mi-area.php:117
-msgid "Buscar"
-msgstr ""
-
-#: admin/class-admin-page.php:196
-msgid "Exportar PDF"
-msgstr ""
-
-#: admin/class-admin-page.php:200 admin/class-admin-page.php:290
-msgid "Disponible en PRO"
-msgstr ""
-
-#: admin/class-admin-page.php:201
-msgid "Exportar PDF (PRO)"
-msgstr ""
-
-#: admin/class-admin-page.php:249
-msgid "Activos"
-msgstr ""
-
-#: admin/class-admin-page.php:252
-msgid "Pendientes"
-msgstr ""
-
-#: admin/class-admin-page.php:255
-msgid "Bajas"
-msgstr ""
-
-#: admin/class-admin-page.php:258
-msgid "Total"
-msgstr ""
-
-#: admin/class-admin-page.php:280
-msgid "Listado"
-msgstr ""
-
-#: admin/class-admin-page.php:287
-msgid "Ver Tarjeta"
-msgstr ""
-
-#: admin/class-admin-page.php:290
-msgid "Ver Tarjeta (PRO)"
-msgstr ""
-
-#: admin/class-admin-page.php:293
-msgid "✏️ Editar"
-msgstr ""
-
-#: admin/class-admin-page.php:299
-msgid "Datos personales"
-msgstr ""
-
-#: admin/class-admin-page.php:332
-msgid "F. Nacimiento"
-msgstr ""
-
-#: admin/class-admin-page.php:356
-msgid "Alta"
-msgstr ""
-
-#: admin/class-admin-page.php:362
-msgid "Renovación"
-msgstr ""
-
-#: admin/class-admin-page.php:368 admin/class-admin-metaboxes.php:130
+#: admin/class-admin-metaboxes.php:146
+#: admin/class-admin-page.php:384
 msgid "RGPD"
 msgstr ""
 
-#: admin/class-admin-page.php:378 admin/class-admin-page.php:389
-msgid "Cambiar estado"
+#: admin/class-admin-metaboxes.php:197
+msgid "¿Generar un nuevo pago en Redsys y enviar email al socio?"
 msgstr ""
 
-#: admin/class-admin-page.php:388
-msgid "Nota (opcional)"
+#: admin/class-admin-metaboxes.php:206
+msgid "¿Reenviar el recordatorio de pago?"
 msgstr ""
 
-#: admin/class-admin-page.php:392
-msgid "Historial"
+#: admin/class-admin-metaboxes.php:215
+msgid "¿Exportar todos los datos de este miembro en formato JSON?"
+msgstr ""
+
+#: admin/class-admin-metaboxes.php:247
+msgid "⚠️ ¿Estás seguro? Esta acción eliminará PERMANENTEMENTE todos los datos del miembro (incluyendo inscripciones, pagos y logs). Esta acción no se puede deshacer."
+msgstr ""
+
+#: admin/class-admin-metaboxes.php:248
+msgid "¿Confirmas definitivamente la eliminación de todos los datos?"
+msgstr ""
+
+#: admin/class-admin-metaboxes.php:546
+msgid "Cambio manual desde edición de miembro."
+msgstr ""
+
+#: admin/class-admin-page.php:48
+#: admin/class-admin-page.php:185
+msgid "Miembros Convoca"
+msgstr ""
+
+#: admin/class-admin-page.php:49
+msgid "Miembros"
+msgstr ""
+
+#: admin/class-admin-page.php:59
+#: admin/class-admin-page.php:60
+msgid "Todos los Miembros"
+msgstr ""
+
+#: admin/class-admin-page.php:68
+msgid "Añadir nuevo Miembro"
+msgstr ""
+
+#: admin/class-admin-page.php:69
+#: admin/class-admin-page.php:188
+#: admin/class-admin-proyectos.php:128
+#: includes/CPT_Documento.php:58
+msgid "Añadir nuevo"
+msgstr ""
+
+#: admin/class-admin-page.php:77
+msgid "Gestionar Voluntarios"
+msgstr ""
+
+#: admin/class-admin-page.php:78
+#: admin/class-admin-page.php:185
+msgid "Voluntarios"
+msgstr ""
+
+#: admin/class-admin-page.php:86
+msgid "Añadir nuevo Voluntario"
+msgstr ""
+
+#: admin/class-admin-page.php:87
+msgid "Añadir voluntario"
+msgstr ""
+
+#: admin/class-admin-page.php:95
+#: admin/class-admin-page.php:96
+msgid "Ajustes"
+msgstr ""
+
+#: admin/class-admin-page.php:104
+#: admin/class-admin-page.php:105
+msgid "Registros"
+msgstr ""
+
+#: admin/class-admin-page.php:113
+#: admin/class-admin-settings.php:909
+msgid "Estado del Sistema"
+msgstr ""
+
+#: admin/class-admin-page.php:172
+msgid "Miembro aprobado correctamente."
+msgstr ""
+
+#: admin/class-admin-page.php:174
+msgid "Miembro enviado a la papelera."
+msgstr ""
+
+#: admin/class-admin-page.php:176
+msgid "Error al procesar la acción. Inténtalo de nuevo."
+msgstr ""
+
+#: admin/class-admin-page.php:199
+#: public/class-mi-area.php:133
+msgid "Buscar"
+msgstr ""
+
+#: admin/class-admin-page.php:212
+msgid "Exportar PDF"
+msgstr ""
+
+#: admin/class-admin-page.php:216
+#: admin/class-admin-page.php:306
+msgid "Disponible en PRO"
+msgstr ""
+
+#: admin/class-admin-page.php:217
+msgid "Exportar PDF (PRO)"
+msgstr ""
+
+#: admin/class-admin-page.php:265
+msgid "Activos"
+msgstr ""
+
+#: admin/class-admin-page.php:268
+msgid "Pendientes"
+msgstr ""
+
+#: admin/class-admin-page.php:271
+msgid "Bajas"
+msgstr ""
+
+#: admin/class-admin-page.php:274
+msgid "Total"
+msgstr ""
+
+#: admin/class-admin-page.php:296
+msgid "Listado"
+msgstr ""
+
+#: admin/class-admin-page.php:303
+msgid "Ver Tarjeta"
+msgstr ""
+
+#: admin/class-admin-page.php:306
+msgid "Ver Tarjeta (PRO)"
+msgstr ""
+
+#: admin/class-admin-page.php:309
+msgid "✏️ Editar"
+msgstr ""
+
+#: admin/class-admin-page.php:315
+msgid "Datos personales"
+msgstr ""
+
+#: admin/class-admin-page.php:324
+#: admin/class-admin-page.php:638
+#: admin/class-csv-exporter.php:45
+msgid "DNI"
+msgstr ""
+
+#: admin/class-admin-page.php:348
+msgid "F. Nacimiento"
+msgstr ""
+
+#: admin/class-admin-page.php:372
+msgid "Alta"
+msgstr ""
+
+#: admin/class-admin-page.php:378
+msgid "Renovación"
 msgstr ""
 
 #: admin/class-admin-page.php:394
+#: admin/class-admin-page.php:405
+msgid "Cambiar estado"
+msgstr ""
+
+#: admin/class-admin-page.php:404
+msgid "Nota (opcional)"
+msgstr ""
+
+#: admin/class-admin-page.php:408
+msgid "Historial"
+msgstr ""
+
+#: admin/class-admin-page.php:410
 msgid "Sin historial todavía."
 msgstr ""
 
-#: admin/class-admin-page.php:399
+#: admin/class-admin-page.php:415
 msgid "De"
 msgstr ""
 
-#: admin/class-admin-page.php:400
+#: admin/class-admin-page.php:416
 msgid "A"
 msgstr ""
 
-#: admin/class-admin-page.php:401 admin/class-admin-page.php:446
-#: admin/class-admin-horas.php:223 admin/class-admin-horas.php:394
-#: admin/class-admin-horas.php:437
-msgid "Fecha"
-msgstr ""
-
-#: admin/class-admin-page.php:402
+#: admin/class-admin-page.php:418
 msgid "Nota"
 msgstr ""
 
-#: admin/class-admin-page.php:430
+#: admin/class-admin-page.php:446
 msgid "Registros de actividad"
 msgstr ""
 
-#: admin/class-admin-page.php:447
+#: admin/class-admin-page.php:463
 msgid "Nivel"
 msgstr ""
 
-#: admin/class-admin-page.php:448
+#: admin/class-admin-page.php:464
 msgid "Mensaje"
 msgstr ""
 
-#: admin/class-admin-page.php:449
+#: admin/class-admin-page.php:465
 msgid "Contexto"
 msgstr ""
 
-#: admin/class-admin-page.php:495
+#: admin/class-admin-page.php:511
 msgid "🍁 Miembros Convoca"
 msgstr ""
 
-#: admin/class-admin-page.php:507
+#: admin/class-admin-page.php:523
 #, php-format
 msgid "<strong>%1$d</strong> activos de <strong>%2$d</strong> registrados."
 msgstr ""
 
-#: admin/class-admin-page.php:511
+#: admin/class-admin-page.php:527
 msgid "Ver listado completo"
 msgstr ""
 
-#: admin/class-admin-page.php:557
-msgid "Se ha iniciado contacto por WhatsApp desde el panel de administración."
+#: admin/class-admin-page.php:538
+#: admin/class-csv-exporter.php:271
+msgid "Sin permisos."
 msgstr ""
 
 #: admin/class-admin-page.php:573
+msgid "Se ha iniciado contacto por WhatsApp desde el panel de administración."
+msgstr ""
+
+#: admin/class-admin-page.php:589
 msgid "📥 Exportar CSV — Seleccionar columnas"
 msgstr ""
 
-#: admin/class-admin-page.php:574
+#: admin/class-admin-page.php:590
 msgid "Cerrar"
 msgstr ""
 
-#: admin/class-admin-page.php:577
+#: admin/class-admin-page.php:593
 msgid "Selecciona las columnas que quieres incluir en la exportación."
 msgstr ""
 
-#: admin/class-admin-page.php:590
+#: admin/class-admin-page.php:606
 msgid "Exportar seleccionadas"
 msgstr ""
 
-#: admin/class-admin-page.php:593
+#: admin/class-admin-page.php:609
 msgid "Exportar todo"
 msgstr ""
 
-#: admin/class-admin-page.php:596
+#: admin/class-admin-page.php:612
 msgid "Restaurar defecto"
 msgstr ""
 
-#: admin/class-admin-page.php:635
+#: admin/class-admin-page.php:651
 msgid "Listado de Miembros"
 msgstr ""
 
-#: admin/class-admin-horas.php:127
-msgid "No puedes aprobar o rechazar tus propias horas de voluntariado."
+#: admin/class-admin-proyectos.php:104
+#: admin/class-admin-proyectos.php:105
+#: includes/CPT_Proyecto.php:50
+msgid "Proyectos"
 msgstr ""
 
-#: admin/class-admin-horas.php:130
-msgid ""
-"Solo un administrador puede aprobar o rechazar las horas de los monitores."
+#: admin/class-admin-proyectos.php:113
+#: admin/class-admin-proyectos.php:114
+msgid "Editor de Proyecto"
 msgstr ""
 
-#: admin/class-admin-horas.php:193
-msgid "Editar Registro de Horas"
+#: admin/class-admin-proyectos.php:126
+msgid "Proyectos de Voluntariado"
 msgstr ""
 
-#: admin/class-admin-horas.php:193
-msgid "Añadir Registro de Horas"
+#: admin/class-admin-proyectos.php:139
+msgid "Buscar proyectos"
 msgstr ""
 
-#: admin/class-admin-horas.php:199
-msgid "Datos del Registro"
+#: admin/class-admin-proyectos.php:187
+#: admin/class-admin-proyectos.php:219
+msgid "Título"
 msgstr ""
 
-#: admin/class-admin-horas.php:200
-msgid "Introduce la información del voluntariado realizado."
+#: admin/class-admin-proyectos.php:188
+#: admin/class-admin-proyectos.php:220
+msgid "Inicio"
 msgstr ""
 
-#: admin/class-admin-horas.php:212 admin/class-admin-horas.php:395
-#: admin/class-admin-horas.php:438
-msgid "Socio"
+#: admin/class-admin-proyectos.php:189
+#: admin/class-admin-proyectos.php:221
+msgid "Fin"
 msgstr ""
 
-#: admin/class-admin-horas.php:214
-msgid "— Seleccionar socio —"
+#: admin/class-admin-proyectos.php:190
+#: admin/class-admin-proyectos.php:222
+#: admin/class-admin-proyectos.php:379
+msgid "Responsable"
 msgstr ""
 
-#: admin/class-admin-horas.php:230 admin/class-admin-horas.php:396
-#: admin/class-admin-horas.php:439 includes/CPT_Proyecto.php:35
-#: includes/CPT_Proyecto.php:62
-msgid "Proyecto"
+#: admin/class-admin-proyectos.php:191
+#: admin/class-admin-proyectos.php:223
+#: admin/class-admin-settings.php:462
+msgid "Activo"
 msgstr ""
 
-#: admin/class-admin-horas.php:232
-msgid "— Seleccionar proyecto —"
+#: admin/class-admin-proyectos.php:317
+msgid "No se encontraron proyectos."
 msgstr ""
 
-#: admin/class-admin-horas.php:241 admin/class-admin-horas.php:399
-#: admin/class-admin-horas.php:442
-msgid "Horas"
+#: admin/class-admin-proyectos.php:333
+#: includes/CPT_Proyecto.php:59
+msgid "Editar Proyecto"
 msgstr ""
 
-#: admin/class-admin-horas.php:247
-msgid "Actividad (Opcional)"
+#: admin/class-admin-proyectos.php:333
+#: includes/CPT_Proyecto.php:58
+msgid "Nuevo Proyecto"
 msgstr ""
 
-#: admin/class-admin-horas.php:249
-msgid "— Ninguna actividad específica —"
+#: admin/class-admin-proyectos.php:348
+msgid "Información General"
 msgstr ""
 
-#: admin/class-admin-horas.php:259
-msgid "Tareas realizadas"
+#: admin/class-admin-proyectos.php:352
+msgid "Nombre del Proyecto"
 msgstr ""
 
-#: admin/class-admin-horas.php:260
-msgid "Ej: Limpieza de sendero, Atención en mesa..."
+#: admin/class-admin-proyectos.php:357
+msgid "Descripción / Objetivos"
 msgstr ""
 
-#: admin/class-admin-horas.php:264
-msgid "Descripción detallada"
+#: admin/class-admin-proyectos.php:365
+msgid "Configuración y Fechas"
 msgstr ""
 
-#: admin/class-admin-horas.php:272
-msgid "Pendiente"
+#: admin/class-admin-proyectos.php:369
+msgid "Fecha de Inicio"
 msgstr ""
 
-#: admin/class-admin-horas.php:273
-msgid "Aprobada"
+#: admin/class-admin-proyectos.php:374
+msgid "Fecha de Fin (opcional)"
 msgstr ""
 
-#: admin/class-admin-horas.php:274
-msgid "Rechazada"
+#: admin/class-admin-proyectos.php:392
+msgid "Proyecto Activo"
 msgstr ""
 
-#: admin/class-admin-horas.php:278
-msgid "Nota interna (Admin)"
-msgstr ""
-
-#: admin/class-admin-horas.php:285
-msgid "Guardar Cambios"
-msgstr ""
-
-#: admin/class-admin-horas.php:285
-msgid "Crear Registro"
-msgstr ""
-
-#: admin/class-admin-horas.php:307
-msgid "Horas de Voluntariado"
-msgstr ""
-
-#: admin/class-admin-horas.php:309
-msgid "Añadir Registro"
-msgstr ""
-
-#: admin/class-admin-horas.php:323
-msgid "Todos los proyectos"
-msgstr ""
-
-#: admin/class-admin-horas.php:332
-msgid "Buscar registros"
-msgstr ""
-
-#: admin/class-admin-horas.php:397 admin/class-admin-horas.php:440
-msgid "Tareas"
-msgstr ""
-
-#: admin/class-admin-horas.php:398 admin/class-admin-horas.php:441
-msgid "Actividad"
-msgstr ""
-
-#: admin/class-admin-horas.php:445
-msgid "Acciones"
-msgstr ""
-
-#: admin/class-admin-horas.php:584
-msgid "Aprobar"
-msgstr ""
-
-#: admin/class-admin-horas.php:590
-msgid "Rechazar"
-msgstr ""
-
-#: admin/class-admin-horas.php:655 admin/class-admin-horas.php:669
-msgid "No puedes aprobar tus propias horas de voluntariado."
-msgstr ""
-
-#: admin/class-admin-horas.php:664 admin/class-admin-horas.php:672
-msgid "Solo un administrador puede aprobar las horas de los monitores."
-msgstr ""
-
-#: admin/class-admin-settings.php:212
-msgid "Ajustes — Miembros Convoca"
-msgstr ""
-
-#: admin/class-admin-settings.php:213
-msgid "Gestión de socios, planes y comunicaciones"
-msgstr ""
-
-#: admin/class-admin-settings.php:220
-msgid "General"
-msgstr ""
-
-#: admin/class-admin-settings.php:224
-msgid "Planes de Socio"
+#: admin/class-admin-proyectos.php:400
+msgid "Guardar Proyecto"
 msgstr ""
 
 #: admin/class-admin-settings.php:228
+msgid "Ajustes — Miembros Convoca"
+msgstr ""
+
+#: admin/class-admin-settings.php:229
+msgid "Gestión de socios, planes y comunicaciones"
+msgstr ""
+
+#: admin/class-admin-settings.php:236
+msgid "General"
+msgstr ""
+
+#: admin/class-admin-settings.php:240
+msgid "Planes de Socio"
+msgstr ""
+
+#: admin/class-admin-settings.php:244
 msgid "Plantillas de Email"
 msgstr ""
 
-#: admin/class-admin-settings.php:232
+#: admin/class-admin-settings.php:248
 msgid "Campos Voluntariado"
 msgstr ""
 
-#: admin/class-admin-settings.php:237
+#: admin/class-admin-settings.php:253
 msgid "Gamificación"
 msgstr ""
 
-#: admin/class-admin-settings.php:289
+#: admin/class-admin-settings.php:305
 msgid "Email administrador"
 msgstr ""
 
-#: admin/class-admin-settings.php:292
+#: admin/class-admin-settings.php:308
 msgid "Recibe notificaciones de nuevas altas."
 msgstr ""
 
-#: admin/class-admin-settings.php:296
+#: admin/class-admin-settings.php:312
 msgid "Nombre remitente emails"
 msgstr ""
 
-#: admin/class-admin-settings.php:302
+#: admin/class-admin-settings.php:318
 msgid "IBAN para transferencias"
 msgstr ""
 
-#: admin/class-admin-settings.php:308
+#: admin/class-admin-settings.php:324
 msgid "Versión texto legal RGPD"
 msgstr ""
 
-#: admin/class-admin-settings.php:314
+#: admin/class-admin-settings.php:330
 msgid "Edad mínima de registro"
 msgstr ""
 
-#: admin/class-admin-settings.php:317
+#: admin/class-admin-settings.php:333
 msgid "Edad mínima permitida para el alta de socios (0 para desactivar)."
 msgstr ""
 
-#: admin/class-admin-settings.php:321
+#: admin/class-admin-settings.php:337
 msgid "Guardar ajustes"
 msgstr ""
 
-#: admin/class-admin-settings.php:374
+#: admin/class-admin-settings.php:390
 msgid "Añadir Nuevo Plan"
 msgstr ""
 
-#: admin/class-admin-settings.php:375
+#: admin/class-admin-settings.php:391
 msgid "Para añadir un plan, guarda primero los cambios actuales."
 msgstr ""
 
-#: admin/class-admin-settings.php:377
+#: admin/class-admin-settings.php:393
 msgid "ID del Plan (ej: <code>socio-colaborador</code>):"
 msgstr ""
 
-#: admin/class-admin-settings.php:379 admin/class-admin-settings.php:633
+#: admin/class-admin-settings.php:395
+#: admin/class-admin-settings.php:649
 msgid "Añadir"
 msgstr ""
 
-#: admin/class-admin-settings.php:386
+#: admin/class-admin-settings.php:402
 msgid "Nuevo Plan"
 msgstr ""
 
-#: admin/class-admin-settings.php:406
+#: admin/class-admin-settings.php:422
 msgid "Escribe un ID único para el plan"
 msgstr ""
 
-#: admin/class-admin-settings.php:411
+#: admin/class-admin-settings.php:427
 msgid "Este ID ya existe."
 msgstr ""
 
-#: admin/class-admin-settings.php:427
+#: admin/class-admin-settings.php:443
 msgid "Guardar Planes"
 msgstr ""
 
-#: admin/class-admin-settings.php:449
+#: admin/class-admin-settings.php:465
 msgid "¿Eliminar este plan al guardar? (Desmarca activo para ocultarlo)"
 msgstr ""
 
-#: admin/class-admin-settings.php:458
+#: admin/class-admin-settings.php:474
 msgid "Nombre visible:"
 msgstr ""
 
-#: admin/class-admin-settings.php:464
+#: admin/class-admin-settings.php:480
 msgid "Emoji:"
 msgstr ""
 
-#: admin/class-admin-settings.php:469
+#: admin/class-admin-settings.php:485
 msgid "Orden:"
 msgstr ""
 
-#: admin/class-admin-settings.php:475
+#: admin/class-admin-settings.php:491
 msgid "Descripción:"
 msgstr ""
 
-#: admin/class-admin-settings.php:483
+#: admin/class-admin-settings.php:499
 msgid "Precio (€):"
 msgstr ""
 
-#: admin/class-admin-settings.php:488
+#: admin/class-admin-settings.php:504
 msgid "Horas Voluntariado:"
 msgstr ""
 
-#: admin/class-admin-settings.php:493
+#: admin/class-admin-settings.php:509
 msgid "Modalidad:"
 msgstr ""
 
-#: admin/class-admin-settings.php:505
+#: admin/class-admin-settings.php:521
 msgid "Pagos:"
 msgstr ""
 
-#: admin/class-admin-settings.php:516
+#: admin/class-admin-settings.php:532
 msgid "Transferencia"
 msgstr ""
 
-#: admin/class-admin-settings.php:522
+#: admin/class-admin-settings.php:538
 msgid "Ventajas (una por línea):"
 msgstr ""
 
-#: admin/class-admin-settings.php:555
+#: admin/class-admin-settings.php:571
 msgid "Plantillas guardadas."
 msgstr ""
 
-#: admin/class-admin-settings.php:560
+#: admin/class-admin-settings.php:576
 msgid "Solicitud recibida"
 msgstr ""
 
-#: admin/class-admin-settings.php:561
+#: admin/class-admin-settings.php:577
 msgid "Bienvenida (activación)"
 msgstr ""
 
-#: admin/class-admin-settings.php:562
+#: admin/class-admin-settings.php:578
 msgid "Recordatorio de pago"
 msgstr ""
 
-#: admin/class-admin-settings.php:563
+#: admin/class-admin-settings.php:579
 msgid "Renovación anual (30 días)"
 msgstr ""
 
-#: admin/class-admin-settings.php:564
+#: admin/class-admin-settings.php:580
 msgid "Aviso renovación automática"
 msgstr ""
 
-#: admin/class-admin-settings.php:565
+#: admin/class-admin-settings.php:581
 msgid "Renovación completada 🎉"
 msgstr ""
 
-#: admin/class-admin-settings.php:572
+#: admin/class-admin-settings.php:588
 msgid "Variables disponibles:"
 msgstr ""
 
-#: admin/class-admin-settings.php:590
+#: admin/class-admin-settings.php:606
 msgid "Asunto:"
 msgstr ""
 
-#: admin/class-admin-settings.php:595
+#: admin/class-admin-settings.php:611
 msgid "Cuerpo (HTML permitido):"
 msgstr ""
 
-#: admin/class-admin-settings.php:603
+#: admin/class-admin-settings.php:619
 msgid "Guardar Plantillas"
 msgstr ""
 
-#: admin/class-admin-settings.php:614
+#: admin/class-admin-settings.php:630
 msgid "Texto Legal (Declaración Responsable)"
 msgstr ""
 
-#: admin/class-admin-settings.php:615
-msgid ""
-"Este texto se mostrará junto a un checkbox obligatorio al final del "
-"formulario de voluntariado."
+#: admin/class-admin-settings.php:631
+msgid "Este texto se mostrará junto a un checkbox obligatorio al final del formulario de voluntariado."
 msgstr ""
 
-#: admin/class-admin-settings.php:618
+#: admin/class-admin-settings.php:634
 msgid "Campos Personalizados"
 msgstr ""
 
-#: admin/class-admin-settings.php:619
-msgid ""
-"Estos campos se solicitarán en el formulario de registro de voluntarios. Los "
-"campos base (Nombre, DNI, Email, Teléfono) ya están incluidos y no necesitan "
-"añadirse aquí."
+#: admin/class-admin-settings.php:635
+msgid "Estos campos se solicitarán en el formulario de registro de voluntarios. Los campos base (Nombre, DNI, Email, Teléfono) ya están incluidos y no necesitan añadirse aquí."
 msgstr ""
 
-#: admin/class-admin-settings.php:628
+#: admin/class-admin-settings.php:644
 msgid "Añadir Nuevo Campo"
 msgstr ""
 
-#: admin/class-admin-settings.php:629
+#: admin/class-admin-settings.php:645
 msgid "Para añadir un campo, guarda primero los cambios actuales."
 msgstr ""
 
-#: admin/class-admin-settings.php:631
+#: admin/class-admin-settings.php:647
 msgid "ID del Campo (solo minúsculas y guiones, ej: alergias):"
 msgstr ""
 
-#: admin/class-admin-settings.php:684
+#: admin/class-admin-settings.php:700
 msgid "Guardar Campos y Textos"
 msgstr ""
 
-#: admin/class-admin-settings.php:700
+#: admin/class-admin-settings.php:716
 msgid "¿Eliminar este campo al guardar?"
 msgstr ""
 
-#: admin/class-admin-settings.php:710
+#: admin/class-admin-settings.php:726
 msgid "Etiqueta (Label):"
 msgstr ""
 
-#: admin/class-admin-settings.php:714
+#: admin/class-admin-settings.php:730
 msgid "Tipo de campo:"
 msgstr ""
 
-#: admin/class-admin-settings.php:736
+#: admin/class-admin-settings.php:752
 msgid "Campo obligatorio"
 msgstr ""
 
-#: admin/class-admin-settings.php:742
+#: admin/class-admin-settings.php:758
 msgid "Opciones (solo para Select):"
 msgstr ""
 
-#: admin/class-admin-settings.php:764
+#: admin/class-admin-settings.php:780
 msgid "Badges guardados correctamente."
 msgstr ""
 
-#: admin/class-admin-settings.php:771
+#: admin/class-admin-settings.php:787
 msgid "🏆 Gamificación — Badges por Modalidad"
 msgstr ""
 
-#: admin/class-admin-settings.php:773
-msgid ""
-"Aquí puedes personalizar los badges de cada track (modalidad). Los valores "
-"por defecto se usan si no introduces cambios."
+#: admin/class-admin-settings.php:789
+msgid "Aquí puedes personalizar los badges de cada track (modalidad). Los valores por defecto se usan si no introduces cambios."
 msgstr ""
 
-#: admin/class-admin-settings.php:777
+#: admin/class-admin-settings.php:793
 msgid "Selecciona track:"
 msgstr ""
 
-#: admin/class-admin-settings.php:801
+#: admin/class-admin-settings.php:817
 msgid "Nombre visible del track:"
 msgstr ""
 
-#: admin/class-admin-settings.php:808
+#: admin/class-admin-settings.php:824
 msgid "Niveles"
 msgstr ""
 
-#: admin/class-admin-settings.php:814
+#: admin/class-admin-settings.php:830
 msgid "Emoji"
 msgstr ""
 
-#: admin/class-admin-settings.php:815
+#: admin/class-admin-settings.php:831
 msgid "Horas mín."
 msgstr ""
 
-#: admin/class-admin-settings.php:816
+#: admin/class-admin-settings.php:832
 msgid "Color"
 msgstr ""
 
-#: admin/class-admin-settings.php:818
+#: admin/class-admin-settings.php:834
 msgid "Vista previa"
 msgstr ""
 
-#: admin/class-admin-settings.php:928
+#: admin/class-admin-settings.php:944
 #, php-format
 msgid "Plugin: %s"
 msgstr ""
 
-#: admin/class-admin-settings.php:930
+#: admin/class-admin-settings.php:946
 msgid "Activo y funcionando."
 msgstr ""
 
-#: admin/class-admin-settings.php:930
+#: admin/class-admin-settings.php:946
 msgid "Plugin no detectado o inactivo."
 msgstr ""
 
-#: admin/class-admin-settings.php:931
+#: admin/class-admin-settings.php:947
 #, php-format
 msgid "Instala y activa el plugin %s."
 msgstr ""
 
-#: admin/class-admin-settings.php:938
+#: admin/class-admin-settings.php:954
 msgid "Página: Alta de Socio"
 msgstr ""
 
-#: admin/class-admin-settings.php:940
+#: admin/class-admin-settings.php:956
 msgid "Crea una página con el shortcode [convoca_alta]."
 msgstr ""
 
-#: admin/class-admin-settings.php:943
+#: admin/class-admin-settings.php:959
 msgid "Página: Registro Voluntariado"
 msgstr ""
 
-#: admin/class-admin-settings.php:945
+#: admin/class-admin-settings.php:961
 msgid "Crea una página con el shortcode [convoca_voluntariado]."
 msgstr ""
 
-#: admin/class-admin-settings.php:948
+#: admin/class-admin-settings.php:964
 msgid "Página: Área de Miembro"
 msgstr ""
 
-#: admin/class-admin-settings.php:950
+#: admin/class-admin-settings.php:966
 msgid "Crea una página con el shortcode [convoca_mi_area]."
 msgstr ""
 
-#: admin/class-admin-settings.php:953
+#: admin/class-admin-settings.php:969
 msgid "Página: Verificación de Certificados"
 msgstr ""
 
-#: admin/class-admin-settings.php:955
+#: admin/class-admin-settings.php:971
 msgid "Crea una página con el shortcode [convoca_verificar_certificado]."
 msgstr ""
 
-#: admin/class-admin-settings.php:958
+#: admin/class-admin-settings.php:974
 msgid "Página: Panel de Reservas"
 msgstr ""
 
-#: admin/class-admin-settings.php:960
-msgid ""
-"Esta página es necesaria para el enlace QR de la tarjeta. Créala con el "
-"shortcode [convoca_panel_reservas]."
+#: admin/class-admin-settings.php:976
+msgid "Esta página es necesaria para el enlace QR de la tarjeta. Créala con el shortcode [convoca_panel_reservas]."
 msgstr ""
 
-#: admin/class-admin-settings.php:969
+#: admin/class-admin-settings.php:985
 #, php-format
 msgid "Detectada: %s"
 msgstr ""
 
-#: admin/class-admin-settings.php:969
+#: admin/class-admin-settings.php:985
 msgid "No se ha encontrado ninguna página con este shortcode."
 msgstr ""
 
-#: admin/class-admin-settings.php:978
+#: admin/class-admin-settings.php:994
 msgid "Base de Datos"
 msgstr ""
 
-#: admin/class-admin-settings.php:980
+#: admin/class-admin-settings.php:996
 #, php-format
 msgid "Versión actual: %s"
 msgstr ""
 
-#: admin/class-admin-settings.php:981
-msgid ""
-"La base de datos necesita actualizarse. Desactiva y vuelve a activar el "
-"plugin."
+#: admin/class-admin-settings.php:997
+msgid "La base de datos necesita actualizarse. Desactiva y vuelve a activar el plugin."
 msgstr ""
 
-#: admin/class-admin-logs.php:71
-msgid "¿Estás seguro de que quieres borrar todos los logs de Members?"
-msgstr ""
-
-#: admin/class-admin-metaboxes.php:69
-msgid "Documentos de Voluntariado"
-msgstr ""
-
-#: admin/class-admin-metaboxes.php:72
-msgid "Documentos Generados"
-msgstr ""
-
-#: admin/class-admin-metaboxes.php:75
-msgid "No hay documentos asociados a este usuario."
-msgstr ""
-
-#: admin/class-admin-metaboxes.php:83
-msgid "Ver PDF"
-msgstr ""
-
-#: admin/class-admin-metaboxes.php:181
-msgid "¿Generar un nuevo pago en Redsys y enviar email al socio?"
-msgstr ""
-
-#: admin/class-admin-metaboxes.php:190
-msgid "¿Reenviar el recordatorio de pago?"
-msgstr ""
-
-#: admin/class-admin-metaboxes.php:199
-msgid "¿Exportar todos los datos de este miembro en formato JSON?"
-msgstr ""
-
-#: admin/class-admin-metaboxes.php:231
-msgid ""
-"⚠️ ¿Estás seguro? Esta acción eliminará PERMANENTEMENTE todos los datos del "
-"miembro (incluyendo inscripciones, pagos y logs). Esta acción no se puede "
-"deshacer."
-msgstr ""
-
-#: admin/class-admin-metaboxes.php:232
-msgid "¿Confirmas definitivamente la eliminación de todos los datos?"
-msgstr ""
-
-#: admin/class-admin-metaboxes.php:530
-msgid "Cambio manual desde edición de miembro."
-msgstr ""
-
-#: admin/class-admin-webhooks.php:35
+#: admin/class-admin-webhooks.php:51
 msgid "Webhooks"
 msgstr ""
 
-#: admin/class-admin-webhooks.php:248
+#: admin/class-admin-webhooks.php:264
 msgid "¿Eliminar este webhook?"
 msgstr ""
 
-#: admin/class-admin-webhooks.php:347
+#: admin/class-admin-webhooks.php:363
 msgid "¿Limpiar todos los registros?"
 msgstr ""
 
-#: includes/Admin_Status.php:119
+#: admin/class-csv-exporter.php:50
+msgid "Código Postal"
+msgstr ""
+
+#: admin/class-csv-exporter.php:51
+msgid "Provincia"
+msgstr ""
+
+#: admin/class-csv-exporter.php:55
+msgid "Sub Plan"
+msgstr ""
+
+#: admin/class-csv-exporter.php:56
+msgid "Forma pago"
+msgstr ""
+
+#: admin/class-csv-exporter.php:57
+msgid "Menor edad"
+msgstr ""
+
+#: admin/class-csv-exporter.php:58
+msgid "RGPD versión"
+msgstr ""
+
+#: admin/class-csv-exporter.php:59
+msgid "RGPD fecha"
+msgstr ""
+
+#: admin/class-csv-exporter.php:60
+msgid "Comunicaciones"
+msgstr ""
+
+#: admin/class-csv-exporter.php:62
+msgid "Fecha renovación"
+msgstr ""
+
+#: admin/class-csv-exporter.php:63
+msgid "Recurrente"
+msgstr ""
+
+#: admin/class-csv-exporter.php:64
+msgid "Número socio"
+msgstr ""
+
+#: admin/class-csv-exporter.php:65
+msgid "Código acceso"
+msgstr ""
+
+#: admin/class-csv-exporter.php:66
+msgid "Voluntario"
+msgstr ""
+
+#: admin/class-csv-exporter.php:67
+msgid "Horas voluntariado"
+msgstr ""
+
+#: admin/class-csv-exporter.php:68
+msgid "Notas"
+msgstr ""
+
+#: admin/class-csv-exporter.php:71
+msgid "Tipo voluntariado"
+msgstr ""
+
+#: admin/class-csv-exporter.php:135
+msgid "No tienes permisos suficientes para exportar la lista de miembros."
+msgstr ""
+
+#: admin/class-csv-exporter.php:136
+#: includes/Rest_API.php:893
+#: includes/Rest_API.php:907
+msgid "Acceso Denegado"
+msgstr ""
+
+#: admin/class-csv-exporter.php:278
+msgid "Formato inválido."
+msgstr ""
+
+#: convoca-members.php:82
+msgid "Convoca Members requires Convoca Core to be active. Please activate Convoca Core first."
+msgstr ""
+
+#: convoca-members.php:142
+msgid "Monitor de Actividad"
+msgstr ""
+
+#: convoca-members.php:188
+msgid "Voluntario Aprobado"
+msgstr ""
+
+#: convoca-members.php:332
+msgid "ID de miembro no válido."
+msgstr ""
+
+#: convoca-members.php:338
+msgid "No tienes permisos para ver la tarjeta de este miembro."
+msgstr ""
+
+#: convoca-members.php:379
+msgid "Escanea el código QR de tu tarjeta de socio para verificar tu membresía."
+msgstr ""
+
+#: convoca-members.php:386
+msgid "Tarjeta no válida"
+msgstr ""
+
+#: convoca-members.php:387
+msgid "El código de verificación no coincide."
+msgstr ""
+
+#: convoca-members.php:394
+msgid "Socio no encontrado."
+msgstr ""
+
+#: convoca-members.php:401
+msgid "Membresía no activa"
+msgstr ""
+
+#: convoca-members.php:402
+msgid "El socio no tiene una membresía activa en este momento."
+msgstr ""
+
+#: convoca-members.php:416
+msgid "Socio Activo"
+msgstr ""
+
+#: convoca-members.php:419
+msgid "Verificado por Convoca"
+msgstr ""
+
+#: includes/Admin_Status.php:135
 msgid "Estado del Sistema - Miembros"
 msgstr ""
 
-#: includes/Admin_Status.php:126
+#: includes/Admin_Status.php:142
 msgid "Se encontraron errores"
 msgstr ""
 
-#: includes/Admin_Status.php:126
+#: includes/Admin_Status.php:142
 msgid "Atención: algunas comprobaciones requieren revisión"
 msgstr ""
 
-#: includes/Admin_Status.php:126
+#: includes/Admin_Status.php:142
 msgid "Todo correcto"
 msgstr ""
 
-#: includes/Admin_Status.php:127
+#: includes/Admin_Status.php:143
 #, php-format
 msgid "%d comprobaciones realizadas."
 msgstr ""
 
-#: includes/Block_Members.php:45
-msgid "Formulario de Alta"
-msgstr ""
-
-#: includes/Block_Members.php:48
-msgid "Formulario de registro multi-paso para nuevos socios."
-msgstr ""
-
-#: includes/Block_Members.php:61
-msgid "Área de Socios"
-msgstr ""
-
-#: includes/Block_Members.php:64
-msgid ""
-"Panel privado de socios: datos, carnet, inscripciones, voluntariado y pagos."
-msgstr ""
-
-#: includes/Block_Members.php:78
-msgid "Formulario de Voluntariado"
-msgstr ""
-
-#: includes/Block_Members.php:81
-msgid "Formulario de registro para nuevos voluntarios."
-msgstr ""
-
-#: includes/Block_Members.php:94 public/class-verificar-certificado.php:74
-msgid "Verificar Certificado"
-msgstr ""
-
-#: includes/Block_Members.php:97
-msgid "Página de verificación de certificados de voluntariado."
-msgstr ""
-
-#: includes/CPT_Documento.php:33
-msgctxt "Post Type General Name"
-msgid "Documentos"
-msgstr ""
-
-#: includes/CPT_Documento.php:34
-msgctxt "Post Type Singular Name"
-msgid "Documento"
-msgstr ""
-
-#: includes/CPT_Documento.php:35
-msgid "Documentos"
-msgstr ""
-
-#: includes/CPT_Documento.php:36 includes/CPT_Documento.php:54
-msgid "Documento"
-msgstr ""
-
-#: includes/CPT_Documento.php:37
-msgid "Archivo de documentos"
-msgstr ""
-
-#: includes/CPT_Documento.php:38
-msgid "Atributos del documento"
-msgstr ""
-
-#: includes/CPT_Documento.php:39
-msgid "Documento superior:"
-msgstr ""
-
-#: includes/CPT_Documento.php:40
-msgid "Todos los documentos"
-msgstr ""
-
-#: includes/CPT_Documento.php:41
-msgid "Añadir nuevo documento"
-msgstr ""
-
-#: includes/CPT_Documento.php:43
-msgid "Nuevo documento"
-msgstr ""
-
-#: includes/CPT_Documento.php:44
-msgid "Editar documento"
-msgstr ""
-
-#: includes/CPT_Documento.php:45
-msgid "Actualizar documento"
-msgstr ""
-
-#: includes/CPT_Documento.php:46
-msgid "Ver documento"
-msgstr ""
-
-#: includes/CPT_Documento.php:47
-msgid "Ver documentos"
-msgstr ""
-
-#: includes/CPT_Documento.php:48
-msgid "Buscar documento"
-msgstr ""
-
-#: includes/CPT_Documento.php:49 includes/CPT_Registro_Hora.php:51
-#: includes/CPT_Proyecto.php:48
-msgid "No encontrado"
-msgstr ""
-
-#: includes/CPT_Documento.php:50 includes/CPT_Registro_Hora.php:52
-#: includes/CPT_Proyecto.php:49
-msgid "No encontrado en la papelera"
-msgstr ""
-
-#: includes/CPT_Documento.php:55
-msgid "Documentos generados como el Acuerdo de Incorporación."
-msgstr ""
-
-#: includes/CPT_Registro_Hora.php:35
-msgctxt "Post Type General Name"
-msgid "Registros de Horas"
-msgstr ""
-
-#: includes/CPT_Registro_Hora.php:36
-msgctxt "Post Type Singular Name"
-msgid "Registro de Hora"
-msgstr ""
-
-#: includes/CPT_Registro_Hora.php:37
-msgid "Horas Voluntariado"
-msgstr ""
-
-#: includes/CPT_Registro_Hora.php:38 includes/CPT_Registro_Hora.php:65
-msgid "Registro de Hora"
-msgstr ""
-
-#: includes/CPT_Registro_Hora.php:39
-msgid "Archivo de Registros"
-msgstr ""
-
-#: includes/CPT_Registro_Hora.php:40
-msgid "Atributos de Registro"
-msgstr ""
-
-#: includes/CPT_Registro_Hora.php:41
-msgid "Registro Padre:"
-msgstr ""
-
-#: includes/CPT_Registro_Hora.php:42
-msgid "Todos los Registros"
-msgstr ""
-
-#: includes/CPT_Registro_Hora.php:43
-msgid "Añadir Nuevo Registro"
-msgstr ""
-
-#: includes/CPT_Registro_Hora.php:44 includes/CPT_Proyecto.php:41
-msgid "Añadir Nuevo"
-msgstr ""
-
-#: includes/CPT_Registro_Hora.php:45
-msgid "Nuevo Registro"
-msgstr ""
-
-#: includes/CPT_Registro_Hora.php:46
-msgid "Editar Registro"
-msgstr ""
-
-#: includes/CPT_Registro_Hora.php:47
-msgid "Actualizar Registro"
-msgstr ""
-
-#: includes/CPT_Registro_Hora.php:48
-msgid "Ver Registro"
-msgstr ""
-
-#: includes/CPT_Registro_Hora.php:49
-msgid "Ver Registros"
-msgstr ""
-
-#: includes/CPT_Registro_Hora.php:50
-msgid "Buscar Registro"
-msgstr ""
-
-#: includes/CPT_Registro_Hora.php:53 includes/CPT_Proyecto.php:50
-msgid "Imagen Destacada"
-msgstr ""
-
-#: includes/CPT_Registro_Hora.php:54 includes/CPT_Proyecto.php:51
-msgid "Establecer imagen destacada"
-msgstr ""
-
-#: includes/CPT_Registro_Hora.php:55 includes/CPT_Proyecto.php:52
-msgid "Borrar imagen destacada"
-msgstr ""
-
-#: includes/CPT_Registro_Hora.php:56 includes/CPT_Proyecto.php:53
-msgid "Usar como imagen destacada"
-msgstr ""
-
-#: includes/CPT_Registro_Hora.php:57
-msgid "Insertar en el registro"
-msgstr ""
-
-#: includes/CPT_Registro_Hora.php:58
-msgid "Subido a este registro"
-msgstr ""
-
-#: includes/CPT_Registro_Hora.php:59
-msgid "Lista de registros"
-msgstr ""
-
-#: includes/CPT_Registro_Hora.php:60
-msgid "Navegación de lista de registros"
-msgstr ""
-
-#: includes/CPT_Registro_Hora.php:61
-msgid "Filtrar lista de registros"
-msgstr ""
-
-#: includes/CPT_Registro_Hora.php:66
-msgid "Seguimiento de horas de voluntariado."
-msgstr ""
-
-#: includes/Audit_Logger.php:33
+#: includes/Audit_Logger.php:49
 msgid "Miembro movido a la papelera (borrado lógico)."
 msgstr ""
 
-#: includes/Audit_Logger.php:45
+#: includes/Audit_Logger.php:61
 msgid "Miembro restaurado de la papelera."
 msgstr ""
 
-#: includes/Audit_Logger.php:57
+#: includes/Audit_Logger.php:73
 msgid "ELIMINACIÓN PERMANENTE del miembro."
 msgstr ""
 
-#: includes/Audit_Logger.php:75
+#: includes/Audit_Logger.php:91
 msgid "Contacto por WhatsApp registrado."
 msgstr ""
 
-#: includes/Audit_Logger.php:101
+#: includes/Audit_Logger.php:117
 #, php-format
 msgid "Metadato \"%s\" actualizado."
 msgstr ""
 
-#: includes/PDF_Document.php:34
-msgid "Error en la generación del documento:"
+#: includes/Block_Members.php:61
+msgid "Formulario de Alta"
 msgstr ""
 
-#: includes/CPT_Proyecto.php:32
-msgctxt "Post Type General Name"
-msgid "Proyectos"
+#: includes/Block_Members.php:64
+msgid "Formulario de registro multi-paso para nuevos socios."
 msgstr ""
 
-#: includes/CPT_Proyecto.php:33
-msgctxt "Post Type Singular Name"
-msgid "Proyecto"
+#: includes/Block_Members.php:77
+msgid "Área de Socios"
 msgstr ""
 
-#: includes/CPT_Proyecto.php:36
-msgid "Archivo de Proyectos"
+#: includes/Block_Members.php:80
+msgid "Panel privado de socios: datos, carnet, inscripciones, voluntariado y pagos."
 msgstr ""
 
-#: includes/CPT_Proyecto.php:37
-msgid "Atributos de Proyecto"
+#: includes/Block_Members.php:94
+msgid "Formulario de Voluntariado"
 msgstr ""
 
-#: includes/CPT_Proyecto.php:38
-msgid "Proyecto Padre:"
+#: includes/Block_Members.php:97
+msgid "Formulario de registro para nuevos voluntarios."
 msgstr ""
 
-#: includes/CPT_Proyecto.php:39
-msgid "Todos los Proyectos"
+#: includes/Block_Members.php:110
+#: public/class-verificar-certificado.php:90
+msgid "Verificar Certificado"
 msgstr ""
 
-#: includes/CPT_Proyecto.php:40
-msgid "Añadir Nuevo Proyecto"
-msgstr ""
-
-#: includes/CPT_Proyecto.php:44
-msgid "Actualizar Proyecto"
-msgstr ""
-
-#: includes/CPT_Proyecto.php:45
-msgid "Ver Proyecto"
-msgstr ""
-
-#: includes/CPT_Proyecto.php:46
-msgid "Ver Proyectos"
-msgstr ""
-
-#: includes/CPT_Proyecto.php:47
-msgid "Buscar Proyecto"
-msgstr ""
-
-#: includes/CPT_Proyecto.php:54
-msgid "Insertar en el proyecto"
-msgstr ""
-
-#: includes/CPT_Proyecto.php:55
-msgid "Subido a este proyecto"
-msgstr ""
-
-#: includes/CPT_Proyecto.php:56
-msgid "Lista de proyectos"
-msgstr ""
-
-#: includes/CPT_Proyecto.php:57
-msgid "Navegación de lista de proyectos"
-msgstr ""
-
-#: includes/CPT_Proyecto.php:58
-msgid "Filtrar lista de proyectos"
-msgstr ""
-
-#: includes/CPT_Proyecto.php:63
-msgid "Proyectos de voluntariado."
-msgstr ""
-
-#: includes/CPT_Proyecto.php:172
-msgid "Fecha de inicio:"
-msgstr ""
-
-#: includes/CPT_Proyecto.php:177
-msgid "Fecha de fin:"
-msgstr ""
-
-#: includes/CPT_Proyecto.php:182
-msgid "Fecha de baja (archivo):"
-msgstr ""
-
-#: includes/CPT_Proyecto.php:185
-msgid "Fecha en la que el proyecto se considera archivado definitivamente."
-msgstr ""
-
-#: includes/CPT_Proyecto.php:188
-msgid "Responsable:"
-msgstr ""
-
-#: includes/CPT_Proyecto.php:190
-msgid "— Seleccionar —"
-msgstr ""
-
-#: includes/CPT_Proyecto.php:205
-msgid "Proyecto activo (visible para voluntarios)"
-msgstr ""
-
-#: includes/Cron_Manager.php:509
-msgid "Resumen semanal"
-msgstr ""
-
-#: includes/Cron_Manager.php:643
-msgid "Resumen Semanal"
-msgstr ""
-
-#: includes/Email_Manager.php:437
-#, php-format
-msgid "Has recibido este email porque eres miembro de %s."
-msgstr ""
-
-#: includes/Email_Manager.php:453
-#, php-format
-msgid "Email enviado: %s"
-msgstr ""
-
-#: includes/Email_Manager.php:459
-#, php-format
-msgid "Error al enviar email: %s"
-msgstr ""
-
-#: includes/GDPR_Tools.php:65
-msgid "Datos de socio"
-msgstr ""
-
-#: includes/GDPR_Tools.php:315
-msgid "Convoca — Datos de socio"
-msgstr ""
-
-#: includes/Hours_Manager.php:25
-msgid "Debes seleccionar un socio."
-msgstr ""
-
-#: includes/Hours_Manager.php:28
-msgid "La fecha es obligatoria."
-msgstr ""
-
-#: includes/Hours_Manager.php:31
-msgid "El número de horas debe ser mayor que cero."
-msgstr ""
-
-#: includes/Hours_Manager.php:34
-msgid "Debes seleccionar un proyecto."
-msgstr ""
-
-#: includes/Hours_Manager.php:37
-msgid "Debes describir las tareas realizadas."
-msgstr ""
-
-#: includes/Hours_Manager.php:43
-msgid "El proyecto seleccionado no es válido."
-msgstr ""
-
-#: includes/Hours_Manager.php:74
-#, php-format
-msgid "Registro Socio %1$d — %2$s — %3$gh"
-msgstr ""
-
-#: includes/PDF_Card.php:24
-msgid "PENDIENTE"
-msgstr ""
-
-#: includes/PDF_Card.php:28
-msgid "Socio/a"
-msgstr ""
-
-#: includes/PDF_Card.php:44
-msgid "Tarjeta Socio"
-msgstr ""
-
-#: includes/PDF_Card.php:156
-msgid "NO."
-msgstr ""
-
-#: includes/PDF_Card.php:162
-msgid "FECHA DE ALTA:"
-msgstr ""
-
-#: includes/PDF_Card.php:166
-msgid "QR Verification"
-msgstr ""
-
-#: includes/PDF_Card.php:172
-msgid "IMPRIMIR / GUARDAR PDF"
-msgstr ""
-
-#: includes/PDF_Card.php:175
-msgid ""
-"Se abrirá el diálogo de impresión. Elige \"Guardar como PDF\" como destino."
+#: includes/Block_Members.php:113
+msgid "Página de verificación de certificados de voluntariado."
 msgstr ""
 
 #: includes/Certificate_Generator.php:36
@@ -1898,258 +1652,583 @@ msgstr ""
 msgid "No se pudo leer el archivo temporal generado."
 msgstr ""
 
-#: includes/Estados.php:79
+#: includes/CPT_Documento.php:49
+msgctxt "Post Type General Name"
+msgid "Documentos"
+msgstr ""
+
+#: includes/CPT_Documento.php:50
+msgctxt "Post Type Singular Name"
+msgid "Documento"
+msgstr ""
+
+#: includes/CPT_Documento.php:51
+msgid "Documentos"
+msgstr ""
+
+#: includes/CPT_Documento.php:52
+#: includes/CPT_Documento.php:70
+msgid "Documento"
+msgstr ""
+
+#: includes/CPT_Documento.php:53
+msgid "Archivo de documentos"
+msgstr ""
+
+#: includes/CPT_Documento.php:54
+msgid "Atributos del documento"
+msgstr ""
+
+#: includes/CPT_Documento.php:55
+msgid "Documento superior:"
+msgstr ""
+
+#: includes/CPT_Documento.php:56
+msgid "Todos los documentos"
+msgstr ""
+
+#: includes/CPT_Documento.php:57
+msgid "Añadir nuevo documento"
+msgstr ""
+
+#: includes/CPT_Documento.php:59
+msgid "Nuevo documento"
+msgstr ""
+
+#: includes/CPT_Documento.php:60
+msgid "Editar documento"
+msgstr ""
+
+#: includes/CPT_Documento.php:61
+msgid "Actualizar documento"
+msgstr ""
+
+#: includes/CPT_Documento.php:62
+msgid "Ver documento"
+msgstr ""
+
+#: includes/CPT_Documento.php:63
+msgid "Ver documentos"
+msgstr ""
+
+#: includes/CPT_Documento.php:64
+msgid "Buscar documento"
+msgstr ""
+
+#: includes/CPT_Documento.php:65
+#: includes/CPT_Proyecto.php:64
+#: includes/CPT_Registro_Hora.php:67
+msgid "No encontrado"
+msgstr ""
+
+#: includes/CPT_Documento.php:66
+#: includes/CPT_Proyecto.php:65
+#: includes/CPT_Registro_Hora.php:68
+msgid "No encontrado en la papelera"
+msgstr ""
+
+#: includes/CPT_Documento.php:71
+msgid "Documentos generados como el Acuerdo de Incorporación."
+msgstr ""
+
+#: includes/CPT_Proyecto.php:48
+msgctxt "Post Type General Name"
+msgid "Proyectos"
+msgstr ""
+
+#: includes/CPT_Proyecto.php:49
+msgctxt "Post Type Singular Name"
+msgid "Proyecto"
+msgstr ""
+
+#: includes/CPT_Proyecto.php:52
+msgid "Archivo de Proyectos"
+msgstr ""
+
+#: includes/CPT_Proyecto.php:53
+msgid "Atributos de Proyecto"
+msgstr ""
+
+#: includes/CPT_Proyecto.php:54
+msgid "Proyecto Padre:"
+msgstr ""
+
+#: includes/CPT_Proyecto.php:55
+msgid "Todos los Proyectos"
+msgstr ""
+
+#: includes/CPT_Proyecto.php:56
+msgid "Añadir Nuevo Proyecto"
+msgstr ""
+
+#: includes/CPT_Proyecto.php:57
+#: includes/CPT_Registro_Hora.php:60
+msgid "Añadir Nuevo"
+msgstr ""
+
+#: includes/CPT_Proyecto.php:60
+msgid "Actualizar Proyecto"
+msgstr ""
+
+#: includes/CPT_Proyecto.php:61
+msgid "Ver Proyecto"
+msgstr ""
+
+#: includes/CPT_Proyecto.php:62
+msgid "Ver Proyectos"
+msgstr ""
+
+#: includes/CPT_Proyecto.php:63
+msgid "Buscar Proyecto"
+msgstr ""
+
+#: includes/CPT_Proyecto.php:66
+#: includes/CPT_Registro_Hora.php:69
+msgid "Imagen Destacada"
+msgstr ""
+
+#: includes/CPT_Proyecto.php:67
+#: includes/CPT_Registro_Hora.php:70
+msgid "Establecer imagen destacada"
+msgstr ""
+
+#: includes/CPT_Proyecto.php:68
+#: includes/CPT_Registro_Hora.php:71
+msgid "Borrar imagen destacada"
+msgstr ""
+
+#: includes/CPT_Proyecto.php:69
+#: includes/CPT_Registro_Hora.php:72
+msgid "Usar como imagen destacada"
+msgstr ""
+
+#: includes/CPT_Proyecto.php:70
+msgid "Insertar en el proyecto"
+msgstr ""
+
+#: includes/CPT_Proyecto.php:71
+msgid "Subido a este proyecto"
+msgstr ""
+
+#: includes/CPT_Proyecto.php:72
+msgid "Lista de proyectos"
+msgstr ""
+
+#: includes/CPT_Proyecto.php:73
+msgid "Navegación de lista de proyectos"
+msgstr ""
+
+#: includes/CPT_Proyecto.php:74
+msgid "Filtrar lista de proyectos"
+msgstr ""
+
+#: includes/CPT_Proyecto.php:79
+msgid "Proyectos de voluntariado."
+msgstr ""
+
+#: includes/CPT_Proyecto.php:188
+msgid "Fecha de inicio:"
+msgstr ""
+
+#: includes/CPT_Proyecto.php:193
+msgid "Fecha de fin:"
+msgstr ""
+
+#: includes/CPT_Proyecto.php:198
+msgid "Fecha de baja (archivo):"
+msgstr ""
+
+#: includes/CPT_Proyecto.php:201
+msgid "Fecha en la que el proyecto se considera archivado definitivamente."
+msgstr ""
+
+#: includes/CPT_Proyecto.php:204
+msgid "Responsable:"
+msgstr ""
+
+#: includes/CPT_Proyecto.php:206
+msgid "— Seleccionar —"
+msgstr ""
+
+#: includes/CPT_Proyecto.php:221
+msgid "Proyecto activo (visible para voluntarios)"
+msgstr ""
+
+#: includes/CPT_Registro_Hora.php:51
+msgctxt "Post Type General Name"
+msgid "Registros de Horas"
+msgstr ""
+
+#: includes/CPT_Registro_Hora.php:52
+msgctxt "Post Type Singular Name"
+msgid "Registro de Hora"
+msgstr ""
+
+#: includes/CPT_Registro_Hora.php:53
+msgid "Horas Voluntariado"
+msgstr ""
+
+#: includes/CPT_Registro_Hora.php:54
+#: includes/CPT_Registro_Hora.php:81
+msgid "Registro de Hora"
+msgstr ""
+
+#: includes/CPT_Registro_Hora.php:55
+msgid "Archivo de Registros"
+msgstr ""
+
+#: includes/CPT_Registro_Hora.php:56
+msgid "Atributos de Registro"
+msgstr ""
+
+#: includes/CPT_Registro_Hora.php:57
+msgid "Registro Padre:"
+msgstr ""
+
+#: includes/CPT_Registro_Hora.php:58
+msgid "Todos los Registros"
+msgstr ""
+
+#: includes/CPT_Registro_Hora.php:59
+msgid "Añadir Nuevo Registro"
+msgstr ""
+
+#: includes/CPT_Registro_Hora.php:61
+msgid "Nuevo Registro"
+msgstr ""
+
+#: includes/CPT_Registro_Hora.php:62
+msgid "Editar Registro"
+msgstr ""
+
+#: includes/CPT_Registro_Hora.php:63
+msgid "Actualizar Registro"
+msgstr ""
+
+#: includes/CPT_Registro_Hora.php:64
+msgid "Ver Registro"
+msgstr ""
+
+#: includes/CPT_Registro_Hora.php:65
+msgid "Ver Registros"
+msgstr ""
+
+#: includes/CPT_Registro_Hora.php:66
+msgid "Buscar Registro"
+msgstr ""
+
+#: includes/CPT_Registro_Hora.php:73
+msgid "Insertar en el registro"
+msgstr ""
+
+#: includes/CPT_Registro_Hora.php:74
+msgid "Subido a este registro"
+msgstr ""
+
+#: includes/CPT_Registro_Hora.php:75
+msgid "Lista de registros"
+msgstr ""
+
+#: includes/CPT_Registro_Hora.php:76
+msgid "Navegación de lista de registros"
+msgstr ""
+
+#: includes/CPT_Registro_Hora.php:77
+msgid "Filtrar lista de registros"
+msgstr ""
+
+#: includes/CPT_Registro_Hora.php:82
+msgid "Seguimiento de horas de voluntariado."
+msgstr ""
+
+#: includes/Cron_Manager.php:525
+msgid "Resumen semanal"
+msgstr ""
+
+#: includes/Cron_Manager.php:659
+msgid "Resumen Semanal"
+msgstr ""
+
+#. translators: %s: site name
+#: includes/Email_Manager.php:453
+#, php-format
+msgid "Has recibido este email porque eres miembro de %s."
+msgstr ""
+
+#: includes/Email_Manager.php:469
+#, php-format
+msgid "Email enviado: %s"
+msgstr ""
+
+#: includes/Email_Manager.php:475
+#, php-format
+msgid "Error al enviar email: %s"
+msgstr ""
+
+#: includes/Estados.php:95
 msgid "Ya hay un cambio de estado en proceso para este miembro."
 msgstr ""
 
-#: includes/Estados.php:94
+#: includes/Estados.php:110
 msgid "Estado no válido."
 msgstr ""
 
-#: includes/Estados.php:113
+#. translators: %1$s: current state, %2$s: target state
+#: includes/Estados.php:129
 #, php-format
 msgid "Transición no permitida: %1$s → %2$s"
 msgstr ""
 
-#: includes/Process_Member.php:173
-msgid "El plan seleccionado no es válido."
+#: includes/GDPR_Tools.php:81
+msgid "Datos de socio"
 msgstr ""
 
-#: includes/Process_Member.php:214
-msgid "Ya existe un miembro registrado con este DNI o email."
+#: includes/GDPR_Tools.php:331
+msgid "Convoca — Datos de socio"
 msgstr ""
 
-#: includes/Process_Member.php:228
-msgid "Error al crear el registro en la base de datos."
+#: includes/Hours_Manager.php:41
+msgid "Debes seleccionar un socio."
 msgstr ""
 
-#: includes/Process_Member.php:288
-msgid "Error inesperado al crear el registro."
+#: includes/Hours_Manager.php:44
+msgid "La fecha es obligatoria."
 msgstr ""
 
-#: includes/Member_Auth.php:39
+#: includes/Hours_Manager.php:47
+msgid "El número de horas debe ser mayor que cero."
+msgstr ""
+
+#: includes/Hours_Manager.php:50
+msgid "Debes seleccionar un proyecto."
+msgstr ""
+
+#: includes/Hours_Manager.php:53
+msgid "Debes describir las tareas realizadas."
+msgstr ""
+
+#: includes/Hours_Manager.php:59
+msgid "El proyecto seleccionado no es válido."
+msgstr ""
+
+#: includes/Hours_Manager.php:90
+#, php-format
+msgid "Registro Socio %1$d — %2$s — %3$gh"
+msgstr ""
+
+#: includes/Member_Auth.php:55
 msgid "Usuario y contraseña son obligatorios."
 msgstr ""
 
-#: includes/Member_Auth.php:46
-msgid ""
-"Demasiados intentos de acceso. Por favor, espera 15 minutos e inténtalo de "
-"nuevo."
+#: includes/Member_Auth.php:62
+msgid "Demasiados intentos de acceso. Por favor, espera 15 minutos e inténtalo de nuevo."
 msgstr ""
 
-#: includes/Member_Auth.php:57
+#: includes/Member_Auth.php:73
 msgid "Usuario o contraseña incorrectos."
 msgstr ""
 
-#: includes/Member_Auth.php:67
-msgid ""
-"Tu usuario no está vinculado a un perfil de socio. Contacta con coordinación."
+#: includes/Member_Auth.php:83
+msgid "Tu usuario no está vinculado a un perfil de socio. Contacta con coordinación."
 msgstr ""
 
-#: includes/Member_Auth.php:75
+#: includes/Member_Auth.php:91
 msgid "No se encontró tu perfil de socio. Contacta con coordinación."
 msgstr ""
 
-#: includes/Rest_API.php:249
-msgid ""
-"Tu cuenta no está activa. Contacta con coordinación si crees que es un error."
+#: includes/PDF_Card.php:40
+msgid "PENDIENTE"
 msgstr ""
 
-#: includes/Rest_API.php:377
+#: includes/PDF_Card.php:44
+msgid "Socio/a"
+msgstr ""
+
+#: includes/PDF_Card.php:60
+msgid "Tarjeta Socio"
+msgstr ""
+
+#: includes/PDF_Card.php:172
+msgid "NO."
+msgstr ""
+
+#: includes/PDF_Card.php:178
+msgid "FECHA DE ALTA:"
+msgstr ""
+
+#: includes/PDF_Card.php:182
+msgid "QR Verification"
+msgstr ""
+
+#: includes/PDF_Card.php:188
+msgid "IMPRIMIR / GUARDAR PDF"
+msgstr ""
+
+#: includes/PDF_Card.php:191
+msgid "Se abrirá el diálogo de impresión. Elige \"Guardar como PDF\" como destino."
+msgstr ""
+
+#: includes/PDF_Document.php:50
+msgid "Error en la generación del documento:"
+msgstr ""
+
+#: includes/Process_Member.php:189
+msgid "El plan seleccionado no es válido."
+msgstr ""
+
+#: includes/Process_Member.php:230
+msgid "Ya existe un miembro registrado con este DNI o email."
+msgstr ""
+
+#: includes/Process_Member.php:244
+msgid "Error al crear el registro en la base de datos."
+msgstr ""
+
+#: includes/Process_Member.php:304
+msgid "Error inesperado al crear el registro."
+msgstr ""
+
+#: includes/Rest_API.php:265
+msgid "Tu cuenta no está activa. Contacta con coordinación si crees que es un error."
+msgstr ""
+
+#: includes/Rest_API.php:393
 msgid "Actividad desconocida"
 msgstr ""
 
-#: includes/Rest_API.php:547
+#: includes/Rest_API.php:563
 msgid "Demasiadas peticiones."
 msgstr ""
 
-#: includes/Rest_API.php:869
+#: includes/Rest_API.php:885
 msgid "Documento no encontrado."
 msgstr ""
 
-#: includes/Rest_API.php:869 includes/Rest_API.php:883
+#: includes/Rest_API.php:885
+#: includes/Rest_API.php:899
 msgid "Error"
 msgstr ""
 
-#: includes/Rest_API.php:877
+#: includes/Rest_API.php:893
 msgid "No tienes permiso para ver este documento."
 msgstr ""
 
-#: includes/Rest_API.php:883
+#: includes/Rest_API.php:899
 msgid "El archivo físico no existe en el servidor."
 msgstr ""
 
-#: includes/Rest_API.php:891
+#: includes/Rest_API.php:907
 msgid "Archivo no válido."
 msgstr ""
 
-#: public/class-verificar-certificado.php:37
-msgid "Certificado Válido"
-msgstr ""
-
-#: public/class-verificar-certificado.php:41
-msgid "Nombre:"
-msgstr ""
-
-#: public/class-verificar-certificado.php:45
-msgid "Horas:"
-msgstr ""
-
-#: public/class-verificar-certificado.php:49
-msgid "Emisión:"
-msgstr ""
-
-#: public/class-verificar-certificado.php:53
-msgid "ID:"
-msgstr ""
-
-#: public/class-verificar-certificado.php:64
-msgid "Certificado No Encontrado"
-msgstr ""
-
-#: public/class-verificar-certificado.php:66
-msgid ""
-"El ID de certificado proporcionado no es válido o no existe en nuestros "
-"registros."
-msgstr ""
-
-#: public/class-verificar-certificado.php:75
-msgid ""
-"Introduce el ID del certificado para verificar su autenticidad y validez "
-"oficial."
-msgstr ""
-
-#: public/class-verificar-certificado.php:79
-msgid "ID del Certificado"
-msgstr ""
-
-#: public/class-verificar-certificado.php:86
-msgid "Verificar Ahora"
-msgstr ""
-
-#: public/class-mi-area.php:38
-msgid "Has iniciado sesión correctamente."
-msgstr ""
-
-#: public/class-mi-area.php:39
-msgid "Email o código incorrecto."
-msgstr ""
-
-#: public/class-mi-area.php:40
-msgid "Datos guardados correctamente."
-msgstr ""
-
-#: public/class-mi-area.php:41
-msgid "Registro de horas enviado a revisión."
-msgstr ""
-
-#: public/class-mi-area.php:74
-msgid "Introduce tu usuario y contraseña para acceder a tu área privada."
-msgstr ""
-
-#: public/class-mi-area.php:77
-msgid "Usuario o Email"
-msgstr ""
-
-#: public/class-mi-area.php:81
-msgid "Contraseña"
-msgstr ""
-
-#: public/class-mi-area.php:83
-msgid "Las credenciales las recibiste por email al ser aprobado."
-msgstr ""
-
-#: public/class-mi-area.php:84
-msgid "¿No tienes acceso? Escribe a coordinación."
-msgstr ""
-
-#: public/class-mi-area.php:86
-msgid "Entrar"
-msgstr ""
-
-#: public/class-mi-area.php:103
-msgid "Bienvenido a tu panel de socio de Convoca."
-msgstr ""
-
-#: public/class-mi-area.php:105
-msgid "Cerrar sesión"
-msgstr ""
-
-#: public/class-mi-area.php:112
-msgid "Mis Datos"
-msgstr ""
-
-#: public/class-mi-area.php:113
-msgid "Carnet Digital"
-msgstr ""
-
-#: public/class-mi-area.php:114
-msgid "Inscripciones"
-msgstr ""
-
-#: public/class-mi-area.php:116
-msgid "Pagos y Cuotas"
-msgstr ""
-
-#: public/class-mi-area.php:118
-msgid "Notificaciones"
-msgstr ""
-
-#: public/class-form-handler.php:167
+#: public/class-form-handler.php:183
 msgid "Demasiadas peticiones. Inténtalo de nuevo más tarde."
 msgstr ""
 
-#: convoca-members.php:77
-msgid ""
-"Convoca Members requires Convoca Core to be active. Please activate Convoca "
-"Core first."
+#: public/class-mi-area.php:54
+msgid "Has iniciado sesión correctamente."
 msgstr ""
 
-#: convoca-members.php:137
-msgid "Monitor de Actividad"
+#: public/class-mi-area.php:55
+msgid "Email o código incorrecto."
 msgstr ""
 
-#: convoca-members.php:183
-msgid "Voluntario Aprobado"
+#: public/class-mi-area.php:56
+msgid "Datos guardados correctamente."
 msgstr ""
 
-#: convoca-members.php:327
-msgid "ID de miembro no válido."
+#: public/class-mi-area.php:57
+msgid "Registro de horas enviado a revisión."
 msgstr ""
 
-#: convoca-members.php:333
-msgid "No tienes permisos para ver la tarjeta de este miembro."
+#: public/class-mi-area.php:90
+msgid "Introduce tu usuario y contraseña para acceder a tu área privada."
 msgstr ""
 
-#: convoca-members.php:374
-msgid ""
-"Escanea el código QR de tu tarjeta de socio para verificar tu membresía."
+#: public/class-mi-area.php:93
+msgid "Usuario o Email"
 msgstr ""
 
-#: convoca-members.php:381
-msgid "Tarjeta no válida"
+#: public/class-mi-area.php:97
+msgid "Contraseña"
 msgstr ""
 
-#: convoca-members.php:382
-msgid "El código de verificación no coincide."
+#: public/class-mi-area.php:99
+msgid "Las credenciales las recibiste por email al ser aprobado."
 msgstr ""
 
-#: convoca-members.php:389
-msgid "Socio no encontrado."
+#: public/class-mi-area.php:100
+msgid "¿No tienes acceso? Escribe a coordinación."
 msgstr ""
 
-#: convoca-members.php:396
-msgid "Membresía no activa"
+#: public/class-mi-area.php:102
+msgid "Entrar"
 msgstr ""
 
-#: convoca-members.php:397
-msgid "El socio no tiene una membresía activa en este momento."
+#: public/class-mi-area.php:119
+msgid "Bienvenido a tu panel de socio de Convoca."
 msgstr ""
 
-#: convoca-members.php:411
-msgid "Socio Activo"
+#: public/class-mi-area.php:121
+msgid "Cerrar sesión"
 msgstr ""
 
-#: convoca-members.php:414
-msgid "Verificado por Convoca"
+#: public/class-mi-area.php:128
+msgid "Mis Datos"
+msgstr ""
+
+#: public/class-mi-area.php:129
+msgid "Carnet Digital"
+msgstr ""
+
+#: public/class-mi-area.php:130
+msgid "Inscripciones"
+msgstr ""
+
+#: public/class-mi-area.php:132
+msgid "Pagos y Cuotas"
+msgstr ""
+
+#: public/class-mi-area.php:134
+msgid "Notificaciones"
+msgstr ""
+
+#: public/class-verificar-certificado.php:53
+msgid "Certificado Válido"
+msgstr ""
+
+#: public/class-verificar-certificado.php:57
+msgid "Nombre:"
+msgstr ""
+
+#: public/class-verificar-certificado.php:61
+msgid "Horas:"
+msgstr ""
+
+#: public/class-verificar-certificado.php:65
+msgid "Emisión:"
+msgstr ""
+
+#: public/class-verificar-certificado.php:69
+msgid "ID:"
+msgstr ""
+
+#: public/class-verificar-certificado.php:80
+msgid "Certificado No Encontrado"
+msgstr ""
+
+#: public/class-verificar-certificado.php:82
+msgid "El ID de certificado proporcionado no es válido o no existe en nuestros registros."
+msgstr ""
+
+#: public/class-verificar-certificado.php:91
+msgid "Introduce el ID del certificado para verificar su autenticidad y validez oficial."
+msgstr ""
+
+#: public/class-verificar-certificado.php:95
+msgid "ID del Certificado"
+msgstr ""
+
+#: public/class-verificar-certificado.php:102
+msgid "Verificar Ahora"
 msgstr ""

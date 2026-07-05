@@ -1,26 +1,31 @@
 <?php
 /**
  * Plugin Name:       Convoca Members
- * Plugin URI:        https://convoca.org.
+ * Plugin URI:        https://getconvoca.app
  * Description:       Members, volunteers and communications management.
- * Version: 2.6.2
+ * Version:           2.6.2
  * Requires at least: 6.4
  * Requires PHP:      8.1
  * Tested up to:      7.0
  * Author:            Jose Carlos Nieto Ramos
- * Author URI:        https://josecarlosnietoramos.wordpress.com.
+ * Author URI:        https://getconvoca.app
  * License:           GPL-2.0-or-later
- * License URI:       https://www.gnu.org/licenses/gpl-2.0.html.
+ * License URI:       https://www.gnu.org/licenses/gpl-2.0.html
  * Text Domain:       convoca-members
  * Domain Path:       /languages
  * Requires Plugins:  convoca-core
- * Network:           true
  */
 
 namespace Convoca\Members;
 
 if ( ! defined( 'ABSPATH' ) ) {
-	exit;
+    exit;
+}
+
+
+namespace Convoca\Members;
+
+if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /* ── Composer autoload ─────────────────────────────── */

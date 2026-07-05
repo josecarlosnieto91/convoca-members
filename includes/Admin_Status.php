@@ -1,4 +1,20 @@
 <?php
+
+/**
+ * Convoca Members
+ *
+ * @package    Convoca\Members
+ * @subpackage Includes
+ *
+ * @copyright  Copyright (C) 2026 Jose Carlos Nieto Ramos
+ * @license    GPL-2.0-or-later
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ */
+
 namespace Convoca\Members;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -123,8 +139,8 @@ class Admin_Status {
 						<?php echo $has_errors ? '✗' : ( $has_warnings ? '⚠' : '✓' ); ?>
 					</div>
 					<div class="convoca-diagnostic-summary">
-						<h3><?php echo $has_errors ? __( 'Se encontraron errores', 'convoca-members' ) : ( $has_warnings ? __( 'Atención: algunas comprobaciones requieren revisión', 'convoca-members' ) : __( 'Todo correcto', 'convoca-members' ) ); ?></h3>
-						<p><?php printf( __( '%d comprobaciones realizadas.', 'convoca-members' ), count( $results ) ); ?></p>
+						<h3><?php echo $has_errors ? esc_html__( 'Se encontraron errores', 'convoca-members' ) : ( $has_warnings ? esc_html__( 'Atención: algunas comprobaciones requieren revisión', 'convoca-members' ) : esc_html__( 'Todo correcto', 'convoca-members' ) ); ?></h3>
+						<p><?php printf( esc_html__( '%d comprobaciones realizadas.', 'convoca-members' ), count( $results ) ); ?></p>
 					</div>
 				</div>
 				<div class="convoca-diagnostic-results">

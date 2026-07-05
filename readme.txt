@@ -8,38 +8,44 @@ Stable tag: 2.6.2
 License: GPL-2.0-or-later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
-Gestión de socios, membresías, voluntariado, certificados PDF y gamificación.
+Member management, memberships, volunteering, PDF certificates and gamification.
 
 == Description ==
 
-Gestiona el ciclo de vida completo de los socios: altas, renovaciones, bajas, cuotas, estados de membresía, horas de voluntariado, certificados PDF y gamificación.
+Manage the complete lifecycle of members: registration, renewals, cancellations, fees, membership states, volunteer hours, PDF certificates and gamification.
 
-Funcionalidades gratuitas:
-* Altas de socio desde formulario público o panel admin
-* Tipos de membresía personalizables
-* Estados: activo, pendiente, suspendido, expirado, baja
-* Renovaciones automáticas y manuales
-* Bajas lógicas con conservación de histórico
-* Gestión de cuotas y pagos manuales
-* Registro y aprobación de horas de voluntariado
-* Verificación pública de membresía y certificados
-* Exportación de datos GDPR
-* Auditoría de cambios
-* Emails automáticos (bienvenida, renovación, recordatorios)
+Free features:
+* Member registration via public form or admin panel
+* Customizable membership types
+* States: active, pending, suspended, expired, cancelled
+* Automatic and manual renewals
+* Soft-delete with history preservation
+* Fee management and manual payments
+* Volunteer hours tracking and approval
+* Public membership and certificate verification
+* GDPR data export
+* Change audit log
+* Automated emails (welcome, renewal, reminders)
 
-Funcionalidades PRO (requieren licencia):
-* Certificados PDF de voluntariado
-* Gamificación con insignias
-* Memorias PDF automáticas
-* Webhooks de miembros
+PRO features (require license):
+* Volunteer PDF certificates
+* Gamification with badges
+* Automatic PDF reports
+* Member webhooks
 
-= Servicios externos =
+= External services =
 
-Este plugin puede contactar con getconvoca.app para validar licencias PRO, solo cuando se introduce una clave en el panel de administración.
+This plugin may contact getconvoca.app to validate PRO licenses, only when a key is entered in the admin panel.
+
+== Installation ==
+
+1. Ensure Convoca Core is active
+2. Upload the `convoca-members` folder to `/wp-content/plugins/`
+3. Activate the plugin from the Plugins menu
 
 == Changelog ==
 
 = 2.6.2 =
-* Mejora: 92 tests unitarios, 250 aserciones
-* Nuevo: Tests de transiciones de estado de membresía
-* Fix: Generación de certificados PDF con QR real
+* Improvement: 92 unit tests, 250 assertions
+* New: Membership state transition tests
+* Fix: PDF certificate generation with real QR code

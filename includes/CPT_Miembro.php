@@ -1,4 +1,20 @@
 <?php
+
+/**
+ * Convoca Members
+ *
+ * @package    Convoca\Members
+ * @subpackage Includes
+ *
+ * @copyright  Copyright (C) 2026 Jose Carlos Nieto Ramos
+ * @license    GPL-2.0-or-later
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ */
+
 /**
  * Custom Post Type: miembro + taxonomy tipo_miembro + meta fields.
  *
@@ -379,7 +395,7 @@ class CPT_Miembro {
 				return $next;
 			} catch ( \Throwable $e2 ) {
 				$wpdb->query( 'ROLLBACK' );
-				throw new \Exception( 'No se pudo obtener número de socio: ' . $e2->getMessage() );
+				throw new \Exception( 'No se pudo obtener número de socio: ' . esc_html( $e2->getMessage() ) );
 			}
 		}
 	}

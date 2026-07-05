@@ -1,4 +1,20 @@
 <?php
+
+/**
+ * Convoca Members
+ *
+ * @package    Convoca\Members
+ * @subpackage Admin
+ *
+ * @copyright  Copyright (C) 2026 Jose Carlos Nieto Ramos
+ * @license    GPL-2.0-or-later
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ */
+
 namespace Convoca\Members;
 
 /**
@@ -140,8 +156,8 @@ class Admin_Metaboxes {
 
 		<script>
 			document.addEventListener('DOMContentLoaded', function () {
-				var postId = <?php echo $post->ID; ?>;
-				var nonce = '<?php echo wp_create_nonce( 'convoca_actions_' . $post->ID ); ?>';
+				var postId = <?php echo (int) $post->ID; ?>;
+				var nonce = '<?php echo esc_js( wp_create_nonce( 'convoca_actions_' . $post->ID ) ); ?>';
 				var msgBox = document.getElementById('conv-ajax-response');
 				var rgpdMsgBox = document.getElementById('conv-rgpd-response');
 
@@ -242,7 +258,7 @@ class Admin_Metaboxes {
 						}).then(r => r.json()).then(res => {
 							if (res.success) {
 								rgpdMsgBox.innerHTML = '<div class="notice notice-success inline"><p>' + res.data.message + '</p></div>';
-								setTimeout(function () { location.href = '<?php echo admin_url( 'edit.php?post_type=miembro' ); ?>'; }, 2000);
+								setTimeout(function () { location.href = '<?php echo esc_url_raw( admin_url( 'edit.php?post_type=miembro' ) ); ?>'; }, 2000);
 							} else {
 								rgpdMsgBox.innerHTML = '<div class="notice notice-error inline"><p>Error: ' + (res.data ? res.data.message : 'Error desconocido') + '</p></div>';
 							}

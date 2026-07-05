@@ -1,4 +1,20 @@
 <?php
+
+/**
+ * Convoca Members
+ *
+ * @package    Convoca\Members
+ * @subpackage Admin
+ *
+ * @copyright  Copyright (C) 2026 Jose Carlos Nieto Ramos
+ * @license    GPL-2.0-or-later
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ */
+
 /**
  * Admin view for volunteering hours.
  *
@@ -75,20 +91,20 @@ class Admin_Horas extends \WP_List_Table {
 		check_admin_referer( 'convoca_save_hours_nonce' );
 
 		if ( ! current_user_can( 'gestionar_miembros' ) ) {
-			wp_die( __( 'No tienes permisos para realizar esta acción.', 'convoca-members' ) );
+			wp_die( esc_html__( 'No tienes permisos para realizar esta acción.', 'convoca-members' ) );
 		}
 
 		$data = array(
 			'id'           => isset( $_POST['id'] ) ? (int) $_POST['id'] : 0,
 			'miembro_id'   => (int) $_POST['miembro_id'],
-			'fecha'        => sanitize_text_field( $_POST['fecha'] ),
+			'fecha'        => sanitize_text_field( wp_unslash( $_POST['fecha'] ) ),
 			'horas'        => (float) $_POST['horas'],
 			'proyecto_id'  => (int) $_POST['proyecto_id'],
 			'actividad_id' => (int) $_POST['actividad_id'],
-			'tareas'       => sanitize_textarea_field( $_POST['tareas'] ),
-			'descripcion'  => sanitize_textarea_field( $_POST['descripcion'] ),
-			'estado'       => sanitize_text_field( $_POST['estado'] ),
-			'nota_admin'   => sanitize_textarea_field( $_POST['nota_admin'] ),
+			'tareas'       => sanitize_textarea_field( wp_unslash( $_POST['tareas'] ) ),
+			'descripcion'  => sanitize_textarea_field( wp_unslash( $_POST['descripcion'] ) ),
+			'estado'       => sanitize_text_field( wp_unslash( $_POST['estado'] ) ),
+			'nota_admin'   => sanitize_textarea_field( wp_unslash( $_POST['nota_admin'] ) ),
 		);
 
 		// Validar autoridad de aprobación también en el editor admin.
@@ -124,10 +140,10 @@ class Admin_Horas extends \WP_List_Table {
 			if ( ! $is_admin ) {
 				// No-admin aprobando/rechazando:.
 				if ( $record_user_id > 0 && $record_user_id === $current_user_id ) {
-					wp_die( __( 'No puedes aprobar o rechazar tus propias horas de voluntariado.', 'convoca-members' ) );
+					wp_die( esc_html__( 'No puedes aprobar o rechazar tus propias horas de voluntariado.', 'convoca-members' ) );
 				}
 				if ( $record_is_monitor ) {
-					wp_die( __( 'Solo un administrador puede aprobar o rechazar las horas de los monitores.', 'convoca-members' ) );
+					wp_die( esc_html__( 'Solo un administrador puede aprobar o rechazar las horas de los monitores.', 'convoca-members' ) );
 				}
 			}
 		}
@@ -135,7 +151,7 @@ class Admin_Horas extends \WP_List_Table {
 		$post_id = Hours_Manager::save_hours_record( $data, true );
 
 		if ( is_wp_error( $post_id ) ) {
-			wp_die( $post_id->get_error_message() );
+			wp_die( esc_html( $post_id->get_error_message() ) );
 		}
 
 		wp_redirect( admin_url( 'admin.php?page=conv-volunteer-hours&message=saved' ) );
@@ -190,7 +206,7 @@ class Admin_Horas extends \WP_List_Table {
 
 		?>
 		<div class="wrap">
-			<h1><?php echo $record_id ? __( 'Editar Registro de Horas', 'convoca-members' ) : __( 'Añadir Registro de Horas', 'convoca-members' ); ?></h1>
+			<h1><?php echo $record_id ? esc_html__( 'Editar Registro de Horas', 'convoca-members' ) : esc_html__( 'Añadir Registro de Horas', 'convoca-members' ); ?></h1>
 			<hr class="wp-header-end">
 
 			<div class="convoca-diagnostic" style="max-width: 800px; margin-top: 20px;">
@@ -282,7 +298,7 @@ class Admin_Horas extends \WP_List_Table {
 
 						<div style="margin-top: 20px; display: flex; gap: 10px;">
 							<button type="submit" class="convoca-btn convoca-btn-primary">
-								<?php echo $record_id ? __( 'Guardar Cambios', 'convoca-members' ) : __( 'Crear Registro', 'convoca-members' ); ?>
+								<?php echo $record_id ? esc_html__( 'Guardar Cambios', 'convoca-members' ) : esc_html__( 'Crear Registro', 'convoca-members' ); ?>
 							</button>
 							<a href="<?php echo esc_url( admin_url( 'admin.php?page=conv-volunteer-hours' ) ); ?>" class="convoca-btn convoca-btn-outline">
 								<?php esc_html_e( 'Cancelar', 'convoca-members' ); ?>
@@ -304,12 +320,12 @@ class Admin_Horas extends \WP_List_Table {
 
 		?>
 		<div class="wrap">
-			<h1 class="wp-heading-inline"><?php _e( 'Horas de Voluntariado', 'convoca-members' ); ?></h1>
-			<a href="<?php echo admin_url( 'post-new.php?post_type=registro_hora' ); ?>" class="page-title-action">
-				<?php _e( 'Añadir Registro', 'convoca-members' ); ?>
+			<h1 class="wp-heading-inline"><?php esc_html_e( 'Horas de Voluntariado', 'convoca-members' ); ?></h1>
+			<a href="<?php echo esc_url( admin_url( 'post-new.php?post_type=registro_hora' ) ); ?>" class="page-title-action">
+				<?php esc_html_e( 'Añadir Registro', 'convoca-members' ); ?>
 			</a>
 			<a href="<?php echo esc_url( wp_nonce_url( admin_url( 'admin-post.php?action=convoca_export_horas_csv&filter_proyecto=' . ( $filter_proyecto ?: '' ) ), 'convoca_export_horas' ) ); ?>" class="convoca-btn convoca-btn-outline" style="margin-left:10px;">
-				📥 <?php _e( 'Exportar CSV', 'convoca-members' ); ?>
+				📥 <?php esc_html_e( 'Exportar CSV', 'convoca-members' ); ?>
 			</a>
 			<hr class="wp-header-end">
 
@@ -320,14 +336,14 @@ class Admin_Horas extends \WP_List_Table {
 				<div class="tablenav top">
 					<div class="alignleft actions">
 						<select name="filter_proyecto">
-							<option value="0"><?php _e( 'Todos los proyectos', 'convoca-members' ); ?></option>
+							<option value="0"><?php esc_html_e( 'Todos los proyectos', 'convoca-members' ); ?></option>
 							<?php foreach ( $proyectos as $id => $title ) : ?>
 								<option value="<?php echo esc_attr( $id ); ?>" <?php selected( $filter_proyecto, $id ); ?>>
 									<?php echo esc_html( $title ); ?>
 								</option>
 							<?php endforeach; ?>
 						</select>
-						<input type="submit" class="convoca-btn convoca-btn-outline" value="<?php _e( 'Filtrar', 'convoca-members' ); ?>">
+						<input type="submit" class="convoca-btn convoca-btn-outline" value="<?php esc_attr_e( 'Filtrar', 'convoca-members' ); ?>">
 					</div>
 					<?php $this->search_box( __( 'Buscar registros', 'convoca-members' ), 'horas' ); ?>
 				</div>
@@ -348,15 +364,15 @@ class Admin_Horas extends \WP_List_Table {
 	}
 
 	public function handle_export_csv(): void {
-		if ( ! wp_verify_nonce( $_GET['_wpnonce'] ?? '', 'convoca_export_horas' ) ) {
-			wp_die( __( 'Nonce inválido.', 'convoca-members' ) );
+		if ( ! wp_verify_nonce( wp_unslash( $_GET['_wpnonce'] ?? '' ), 'convoca_export_horas' ) ) {
+			wp_die( esc_html__( 'Nonce inválido.', 'convoca-members' ) );
 		}
 		if ( ! current_user_can( 'gestionar_miembros' ) ) {
-			wp_die( __( 'No tienes permisos.', 'convoca-members' ) );
+			wp_die( esc_html__( 'No tienes permisos.', 'convoca-members' ) );
 		}
 
 		$filter_proyecto = isset( $_GET['filter_proyecto'] ) ? (int) $_GET['filter_proyecto'] : 0;
-		$search          = sanitize_text_field( $_GET['s'] ?? '' );
+		$search          = sanitize_text_field( wp_unslash( $_GET['s'] ?? '' ) );
 
 		$args = array(
 			'post_type'      => 'registro_hora',
@@ -457,7 +473,7 @@ class Admin_Horas extends \WP_List_Table {
 	public function prepare_items() {
 		$per_page        = 20;
 		$current_page    = $this->get_pagenum();
-		$search          = isset( $_REQUEST['s'] ) ? sanitize_text_field( $_REQUEST['s'] ) : '';
+		$search          = isset( $_REQUEST['s'] ) ? sanitize_text_field( wp_unslash( $_REQUEST['s'] ) ) : '';
 		$filter_proyecto = isset( $_REQUEST['filter_proyecto'] ) ? (int) $_REQUEST['filter_proyecto'] : 0;
 
 		$args = array(
@@ -595,7 +611,7 @@ class Admin_Horas extends \WP_List_Table {
 
 	public function process_action() {
 		if ( ! current_user_can( 'gestionar_miembros' ) ) {
-			wp_die( __( 'No tienes permisos.', 'convoca-members' ) );
+			wp_die( esc_html__( 'No tienes permisos.', 'convoca-members' ) );
 		}
 
 		$get_data   = wp_unslash( $_GET );

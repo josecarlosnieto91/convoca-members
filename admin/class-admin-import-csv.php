@@ -1,4 +1,20 @@
 <?php
+
+/**
+ * Convoca Members
+ *
+ * @package    Convoca\Members
+ * @subpackage Admin
+ *
+ * @copyright  Copyright (C) 2026 Jose Carlos Nieto Ramos
+ * @license    GPL-2.0-or-later
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ */
+
 /**
  * CSV Import page for members.
  *
@@ -34,7 +50,7 @@ class Admin_Import_CSV {
 
 	public function render(): void {
 		if ( ! current_user_can( 'manage_options' ) ) {
-			wp_die( __( 'No tienes permisos.', 'convoca-members' ) );
+			wp_die( esc_html__( 'No tienes permisos.', 'convoca-members' ) );
 		}
 		$preview = get_transient( 'convoca_csv_preview_' . get_current_user_id() );
 		?>
@@ -43,7 +59,7 @@ class Admin_Import_CSV {
 
 			<?php if ( isset( $_GET['import_result'] ) ) : ?>
 				<div class="convoca-alert convoca-alert--success" style="display:block;margin-bottom:20px;">
-					<p><?php echo esc_html( sanitize_text_field( $_GET['import_result'] ) ); ?></p>
+					<p><?php echo esc_html( sanitize_text_field( wp_unslash( $_GET['import_result'] ) ) ); ?></p>
 				</div>
 			<?php endif; ?>
 
@@ -88,15 +104,15 @@ class Admin_Import_CSV {
 					<p style="font-size:1.2em;">
 						<?php
 						printf(
-							__( 'Procesados %1$d de %2$d registros...', 'convoca-members' ),
-							$batch_progress['imported'],
-							$batch_progress['total']
+							esc_html__( 'Procesados %1$d de %2$d registros...', 'convoca-members' ),
+							(int) $batch_progress['imported'],
+							(int) $batch_progress['total']
 						);
 						?>
 					</p>
 					<?php $pct = $batch_progress['total'] > 0 ? round( $batch_progress['imported'] / $batch_progress['total'] * 100 ) : 0; ?>
 					<div style="background:#eee;border-radius:8px;height:24px;margin:16px 0;overflow:hidden;">
-						<div style="background:#4CAF50;height:100%;width:<?php echo $pct; ?>%;transition:width 0.3s;"></div>
+						<div style="background:#4CAF50;height:100%;width:<?php echo (int) $pct; ?>%;transition:width 0.3s;"></div>
 					</div>
 					<form method="post" action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>">
 						<?php wp_nonce_field( 'convoca_import_csv_continue' ); ?>
@@ -110,7 +126,7 @@ class Admin_Import_CSV {
 
 			<?php if ( $preview ) : ?>
 				<div class="convoca-box" style="background:#fff;border-radius:12px;padding:30px;margin-top:20px;">
-					<h2><?php printf( __( '2. Vista previa (%d filas detectadas)', 'convoca-members' ), $preview['total'] ); ?></h2>
+					<h2><?php printf( esc_html__( '2. Vista previa (%d filas detectadas)', 'convoca-members' ), (int) $preview['total'] ); ?></h2>
 					<form method="post" action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>">
 						<?php wp_nonce_field( 'convoca_import_csv_run' ); ?>
 						<input type="hidden" name="action" value="convoca_import_csv_run">
@@ -177,7 +193,7 @@ class Admin_Import_CSV {
 
 						<div style="margin-top:20px;">
 							<button type="submit" class="convoca-btn convoca-btn-primary" onclick="return confirm('<?php esc_attr_e( '¿Importar todos los socios? Esta acción no se puede deshacer.', 'convoca-members' ); ?>');">
-								🚀 <?php printf( __( 'Importar %d socios', 'convoca-members' ), $preview['total'] ); ?>
+								🚀 <?php printf( esc_html__( 'Importar %d socios', 'convoca-members' ), (int) $preview['total'] ); ?>
 							</button>
 						</div>
 					</form>
@@ -190,23 +206,23 @@ class Admin_Import_CSV {
 	public function handle_preview(): void {
 		check_admin_referer( 'convoca_import_csv' );
 		if ( ! current_user_can( 'manage_options' ) ) {
-			wp_die( __( 'No tienes permisos.', 'convoca-members' ) );
+			wp_die( esc_html__( 'No tienes permisos.', 'convoca-members' ) );
 		}
 
 		if ( empty( $_FILES['csv_file']['tmp_name'] ) ) {
-			wp_die( __( 'No se ha subido ningún archivo.', 'convoca-members' ) );
+			wp_die( esc_html__( 'No se ha subido ningún archivo.', 'convoca-members' ) );
 		}
 
 		$filename = $_FILES['csv_file']['tmp_name'];
 		$handle   = fopen( $filename, 'r' );
 		if ( ! $handle ) {
-			wp_die( __( 'No se pudo leer el archivo.', 'convoca-members' ) );
+			wp_die( esc_html__( 'No se pudo leer el archivo.', 'convoca-members' ) );
 		}
 
 		$headers = fgetcsv( $handle, 0, ',', '"', '' );
 		if ( ! $headers ) {
 			fclose( $handle );
-			wp_die( __( 'CSV vacío o sin cabeceras.', 'convoca-members' ) ); }
+			wp_die( esc_html__( 'CSV vacío o sin cabeceras.', 'convoca-members' ) ); }
 		$headers = array_map( 'trim', $headers );
 
 		$rows  = array();
@@ -241,7 +257,7 @@ class Admin_Import_CSV {
 
 	public function handle_template_download(): void {
 		if ( ! current_user_can( 'manage_options' ) ) {
-			wp_die( __( 'No tienes permisos.', 'convoca-members' ) );
+			wp_die( esc_html__( 'No tienes permisos.', 'convoca-members' ) );
 		}
 
 		$filename = 'plantilla-socios.csv';
@@ -266,16 +282,16 @@ class Admin_Import_CSV {
 	public function handle_import(): void {
 		check_admin_referer( 'convoca_import_csv_run' );
 		if ( ! current_user_can( 'manage_options' ) ) {
-			wp_die( __( 'No tienes permisos.', 'convoca-members' ) );
+			wp_die( esc_html__( 'No tienes permisos.', 'convoca-members' ) );
 		}
 
-		$filename = sanitize_file_name( $_POST['filename'] ?? '' );
+		$filename = sanitize_file_name( wp_unslash( $_POST['filename'] ?? '' ) );
 		$filepath = sys_get_temp_dir() . '/' . $filename;
 		if ( ! file_exists( $filepath ) ) {
-			wp_die( __( 'Archivo temporal no encontrado. Vuelve a subir el CSV.', 'convoca-members' ) );
+			wp_die( esc_html__( 'Archivo temporal no encontrado. Vuelve a subir el CSV.', 'convoca-members' ) );
 		}
 
-		$map             = array_map( 'sanitize_text_field', $_POST['map'] ?? array() );
+		$map             = array_map( 'sanitize_text_field', wp_unslash( $_POST['map'] ?? array() ) );
 		$send_welcome    = isset( $_POST['send_welcome'] );
 		$update_existing = isset( $_POST['update_existing'] );
 
@@ -284,7 +300,7 @@ class Admin_Import_CSV {
 		$headers = fgetcsv( $handle, 0, ',', '"', '' );
 		if ( ! $headers ) {
 			fclose( $handle );
-			wp_die( __( 'Error al leer cabeceras.', 'convoca-members' ) ); }
+			wp_die( esc_html__( 'Error al leer cabeceras.', 'convoca-members' ) ); }
 
 		$rows = array();
 		while ( ( $data = fgetcsv( $handle, 0, ',', '"', '' ) ) !== false ) {
@@ -375,7 +391,7 @@ class Admin_Import_CSV {
 	public function handle_batch_continue(): void {
 		check_admin_referer( 'convoca_import_csv_continue' );
 		if ( ! current_user_can( 'manage_options' ) ) {
-			wp_die( __( 'No tienes permisos.', 'convoca-members' ) );
+			wp_die( esc_html__( 'No tienes permisos.', 'convoca-members' ) );
 		}
 
 		$batch_key = 'convoca_import_batch_' . get_current_user_id();

@@ -1,4 +1,20 @@
 <?php
+
+/**
+ * Convoca Members
+ *
+ * @package    Convoca\Members
+ * @subpackage Admin
+ *
+ * @copyright  Copyright (C) 2026 Jose Carlos Nieto Ramos
+ * @license    GPL-2.0-or-later
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ */
+
 /**
  * Admin page: menu registration, dashboard widget, and member detail view.
  *
@@ -151,7 +167,7 @@ class Admin_Page {
 		}
 
 		// Mostrar mensajes de feedback después de acciones admin-post.
-		$msg = sanitize_text_field( $_GET['msg'] ?? '' );
+		$msg = sanitize_text_field( wp_unslash( $_GET['msg'] ?? '' ) );
 		if ( $msg === 'approved' ) {
 			echo '<div class="notice notice-success is-dismissible"><p>' . esc_html__( 'Miembro aprobado correctamente.', 'convoca-members' ) . '</p></div>';
 		} elseif ( $msg === 'deleted' ) {
@@ -245,16 +261,16 @@ class Admin_Page {
 		?>
 		<div class="conv-stats-bar">
 			<div class="conv-stat"><span class="conv-stat-num">
-					<?php echo $counts['activo']; ?>
+					<?php echo (int) $counts['activo']; ?>
 				</span> <?php esc_html_e( 'Activos', 'convoca-members' ); ?></div>
 			<div class="conv-stat"><span class="conv-stat-num">
-					<?php echo $counts['pendiente_pago'] + $counts['pendiente_documentacion']; ?>
+					<?php echo (int) $counts['pendiente_pago'] + (int) $counts['pendiente_documentacion']; ?>
 				</span> <?php esc_html_e( 'Pendientes', 'convoca-members' ); ?></div>
 			<div class="conv-stat"><span class="conv-stat-num">
-					<?php echo $counts['baja']; ?>
+					<?php echo (int) $counts['baja']; ?>
 				</span> <?php esc_html_e( 'Bajas', 'convoca-members' ); ?></div>
 			<div class="conv-stat"><span class="conv-stat-num">
-					<?php echo $total; ?>
+					<?php echo (int) $total; ?>
 				</span> <?php esc_html_e( 'Total', 'convoca-members' ); ?></div>
 		</div>
 		<?php
@@ -280,7 +296,7 @@ class Admin_Page {
 				<a href="<?php echo esc_url( admin_url( 'admin.php?page=conv-members' ) ); ?>">← <?php esc_html_e( 'Listado', 'convoca-members' ); ?></a>
 				&nbsp;
 				<?php echo esc_html( $post->post_title ); ?>
-				<?php echo Estados::badge_html( $estado ); ?>
+				<?php echo wp_kses_post( Estados::badge_html( $estado ) ); ?>
 				&nbsp;
 				<?php if ( \Convoca\Core\License_Manager::has_pro( 'pdf_memories' ) ) : ?>
 				<a href="<?php echo esc_url( wp_nonce_url( admin_url( 'admin-post.php?action=convoca_pdf_card&member_id=' . $post_id ), 'convoca_pdf_card_' . $post_id ) ); ?>" 
@@ -602,7 +618,7 @@ class Admin_Page {
 	}
 
 	public function handle_export_members_pdf(): void {
-		if ( ! wp_verify_nonce( $_GET['_wpnonce'] ?? '', 'convoca_export_members_pdf' ) ) {
+		if ( ! wp_verify_nonce( wp_unslash( $_GET['_wpnonce'] ?? '' ), 'convoca_export_members_pdf' ) ) {
 			wp_die( __( 'Nonce inválido.', 'convoca-members' ) );
 		}
 		if ( ! current_user_can( 'gestionar_miembros' ) ) {

@@ -1,4 +1,20 @@
 <?php
+
+/**
+ * Convoca Members
+ *
+ * @package    Convoca\Members
+ * @subpackage Admin
+ *
+ * @copyright  Copyright (C) 2026 Jose Carlos Nieto Ramos
+ * @license    GPL-2.0-or-later
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ */
+
 /**
  * Custom add/edit screen for Members (CPT miembro).
  *
@@ -246,14 +262,14 @@ class Admin_Member_Editor {
 				wp_die( __( 'Nonce inválido.', 'convoca-members' ) );
 			}
 			if ( ! current_user_can( 'edit_post', $post_id ) ) {
-				wp_die( __( 'No tienes permisos.', 'convoca-members' ) );
+				wp_die( esc_html__( 'No tienes permisos.', 'convoca-members' ) );
 			}
 		} else {
 			if ( ! wp_verify_nonce( $data['_convoca_nonce'], 'convoca_save_member_0' ) ) {
 				wp_die( __( 'Nonce inválido.', 'convoca-members' ) );
 			}
 			if ( ! current_user_can( 'edit_posts' ) ) {
-				wp_die( __( 'No tienes permisos.', 'convoca-members' ) );
+				wp_die( esc_html__( 'No tienes permisos.', 'convoca-members' ) );
 			}
 		}
 
@@ -363,7 +379,7 @@ class Admin_Member_Editor {
 			wp_die( __( 'Acceso denegado.', 'convoca-members' ) );
 		}
 		if ( ! current_user_can( 'delete_post', $post_id ) ) {
-			wp_die( __( 'No tienes permisos.', 'convoca-members' ) );
+			wp_die( esc_html__( 'No tienes permisos.', 'convoca-members' ) );
 		}
 
 		wp_trash_post( $post_id );

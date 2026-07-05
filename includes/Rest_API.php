@@ -1,4 +1,20 @@
 <?php
+
+/**
+ * Convoca Members
+ *
+ * @package    Convoca\Members
+ * @subpackage Includes
+ *
+ * @copyright  Copyright (C) 2026 Jose Carlos Nieto Ramos
+ * @license    GPL-2.0-or-later
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ */
+
 /**
  * REST API for Members.
  *
@@ -866,7 +882,7 @@ class Rest_API {
 		$post = get_post( $id );
 
 		if ( ! $post || $post->post_type !== 'convoca_documento' ) {
-			wp_die( __( 'Documento no encontrado.', 'convoca-members' ), __( 'Error', 'convoca-members' ), array( 'response' => 404 ) );
+			wp_die( esc_html__( 'Documento no encontrado.', 'convoca-members' ), esc_html__( 'Error', 'convoca-members' ), array( 'response' => 404 ) );
 		}
 
 		$user_id         = (int) get_post_meta( $id, '_convoca_usuario_id', true );
@@ -874,13 +890,13 @@ class Rest_API {
 
 		// Security check: Admin OR Owner.
 		if ( ! current_user_can( 'manage_options' ) && $user_id !== $current_user_id ) {
-			wp_die( __( 'No tienes permiso para ver este documento.', 'convoca-members' ), __( 'Acceso Denegado', 'convoca-members' ), array( 'response' => 403 ) );
+			wp_die( esc_html__( 'No tienes permiso para ver este documento.', 'convoca-members' ), esc_html__( 'Acceso Denegado', 'convoca-members' ), array( 'response' => 403 ) );
 		}
 
 		$filepath = get_post_meta( $id, '_convoca_documento_path', true );
 
 		if ( ! $filepath || ! file_exists( $filepath ) ) {
-			wp_die( __( 'El archivo físico no existe en el servidor.', 'convoca-members' ), __( 'Error', 'convoca-members' ), array( 'response' => 404 ) );
+			wp_die( esc_html__( 'El archivo físico no existe en el servidor.', 'convoca-members' ), esc_html__( 'Error', 'convoca-members' ), array( 'response' => 404 ) );
 		}
 
 		// Path traversal protection: ensure file is within the safe documents directory.
@@ -888,7 +904,7 @@ class Rest_API {
 		$safe_base = realpath( wp_upload_dir()['basedir'] . '/convoca-documentos' );
 		if ( $real_path === false || $safe_base === false || ! str_starts_with( $real_path, $safe_base ) ) {
 			\Convoca\Core\Logger::warning( "Intento de path traversal detectado: $filepath", 'Members/Security' );
-			wp_die( __( 'Archivo no válido.', 'convoca-members' ), __( 'Acceso Denegado', 'convoca-members' ), array( 'response' => 403 ) );
+			wp_die( esc_html__( 'Archivo no válido.', 'convoca-members' ), esc_html__( 'Acceso Denegado', 'convoca-members' ), array( 'response' => 403 ) );
 		}
 
 		// Clear output buffer to avoid corruption.

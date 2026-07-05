@@ -1,4 +1,20 @@
 <?php
+
+/**
+ * Convoca Members
+ *
+ * @package    Convoca\Members
+ * @subpackage Admin
+ *
+ * @copyright  Copyright (C) 2026 Jose Carlos Nieto Ramos
+ * @license    GPL-2.0-or-later
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ */
+
 /**
  * Settings page: general settings + plans + email template editor.
  *
@@ -24,11 +40,11 @@ class Admin_Settings {
 		if ( ! isset( $_POST['_convoca_settings_nonce'] ) ) {
 			return;
 		}
-		if ( ! wp_verify_nonce( $_POST['_convoca_settings_nonce'], 'convoca_members_settings_save' ) ) {
+		if ( ! wp_verify_nonce( wp_unslash( $_POST['_convoca_settings_nonce'] ), 'convoca_members_settings_save' ) ) {
 			return;
 		}
 		if ( ! current_user_can( 'manage_options' ) ) {
-			wp_die( __( 'No tienes permisos.', 'convoca-members' ) );
+			wp_die( esc_html__( 'No tienes permisos.', 'convoca-members' ) );
 		}
 
 		if ( isset( $_POST['convoca_save_settings'] ) && $_POST['convoca_save_settings'] === 'general' ) {
@@ -210,7 +226,7 @@ class Admin_Settings {
 				<img src="<?php echo esc_url( CONVOCA_IMAGES_URL . 'logo.png' ); ?>" alt="Convoca Members" style="width: 80px; height: 80px; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.1);">
 				<div>
 					<h1 style="margin: 0; padding: 0;"><?php esc_html_e( 'Ajustes — Miembros Convoca', 'convoca-members' ); ?></h1>
-					<p style="margin: 5px 0 0; color: #666; font-size: 1.1em;"><?php _e( 'Gestión de socios, planes y comunicaciones', 'convoca-members' ); ?></p>
+					<p style="margin: 5px 0 0; color: #666; font-size: 1.1em;"><?php esc_html_e( 'Gestión de socios, planes y comunicaciones', 'convoca-members' ); ?></p>
 				</div>
 			</div>
 

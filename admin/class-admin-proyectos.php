@@ -1,4 +1,20 @@
 <?php
+
+/**
+ * Convoca Members
+ *
+ * @package    Convoca\Members
+ * @subpackage Admin
+ *
+ * @copyright  Copyright (C) 2026 Jose Carlos Nieto Ramos
+ * @license    GPL-2.0-or-later
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ */
+
 /**
  * Admin view for volunteer projects.
  *
@@ -107,12 +123,12 @@ class Admin_Proyectos extends \WP_List_Table {
 		$this->prepare_items();
 		?>
 		<div class="wrap">
-			<h1 class="wp-heading-inline"><?php _e( 'Proyectos de Voluntariado', 'convoca-members' ); ?></h1>
-			<a href="<?php echo admin_url( 'post-new.php?post_type=proyecto' ); ?>" class="page-title-action">
-				<?php _e( 'Añadir nuevo', 'convoca-members' ); ?>
+			<h1 class="wp-heading-inline"><?php esc_html_e( 'Proyectos de Voluntariado', 'convoca-members' ); ?></h1>
+			<a href="<?php echo esc_url( admin_url( 'post-new.php?post_type=proyecto' ) ); ?>" class="page-title-action">
+				<?php esc_html_e( 'Añadir nuevo', 'convoca-members' ); ?>
 			</a>
 			<a href="<?php echo esc_url( wp_nonce_url( admin_url( 'admin-post.php?action=convoca_export_proyectos_csv' ), 'convoca_export_proyectos' ) ); ?>" class="convoca-btn convoca-btn-outline" style="margin-left:10px;">
-				📥 <?php _e( 'Exportar CSV', 'convoca-members' ); ?>
+				📥 <?php esc_html_e( 'Exportar CSV', 'convoca-members' ); ?>
 			</a>
 			<hr class="wp-header-end">
 
@@ -134,11 +150,11 @@ class Admin_Proyectos extends \WP_List_Table {
 	}
 
 	public function handle_export_csv(): void {
-		if ( ! wp_verify_nonce( $_GET['_wpnonce'] ?? '', 'convoca_export_proyectos' ) ) {
-			wp_die( __( 'Nonce inválido.', 'convoca-members' ) );
+		if ( ! wp_verify_nonce( wp_unslash( $_GET['_wpnonce'] ?? '' ), 'convoca_export_proyectos' ) ) {
+			wp_die( esc_html__( 'Nonce inválido.', 'convoca-members' ) );
 		}
 		if ( ! current_user_can( 'gestionar_miembros' ) ) {
-			wp_die( __( 'No tienes permisos.', 'convoca-members' ) );
+			wp_die( esc_html__( 'No tienes permisos.', 'convoca-members' ) );
 		}
 
 		$args = array(
@@ -219,7 +235,7 @@ class Admin_Proyectos extends \WP_List_Table {
 	public function prepare_items() {
 		$per_page     = 20;
 		$current_page = $this->get_pagenum();
-		$search       = isset( $_REQUEST['s'] ) ? sanitize_text_field( $_REQUEST['s'] ) : '';
+		$search       = isset( $_REQUEST['s'] ) ? sanitize_text_field( wp_unslash( $_REQUEST['s'] ) ) : '';
 
 		$args = array(
 			'post_type'      => CPT_Proyecto::POST_TYPE,
@@ -298,7 +314,7 @@ class Admin_Proyectos extends \WP_List_Table {
 	}
 
 	public function no_items() {
-		_e( 'No se encontraron proyectos.', 'convoca-members' );
+		esc_html_e( 'No se encontraron proyectos.', 'convoca-members' );
 	}
 
 	/**
@@ -396,12 +412,12 @@ class Admin_Proyectos extends \WP_List_Table {
 		check_admin_referer( 'convoca_save_proyecto_nonce' );
 
 		if ( ! current_user_can( 'gestionar_miembros' ) ) {
-			wp_die( __( 'No tienes permisos para realizar esta acción.', 'convoca-members' ) );
+			wp_die( esc_html__( 'No tienes permisos para realizar esta acción.', 'convoca-members' ) );
 		}
 
 		$post_id = isset( $_POST['id'] ) ? (int) $_POST['id'] : 0;
-		$title   = sanitize_text_field( $_POST['post_title'] );
-		$content = wp_kses_post( $_POST['post_content'] );
+		$title   = sanitize_text_field( wp_unslash( $_POST['post_title'] ) );
+		$content = wp_kses_post( wp_unslash( $_POST['post_content'] ) );
 
 		$post_data = array(
 			'post_type'    => CPT_Proyecto::POST_TYPE,
@@ -419,12 +435,12 @@ class Admin_Proyectos extends \WP_List_Table {
 		}
 
 		if ( is_wp_error( $result ) ) {
-			wp_die( $result->get_error_message() );
+			wp_die( esc_html( $result->get_error_message() ) );
 		}
 
 		// Save Meta.
-		update_post_meta( $post_id, '_convoca_fecha_inicio', sanitize_text_field( $_POST['fecha_inicio'] ) );
-		update_post_meta( $post_id, '_convoca_fecha_fin', sanitize_text_field( $_POST['fecha_fin'] ) );
+		update_post_meta( $post_id, '_convoca_fecha_inicio', sanitize_text_field( wp_unslash( $_POST['fecha_inicio'] ) ) );
+		update_post_meta( $post_id, '_convoca_fecha_fin', sanitize_text_field( wp_unslash( $_POST['fecha_fin'] ) ) );
 		update_post_meta( $post_id, '_convoca_responsable', (int) $_POST['responsable'] );
 		update_post_meta( $post_id, '_convoca_activo', isset( $_POST['activo'] ) ? '1' : '0' );
 
