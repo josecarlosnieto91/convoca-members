@@ -22,9 +22,6 @@ if ( ! defined( 'ABSPATH' ) ) {
     exit;
 }
 
-
-namespace Convoca\Members;
-
 /* ── Composer autoload ─────────────────────────────── */
 $composer_autoload = __DIR__ . '/vendor/autoload.php';
 if ( file_exists( $composer_autoload ) ) {
