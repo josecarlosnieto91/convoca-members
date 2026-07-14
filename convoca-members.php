@@ -25,9 +25,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 namespace Convoca\Members;
 
-if ( ! defined( 'ABSPATH' ) ) {
-}
-
 /* ── Composer autoload ─────────────────────────────── */
 $composer_autoload = __DIR__ . '/vendor/autoload.php';
 if ( file_exists( $composer_autoload ) ) {
@@ -53,7 +50,7 @@ if ( ! class_exists( '\\Convoca\\Core\\Utils' ) ) {
 
 /* ── Constants ────────────────────────────────────────────── */
 if ( ! defined( 'CONVOCA_MEMBERS_VERSION' ) ) {
-	define( 'CONVOCA_MEMBERS_VERSION', '2.6.1' );
+	define( 'CONVOCA_MEMBERS_VERSION', '2.6.2' );
 }
 if ( ! defined( 'CONVOCA_MEMBERS_DB_VERSION' ) ) {
 	define( 'CONVOCA_MEMBERS_DB_VERSION', '1.0.3' );
@@ -71,8 +68,6 @@ if ( ! defined( 'CONVOCA_MEMBERS_URL' ) ) {
 /* ── Autoloader ───────────────────────────────────────────── */
 // PSR-4 autoloading handled by Composer (vendor/autoload.php)
 
-/*
-── Activation / Deactivation ────────────────────────────── */
 /* ── Activation / Deactivation ────────────────────────────── */
 register_activation_hook(
 	__FILE__,
