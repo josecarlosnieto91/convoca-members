@@ -307,7 +307,7 @@ class Admin_List extends \WP_List_Table {
 				<option value="">
 					<?php esc_html_e( 'Todos los planes', 'convoca-members' ); ?>
 				</option>
-				<?php foreach ( CPT_Miembro::PLANS as $slug => $plan ) : ?>
+				<?php foreach ( CPT_Miembro::get_plans() as $slug => $plan ) : ?>
 					<option value="<?php echo esc_attr( $slug ); ?>" <?php selected( $get_data['plan_filter'] ?? '', $slug ); ?>>
 						<?php echo esc_html( $plan['label'] ); ?>
 					</option>

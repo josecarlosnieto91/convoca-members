@@ -191,7 +191,8 @@ class Admin_Settings {
 		$sanitized = array();
 		foreach ( $input as $track_key => $track ) {
 			$tk = sanitize_key( $track_key );
-			if ( ! in_array( $tk, array( 'busgosu', 'lugg', 'deva' ), true ) ) {
+			$valid_plans = array_keys( \Convoca\Members\CPT_Miembro::get_plans() );
+			if ( ! in_array( $tk, $valid_plans, true ) ) {
 				continue;
 			}
 			$sanitized[ $tk ] = array(
@@ -804,9 +805,10 @@ class Admin_Settings {
 				<?php wp_nonce_field( 'convoca_gamification_nonce' ); ?>
 				<input type="hidden" name="convoca_save_gamification" value="1">
 
+				<?php $first_track_key = array_key_first( $tracks ); ?>
 				<?php foreach ( $tracks as $track_key => $track ) : ?>
 					<div class="conv-gami-track-panel" id="conv-gami-track-<?php echo esc_attr( $track_key ); ?>"
-						style="display: <?php echo $track_key === 'busgosu' ? 'block' : 'none'; ?>;">
+						style="display: <?php echo $track_key === $first_track_key ? 'block' : 'none'; ?>;">
 						<div class="postbox">
 							<div class="postbox-header" style="padding: 12px 15px; display: flex; align-items: center; gap: 10px;">
 								<h2 style="margin:0;"><?php echo esc_html( $track['label'] ); ?></h2>

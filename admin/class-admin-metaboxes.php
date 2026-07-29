@@ -308,7 +308,7 @@ class Admin_Metaboxes {
 			<div class="convoca-field">
 				<label for="convoca_sub_plan">Sub-plan (si aplica)</label>
 				<input type="text" name="convoca_sub_plan" value="<?php echo esc_attr( $get( 'sub_plan' ) ); ?>"
-					placeholder="e.g. fam-busgosu">
+					placeholder="e.g. familiar">
 			</div>
 
 			<div class="convoca-field">

@@ -54,8 +54,8 @@ class CPT_Miembro {
 		'municipio',
 
 		// ── Membership ──
-		'plan',                 // busgosu, lugg, deva, etc.
-		'sub_plan',             // fam-busgosu, juv-busgosu, etc.
+		'plan',                 // Plan slug (customizable via convoca_members_plans filter).
+		'sub_plan',             // e.g. fam-bronze, juv-bronze
 		'modalidad',            // Numerario, Familiar, Juvenil.
 		'estado_miembro',       // activo, proximo_vencer, baja.
 		'forma_pago',           // cuota, voluntariado.
@@ -104,9 +104,9 @@ class CPT_Miembro {
 	);
 
 	/** Plan definitions (price in €, hours in h). */
-	public const PLANS = array(
-		'busgosu'     => array(
-			'label'           => '🍁 Busgosu',
+	public const DEFAULT_PLANS = array(
+		'bronze'      => array(
+			'label'           => '🥉 Bronce',
 			'price'           => 30,
 			'hours'           => 15,
 			'modalidad'       => 'Numerario',
@@ -116,8 +116,8 @@ class CPT_Miembro {
 				'Prioridad en las inscripciones para actividades ambientales.',
 			),
 		),
-		'lugg'        => array(
-			'label'           => '🌿 Lugg',
+		'silver'      => array(
+			'label'           => '🥈 Plata',
 			'price'           => 50,
 			'hours'           => 25,
 			'modalidad'       => 'Numerario',
@@ -128,21 +128,21 @@ class CPT_Miembro {
 				'Reserva el local 2 veces al año para eventos privados.',
 			),
 		),
-		'deva'        => array(
-			'label'           => '🔥 Deva',
+		'gold'        => array(
+			'label'           => '🥇 Oro',
 			'price'           => 100,
 			'hours'           => 50,
 			'modalidad'       => 'Numerario',
 			'payment_methods' => array( 'bizum', 'tarjeta', 'transferencia' ),
 			'advantages'      => array(
-				'Todas las ventajas de Busgosu y Lugg.',
+				'Todas las ventajas de Bronce y Plata.',
 				'Prioridad en ofertas de trabajo internas.',
 				'Grupo de WhatsApp exclusivo con comunidad activa.',
 				'Descuentos especiales con diferentes colaboradores.',
 			),
 		),
-		'fam-busgosu' => array(
-			'label'           => 'Familiar Busgosu',
+		'fam-bronze'  => array(
+			'label'           => 'Familiar Bronce',
 			'price'           => 45,
 			'hours'           => 22.5,
 			'modalidad'       => 'Familiar',
@@ -153,8 +153,8 @@ class CPT_Miembro {
 				'Ventajas aplicables a toda la unidad familiar.',
 			),
 		),
-		'fam-lugg'    => array(
-			'label'           => 'Familiar Lugg',
+		'fam-silver'  => array(
+			'label'           => 'Familiar Plata',
 			'price'           => 75,
 			'hours'           => 37.5,
 			'modalidad'       => 'Familiar',
@@ -166,22 +166,22 @@ class CPT_Miembro {
 				'Ventajas aplicables a toda la unidad familiar.',
 			),
 		),
-		'fam-deva'    => array(
-			'label'           => 'Familiar Deva',
+		'fam-gold'    => array(
+			'label'           => 'Familiar Oro',
 			'price'           => 150,
 			'hours'           => 75,
 			'modalidad'       => 'Familiar',
 			'payment_methods' => array( 'bizum', 'tarjeta', 'transferencia' ),
 			'advantages'      => array(
-				'Todas las ventajas de Busgosu y Lugg.',
+				'Todas las ventajas de Bronce y Plata.',
 				'Prioridad en ofertas de trabajo internas.',
 				'Grupo de WhatsApp exclusivo con comunidad activa.',
 				'Descuentos especiales con diferentes colaboradores.',
 				'Ventajas aplicables a toda la unidad familiar.',
 			),
 		),
-		'juv-busgosu' => array(
-			'label'           => 'Juvenil Busgosu',
+		'juv-bronze'  => array(
+			'label'           => 'Juvenil Bronce',
 			'price'           => 15,
 			'hours'           => 7.5,
 			'modalidad'       => 'Juvenil',
@@ -192,8 +192,8 @@ class CPT_Miembro {
 				'Espacio independiente para actuar y tomar decisiones.',
 			),
 		),
-		'juv-lugg'    => array(
-			'label'           => 'Juvenil Lugg',
+		'juv-silver'  => array(
+			'label'           => 'Juvenil Plata',
 			'price'           => 25,
 			'hours'           => 12.5,
 			'modalidad'       => 'Juvenil',
@@ -205,14 +205,14 @@ class CPT_Miembro {
 				'Espacio independiente para actuar y tomar decisiones.',
 			),
 		),
-		'juv-deva'    => array(
-			'label'           => 'Juvenil Deva',
+		'juv-gold'    => array(
+			'label'           => 'Juvenil Oro',
 			'price'           => 50,
 			'hours'           => 25,
 			'modalidad'       => 'Juvenil',
 			'payment_methods' => array( 'bizum', 'tarjeta', 'transferencia' ),
 			'advantages'      => array(
-				'Todas las ventajas de Busgosu y Lugg.',
+				'Todas las ventajas de Bronce y Plata.',
 				'Prioridad en ofertas de trabajo internas.',
 				'Grupo de WhatsApp exclusivo con comunidad activa.',
 				'Descuentos especiales con diferentes colaboradores.',
@@ -293,17 +293,28 @@ class CPT_Miembro {
 	}
 
 	/**
+	 * Get default plan definitions.
+	 *
+	 * @return array Default plan data.
+	 */
+	public static function get_default_plans(): array {
+		return self::DEFAULT_PLANS;
+	}
+
+
+
+	/**
 	 * Get all membership plans (merged with DB settings).
 	 */
 	public static function get_plans(): array {
 		$db_plans = get_option( 'convoca_members_plans', array() );
 
 		// If DB is empty, use defaults (legacy mode).
-		$plans = empty( $db_plans ) ? self::PLANS : $db_plans;
+		$plans = empty( $db_plans ) ? self::get_default_plans() : $db_plans;
 
 		// Normalize: Ensure all plans have critical keys.
 		foreach ( $plans as $key => &$plan ) {
-			$default = isset( self::PLANS[ $key ] ) ? self::PLANS[ $key ] : array();
+			$default = isset( self::DEFAULT_PLANS[ $key ] ) ? self::DEFAULT_PLANS[ $key ] : array();
 
 			if ( ! isset( $plan['payment_methods'] ) ) {
 				$plan['payment_methods'] = isset( $default['payment_methods'] ) ? $default['payment_methods'] : array( 'bizum', 'tarjeta', 'transferencia' );
@@ -316,7 +327,7 @@ class CPT_Miembro {
 			}
 		}
 
-		return $plans;
+		return apply_filters( 'convoca_members_plans', $plans );
 	}
 
 	/**

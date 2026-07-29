@@ -17,7 +17,7 @@
 
 /**
  * Volunteer Gamification — badge/level system for volunteer hours.
- * Multi-track: Busgosu (nature), Lugg (social), Deva (elemental).
+ * Multi-track gamification system with configurable tracks via convoca_gamification_tracks filter.
  *
  * @package Convoca\Members
  */
@@ -33,9 +33,9 @@ class Voluntariado_Gamification {
 	/**
 	 * Default track definitions. Saved options merge over these.
 	 */
-	const TRACKS = array(
-		'busgosu' => array(
-			'label'  => 'Busgosu · Naturaleza',
+	const DEFAULT_TRACKS = array(
+		'nature'    => array(
+			'label'  => '🌱 Naturaleza',
 			'levels' => array(
 				array(
 					'name'  => 'Semilla',
@@ -74,8 +74,8 @@ class Voluntariado_Gamification {
 				),
 			),
 		),
-		'lugg'    => array(
-			'label'  => 'Lugg · Social',
+		'community' => array(
+			'label'  => '🤝 Comunidad',
 			'levels' => array(
 				array(
 					'name'  => 'Mano Abierta',
@@ -114,8 +114,8 @@ class Voluntariado_Gamification {
 				),
 			),
 		),
-		'deva'    => array(
-			'label'  => 'Deva · Elementales',
+		'growth'    => array(
+			'label'  => '🚀 Crecimiento',
 			'levels' => array(
 				array(
 					'name'  => 'Náyade',
@@ -156,9 +156,27 @@ class Voluntariado_Gamification {
 		),
 	);
 
-	const DEFAULT_TRACK = 'busgosu';
+	const DEFAULT_TRACK = 'nature';
 
 	const OPTION_KEY = 'convoca_gamification_tracks';
+
+	/**
+	 * Get default track definitions.
+	 *
+	 * @return array Default track data.
+	 */
+	public static function get_default_tracks(): array {
+		return self::DEFAULT_TRACKS;
+	}
+
+	/**
+	 * Get tracks with filter applied.
+	 *
+	 * @return array Filtered track configuration.
+	 */
+	public static function get_tracks(): array {
+		return apply_filters( 'convoca_gamification_tracks', self::get_default_tracks() );
+	}
 
 	/**
 	 * Initialize hooks.
@@ -171,10 +189,10 @@ class Voluntariado_Gamification {
 	 * Get the track key for a given member.
 	 *
 	 * Examines _convoca_sub_plan then _convoca_plan and extracts the
-	 * track name from the suffix (e.g. fam-busgosu → busgosu).
+	 * track name from the suffix.
 	 *
 	 * @param  int $member_id Post ID of the member.
-	 * @return string Track key (busgosu, lugg, deva, or DEFAULT_TRACK).
+	 * @return string Track key (first matching track or DEFAULT_TRACK).
 	 */
 	public static function get_track_for_member( int $member_id ): string {
 		$sub_plan = get_post_meta( $member_id, '_convoca_sub_plan', true );
@@ -185,8 +203,9 @@ class Voluntariado_Gamification {
 			return self::DEFAULT_TRACK;
 		}
 
-		// Extract track from the suffix: fam-busgosu → busgosu, juv-lugg → lugg, deva → deva.
-		foreach ( array( 'busgosu', 'lugg', 'deva' ) as $track ) {
+		// Extract track from the suffix by matching against available track keys.
+		$tracks = array_keys( self::get_tracks() );
+		foreach ( $tracks as $track ) {
 			if ( str_ends_with( $key, $track ) ) {
 				return $track;
 			}
@@ -201,7 +220,7 @@ class Voluntariado_Gamification {
 	 * @return array Full TRACKS config with saved overrides merged in.
 	 */
 	public static function get_tracks_config(): array {
-		$defaults = self::TRACKS;
+		$defaults = self::DEFAULT_TRACKS;
 		$saved    = get_option( self::OPTION_KEY, array() );
 
 		if ( empty( $saved ) ) {
@@ -229,16 +248,16 @@ class Voluntariado_Gamification {
 	 * Get the current level for a given amount of hours, on a specific track.
 	 *
 	 * @param  float  $hours Total approved volunteer hours.
-	 * @param  string $track Track key (busgosu, lugg, deva).
+	 * @param  string $track Track key.
 	 * @return array  Current level with name, emoji, color, desc, index.
 	 */
 	public static function get_level( float $hours, string $track = '' ): array {
-		if ( ! $track || ! isset( self::TRACKS[ $track ] ) ) {
+		if ( ! $track || ! isset( self::DEFAULT_TRACKS[ $track ] ) ) {
 			$track = self::DEFAULT_TRACK;
 		}
 
 		$config = self::get_tracks_config();
-		$levels = $config[ $track ]['levels'] ?? self::TRACKS[ self::DEFAULT_TRACK ]['levels'];
+		$levels = $config[ $track ]['levels'] ?? self::DEFAULT_TRACKS[ self::DEFAULT_TRACK ]['levels'];
 
 		$level          = $levels[0];
 		$level['index'] = 0;
@@ -261,12 +280,12 @@ class Voluntariado_Gamification {
 	 * @return array|null Next level data or null.
 	 */
 	public static function get_next_level( float $hours, string $track = '' ): ?array {
-		if ( ! $track || ! isset( self::TRACKS[ $track ] ) ) {
+		if ( ! $track || ! isset( self::DEFAULT_TRACKS[ $track ] ) ) {
 			$track = self::DEFAULT_TRACK;
 		}
 
 		$config = self::get_tracks_config();
-		$levels = $config[ $track ]['levels'] ?? self::TRACKS[ self::DEFAULT_TRACK ]['levels'];
+		$levels = $config[ $track ]['levels'] ?? self::DEFAULT_TRACKS[ self::DEFAULT_TRACK ]['levels'];
 
 		$current_index = self::get_level( $hours, $track )['index'] ?? 0;
 		$next_index    = $current_index + 1;
@@ -286,12 +305,12 @@ class Voluntariado_Gamification {
 	 * @return array{current: array, next: array|null, progress_percent: float, hours_to_next: float}
 	 */
 	public static function get_progress( float $hours, string $track = '' ): array {
-		if ( ! $track || ! isset( self::TRACKS[ $track ] ) ) {
+		if ( ! $track || ! isset( self::DEFAULT_TRACKS[ $track ] ) ) {
 			$track = self::DEFAULT_TRACK;
 		}
 
 		$config = self::get_tracks_config();
-		$levels = $config[ $track ]['levels'] ?? self::TRACKS[ self::DEFAULT_TRACK ]['levels'];
+		$levels = $config[ $track ]['levels'] ?? self::DEFAULT_TRACKS[ self::DEFAULT_TRACK ]['levels'];
 
 		$current = self::get_level( $hours, $track );
 		$next    = self::get_next_level( $hours, $track );

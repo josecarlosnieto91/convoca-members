@@ -82,6 +82,7 @@ class Email_Manager {
 		'{usuario}',
 		'{password}',
 		'{login_url}',
+		'{admin_email}',
 	);
 
 	public function __construct() {
@@ -130,7 +131,7 @@ class Email_Manager {
 					)
 					. '<p style="color:#dc2626;font-size:0.9rem;">⚠️ Por seguridad, cambia tu contraseña después del primer inicio de sesión.</p>'
 					. Email_Layout::button_html( '{login_url}', 'Acceder a Mi Área' )
-					. '<p>Si tienes cualquier problema, responde a este email o escribe a coordinacion@getconvoca.app.</p>',
+					. '<p>Si tienes cualquier problema, responde a este email o escribe a <a href="mailto:{admin_email}">{admin_email}</a>.</p>',
 			),
 			'solicitud_recibida'               => array(
 				'subject' => 'Hemos recibido tu solicitud — ' . get_bloginfo('name'),
@@ -176,7 +177,7 @@ class Email_Manager {
 						)
 					)
 					. '<p>Ya formas parte de la comunidad Convoca. Puedes participar en todas nuestras actividades y proyectos.</p>'
-					. '<p>Si tienes cualquier duda, escríbenos a <a href="mailto:coordinacion@getconvoca.app">coordinacion@getconvoca.app</a>.</p>'
+					. '<p>Si tienes cualquier duda, escríbenos a <a href="mailto:{admin_email}">{admin_email}</a>.</p>'
 					. '<p>¡Nos vemos en el campo! 🌿</p>',
 			),
 			'recordatorio_pago'                => array(
@@ -565,6 +566,7 @@ class Email_Manager {
 		$certificado_id = $meta( 'certificado_id' ) ?: '—';
 
 		return array(
+			'{admin_email}'                  => get_bloginfo( 'admin_email' ),
 			'{nombre}'                       => get_the_title( $post_id ),
 			'{email}'                        => $meta( 'email' ) ?: '—',
 			'{tipo_miembro}'                 => $tipo_label,

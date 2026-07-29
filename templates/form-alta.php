@@ -308,7 +308,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 			<div id="conv-volunteer-agreement" style="display:none">
 				<div class="convoca-field">
 					<p class="convoca-small">Al elegir horas de voluntariado, aceptas el
-						<a href="https://drive.google.com/file/d/1MmUSP9hVygjpJi1ACAILLWajzTeqEqlA/view" target="_blank".
+						<a href="<?php echo esc_url( apply_filters( 'convoca_members_alta_document_url', '' ) ); ?>" target="_blank"
 							rel="noopener">Código Ético</a> y el <a
 							href="https://drive.google.com/file/d/1Qps5ghQjNOPH4B55JEmlkQARJrpPN9jK/view".
 							target="_blank" rel="noopener">Programa de Voluntariado</a>.

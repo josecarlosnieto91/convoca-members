@@ -15,26 +15,8 @@
     const inlineConfig = wrapper && wrapper.dataset.config ? JSON.parse(wrapper.dataset.config) : null;
     const config = inlineConfig || window.convMembers || {};
 
-    // Fallback data in case PHP localization fails or DB is empty
-    const DEFAULT_PLANS = {
-      'busgosu': { advantages: ['Participa en todas las actividades de naturaleza de forma gratuita.', 'Prioridad en las inscripciones para actividades ambientales.'] },
-      'lugg': { advantages: ['20% de descuento en actividades de pago del Centro.', 'Accede a los espacios sociales del local cuando quieras.', 'Reserva el local 2 veces al año para eventos privados.'] },
-      'deva': { advantages: ['Todas las ventajas de Busgosu y Lugg.', 'Prioridad en ofertas de trabajo internas.', 'Grupo de WhatsApp exclusivo con comunidad activa.', 'Descuentos especiales con diferentes colaboradores.'] },
-      'familiar': { advantages: ['Descuentos en los diferentes formatos.', 'Mismas ventajas que el plan correspondiente, adaptadas al grupo familiar.'] },
-      'juvenil': { advantages: ['Espacio independiente para actuar y tomar decisiones.', 'Descuentos del 50% en todos los formatos.'] },
-      'fam-busgosu': { advantages: ['Participa en todas las actividades.', 'Prioridad inscripciones.', 'Ventajas unidad familiar.'] },
-      'fam-lugg': { advantages: ['Descuento 20%.', 'Acceso espacios.', 'Reserva local.', 'Ventajas unidad familiar.'] },
-      'fam-deva': { advantages: ['Todas ventajas Busgosu/Lugg.', 'Prioridad ofertas.', 'Grupo exclusivo.', 'Descuentos colaboradores.', 'Ventajas unidad familiar.'] },
-      'juv-busgosu': { advantages: ['Actividades gratuitas.', 'Prioridad inscripciones.', 'Espacio joven.'] },
-      'juv-lugg': { advantages: ['Descuento 20%.', 'Acceso espacios.', 'Reserva local.', 'Espacio joven.'] },
-      'juv-deva': { advantages: ['Todas ventajas Busgosu/Lugg.', 'Prioridad ofertas.', 'Grupo exclusivo.', 'Espacio joven.'] }
-    };
-
-    const inputData = config.plans || {};
-    const plansData = { ...DEFAULT_PLANS };
-    for (const k in inputData) {
-      plansData[k] = { ...DEFAULT_PLANS[k], ...inputData[k] };
-    }
+    // Plan data loaded from PHP via data-config attribute (CPT_Miembro::get_plans())
+    const plansData = config.plans || {};
 
     const altaWrap = conv.$('#convoca-form-alta');
     const steps = conv.$$('.conv-form-step', altaWrap);
@@ -288,9 +270,7 @@
       const cardEl = conv.$('#conv-card-preview');
       if (cardEl) {
         cardEl.className = 'conv-card-visual';
-        if (key.includes('busgosu')) cardEl.classList.add('card-busgosu');
-        if (key.includes('lugg')) cardEl.classList.add('card-lugg');
-        if (key.includes('deva')) cardEl.classList.add('card-deva');
+        if (key) cardEl.classList.add('card-' + key);
       }
     }
 

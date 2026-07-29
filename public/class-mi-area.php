@@ -91,13 +91,13 @@ class Mi_Area {
 			<form id="conv-login-form" class="conv-login-form">
 				<div class="form-group">
 					<label for="username"><?php esc_html_e( 'Usuario o Email', 'convoca-members' ); ?></label>
-					<input type="text" id="username" name="username" required placeholder="ejemplo@getconvoca.app">
+					<input type="text" id="username" name="username" required placeholder="ejemplo@correo.com">
 				</div>
 				<div class="form-group">
 					<label for="password"><?php esc_html_e( 'Contraseña', 'convoca-members' ); ?></label>
 					<input type="password" id="password" name="password" required minlength="4">
 					<small><?php esc_html_e( 'Las credenciales las recibiste por email al ser aprobado.', 'convoca-members' ); ?></small>
-					<br><small><a href="mailto:coordinacion@getconvoca.app"><?php esc_html_e( '¿No tienes acceso? Escribe a coordinación.', 'convoca-members' ); ?></a></small>
+					<br><small><a href="mailto:<?php echo esc_attr( get_bloginfo( 'admin_email' ) ); ?>"><?php esc_html_e( '¿No tienes acceso? Escríbenos.', 'convoca-members' ); ?></a></small>
 				</div>
 				<button type="submit" class="btn-primary"><?php esc_html_e( 'Entrar', 'convoca-members' ); ?></button>
 				<div class="form-result"></div>

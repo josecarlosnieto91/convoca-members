@@ -131,7 +131,7 @@ class Admin_Member_Editor {
 
 					<div class="convoca-field">
 						<label for="convoca_sub_plan"><?php esc_html_e( 'Sub-plan', 'convoca-members' ); ?></label>
-						<input type="text" id="convoca_sub_plan" name="convoca_sub_plan" value="<?php echo esc_attr( $m( 'sub_plan' ) ); ?>" placeholder="e.g. fam-busgosu">
+						<input type="text" id="convoca_sub_plan" name="convoca_sub_plan" value="<?php echo esc_attr( $m( 'sub_plan' ) ); ?>" placeholder="e.g. familiar">
 					</div>
 
 					<div class="convoca-field">

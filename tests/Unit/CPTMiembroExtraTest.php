@@ -10,6 +10,8 @@ use Convoca\Members\CPT_Miembro;
 
 class CPTMiembroExtraTest extends TestCase
 {
+    private const MEMBER_ID = 42;
+
     protected function setUp(): void
     {
         parent::setUp();
@@ -48,22 +50,22 @@ class CPTMiembroExtraTest extends TestCase
     {
         // Simulate DB plans with missing fields
         update_option('convoca_members_plans', [
-            'busgosu' => ['label' => 'Custom'],
+            'bronze' => ['label' => 'Custom'],
         ]);
 
         $plans = CPT_Miembro::get_plans();
-        $this->assertEquals('Custom', $plans['busgosu']['label']);
-        $this->assertNotEmpty($plans['busgosu']['payment_methods']);
-        $this->assertIsFloat($plans['busgosu']['price'] * 1.0);
+        $this->assertEquals('Custom', $plans['bronze']['label']);
+        $this->assertNotEmpty($plans['bronze']['payment_methods']);
+        $this->assertIsFloat($plans['bronze']['price'] * 1.0);
     }
 
     // ── get_plan ───────────────────────────────────────
 
     public function test_get_plan_valid_key(): void
     {
-        $plan = CPT_Miembro::get_plan('busgosu');
+        $plan = CPT_Miembro::get_plan('bronze');
         $this->assertIsArray($plan);
-        $this->assertEquals('🍁 Busgosu', $plan['label']);
+        $this->assertEquals('🥉 Bronce', $plan['label']);
         $this->assertEquals(30, $plan['price']);
     }
 
@@ -81,22 +83,22 @@ class CPTMiembroExtraTest extends TestCase
 
     public function test_whatsapp_link_no_phone_returns_null(): void
     {
-        $result = CPT_Miembro::whatsapp_link(42);
+        $result = CPT_Miembro::whatsapp_link(self::MEMBER_ID);
         $this->assertNull($result);
     }
 
     public function test_whatsapp_link_whatsapp_disabled_returns_null(): void
     {
-        update_post_meta(42, '_convoca_telefono', '612345678');
-        update_post_meta(42, '_convoca_whatsapp', 'no');
-        $this->assertNull(CPT_Miembro::whatsapp_link(42));
+        update_post_meta(self::MEMBER_ID, '_convoca_telefono', '612345678');
+        update_post_meta(self::MEMBER_ID, '_convoca_whatsapp', 'no');
+        $this->assertNull(CPT_Miembro::whatsapp_link(self::MEMBER_ID));
     }
 
     public function test_whatsapp_link_basic(): void
     {
-        update_post_meta(42, '_convoca_telefono', '612345678');
-        update_post_meta(42, '_convoca_whatsapp', 'si');
-        $url = CPT_Miembro::whatsapp_link(42);
+        update_post_meta(self::MEMBER_ID, '_convoca_telefono', '612345678');
+        update_post_meta(self::MEMBER_ID, '_convoca_whatsapp', 'si');
+        $url = CPT_Miembro::whatsapp_link(self::MEMBER_ID);
         $this->assertNotNull($url);
         $this->assertStringStartsWith('https://wa.me/', $url);
         // Should add 34 prefix
@@ -105,36 +107,36 @@ class CPTMiembroExtraTest extends TestCase
 
     public function test_whatsapp_link_with_country_code(): void
     {
-        update_post_meta(42, '_convoca_telefono', '34612345678');
-        update_post_meta(42, '_convoca_whatsapp', 'si');
-        $url = CPT_Miembro::whatsapp_link(42);
+        update_post_meta(self::MEMBER_ID, '_convoca_telefono', '34612345678');
+        update_post_meta(self::MEMBER_ID, '_convoca_whatsapp', 'si');
+        $url = CPT_Miembro::whatsapp_link(self::MEMBER_ID);
         $this->assertNotNull($url);
         $this->assertStringContainsString('34612345678', $url);
     }
 
     public function test_whatsapp_link_with_plus(): void
     {
-        update_post_meta(42, '_convoca_telefono', '+34612345678');
-        update_post_meta(42, '_convoca_whatsapp', 'si');
-        $url = CPT_Miembro::whatsapp_link(42);
+        update_post_meta(self::MEMBER_ID, '_convoca_telefono', '+34612345678');
+        update_post_meta(self::MEMBER_ID, '_convoca_whatsapp', 'si');
+        $url = CPT_Miembro::whatsapp_link(self::MEMBER_ID);
         $this->assertNotNull($url);
         $this->assertStringContainsString('34612345678', $url);
     }
 
     public function test_whatsapp_link_with_message(): void
     {
-        update_post_meta(42, '_convoca_telefono', '612345678');
-        update_post_meta(42, '_convoca_whatsapp', 'si');
-        $url = CPT_Miembro::whatsapp_link(42, 'Hola {nombre}, bienvenido!');
+        update_post_meta(self::MEMBER_ID, '_convoca_telefono', '612345678');
+        update_post_meta(self::MEMBER_ID, '_convoca_whatsapp', 'si');
+        $url = CPT_Miembro::whatsapp_link(self::MEMBER_ID, 'Hola {nombre}, bienvenido!');
         $this->assertStringContainsString('?text=', $url);
         $this->assertStringContainsString(rawurlencode('Hola'), $url);
     }
 
     public function test_whatsapp_link_normalizes_phone(): void
     {
-        update_post_meta(42, '_convoca_telefono', '612-345-678');
-        update_post_meta(42, '_convoca_whatsapp', 'si');
-        $url = CPT_Miembro::whatsapp_link(42);
+        update_post_meta(self::MEMBER_ID, '_convoca_telefono', '612-345-678');
+        update_post_meta(self::MEMBER_ID, '_convoca_whatsapp', 'si');
+        $url = CPT_Miembro::whatsapp_link(self::MEMBER_ID);
         $this->assertStringContainsString('34612345678', $url);
     }
 

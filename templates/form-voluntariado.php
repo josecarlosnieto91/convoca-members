@@ -262,7 +262,7 @@ $areas = \Convoca\Members\Form_Voluntariado::INTEREST_AREAS;
 		<h2>¡Gracias por querer ser voluntario/a!</h2>
 		<p>Tu solicitud se ha registrado correctamente. Hemos enviado un email de confirmación a tu correo.</p>
 		<p class="convoca-small">¿Tienes dudas? Escríbenos a <a
-				href="mailto:voluntarios@getconvoca.app">voluntarios@getconvoca.app</a></p>
+				href="mailto:<?php echo esc_attr( get_bloginfo( 'admin_email' ) ); ?>"><?php echo esc_html( get_bloginfo( 'admin_email' ) ); ?></a></p>
 		<p><a href="<?php echo esc_url( home_url( '/' ) ); ?>" class="convoca-btn convoca-btn-outline">← Volver al inicio</a></p>
 	</div>
 

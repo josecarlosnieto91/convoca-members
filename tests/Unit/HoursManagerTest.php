@@ -11,6 +11,9 @@ use Convoca\Members\Hours_Manager;
 
 class HoursManagerTest extends TestCase
 {
+    private const MEMBER_ID = 42;
+    private const HOURS_POST_ID = 100;
+
     protected function setUp(): void
     {
         parent::setUp();
@@ -157,43 +160,43 @@ class HoursManagerTest extends TestCase
 
     public function test_process_approval_approves_hour_record(): void
     {
-        update_post_meta(100, '_convoca_member_id', 42);
-        update_post_meta(100, '_convoca_estado', 'pendiente');
+        update_post_meta(self::HOURS_POST_ID, '_convoca_member_id', self::MEMBER_ID);
+        update_post_meta(self::HOURS_POST_ID, '_convoca_estado', 'pendiente');
 
-        $result = Hours_Manager::process_approval(100, 'aprobada', 1);
+        $result = Hours_Manager::process_approval(self::HOURS_POST_ID, 'aprobada', 1);
         $this->assertTrue($result);
-        $this->assertEquals('aprobada', get_post_meta(100, '_convoca_estado', true));
-        $this->assertEquals(1, get_post_meta(100, '_convoca_aprobada_por', true));
+        $this->assertEquals('aprobada', get_post_meta(self::HOURS_POST_ID, '_convoca_estado', true));
+        $this->assertEquals(1, get_post_meta(self::HOURS_POST_ID, '_convoca_aprobada_por', true));
     }
 
     public function test_process_approval_rejects_record(): void
     {
-        update_post_meta(100, '_convoca_member_id', 42);
-        update_post_meta(100, '_convoca_estado', 'pendiente');
+        update_post_meta(self::HOURS_POST_ID, '_convoca_member_id', self::MEMBER_ID);
+        update_post_meta(self::HOURS_POST_ID, '_convoca_estado', 'pendiente');
 
-        $result = Hours_Manager::process_approval(100, 'rechazada', 1);
+        $result = Hours_Manager::process_approval(self::HOURS_POST_ID, 'rechazada', 1);
         $this->assertTrue($result);
-        $this->assertEquals('rechazada', get_post_meta(100, '_convoca_estado', true));
+        $this->assertEquals('rechazada', get_post_meta(self::HOURS_POST_ID, '_convoca_estado', true));
     }
 
     public function test_process_approval_with_bool_true(): void
     {
-        update_post_meta(100, '_convoca_member_id', 42);
-        update_post_meta(100, '_convoca_estado', 'pendiente');
+        update_post_meta(self::HOURS_POST_ID, '_convoca_member_id', self::MEMBER_ID);
+        update_post_meta(self::HOURS_POST_ID, '_convoca_estado', 'pendiente');
 
-        $result = Hours_Manager::process_approval(100, true, 1);
+        $result = Hours_Manager::process_approval(self::HOURS_POST_ID, true, 1);
         $this->assertTrue($result);
-        $this->assertEquals('aprobada', get_post_meta(100, '_convoca_estado', true));
+        $this->assertEquals('aprobada', get_post_meta(self::HOURS_POST_ID, '_convoca_estado', true));
     }
 
     public function test_process_approval_with_bool_false(): void
     {
-        update_post_meta(100, '_convoca_member_id', 42);
-        update_post_meta(100, '_convoca_estado', 'pendiente');
+        update_post_meta(self::HOURS_POST_ID, '_convoca_member_id', self::MEMBER_ID);
+        update_post_meta(self::HOURS_POST_ID, '_convoca_estado', 'pendiente');
 
-        $result = Hours_Manager::process_approval(100, false, 1);
+        $result = Hours_Manager::process_approval(self::HOURS_POST_ID, false, 1);
         $this->assertTrue($result);
-        $this->assertEquals('rechazada', get_post_meta(100, '_convoca_estado', true));
+        $this->assertEquals('rechazada', get_post_meta(self::HOURS_POST_ID, '_convoca_estado', true));
     }
 
     public function test_process_approval_no_member_id_returns_false(): void
@@ -204,11 +207,11 @@ class HoursManagerTest extends TestCase
 
     public function test_process_approval_same_status_is_noop(): void
     {
-        update_post_meta(100, '_convoca_member_id', 42);
-        update_post_meta(100, '_convoca_estado', 'aprobada');
+        update_post_meta(self::HOURS_POST_ID, '_convoca_member_id', self::MEMBER_ID);
+        update_post_meta(self::HOURS_POST_ID, '_convoca_estado', 'aprobada');
 
-        $result = Hours_Manager::process_approval(100, 'aprobada', 1);
+        $result = Hours_Manager::process_approval(self::HOURS_POST_ID, 'aprobada', 1);
         $this->assertTrue($result);
-        $this->assertEquals('aprobada', get_post_meta(100, '_convoca_estado', true));
+        $this->assertEquals('aprobada', get_post_meta(self::HOURS_POST_ID, '_convoca_estado', true));
     }
 }
