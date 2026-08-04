@@ -733,13 +733,13 @@ class Admin_Settings {
 								<?php
 								$types = array(
 									'text'     => 'Texto corto',
-									'textarea' => 'Texto largo (párrafo)',
+									'textarea' => __( 'Texto largo (párrafo)', 'convoca-members' ),
 									'email'    => 'Email',
 									'tel'      => 'Teléfono',
 									'number'   => 'Número',
 									'date'     => 'Fecha',
-									'select'   => 'Desplegable (Select)',
-									'checkbox' => 'Casilla de verificación (Checkbox)',
+									'select'   => __( 'Desplegable (Select)', 'convoca-members' ),
+									'checkbox' => __( 'Casilla de verificación (Checkbox)', 'convoca-members' ),
 								);
 								foreach ( $types as $val => $label ) {
 									echo '<option value="' . esc_attr( $val ) . '" ' . selected( $field['type'] ?? 'text', $val, false ) . '>' . esc_html( $label ) . '</option>';
@@ -959,7 +959,7 @@ class Admin_Settings {
 			),
 			'convoca_voluntariado'          => array(
 				'title'     => __( 'Página: Registro Voluntariado', 'convoca-members' ),
-				'shortcode' => '[convoca_voluntariado]',
+				'shortcode' => __( '[convoca_voluntariado]', 'convoca-members' ),
 				'fix'       => __( 'Crea una página con el shortcode [convoca_voluntariado].', 'convoca-members' ),
 			),
 			'convoca_mi_area'               => array(
@@ -969,12 +969,12 @@ class Admin_Settings {
 			),
 			'convoca_verificar_certificado' => array(
 				'title'     => __( 'Página: Verificación de Certificados', 'convoca-members' ),
-				'shortcode' => '[convoca_verificar_certificado]',
+				'shortcode' => __( '[convoca_verificar_certificado]', 'convoca-members' ),
 				'fix'       => __( 'Crea una página con el shortcode [convoca_verificar_certificado].', 'convoca-members' ),
 			),
 			'convoca_panel_reservas'        => array(
 				'title'     => __( 'Página: Panel de Reservas', 'convoca-members' ),
-				'shortcode' => '[convoca_panel_reservas]',
+				'shortcode' => __( '[convoca_panel_reservas]', 'convoca-members' ),
 				'fix'       => __( 'Esta página es necesaria para el enlace QR de la tarjeta. Créala con el shortcode [convoca_panel_reservas].', 'convoca-members' ),
 			),
 		);

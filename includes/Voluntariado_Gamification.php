@@ -376,7 +376,7 @@ class Voluntariado_Gamification {
 		$member_id = Member_Auth::get_current_member_id();
 
 		if ( ! $member_id ) {
-			return new \WP_REST_Response( array( 'error' => 'No autorizado.' ), 401 );
+			return new \WP_REST_Response( array( 'error' => __( 'No autorizado.', 'convoca-members' ) ), 401 );
 		}
 
 		$track_key   = self::get_track_for_member( $member_id );

@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  WPML String Translation configuration for Convoca Members.
+  Legal text, plans and gamification tracks are user-facing strings.
+-->
+<wpml-config>
+    <admin-texts>
+        <key name="convoca_volunteer_legal_text"/>
+        <key name="convoca_members_plans"/>
+        <key name="convoca_gamification_tracks"/>
+    </admin-texts>
+</wpml-config>

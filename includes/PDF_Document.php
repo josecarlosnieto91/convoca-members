@@ -106,7 +106,7 @@ class PDF_Document {
 		$temp_post_id = wp_insert_post(
 			array(
 				'post_type'   => 'convoca_documento',
-				'post_title'  => 'Acuerdo Voluntariado - ' . $nombre,
+				'post_title'  => __( 'Acuerdo Voluntariado - ', 'convoca-members' ) . $nombre,
 				'post_status' => 'draft',
 				'post_author' => 1, // System.
 			)

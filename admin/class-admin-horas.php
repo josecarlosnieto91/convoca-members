@@ -449,7 +449,7 @@ class Admin_Horas extends \WP_List_Table {
 
 	public function get_columns() {
 		return array(
-			'cb'          => '<input type="checkbox" />',
+			'cb'          => __( '<input type="checkbox" />', 'convoca-members' ),
 			'fecha'       => __( 'Fecha', 'convoca-members' ),
 			'socio'       => __( 'Socio', 'convoca-members' ),
 			'proyecto'    => __( 'Proyecto', 'convoca-members' ),

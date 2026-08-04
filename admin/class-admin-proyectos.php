@@ -215,7 +215,7 @@ class Admin_Proyectos extends \WP_List_Table {
 
 	public function get_columns() {
 		return array(
-			'cb'           => '<input type="checkbox" />',
+			'cb'           => __( '<input type="checkbox" />', 'convoca-members' ),
 			'title'        => __( 'Título', 'convoca-members' ),
 			'fecha_inicio' => __( 'Inicio', 'convoca-members' ),
 			'fecha_fin'    => __( 'Fin', 'convoca-members' ),

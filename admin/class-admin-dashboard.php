@@ -75,7 +75,7 @@ class Admin_Dashboard {
 		// Alerts section.
 		if ( ! empty( $alerts ) ) {
 			echo '<div class="conv-dash-alerts">';
-			echo '<h4>⚡ Requiere atención</h4>';
+			echo '<h4>' . esc_html__( '⚡ Requiere atención', 'convoca-members' ) . '</h4>';
 			echo '<ul>';
 			foreach ( $alerts as $alert ) {
 				printf(
@@ -95,7 +95,7 @@ class Admin_Dashboard {
 		// Recent events.
 		if ( ! empty( $recent ) ) {
 			echo '<div class="conv-dash-recent">';
-			echo '<h4>📋 Actividad reciente</h4>';
+			echo '<h4>' . esc_html__( '📋 Actividad reciente', 'convoca-members' ) . '</h4>';
 			echo '<table class="conv-dash-table">';
 			foreach ( $recent as $event ) {
 				printf(
@@ -112,7 +112,7 @@ class Admin_Dashboard {
 		echo '<div class="conv-dash-links">';
 		echo '<a href="' . esc_url( admin_url( 'admin.php?page=conv-members' ) ) . '" class="button">Gestionar socios</a> ';
 		echo '<a href="' . esc_url( admin_url( 'admin.php?page=conv-members-settings' ) ) . '" class="button">Ajustes</a> ';
-		echo '<a href="' . esc_url( admin_url( 'admin.php?page=conv-horas' ) ) . '" class="button">Horas voluntariado</a>';
+		echo '<a href="' . esc_url( admin_url( 'admin.php?page=conv-horas' ) ) . '" class="button">' . esc_html__( 'Horas voluntariado', 'convoca-members' ) . '</a>';
 		echo '</div>';
 
 		echo '</div>';

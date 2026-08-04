@@ -174,7 +174,7 @@ $areas = \Convoca\Members\Form_Voluntariado::INTEREST_AREAS;
 		<?php
 		$dynamic_fields = get_option( 'convoca_volunteer_fields', array() );
 		if ( ! empty( $dynamic_fields ) ) :
-			echo '<h3 style="margin-top:2rem">📋 Información adicional</h3>';
+			echo '<h3 style="margin-top:2rem">' . esc_html__( '📋 Información adicional', 'convoca-members' ) . '</h3>';
 			foreach ( $dynamic_fields as $field ) :
 				$id       = 'conv-vol-' . esc_attr( $field['name'] );
 				$name     = 'dyn_' . esc_attr( $field['name'] );

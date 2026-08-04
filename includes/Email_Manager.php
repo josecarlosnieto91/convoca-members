@@ -134,7 +134,7 @@ class Email_Manager {
 					. '<p>Si tienes cualquier problema, responde a este email o escribe a <a href="mailto:{admin_email}">{admin_email}</a>.</p>',
 			),
 			'solicitud_recibida'               => array(
-				'subject' => 'Hemos recibido tu solicitud — ' . get_bloginfo('name'),
+				'subject' => __( 'Hemos recibido tu solicitud — ', 'convoca-members' ) . get_bloginfo('name'),
 				'body'    => '<h1>Hola {nombre},</h1>'
 					. '<p>Hemos recibido correctamente tu solicitud como <strong>{tipo_miembro}</strong> en ' . esc_html(get_bloginfo('name')) . '.</p>'
 					. Email_Layout::meta_table(
@@ -158,7 +158,7 @@ class Email_Manager {
 			),
 			'bienvenida'                       => array(
 				'subject' => '\u00a1Bienvenido/a a ' . get_bloginfo('name') . ', {nombre}!',
-				'body'    => '<h1>00a1Bienvenido/a a ' . esc_html(get_bloginfo('name')) . ', {nombre}! 0001F389</H1>'
+				'body'    => __( '<h1>00a1Bienvenido/a a ', 'convoca-members' ) . esc_html(get_bloginfo('name')) . ', {nombre}! 0001F389</H1>'
 					. '<p>Tu alta como <strong>{tipo_miembro}</strong> ha sido confirmada.</p>'
 					. Email_Layout::meta_table(
 						array(
@@ -181,7 +181,7 @@ class Email_Manager {
 					. '<p>¡Nos vemos en el campo! 🌿</p>',
 			),
 			'recordatorio_pago'                => array(
-				'subject' => 'Recordatorio de pago (1/3) — ' . get_bloginfo('name'),
+				'subject' => __( 'Recordatorio de pago (1/3) — ', 'convoca-members' ) . get_bloginfo('name'),
 				'body'    => '<h1>Hola {nombre},</h1>'
 					. '<p>Tu solicitud de alta/renovación como <strong>{tipo_miembro}</strong> está pendiente de pago.</p>'
 					. Email_Layout::meta_table(
@@ -200,7 +200,7 @@ class Email_Manager {
 					. '<p>Si ya has realizado el pago, ignora este mensaje.</p>',
 			),
 			'pago_pendiente_2'                 => array(
-				'subject' => 'Segundo aviso: pago pendiente — ' . get_bloginfo('name'),
+				'subject' => __( 'Segundo aviso: pago pendiente — ', 'convoca-members' ) . get_bloginfo('name'),
 				'body'    => '<h1>Hola {nombre},</h1>'
 					. '<p>Seguimos sin constancia del pago de tu cuota de <strong>{tipo_miembro}</strong>.</p>'
 					. Email_Layout::meta_table(
@@ -214,7 +214,7 @@ class Email_Manager {
 					. '<p>Es importante completar el pago para mantener tu estado activo y acceder a las ventajas de socio.</p>',
 			),
 			'pago_pendiente_ultimo'            => array(
-				'subject' => 'Último aviso: suspensión inminente — ' . get_bloginfo('name'),
+				'subject' => __( 'Último aviso: suspensión inminente — ', 'convoca-members' ) . get_bloginfo('name'),
 				'body'    => '<h1>Hola {nombre},</h1>'
 					. '<p>Este es el <strong>último aviso</strong> respecto a tu cuota pendiente de <strong>{tipo_miembro}</strong>.</p>'
 					. Email_Layout::meta_table(
@@ -257,13 +257,13 @@ class Email_Manager {
 					. '<p>Recuerda renovar para no perder tu antigüedad y beneficios.</p>',
 			),
 			'renovacion_7d'                    => array(
-				'subject' => 'Última semana para tu renovación — ' . get_bloginfo('name'),
+				'subject' => __( 'Última semana para tu renovación — ', 'convoca-members' ) . get_bloginfo('name'),
 				'body'    => '<h1>Hola {nombre},</h1>'
 					. '<p>Tu membresía de {tipo_miembro} vencerá en <strong>7 días</strong>.</p>'
 					. '<p>Evita la suspensión automática realizando el pago desde tu panel de socio.</p>',
 			),
 			'renovacion_automatica'            => array(
-				'subject' => 'Procesando tu renovación automática — ' . get_bloginfo('name'),
+				'subject' => __( 'Procesando tu renovación automática — ', 'convoca-members' ) . get_bloginfo('name'),
 				'body'    => '<h1>Hola {nombre},</h1>'
 					. '<p>Como tienes activada la renovación automática, hemos generado el cargo correspondiente a tu cuota de {tipo_miembro}.</p>'
 					. Email_Layout::meta_table(
@@ -286,7 +286,7 @@ class Email_Manager {
 					. '<p>¡Gracias por seguir apoyando a Convoca!</p>',
 			),
 			'renovacion_completada'            => array(
-				'subject' => 'Renovación completada con éxito — ' . get_bloginfo('name'),
+				'subject' => __( 'Renovación completada con éxito — ', 'convoca-members' ) . get_bloginfo('name'),
 				'body'    => '<h1>¡Buenas noticias, {nombre}! 🎉</h1>'
 					. '<p>El pago de tu cuota anual como <strong>{tipo_miembro}</strong> se ha procesado correctamente.</p>'
 					. Email_Layout::meta_table(
@@ -301,7 +301,7 @@ class Email_Manager {
 					. '<p>¡Gracias por tu compromiso con la naturaleza! 🌍</p>',
 			),
 			'voluntariado_recordatorio'        => array(
-				'subject' => 'Recuerda tus horas de voluntariado — ' . get_bloginfo('name'),
+				'subject' => __( 'Recuerda tus horas de voluntariado — ', 'convoca-members' ) . get_bloginfo('name'),
 				'body'    => '<h1>Hola {nombre},</h1>'
 					. '<p>Te escribimos para recordarte tu compromiso de voluntariado con ' . esc_html(get_bloginfo('name')) . '.</p>'
 					. Email_Layout::meta_table(

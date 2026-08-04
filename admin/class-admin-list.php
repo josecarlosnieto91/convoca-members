@@ -53,7 +53,7 @@ class Admin_List extends \WP_List_Table {
 
 	public function get_columns(): array {
 		return array(
-			'cb'         => '<input type="checkbox">',
+			'cb'         => __( '<input type="checkbox">', 'convoca-members' ),
 			'numero'     => __( 'Nº', 'convoca-members' ),
 			'nombre'     => __( 'Nombre', 'convoca-members' ),
 			'email'      => __( 'Email', 'convoca-members' ),
@@ -419,7 +419,7 @@ class Admin_List extends \WP_List_Table {
 	public function column_whatsapp( $item ): string {
 		$has_wa = get_post_meta( $item->ID, '_convoca_whatsapp', true );
 		if ( $has_wa === 'no' ) {
-			return '<span style="color:#999">No</span>';
+			return '<span style="color:#999">' . esc_html__( 'No', 'convoca-members' ) . '</span>';
 		}
 
 		$wa_url = CPT_Miembro::whatsapp_link( $item->ID, self::WA_MSG );

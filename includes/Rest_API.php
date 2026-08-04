@@ -279,7 +279,7 @@ class Rest_API {
 			return new \WP_REST_Response(
 				array(
 					'success' => false,
-					'message' => 'Demasiados intentos. Intenta de nuevo en 5 minutos.',
+					'message' => __( 'Demasiados intentos. Intenta de nuevo en 5 minutos.', 'convoca-members' ),
 				),
 				429
 			);
@@ -292,7 +292,7 @@ class Rest_API {
 			return new \WP_REST_Response(
 				array(
 					'success' => false,
-					'message' => 'Usuario y contraseña son obligatorios.',
+					'message' => __( 'Usuario y contraseña son obligatorios.', 'convoca-members' ),
 				),
 				400
 			);
@@ -334,7 +334,7 @@ class Rest_API {
 		$post      = get_post( $member_id );
 
 		if ( ! $post || $post->post_type !== 'miembro' ) {
-			return new \WP_REST_Response( array( 'error' => 'Miembro no encontrado.' ), 404 );
+			return new \WP_REST_Response( array( 'error' => __( 'Miembro no encontrado.', 'convoca-members' ) ), 404 );
 		}
 
 		$access_code = get_post_meta( $member_id, '_convoca_access_code', true );
@@ -749,7 +749,7 @@ class Rest_API {
 		$post      = get_post( $member_id );
 
 		if ( ! $post || $post->post_type !== 'miembro' ) {
-			return new \WP_REST_Response( array( 'error' => 'Miembro no encontrado.' ), 404 );
+			return new \WP_REST_Response( array( 'error' => __( 'Miembro no encontrado.', 'convoca-members' ) ), 404 );
 		}
 
 		// Verify completion by recalculating actual hours (not just meta).
@@ -761,7 +761,7 @@ class Rest_API {
 			return new \WP_REST_Response(
 				array(
 					'success'  => false,
-					'message'  => 'Aún no has completado las horas mínimas requeridas para generar el certificado.',
+					'message'  => __( 'Aún no has completado las horas mínimas requeridas para generar el certificado.', 'convoca-members' ),
 					'progress' => array(
 						'aprobadas' => $horas_aprobadas,
 						'objetivo'  => $objetivo,
@@ -792,7 +792,7 @@ class Rest_API {
 		$post      = get_post( $member_id );
 
 		if ( ! $member_id || ! $post || $post->post_type !== 'miembro' ) {
-			wp_send_json_error( 'Miembro no encontrado o no autorizado', 404 );
+			wp_send_json_error( __( 'Miembro no encontrado o no autorizado', 'convoca-members' ), 404 );
 			return;
 		}
 
@@ -854,7 +854,7 @@ class Rest_API {
 			return new \WP_REST_Response(
 				array(
 					'success' => false,
-					'message' => 'Falta ID de notificación.',
+					'message' => __( 'Falta ID de notificación.', 'convoca-members' ),
 				),
 				400
 			);

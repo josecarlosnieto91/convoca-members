@@ -342,7 +342,7 @@ class Process_Member {
 					'id'            => $post_id,
 					'nombre'        => $nombre,
 					'gateway_error' => true,
-					'error_message' => 'No se ha podido contactar con la pasarela. Tu registro está guardado pero el pago está pendiente.',
+					'error_message' => __( 'No se ha podido contactar con la pasarela. Tu registro está guardado pero el pago está pendiente.', 'convoca-members' ),
 					'estado'        => $estado,
 				);
 			}

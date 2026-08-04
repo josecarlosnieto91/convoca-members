@@ -425,17 +425,17 @@ class Admin_Metaboxes {
 		$plan     = CPT_Miembro::get_plan( $plan_key );
 
 		if ( ! $plan ) {
-			wp_send_json_error( array( 'message' => 'Plan no válido o no asignado.' ) );
+			wp_send_json_error( array( 'message' => __( 'Plan no válido o no asignado.', 'convoca-members' ) ) );
 		}
 
 		$amount = $plan['price'];
 		if ( $amount <= 0 ) {
-			wp_send_json_error( array( 'message' => 'Este plan no tiene coste económico.' ) );
+			wp_send_json_error( array( 'message' => __( 'Este plan no tiene coste económico.', 'convoca-members' ) ) );
 		}
 
 		// Create Payment in Gateway.
 		if ( ! \Convoca\Core\Features::is_gateway_active() || ! function_exists( 'Convoca\Gateway\convoca_gateway_create_payment' ) ) {
-			wp_send_json_error( array( 'message' => 'Gateway no activo.' ) );
+			wp_send_json_error( array( 'message' => __( 'Gateway no activo.', 'convoca-members' ) ) );
 		}
 
 		$result = \Convoca\Gateway\convoca_gateway_create_payment(
@@ -461,7 +461,7 @@ class Admin_Metaboxes {
 
 		wp_send_json_success(
 			array(
-				'message' => 'Enlace generado y enviado correctamente. Recargando...',
+				'message' => __( 'Enlace generado y enviado correctamente. Recargando...', 'convoca-members' ),
 				'reload'  => true,
 			)
 		);
@@ -474,7 +474,7 @@ class Admin_Metaboxes {
 
 		$pago_id = get_post_meta( $post_id, '_convoca_pago_id', true );
 		if ( ! $pago_id ) {
-			wp_send_json_error( array( 'message' => 'No hay un pago activo. Genera uno primero.' ) );
+			wp_send_json_error( array( 'message' => __( 'No hay un pago activo. Genera uno primero.', 'convoca-members' ) ) );
 		}
 
 		$payment_url = Payment_Handler::get_payment_link( (int) $pago_id );
@@ -483,17 +483,17 @@ class Admin_Metaboxes {
 		$email_manager = new Email_Manager();
 		$email_manager->send_recordatorio_pago( $post_id, array( '{link_pago}' => $payment_url ) );
 
-		wp_send_json_success( array( 'message' => 'Recordatorio enviado correctamente.' ) );
+		wp_send_json_success( array( 'message' => __( 'Recordatorio enviado correctamente.', 'convoca-members' ) ) );
 	}
 
 	private function verify_ajax(): void {
 		$data    = wp_unslash( $_POST );
 		$post_id = isset( $data['post_id'] ) ? (int) $data['post_id'] : 0;
 		if ( ! current_user_can( 'edit_post', $post_id ) ) {
-			wp_send_json_error( array( 'message' => 'Sin permisos sobre este registro.' ) );
+			wp_send_json_error( array( 'message' => __( 'Sin permisos sobre este registro.', 'convoca-members' ) ) );
 		}
 		if ( ! isset( $data['nonce'] ) || ! wp_verify_nonce( $data['nonce'], 'convoca_actions_' . $post_id ) ) {
-			wp_send_json_error( array( 'message' => 'Nonce inválido.' ) );
+			wp_send_json_error( array( 'message' => __( 'Nonce inválido.', 'convoca-members' ) ) );
 		}
 	}
 
@@ -573,14 +573,14 @@ class Admin_Metaboxes {
 		check_ajax_referer( 'convoca_actions_' . $data['post_id'], 'nonce' );
 
 		if ( ! current_user_can( 'manage_options' ) ) {
-			wp_send_json_error( array( 'message' => 'Sin permisos' ) );
+			wp_send_json_error( array( 'message' => __( 'Sin permisos', 'convoca-members' ) ) );
 		}
 
 		$member_id = absint( $data['post_id'] );
 		$member    = get_post( $member_id );
 
 		if ( ! $member || $member->post_type !== 'miembro' ) {
-			wp_send_json_error( array( 'message' => 'Miembro no encontrado' ) );
+			wp_send_json_error( array( 'message' => __( 'Miembro no encontrado', 'convoca-members' ) ) );
 		}
 
 		$data = array(
@@ -644,14 +644,14 @@ class Admin_Metaboxes {
 		check_ajax_referer( 'convoca_actions_' . $data['post_id'], 'nonce' );
 
 		if ( ! current_user_can( 'manage_options' ) ) {
-			wp_send_json_error( array( 'message' => 'Sin permisos' ) );
+			wp_send_json_error( array( 'message' => __( 'Sin permisos', 'convoca-members' ) ) );
 		}
 
 		$member_id = absint( $data['post_id'] );
 		$member    = get_post( $member_id );
 
 		if ( ! $member || $member->post_type !== 'miembro' ) {
-			wp_send_json_error( array( 'message' => 'Miembro no encontrado' ) );
+			wp_send_json_error( array( 'message' => __( 'Miembro no encontrado', 'convoca-members' ) ) );
 		}
 
 		global $wpdb;
@@ -684,7 +684,7 @@ class Admin_Metaboxes {
 
 		wp_delete_post( $member_id, true );
 
-		wp_send_json_success( array( 'message' => 'Todos los datos del miembro han sido eliminados.' ) );
+		wp_send_json_success( array( 'message' => __( 'Todos los datos del miembro han sido eliminados.', 'convoca-members' ) ) );
 	}
 }
 

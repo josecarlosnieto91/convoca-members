@@ -156,7 +156,7 @@ class Admin_Webhooks {
 		$msg  = sanitize_text_field( wp_unslash( $_GET['msg'] ?? '' ) );
 
 		echo '<div class="wrap">';
-		echo '<h1>🔗 Webhooks — Convoca</h1>';
+		echo '<h1>' . esc_html__( '🔗 Webhooks — Convoca', 'convoca-members' ) . '</h1>';
 
 		// Flash messages.
 		$messages = array(
@@ -202,7 +202,7 @@ class Admin_Webhooks {
 		$webhooks = Webhook_Manager::get_webhooks();
 
 		echo '<div style="margin-bottom:15px;">';
-		echo '<a href="' . esc_url( admin_url( 'admin.php?page=convoca-webhooks&view=create' ) ) . '" class="button button-primary">+ Añadir Webhook</a>';
+		echo '<a href="' . esc_url( admin_url( 'admin.php?page=convoca-webhooks&view=create' ) ) . '" class="button button-primary">' . esc_html__( '+ Añadir Webhook', 'convoca-members' ) . '</a>';
 		echo '</div>';
 
 		if ( empty( $webhooks ) ) {
@@ -286,7 +286,7 @@ class Admin_Webhooks {
 		$title  = $is_edit ? 'Editar Webhook' : 'Nuevo Webhook';
 
 		echo '<h2>' . esc_html( $title ) . '</h2>';
-		echo '<a href="' . esc_url( admin_url( 'admin.php?page=convoca-webhooks' ) ) . '" class="button" style="margin-bottom:15px;">← Volver a la lista</a>';
+		echo '<a href="' . esc_url( admin_url( 'admin.php?page=convoca-webhooks' ) ) . '" class="button" style="margin-bottom:15px;">' . esc_html__( '← Volver a la lista', 'convoca-members' ) . '</a>';
 
 		echo '<form method="post" action="">';
 		wp_nonce_field( 'convoca_webhook_nonce' );
