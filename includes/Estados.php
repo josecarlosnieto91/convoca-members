@@ -51,14 +51,16 @@ class Estados {
 	);
 
 	/** Human-readable labels. */
-	public const LABELS = array(
-		'pendiente_documentacion' => 'Pendiente documentación',
-		'pendiente_pago'          => 'Pendiente pago',
-		'activo'                  => 'Activo',
-		'suspendido'              => 'Suspendido',
-		'baja_solicitada'         => 'Baja solicitada',
-		'baja'                    => 'Baja',
-	);
+	public static function labels(): array {
+		return array(
+			'pendiente_documentacion' => __( 'Pendiente documentación', 'convoca-members' ),
+			'pendiente_pago'          => __( 'Pendiente pago', 'convoca-members' ),
+			'activo'                  => __( 'Activo', 'convoca-members' ),
+			'suspendido'              => __( 'Suspendido', 'convoca-members' ),
+			'baja_solicitada'         => __( 'Baja solicitada', 'convoca-members' ),
+			'baja'                    => __( 'Baja', 'convoca-members' ),
+		);
+	}
 
 	/** Badge CSS classes (matching theme). */
 	public const BADGE_CLASSES = array(
@@ -127,8 +129,8 @@ class Estados {
 					sprintf(
 						/* translators: %1$s: current state, %2$s: target state */
 						__( 'Transición no permitida: %1$s → %2$s', 'convoca-members' ),
-						self::LABELS[ $old ] ?? $old,
-						self::LABELS[ $new ] ?? $new
+						self::labels()[ $old ] ?? $old,
+						self::labels()[ $new ] ?? $new
 					)
 				);
 			}
@@ -178,8 +180,8 @@ class Estados {
 		\Convoca\Core\Logger::info(
 			sprintf(
 				'Estado: %s → %s. %s',
-				self::LABELS[ $old ] ?? $old ?: 'NUEVO',
-				self::LABELS[ $new ] ?? $new,
+				self::labels()[ $old ] ?? $old ?: 'NUEVO',
+				self::labels()[ $new ] ?? $new,
 				$note ? "Nota: $note" : ''
 			),
 			'Members/Estados',
@@ -216,7 +218,7 @@ class Estados {
 	 */
 	public static function badge_html( string $state ): string {
 		$class = self::BADGE_CLASSES[ $state ] ?? 'convoca-badge';
-		$label = self::LABELS[ $state ] ?? $state;
+		$label = self::labels()[ $state ] ?? $state;
 		return '<span class="' . esc_attr( $class ) . '">' . esc_html( $label ) . '</span>';
 	}
 }

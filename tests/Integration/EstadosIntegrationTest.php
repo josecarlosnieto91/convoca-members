@@ -27,7 +27,7 @@ class EstadosIntegrationTest extends \WP_UnitTestCase
     public function test_all_state_keys_have_labels(): void
     {
         foreach (\Convoca\Members\Estados::STATES as $key => $label) {
-            $this->assertArrayHasKey($key, \Convoca\Members\Estados::LABELS);
+            $this->assertArrayHasKey($key, \Convoca\Members\Estados::labels());
             $this->assertArrayHasKey($key, \Convoca\Members\Estados::BADGE_CLASSES);
         }
     }

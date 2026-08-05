@@ -278,7 +278,7 @@ class Admin_Settings {
 						if ( \Convoca\Core\License_Manager::has_pro( 'gamification' ) ) {
 							$this->render_gamification_tab();
 						} else {
-							echo '<div class="convoca-alert convoca-alert--info" style="display:block;margin:20px 0;"><p>🔒 <strong>Gamificación</strong> es una funcionalidad PRO. <a href="' . esc_url( admin_url( 'admin.php?page=convoca-license' ) ) . '">Activa tu licencia</a> para desbloquear badges, niveles y puntos de voluntariado.</p></div>';
+							echo '<div class="convoca-alert convoca-alert--info" style="display:block;margin:20px 0;"><p>🔒 <strong>' . esc_html__( 'Gamificación', 'convoca-members' ) . '</strong> ' . esc_html__( 'es una funcionalidad PRO.', 'convoca-members' ) . ' <a href="' . esc_url( admin_url( 'admin.php?page=convoca-license' ) ) . '">' . esc_html__( 'Activa tu licencia', 'convoca-members' ) . '</a> ' . esc_html__( 'para desbloquear badges, niveles y puntos de voluntariado.', 'convoca-members' ) . '</p></div>';
 						}
 						break;
 					case 'status':

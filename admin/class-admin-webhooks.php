@@ -303,28 +303,28 @@ class Admin_Webhooks {
 		echo '<td><input type="text" id="webhook_label" name="webhook_label" value="' . esc_attr( $webhook['label'] ?? '' ) . '" class="regular-text" placeholder="Ej: Slack Notifications"></td></tr>';
 
 		// URL.
-		echo '<tr><th><label for="webhook_url">URL del Webhook</label></th>';
+		echo '<tr><th><label for="webhook_url">' . esc_html__( 'URL del Webhook', 'convoca-members' ) . '</label></th>';
 		echo '<td><input type="url" id="webhook_url" name="webhook_url" value="' . esc_attr( $webhook['url'] ?? '' ) . '" class="regular-text" required placeholder="https://ejemplo.com/webhook"></td></tr>';
 
 		// Secret.
-		echo '<tr><th><label for="webhook_secret">Secreto HMAC (opcional)</label></th>';
-		echo '<td><input type="text" id="webhook_secret" name="webhook_secret" value="' . esc_attr( $webhook['secret'] ?? '' ) . '" class="regular-text" placeholder="Se usa para firmar los payloads">';
-		echo '<p class="description">Si se configura, cada entrega incluirá un header <code>X-Convoca-Signature</code> con el HMAC-SHA256.</p></td></tr>';
+		echo '<tr><th><label for="webhook_secret">' . esc_html__( 'Secreto HMAC (opcional)', 'convoca-members' ) . '</label></th>';
+		echo '<td><input type="text" id="webhook_secret" name="webhook_secret" value="' . esc_attr( $webhook['secret'] ?? '' ) . '" class="regular-text" placeholder="' . esc_attr__( 'Se usa para firmar los payloads', 'convoca-members' ) . '">';
+		echo '<p class="description">' . esc_html__( 'Si se configura, cada entrega incluirá un header', 'convoca-members' ) . ' <code>X-Convoca-Signature</code> ' . esc_html__( 'con el HMAC-SHA256.', 'convoca-members' ) . '</p></td></tr>';
 
 		// Active (only for edit).
 		if ( $is_edit ) {
-			echo '<tr><th>Estado</th>';
-			echo '<td><label><input type="checkbox" name="webhook_active" value="1" ' . checked( $webhook['active'] ?? true, true, false ) . '> Activo</label></td></tr>';
+			echo '<tr><th>' . esc_html__( 'Estado', 'convoca-members' ) . '</th>';
+			echo '<td><label><input type="checkbox" name="webhook_active" value="1" ' . checked( $webhook['active'] ?? true, true, false ) . '> ' . esc_html__( 'Activo', 'convoca-members' ) . '</label></td></tr>';
 		}
 
 		// Events.
-		echo '<tr><th>Eventos suscritos</th>';
+		echo '<tr><th>' . esc_html__( 'Eventos suscritos', 'convoca-members' ) . '</th>';
 		echo '<td><fieldset>';
-		echo '<p class="description" style="margin-bottom:10px;">Selecciona los eventos. Si no seleccionas ninguno, recibirá <strong>todos</strong> los eventos.</p>';
+		echo '<p class="description" style="margin-bottom:10px;">' . esc_html__( 'Selecciona los eventos. Si no seleccionas ninguno, recibirá', 'convoca-members' ) . ' <strong>' . esc_html__( 'todos', 'convoca-members' ) . '</strong> ' . esc_html__( 'los eventos.', 'convoca-members' ) . '</p>';
 
 		$subscribed = $webhook['events'] ?? array();
 
-		foreach ( Webhook_Manager::EVENTS as $key => $label ) {
+		foreach ( Webhook_Manager::events() as $key => $label ) {
 			$checked = empty( $subscribed ) || in_array( $key, $subscribed, true );
 			printf(
 				'<label style="display:block;margin-bottom:4px;"><input type="checkbox" name="webhook_events[]" value="%s" %s> <code>%s</code> — %s</label>',

@@ -696,7 +696,7 @@ class Cron_Manager {
 		$html .= '<table style="width:100%;font-size:14px;">';
 
 		foreach ( $stats['status_counts'] as $state => $count ) {
-			$label = Estados::LABELS[ $state ] ?? $state;
+			$label = Estados::labels()[ $state ] ?? $state;
 			$html .= '<tr><td style="padding:4px 0;">' . esc_html( $label ) . '</td>';
 			$html .= '<td style="padding:4px 0;text-align:right;font-weight:bold;">' . $count . '</td></tr>';
 		}

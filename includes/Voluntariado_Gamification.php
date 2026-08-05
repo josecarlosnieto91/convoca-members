@@ -33,128 +33,130 @@ class Voluntariado_Gamification {
 	/**
 	 * Default track definitions. Saved options merge over these.
 	 */
-	const DEFAULT_TRACKS = array(
+	public static function default_tracks(): array {
+		return array(
 		'nature'    => array(
-			'label'  => '🌱 Naturaleza',
+			'label'  => __( '🌱 Naturaleza', 'convoca-members' ),
 			'levels' => array(
 				array(
-					'name'  => 'Semilla',
+					'name'  => __( 'Semilla', 'convoca-members' ),
 					'emoji' => '🌱',
 					'hours' => 0,
 					'color' => '#7FA36B',
-					'desc'  => 'Empiezas a conectar con la naturaleza',
+					'desc'  => __( 'Empiezas a conectar con la naturaleza', 'convoca-members' ),
 				),
 				array(
-					'name'  => 'Brote',
+					'name'  => __( 'Brote', 'convoca-members' ),
 					'emoji' => '🌿',
 					'hours' => 10,
 					'color' => '#5C6B4F',
-					'desc'  => 'Tus raíces crecen',
+					'desc'  => __( 'Tus raíces crecen', 'convoca-members' ),
 				),
 				array(
-					'name'  => 'Árbol',
+					'name'  => __( 'Árbol', 'convoca-members' ),
 					'emoji' => '🌳',
 					'hours' => 25,
 					'color' => '#FF8700',
-					'desc'  => 'Ya eres refugio de biodiversidad',
+					'desc'  => __( 'Ya eres refugio de biodiversidad', 'convoca-members' ),
 				),
 				array(
-					'name'  => 'Bosque',
+					'name'  => __( 'Bosque', 'convoca-members' ),
 					'emoji' => '🌲',
 					'hours' => 50,
 					'color' => '#FFAB00',
-					'desc'  => 'El ecosistema te reconoce',
+					'desc'  => __( 'El ecosistema te reconoce', 'convoca-members' ),
 				),
 				array(
-					'name'  => 'Ecosistema',
+					'name'  => __( 'Ecosistema', 'convoca-members' ),
 					'emoji' => '🌍',
 					'hours' => 100,
 					'color' => '#7D0032',
-					'desc'  => 'Eres parte del todo',
+					'desc'  => __( 'Eres parte del todo', 'convoca-members' ),
 				),
 			),
 		),
 		'community' => array(
-			'label'  => '🤝 Comunidad',
+			'label'  => __( '🤝 Comunidad', 'convoca-members' ),
 			'levels' => array(
 				array(
-					'name'  => 'Mano Abierta',
+					'name'  => __( 'Mano Abierta', 'convoca-members' ),
 					'emoji' => '🤝',
 					'hours' => 0,
 					'color' => '#4A90D9',
-					'desc'  => 'El primer paso es la confianza',
+					'desc'  => __( 'El primer paso es la confianza', 'convoca-members' ),
 				),
 				array(
-					'name'  => 'Vínculo',
+					'name'  => __( 'Vínculo', 'convoca-members' ),
 					'emoji' => '👥',
 					'hours' => 10,
 					'color' => '#357ABD',
-					'desc'  => 'Creas comunidad',
+					'desc'  => __( 'Creas comunidad', 'convoca-members' ),
 				),
 				array(
-					'name'  => 'Comunidad',
+					'name'  => __( 'Comunidad', 'convoca-members' ),
 					'emoji' => '🏘️',
 					'hours' => 25,
 					'color' => '#E67E22',
-					'desc'  => 'El grupo te sostiene',
+					'desc'  => __( 'El grupo te sostiene', 'convoca-members' ),
 				),
 				array(
-					'name'  => 'Ciudad',
+					'name'  => __( 'Ciudad', 'convoca-members' ),
 					'emoji' => '🌆',
 					'hours' => 50,
 					'color' => '#F39C12',
-					'desc'  => 'Tu huella social se expande',
+					'desc'  => __( 'Tu huella social se expande', 'convoca-members' ),
 				),
 				array(
-					'name'  => 'Red',
+					'name'  => __( 'Red', 'convoca-members' ),
 					'emoji' => '🌐',
 					'hours' => 100,
 					'color' => '#8E44AD',
-					'desc'  => 'Eres nodo de una red viva',
+					'desc'  => __( 'Eres nodo de una red viva', 'convoca-members' ),
 				),
 			),
 		),
 		'growth'    => array(
-			'label'  => '🚀 Crecimiento',
+			'label'  => __( '🚀 Crecimiento', 'convoca-members' ),
 			'levels' => array(
 				array(
-					'name'  => 'Náyade',
+					'name'  => __( 'Náyade', 'convoca-members' ),
 					'emoji' => '💧',
 					'hours' => 0,
 					'color' => '#3498DB',
-					'desc'  => 'Fluir con el cambio',
+					'desc'  => __( 'Fluir con el cambio', 'convoca-members' ),
 				),
 				array(
-					'name'  => 'Salamandra',
+					'name'  => __( 'Salamandra', 'convoca-members' ),
 					'emoji' => '🔥',
 					'hours' => 10,
 					'color' => '#E74C3C',
-					'desc'  => 'La pasión que transforma',
+					'desc'  => __( 'La pasión que transforma', 'convoca-members' ),
 				),
 				array(
-					'name'  => 'Silfo',
+					'name'  => __( 'Silfo', 'convoca-members' ),
 					'emoji' => '🌪️',
 					'hours' => 25,
 					'color' => '#1ABC9C',
-					'desc'  => 'La idea que vuela',
+					'desc'  => __( 'La idea que vuela', 'convoca-members' ),
 				),
 				array(
-					'name'  => 'Gnomo',
+					'name'  => __( 'Gnomo', 'convoca-members' ),
 					'emoji' => '⛰️',
 					'hours' => 50,
 					'color' => '#795548',
-					'desc'  => 'La fuerza que sostiene',
+					'desc'  => __( 'La fuerza que sostiene', 'convoca-members' ),
 				),
 				array(
-					'name'  => 'Deva',
+					'name'  => __( 'Deva', 'convoca-members' ),
 					'emoji' => '✨',
 					'hours' => 100,
 					'color' => '#9B59B6',
-					'desc'  => 'Guardian/a de la naturaleza',
+					'desc'  => __( 'Guardian/a de la naturaleza', 'convoca-members' ),
 				),
 			),
 		),
-	);
+		);
+	}
 
 	const DEFAULT_TRACK = 'nature';
 
@@ -166,7 +168,7 @@ class Voluntariado_Gamification {
 	 * @return array Default track data.
 	 */
 	public static function get_default_tracks(): array {
-		return self::DEFAULT_TRACKS;
+		return self::default_tracks();
 	}
 
 	/**
@@ -220,7 +222,7 @@ class Voluntariado_Gamification {
 	 * @return array Full TRACKS config with saved overrides merged in.
 	 */
 	public static function get_tracks_config(): array {
-		$defaults = self::DEFAULT_TRACKS;
+		$defaults = self::default_tracks();
 		$saved    = get_option( self::OPTION_KEY, array() );
 
 		if ( empty( $saved ) ) {
@@ -252,12 +254,12 @@ class Voluntariado_Gamification {
 	 * @return array  Current level with name, emoji, color, desc, index.
 	 */
 	public static function get_level( float $hours, string $track = '' ): array {
-		if ( ! $track || ! isset( self::DEFAULT_TRACKS[ $track ] ) ) {
+		if ( ! $track || ! isset( self::default_tracks()[ $track ] ) ) {
 			$track = self::DEFAULT_TRACK;
 		}
 
 		$config = self::get_tracks_config();
-		$levels = $config[ $track ]['levels'] ?? self::DEFAULT_TRACKS[ self::DEFAULT_TRACK ]['levels'];
+		$levels = $config[ $track ]['levels'] ?? self::default_tracks()[ self::DEFAULT_TRACK ]['levels'];
 
 		$level          = $levels[0];
 		$level['index'] = 0;
@@ -280,12 +282,12 @@ class Voluntariado_Gamification {
 	 * @return array|null Next level data or null.
 	 */
 	public static function get_next_level( float $hours, string $track = '' ): ?array {
-		if ( ! $track || ! isset( self::DEFAULT_TRACKS[ $track ] ) ) {
+		if ( ! $track || ! isset( self::default_tracks()[ $track ] ) ) {
 			$track = self::DEFAULT_TRACK;
 		}
 
 		$config = self::get_tracks_config();
-		$levels = $config[ $track ]['levels'] ?? self::DEFAULT_TRACKS[ self::DEFAULT_TRACK ]['levels'];
+		$levels = $config[ $track ]['levels'] ?? self::default_tracks()[ self::DEFAULT_TRACK ]['levels'];
 
 		$current_index = self::get_level( $hours, $track )['index'] ?? 0;
 		$next_index    = $current_index + 1;
@@ -305,12 +307,12 @@ class Voluntariado_Gamification {
 	 * @return array{current: array, next: array|null, progress_percent: float, hours_to_next: float}
 	 */
 	public static function get_progress( float $hours, string $track = '' ): array {
-		if ( ! $track || ! isset( self::DEFAULT_TRACKS[ $track ] ) ) {
+		if ( ! $track || ! isset( self::default_tracks()[ $track ] ) ) {
 			$track = self::DEFAULT_TRACK;
 		}
 
 		$config = self::get_tracks_config();
-		$levels = $config[ $track ]['levels'] ?? self::DEFAULT_TRACKS[ self::DEFAULT_TRACK ]['levels'];
+		$levels = $config[ $track ]['levels'] ?? self::default_tracks()[ self::DEFAULT_TRACK ]['levels'];
 
 		$current = self::get_level( $hours, $track );
 		$next    = self::get_next_level( $hours, $track );

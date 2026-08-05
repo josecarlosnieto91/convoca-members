@@ -397,7 +397,7 @@ class Admin_Page {
 						<select name="nuevo_estado">
 							<?php foreach ( Estados::TRANSITIONS[ $estado ] ?? array() as $target ) : ?>
 								<option value="<?php echo esc_attr( $target ); ?>">
-									<?php echo esc_html( Estados::LABELS[ $target ] ); ?>
+									<?php echo esc_html( Estados::labels()[ $target ] ); ?>
 								</option>
 							<?php endforeach; ?>
 						</select>
@@ -422,10 +422,10 @@ class Admin_Page {
 								<?php foreach ( array_reverse( $history ) as $entry ) : ?>
 									<tr>
 										<td>
-											<?php echo esc_html( Estados::LABELS[ $entry['de'] ] ?? $entry['de'] ); ?>
+											<?php echo esc_html( Estados::labels()[ $entry['de'] ] ?? $entry['de'] ); ?>
 										</td>
 										<td>
-											<?php echo esc_html( Estados::LABELS[ $entry['a'] ] ?? $entry['a'] ); ?>
+											<?php echo esc_html( Estados::labels()[ $entry['a'] ] ?? $entry['a'] ); ?>
 										</td>
 										<td>
 											<?php echo esc_html( $entry['fecha'] ); ?>

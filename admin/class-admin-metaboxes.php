@@ -285,7 +285,7 @@ class Admin_Metaboxes {
 			<div class="convoca-field">
 				<label for="convoca_estado_miembro">Estado</label>
 				<select name="convoca_estado_miembro" id="convoca_estado_miembro">
-					<?php foreach ( Estados::LABELS as $slug => $label ) : ?>
+					<?php foreach ( Estados::labels() as $slug => $label ) : ?>
 						<option value="<?php echo esc_attr( $slug ); ?>" <?php selected( $get( 'estado_miembro' ), $slug ); ?>>
 							<?php echo esc_html( $label ); ?>
 						</option>

@@ -115,17 +115,17 @@ class GDPR_Tools {
 			// ── Member profile data ──
 			$profile_data = array();
 			$meta_map     = array(
-				'_convoca_nombre'           => 'Nombre',
-				'_convoca_apellidos'        => 'Apellidos',
-				'_convoca_email'            => 'Email',
-				'_convoca_telefono'         => 'Teléfono',
-				'_convoca_dni'              => 'DNI/NIE',
-				'_convoca_direccion'        => 'Dirección',
-				'_convoca_fecha_nacimiento' => 'Fecha de nacimiento',
-				'_convoca_plan'             => 'Plan de membresía',
-				'_convoca_estado'           => 'Estado',
-				'_convoca_numero_socio'     => 'Número de socio',
-				'_convoca_fecha_alta'       => 'Fecha de alta',
+				'_convoca_nombre'           => __( 'Nombre', 'convoca-members' ),
+				'_convoca_apellidos'        => __( 'Apellidos', 'convoca-members' ),
+				'_convoca_email'            => __( 'Email', 'convoca-members' ),
+				'_convoca_telefono'         => __( 'Teléfono', 'convoca-members' ),
+				'_convoca_dni'              => __( 'DNI/NIE', 'convoca-members' ),
+				'_convoca_direccion'        => __( 'Dirección', 'convoca-members' ),
+				'_convoca_fecha_nacimiento' => __( 'Fecha de nacimiento', 'convoca-members' ),
+				'_convoca_plan'             => __( 'Plan de membresía', 'convoca-members' ),
+				'_convoca_estado'           => __( 'Estado', 'convoca-members' ),
+				'_convoca_numero_socio'     => __( 'Número de socio', 'convoca-members' ),
+				'_convoca_fecha_alta'       => __( 'Fecha de alta', 'convoca-members' ),
 			);
 
 			foreach ( $meta_map as $meta_key => $label ) {
@@ -142,11 +142,11 @@ class GDPR_Tools {
 			$consent_ts = get_post_meta( $member_id, '_convoca_consent_timestamp', true );
 			if ( $consent_ts ) {
 				$profile_data[] = array(
-					'name'  => 'Consentimiento registrado',
+					'name'  => __( 'Consentimiento registrado', 'convoca-members' ),
 					'value' => $consent_ts,
 				);
 				$profile_data[] = array(
-					'name'  => 'Versión de consentimiento',
+					'name'  => __( 'Versión de consentimiento', 'convoca-members' ),
 					'value' => get_post_meta( $member_id, '_convoca_consent_version', true ),
 				);
 			}
@@ -154,7 +154,7 @@ class GDPR_Tools {
 			if ( ! empty( $profile_data ) ) {
 				$export_items[] = array(
 					'group_id'          => 'convoca-member-profile',
-					'group_label'       => 'Datos de socio ' . get_bloginfo('name'),
+					'group_label'       => __( 'Datos de socio', 'convoca-members' ) . ' ' . get_bloginfo('name'),
 					'group_description' => __( 'Datos personales almacenados como socio de la asociación.', 'convoca-members' ),
 					'item_id'           => "member-{$member_id}",
 					'data'              => $profile_data,
@@ -185,30 +185,30 @@ class GDPR_Tools {
 				$amount_cents = (int) get_post_meta( $pago->ID, '_convoca_amount_cents', true );
 				$pago_data    = array(
 					array(
-						'name'  => 'Concepto',
+						'name'  => __( 'Concepto', 'convoca-members' ),
 						'value' => get_post_meta( $pago->ID, '_convoca_product_desc', true ),
 					),
 					array(
-						'name'  => 'Importe',
+						'name'  => __( 'Importe', 'convoca-members' ),
 						'value' => number_format( $amount_cents / 100, 2, ',', '.' ) . ' €',
 					),
 					array(
-						'name'  => 'Estado',
+						'name'  => __( 'Estado', 'convoca-members' ),
 						'value' => get_post_meta( $pago->ID, '_convoca_status', true ),
 					),
 					array(
-						'name'  => 'Método',
+						'name'  => __( 'Método', 'convoca-members' ),
 						'value' => get_post_meta( $pago->ID, '_convoca_method', true ),
 					),
 					array(
-						'name'  => 'Fecha',
+						'name'  => __( 'Fecha', 'convoca-members' ),
 						'value' => $pago->post_date,
 					),
 				);
 
 				$export_items[] = array(
 					'group_id'          => 'convoca-payments',
-					'group_label'       => 'Pagos ' . get_bloginfo('name'),
+					'group_label'       => __( 'Pagos', 'convoca-members' ) . ' ' . get_bloginfo('name'),
 					'group_description' => __( 'Historial de pagos realizados.', 'convoca-members' ),
 					'item_id'           => "payment-{$pago->ID}",
 					'data'              => $pago_data,
@@ -237,22 +237,22 @@ class GDPR_Tools {
 
 				$insc_data = array(
 					array(
-						'name'  => 'Actividad',
+						'name'  => __( 'Actividad', 'convoca-members' ),
 						'value' => $actividad_title,
 					),
 					array(
-						'name'  => 'Estado',
+						'name'  => __( 'Estado', 'convoca-members' ),
 						'value' => get_post_meta( $inscripcion->ID, '_convoca_estado', true ),
 					),
 					array(
-						'name'  => 'Fecha inscripción',
+						'name'  => __( 'Fecha inscripción', 'convoca-members' ),
 						'value' => $inscripcion->post_date,
 					),
 				);
 
 				$export_items[] = array(
 					'group_id'          => 'convoca-inscriptions',
-					'group_label'       => 'Inscripciones ' . get_bloginfo('name'),
+					'group_label'       => __( 'Inscripciones', 'convoca-members' ) . ' ' . get_bloginfo('name'),
 					'group_description' => __( 'Inscripciones a actividades.', 'convoca-members' ),
 					'item_id'           => "inscription-{$inscripcion->ID}",
 					'data'              => $insc_data,
@@ -278,23 +278,23 @@ class GDPR_Tools {
 				$proyecto_id = get_post_meta( $hora->ID, '_convoca_proyecto_id', true );
 				$hora_data   = array(
 					array(
-						'name'  => 'Fecha',
+						'name'  => __( 'Fecha', 'convoca-members' ),
 						'value' => get_post_meta( $hora->ID, '_convoca_fecha', true ),
 					),
 					array(
-						'name'  => 'Horas',
+						'name'  => __( 'Horas', 'convoca-members' ),
 						'value' => get_post_meta( $hora->ID, '_convoca_horas', true ),
 					),
 					array(
-						'name'  => 'Proyecto',
+						'name'  => __( 'Proyecto', 'convoca-members' ),
 						'value' => $proyecto_id ? get_the_title( $proyecto_id ) : '',
 					),
 					array(
-						'name'  => 'Descripción',
+						'name'  => __( 'Descripción', 'convoca-members' ),
 						'value' => $hora->post_content,
 					),
 					array(
-						'name'  => 'Estado',
+						'name'  => __( 'Estado', 'convoca-members' ),
 						'value' => get_post_meta( $hora->ID, '_convoca_estado', true ),
 					),
 				);

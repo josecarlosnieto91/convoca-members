@@ -231,7 +231,7 @@ class CSV_Exporter {
 				'Código Postal'      => $esc( $meta( 'c_postal' ) ),
 				'Provincia'          => $esc( $meta( 'provincia' ) ),
 				'Tipo'               => $esc( $tipo ),
-				'Estado'             => Estados::LABELS[ $meta( 'estado_miembro' ) ] ?? $meta( 'estado_miembro' ),
+				'Estado'             => Estados::labels()[ $meta( 'estado_miembro' ) ] ?? $meta( 'estado_miembro' ),
 				'Plan'               => $esc( $meta( 'plan' ) ),
 				'Sub Plan'           => $esc( $meta( 'sub_plan' ) ),
 				'Forma pago'         => $esc( $meta( 'forma_pago' ) ),

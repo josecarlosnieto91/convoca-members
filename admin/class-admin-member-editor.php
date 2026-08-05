@@ -109,7 +109,7 @@ class Admin_Member_Editor {
 					<div class="convoca-field">
 						<label for="convoca_estado_miembro"><?php esc_html_e( 'Estado', 'convoca-members' ); ?></label>
 						<select id="convoca_estado_miembro" name="convoca_estado_miembro">
-							<?php foreach ( Estados::LABELS as $slug => $label ) : ?>
+							<?php foreach ( Estados::labels() as $slug => $label ) : ?>
 								<option value="<?php echo esc_attr( $slug ); ?>" <?php selected( $m( 'estado_miembro' ), $slug ); ?>>
 									<?php echo esc_html( $label ); ?>
 								</option>

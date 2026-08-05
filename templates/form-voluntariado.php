@@ -28,7 +28,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-$areas = \Convoca\Members\Form_Voluntariado::INTEREST_AREAS;
+$areas = \Convoca\Members\Form_Voluntariado::interest_areas();
 ?>
 
 <div id="conv-vol-wrapper" class="convoca-form" role="region" aria-label="Formulario de voluntariado">

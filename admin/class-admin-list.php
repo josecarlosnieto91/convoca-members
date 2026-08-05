@@ -287,7 +287,7 @@ class Admin_List extends \WP_List_Table {
 				</option>
 				<?php
 				$get_data = wp_unslash( $_GET );
-				foreach ( Estados::LABELS as $slug => $label ) :
+				foreach ( Estados::labels() as $slug => $label ) :
 					?>
 					<option value="<?php echo esc_attr( $slug ); ?>" <?php selected( $get_data['estado_filter'] ?? '', $slug ); ?>>
 						<?php echo esc_html( $label ); ?>

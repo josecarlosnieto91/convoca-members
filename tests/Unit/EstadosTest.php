@@ -45,8 +45,8 @@ class EstadosTest extends TestCase
     public function test_labels_cover_all_states(): void
     {
         foreach (Estados::STATES as $state) {
-            $this->assertArrayHasKey($state, Estados::LABELS, "Missing label for state: $state");
-            $this->assertNotEmpty(Estados::LABELS[$state]);
+            $this->assertArrayHasKey($state, Estados::labels(), "Missing label for state: $state");
+            $this->assertNotEmpty(Estados::labels()[$state]);
         }
     }
 

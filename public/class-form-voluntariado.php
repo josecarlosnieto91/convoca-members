@@ -30,21 +30,38 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Form_Voluntariado {
 
 
-	/** Interest areas matching the static site. */
-	public const INTEREST_AREAS = array(
-		'educacion'    => '📚 Educación Ambiental',
-		'aves'         => '🐦 Ornitología (Paxareando)',
-		'marina'       => '🌊 Biodiversidad Marina (GIMPA)',
-		'rios'         => '💧 Ciencia Ciudadana Fluvial',
-		'botanica'     => '🌿 Botánica (Veget-ando)',
-		'meteo'        => '🌦️ Meteorología (Troposfera)',
-		'infantil'     => '👶 Actividades Infantiles',
-		'social'       => '🏠 Centro Social (actividades comunitarias)',
-		'comunicacion' => '📢 Comunicación y RRSS',
-		'diseno'       => '🎨 Diseño e Ilustración',
-		'fotografia'   => '📷 Fotografía de Naturaleza',
-		'logistica'    => '🚗 Logística y Coordinación',
-	);
+	/**
+	 * Interest areas shown in the volunteer form.
+	 *
+	 * Defaults are generic. Sites can override via the
+	 * `convoca_members_interest_areas` filter (see demo-mode mu-plugin
+	 * for a sandbox example). No site-specific data is hardcoded.
+	 *
+	 * @return array<string,string> slug => translatable label.
+	 */
+	public static function interest_areas(): array {
+		$defaults = array(
+			'educacion'    => __( '📚 Educación Ambiental', 'convoca-members' ),
+			'conservacion' => __( '🌿 Conservación de la Naturaleza', 'convoca-members' ),
+			'marina'       => __( '🌊 Biodiversidad Marina', 'convoca-members' ),
+			'rios'         => __( '💧 Ciencia Ciudadana Fluvial', 'convoca-members' ),
+			'botanica'     => __( '🌱 Botánica', 'convoca-members' ),
+			'meteo'        => __( '🌦️ Meteorología', 'convoca-members' ),
+			'infantil'     => __( '👶 Actividades Infantiles', 'convoca-members' ),
+			'social'       => __( '🏠 Actividades Comunitarias', 'convoca-members' ),
+			'comunicacion' => __( '📢 Comunicación y RRSS', 'convoca-members' ),
+			'diseno'       => __( '🎨 Diseño e Ilustración', 'convoca-members' ),
+			'fotografia'   => __( '📷 Fotografía de Naturaleza', 'convoca-members' ),
+			'logistica'    => __( '🚗 Logística y Coordinación', 'convoca-members' ),
+		);
+
+		/**
+		 * Filter the interest areas for the volunteer form.
+		 *
+		 * @param array $defaults slug => label.
+		 */
+		return apply_filters( 'convoca_members_interest_areas', $defaults );
+	}
 
 	public function __construct() {
 		add_shortcode( 'convoca_voluntariado', array( $this, 'render' ) );
