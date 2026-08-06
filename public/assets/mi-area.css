@@ -68,7 +68,7 @@
 }
 
 /* Dashboard */
-.conv-panel-header {
+.conv-panel-header:not(.conv-panel-login .conv-panel-header) {
   display: flex;
   justify-content: space-between;
   align-items: flex-end;
