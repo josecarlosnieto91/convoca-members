@@ -118,7 +118,7 @@ class Mi_Area {
 					<h1>¡Hola, <span><?php echo esc_html( $post->post_title ); ?></span>!</h1>
 					<p class="subtitle"><?php esc_html_e( 'Bienvenido a tu panel de socio de Convoca.', 'convoca-members' ); ?></p>
 				</div>
-				<button id="conv-logout-btn" class="btn-link"><?php esc_html_e( 'Cerrar sesión', 'convoca-members' ); ?></button>
+				<button id="conv-logout-btn" type="button" class="btn-link"><?php esc_html_e( 'Cerrar sesión', 'convoca-members' ); ?></button>
 			</header>
 
 			<div class="conv-panel-grid">
