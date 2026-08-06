@@ -35,126 +35,126 @@ class Voluntariado_Gamification {
 	 */
 	public static function default_tracks(): array {
 		return array(
-		'nature'    => array(
-			'label'  => __( '🌱 Naturaleza', 'convoca-members' ),
-			'levels' => array(
-				array(
-					'name'  => __( 'Semilla', 'convoca-members' ),
-					'emoji' => '🌱',
-					'hours' => 0,
-					'color' => '#7FA36B',
-					'desc'  => __( 'Empiezas a conectar con la naturaleza', 'convoca-members' ),
-				),
-				array(
-					'name'  => __( 'Brote', 'convoca-members' ),
-					'emoji' => '🌿',
-					'hours' => 10,
-					'color' => '#5C6B4F',
-					'desc'  => __( 'Tus raíces crecen', 'convoca-members' ),
-				),
-				array(
-					'name'  => __( 'Árbol', 'convoca-members' ),
-					'emoji' => '🌳',
-					'hours' => 25,
-					'color' => '#FF8700',
-					'desc'  => __( 'Ya eres refugio de biodiversidad', 'convoca-members' ),
-				),
-				array(
-					'name'  => __( 'Bosque', 'convoca-members' ),
-					'emoji' => '🌲',
-					'hours' => 50,
-					'color' => '#FFAB00',
-					'desc'  => __( 'El ecosistema te reconoce', 'convoca-members' ),
-				),
-				array(
-					'name'  => __( 'Ecosistema', 'convoca-members' ),
-					'emoji' => '🌍',
-					'hours' => 100,
-					'color' => '#7D0032',
-					'desc'  => __( 'Eres parte del todo', 'convoca-members' ),
-				),
-			),
-		),
-		'community' => array(
-			'label'  => __( '🤝 Comunidad', 'convoca-members' ),
-			'levels' => array(
-				array(
-					'name'  => __( 'Mano Abierta', 'convoca-members' ),
-					'emoji' => '🤝',
-					'hours' => 0,
-					'color' => '#4A90D9',
-					'desc'  => __( 'El primer paso es la confianza', 'convoca-members' ),
-				),
-				array(
-					'name'  => __( 'Vínculo', 'convoca-members' ),
-					'emoji' => '👥',
-					'hours' => 10,
-					'color' => '#357ABD',
-					'desc'  => __( 'Creas comunidad', 'convoca-members' ),
-				),
-				array(
-					'name'  => __( 'Comunidad', 'convoca-members' ),
-					'emoji' => '🏘️',
-					'hours' => 25,
-					'color' => '#E67E22',
-					'desc'  => __( 'El grupo te sostiene', 'convoca-members' ),
-				),
-				array(
-					'name'  => __( 'Ciudad', 'convoca-members' ),
-					'emoji' => '🌆',
-					'hours' => 50,
-					'color' => '#F39C12',
-					'desc'  => __( 'Tu huella social se expande', 'convoca-members' ),
-				),
-				array(
-					'name'  => __( 'Red', 'convoca-members' ),
-					'emoji' => '🌐',
-					'hours' => 100,
-					'color' => '#8E44AD',
-					'desc'  => __( 'Eres nodo de una red viva', 'convoca-members' ),
+			'nature'    => array(
+				'label'  => __( '🌱 Naturaleza', 'convoca-members' ),
+				'levels' => array(
+					array(
+						'name'  => __( 'Semilla', 'convoca-members' ),
+						'emoji' => '🌱',
+						'hours' => 0,
+						'color' => '#7FA36B',
+						'desc'  => __( 'Empiezas a conectar con la naturaleza', 'convoca-members' ),
+					),
+					array(
+						'name'  => __( 'Brote', 'convoca-members' ),
+						'emoji' => '🌿',
+						'hours' => 10,
+						'color' => '#5C6B4F',
+						'desc'  => __( 'Tus raíces crecen', 'convoca-members' ),
+					),
+					array(
+						'name'  => __( 'Árbol', 'convoca-members' ),
+						'emoji' => '🌳',
+						'hours' => 25,
+						'color' => '#FF8700',
+						'desc'  => __( 'Ya eres refugio de biodiversidad', 'convoca-members' ),
+					),
+					array(
+						'name'  => __( 'Bosque', 'convoca-members' ),
+						'emoji' => '🌲',
+						'hours' => 50,
+						'color' => '#FFAB00',
+						'desc'  => __( 'El ecosistema te reconoce', 'convoca-members' ),
+					),
+					array(
+						'name'  => __( 'Ecosistema', 'convoca-members' ),
+						'emoji' => '🌍',
+						'hours' => 100,
+						'color' => '#7D0032',
+						'desc'  => __( 'Eres parte del todo', 'convoca-members' ),
+					),
 				),
 			),
-		),
-		'growth'    => array(
-			'label'  => __( '🚀 Crecimiento', 'convoca-members' ),
-			'levels' => array(
-				array(
-					'name'  => __( 'Náyade', 'convoca-members' ),
-					'emoji' => '💧',
-					'hours' => 0,
-					'color' => '#3498DB',
-					'desc'  => __( 'Fluir con el cambio', 'convoca-members' ),
-				),
-				array(
-					'name'  => __( 'Salamandra', 'convoca-members' ),
-					'emoji' => '🔥',
-					'hours' => 10,
-					'color' => '#E74C3C',
-					'desc'  => __( 'La pasión que transforma', 'convoca-members' ),
-				),
-				array(
-					'name'  => __( 'Silfo', 'convoca-members' ),
-					'emoji' => '🌪️',
-					'hours' => 25,
-					'color' => '#1ABC9C',
-					'desc'  => __( 'La idea que vuela', 'convoca-members' ),
-				),
-				array(
-					'name'  => __( 'Gnomo', 'convoca-members' ),
-					'emoji' => '⛰️',
-					'hours' => 50,
-					'color' => '#795548',
-					'desc'  => __( 'La fuerza que sostiene', 'convoca-members' ),
-				),
-				array(
-					'name'  => __( 'Deva', 'convoca-members' ),
-					'emoji' => '✨',
-					'hours' => 100,
-					'color' => '#9B59B6',
-					'desc'  => __( 'Guardian/a de la naturaleza', 'convoca-members' ),
+			'community' => array(
+				'label'  => __( '🤝 Comunidad', 'convoca-members' ),
+				'levels' => array(
+					array(
+						'name'  => __( 'Mano Abierta', 'convoca-members' ),
+						'emoji' => '🤝',
+						'hours' => 0,
+						'color' => '#4A90D9',
+						'desc'  => __( 'El primer paso es la confianza', 'convoca-members' ),
+					),
+					array(
+						'name'  => __( 'Vínculo', 'convoca-members' ),
+						'emoji' => '👥',
+						'hours' => 10,
+						'color' => '#357ABD',
+						'desc'  => __( 'Creas comunidad', 'convoca-members' ),
+					),
+					array(
+						'name'  => __( 'Comunidad', 'convoca-members' ),
+						'emoji' => '🏘️',
+						'hours' => 25,
+						'color' => '#E67E22',
+						'desc'  => __( 'El grupo te sostiene', 'convoca-members' ),
+					),
+					array(
+						'name'  => __( 'Ciudad', 'convoca-members' ),
+						'emoji' => '🌆',
+						'hours' => 50,
+						'color' => '#F39C12',
+						'desc'  => __( 'Tu huella social se expande', 'convoca-members' ),
+					),
+					array(
+						'name'  => __( 'Red', 'convoca-members' ),
+						'emoji' => '🌐',
+						'hours' => 100,
+						'color' => '#8E44AD',
+						'desc'  => __( 'Eres nodo de una red viva', 'convoca-members' ),
+					),
 				),
 			),
-		),
+			'growth'    => array(
+				'label'  => __( '🚀 Crecimiento', 'convoca-members' ),
+				'levels' => array(
+					array(
+						'name'  => __( 'Náyade', 'convoca-members' ),
+						'emoji' => '💧',
+						'hours' => 0,
+						'color' => '#3498DB',
+						'desc'  => __( 'Fluir con el cambio', 'convoca-members' ),
+					),
+					array(
+						'name'  => __( 'Salamandra', 'convoca-members' ),
+						'emoji' => '🔥',
+						'hours' => 10,
+						'color' => '#E74C3C',
+						'desc'  => __( 'La pasión que transforma', 'convoca-members' ),
+					),
+					array(
+						'name'  => __( 'Silfo', 'convoca-members' ),
+						'emoji' => '🌪️',
+						'hours' => 25,
+						'color' => '#1ABC9C',
+						'desc'  => __( 'La idea que vuela', 'convoca-members' ),
+					),
+					array(
+						'name'  => __( 'Gnomo', 'convoca-members' ),
+						'emoji' => '⛰️',
+						'hours' => 50,
+						'color' => '#795548',
+						'desc'  => __( 'La fuerza que sostiene', 'convoca-members' ),
+					),
+					array(
+						'name'  => __( 'Deva', 'convoca-members' ),
+						'emoji' => '✨',
+						'hours' => 100,
+						'color' => '#9B59B6',
+						'desc'  => __( 'Guardian/a de la naturaleza', 'convoca-members' ),
+					),
+				),
+			),
 		);
 	}
 

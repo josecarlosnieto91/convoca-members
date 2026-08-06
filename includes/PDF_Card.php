@@ -49,7 +49,7 @@ class PDF_Card {
 		$logo_html = \Convoca\Core\Utils::get_branding_html( 'members', '', 'height: 45px; width: auto; color: #fff; margin: 0; font-size: 24px;' );
 
 		$verification_hash = hash_hmac( 'sha256', 'member_' . $post_id, \Convoca\Core\Utils::get_persistent_salt() );
-		$site_domain = strtoupper( wp_parse_url( home_url(), PHP_URL_HOST ) );
+		$site_domain       = strtoupper( wp_parse_url( home_url(), PHP_URL_HOST ) );
 		$qr_url            = 'https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=' . urlencode( home_url( '/verificar-socio/?id=' . $post_id . '&token=' . $verification_hash ) );
 
 		return '

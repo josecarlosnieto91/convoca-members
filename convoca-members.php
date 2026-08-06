@@ -19,7 +19,7 @@
 namespace Convoca\Members;
 
 if ( ! defined( 'ABSPATH' ) ) {
-    exit;
+	exit;
 }
 
 /* ── Composer autoload ─────────────────────────────── */
@@ -28,7 +28,8 @@ if ( file_exists( $composer_autoload ) ) {
 	require_once $composer_autoload;
 }
 
-/* ── Convoca Core fallback ────────────────────────── */
+/*
+── Convoca Core fallback ────────────────────────── */
 // Core classes auto-loaded via Convoca Core's Composer PSR-4
 
 // Compatibility Check: Ensure Convoca Common is loaded.
@@ -62,7 +63,8 @@ if ( ! defined( 'CONVOCA_MEMBERS_URL' ) ) {
 	define( 'CONVOCA_MEMBERS_URL', plugin_dir_url( __FILE__ ) );
 }
 
-/* ── Autoloader ───────────────────────────────────────────── */
+/*
+── Autoloader ───────────────────────────────────────────── */
 // PSR-4 autoloading handled by Composer (vendor/autoload.php)
 
 /* ── Activation / Deactivation ────────────────────────────── */
@@ -205,18 +207,23 @@ register_deactivation_hook(
 	}
 );
 
-/* ── Boot ─────────────────────────────────────────────────── */
+/*
+── Boot ─────────────────────────────────────────────────── */
 /* ── Script translations (JS i18n) ──────────────────────── */
-add_action( 'init', function() {
-	wp_set_script_translations( 'convoca-members-scripts', 'convoca-members', plugin_dir_path( __FILE__ ) . 'languages/' );
-}, 20 );
+add_action(
+	'init',
+	function () {
+		wp_set_script_translations( 'convoca-members-scripts', 'convoca-members', plugin_dir_path( __FILE__ ) . 'languages/' );
+	},
+	20 
+);
 
 add_action(
 	'plugins_loaded',
 	function (): void {
 
 		// Load translations.
-	load_plugin_textdomain( 'convoca-members', false, dirname( plugin_basename( __FILE__ ) ) . '/languages' );
+		load_plugin_textdomain( 'convoca-members', false, dirname( plugin_basename( __FILE__ ) ) . '/languages' );
 
 		// Core.
 		new \Convoca\Members\CPT_Miembro();

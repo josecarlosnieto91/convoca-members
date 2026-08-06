@@ -128,17 +128,19 @@ class Admin_Logs {
 				<div class="tablenav">
 					<div class="tablenav-pages">
 						<?php
-						echo wp_kses_post( paginate_links(
-							array(
-								'base'      => add_query_arg( 'paged', '%#%' ),
-								'format'    => '',
-								'prev_text' => '&laquo;',
-								'next_text' => '&raquo;',
-								'total'     => $num_pages,
-							'current'   => $pagenum,
-						)
-					) );
-					?>
+						echo wp_kses_post(
+							paginate_links(
+								array(
+									'base'      => add_query_arg( 'paged', '%#%' ),
+									'format'    => '',
+									'prev_text' => '&laquo;',
+									'next_text' => '&raquo;',
+									'total'     => $num_pages,
+									'current'   => $pagenum,
+								)
+							) 
+						);
+						?>
 					</div>
 				</div>
 			<?php endif; ?>

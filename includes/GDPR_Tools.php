@@ -78,7 +78,7 @@ class GDPR_Tools {
 	 */
 	public static function register_exporter( array $exporters ): array {
 		$exporters['convoca-members'] = array(
-			'exporter_friendly_name' => get_bloginfo('name') . ' — ' . __( 'Datos de socio', 'convoca-members' ),
+			'exporter_friendly_name' => get_bloginfo( 'name' ) . ' — ' . __( 'Datos de socio', 'convoca-members' ),
 			'callback'               => array( self::class, 'export_personal_data' ),
 		);
 		return $exporters;
@@ -154,7 +154,7 @@ class GDPR_Tools {
 			if ( ! empty( $profile_data ) ) {
 				$export_items[] = array(
 					'group_id'          => 'convoca-member-profile',
-					'group_label'       => __( 'Datos de socio', 'convoca-members' ) . ' ' . get_bloginfo('name'),
+					'group_label'       => __( 'Datos de socio', 'convoca-members' ) . ' ' . get_bloginfo( 'name' ),
 					'group_description' => __( 'Datos personales almacenados como socio de la asociación.', 'convoca-members' ),
 					'item_id'           => "member-{$member_id}",
 					'data'              => $profile_data,
@@ -208,7 +208,7 @@ class GDPR_Tools {
 
 				$export_items[] = array(
 					'group_id'          => 'convoca-payments',
-					'group_label'       => __( 'Pagos', 'convoca-members' ) . ' ' . get_bloginfo('name'),
+					'group_label'       => __( 'Pagos', 'convoca-members' ) . ' ' . get_bloginfo( 'name' ),
 					'group_description' => __( 'Historial de pagos realizados.', 'convoca-members' ),
 					'item_id'           => "payment-{$pago->ID}",
 					'data'              => $pago_data,
@@ -252,7 +252,7 @@ class GDPR_Tools {
 
 				$export_items[] = array(
 					'group_id'          => 'convoca-inscriptions',
-					'group_label'       => __( 'Inscripciones', 'convoca-members' ) . ' ' . get_bloginfo('name'),
+					'group_label'       => __( 'Inscripciones', 'convoca-members' ) . ' ' . get_bloginfo( 'name' ),
 					'group_description' => __( 'Inscripciones a actividades.', 'convoca-members' ),
 					'item_id'           => "inscription-{$inscripcion->ID}",
 					'data'              => $insc_data,
@@ -301,7 +301,7 @@ class GDPR_Tools {
 
 				$export_items[] = array(
 					'group_id'          => 'convoca-volunteering',
-					'group_label'       => __( 'Horas de voluntariado ', 'convoca-members' ) . get_bloginfo('name'),
+					'group_label'       => __( 'Horas de voluntariado ', 'convoca-members' ) . get_bloginfo( 'name' ),
 					'group_description' => __( 'Registros de horas de voluntariado.', 'convoca-members' ),
 					'item_id'           => "volunteer-hour-{$hora->ID}",
 					'data'              => $hora_data,

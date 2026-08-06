@@ -182,7 +182,11 @@ class Admin_Page {
 		?>
 		<div class="wrap conv-members-page">
 			<h1 class="wp-heading-inline">
-				<?php if ( $is_voluntarios ) : echo esc_html( get_bloginfo( 'name' ) ) . ' — '; esc_html_e( 'Voluntarios', 'convoca-members' ); else : esc_html_e( 'Miembros Convoca', 'convoca-members' ); endif; ?>
+				<?php
+				if ( $is_voluntarios ) :
+					echo esc_html( get_bloginfo( 'name' ) ) . ' — '; esc_html_e( 'Voluntarios', 'convoca-members' ); else :
+						esc_html_e( 'Miembros Convoca', 'convoca-members' ); endif;
+					?>
 			</h1>
 			<a href="<?php echo esc_url( admin_url( 'post-new.php?post_type=miembro' . ( $is_voluntarios ? '&es_voluntario=1' : '' ) ) ); ?>" class="page-title-action">
 				<?php esc_html_e( 'Añadir nuevo', 'convoca-members' ); ?>
@@ -243,7 +247,7 @@ class Admin_Page {
 		}
 
 		// Members without any estado meta are treated as "pendiente_documentacion".
-		$sin_estado = (int) $wpdb->get_var(
+		$sin_estado                         = (int) $wpdb->get_var(
 			"SELECT COUNT(*) FROM {$wpdb->posts} p
 			 WHERE p.post_type = 'miembro' AND p.post_status = 'publish'
 			   AND NOT EXISTS (
@@ -521,7 +525,7 @@ class Admin_Page {
 				);
 				echo '<p>' . sprintf(
 					// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- inline HTML in translatable string, variables escaped separately
-					/* translators: 1: active count, 2: total count */ __( '<strong>%1$d</strong> activos de <strong>%2$d</strong> registrados.', 'convoca-members' ),
+					/* translators: 1: active count, 2: total count */                    __( '<strong>%1$d</strong> activos de <strong>%2$d</strong> registrados.', 'convoca-members' ),
 					esc_html( $activos ),
 					esc_html( $total )
 				) . '</p>';

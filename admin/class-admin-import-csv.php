@@ -104,7 +104,7 @@ class Admin_Import_CSV {
 					<p style="font-size:1.2em;">
 						<?php
 						printf(
-							/* translators: 1: imported count, 2: total count */ esc_html__( 'Procesados %1$d de %2$d registros...', 'convoca-members' ),
+							/* translators: 1: imported count, 2: total count */                            esc_html__( 'Procesados %1$d de %2$d registros...', 'convoca-members' ),
 							(int) $batch_progress['imported'],
 							(int) $batch_progress['total']
 						);
@@ -215,7 +215,7 @@ class Admin_Import_CSV {
 
 		$filename = $_FILES['csv_file']['tmp_name'];
 		// phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_fopen -- CSV parsing requires direct file access.
-		$handle   = fopen( $filename, 'r' );
+		$handle = fopen( $filename, 'r' );
 		if ( ! $handle ) {
 			wp_die( esc_html__( 'No se pudo leer el archivo.', 'convoca-members' ) );
 		}

@@ -415,7 +415,7 @@ class Cron_Manager {
 					'origin'       => 'members',
 					'origin_id'    => $member_id,
 					'amount_cents' => (int) round( $plan_data['price'] * 100 ),
-					'product_desc' => mb_substr( 'RENOVACIÓN ' . strtoupper(get_bloginfo('name')) . ' - ' . strtoupper( $plan_data['label'] ), 0, 125 ),
+					'product_desc' => mb_substr( 'RENOVACIÓN ' . strtoupper( get_bloginfo( 'name' ) ) . ' - ' . strtoupper( $plan_data['label'] ), 0, 125 ),
 					'method'       => 'tarjeta',
 					'tokenize'     => $needs_tokenization,
 				)
@@ -522,7 +522,7 @@ class Cron_Manager {
 		$body = $this->build_digest_body( $stats );
 
 		$subject = sprintf(
-			'[' . get_bloginfo('name') . '] ' . __('Resumen semanal', 'convoca-members') . ' — %s',
+			'[' . get_bloginfo( 'name' ) . '] ' . __( 'Resumen semanal', 'convoca-members' ) . ' — %s',
 			wp_date( 'd/m/Y' )
 		);
 
@@ -656,7 +656,7 @@ class Cron_Manager {
 
 		// Header.
 		$html .= '<div style="background:#2c5e3e;color:#fff;padding:20px;border-radius:8px 8px 0 0;text-align:center;">';
-		$html .= '<h1 style="margin:0;font-size:22px;">📊 ' . esc_html(get_bloginfo('name')) . ' - ' . __('Resumen Semanal', 'convoca-members') . '</h1>';
+		$html .= '<h1 style="margin:0;font-size:22px;">📊 ' . esc_html( get_bloginfo( 'name' ) ) . ' - ' . __( 'Resumen Semanal', 'convoca-members' ) . '</h1>';
 		$html .= '<p style="margin:5px 0 0;opacity:0.8;font-size:14px;">' . esc_html( $date_range ) . '</p>';
 		$html .= '</div>';
 
@@ -764,7 +764,7 @@ class Cron_Manager {
 						'method'       => ( $forma_pago === 'cuota' ) ? 'tarjeta' : $forma_pago,
 						'origin'       => 'members',
 						'origin_id'    => $post_id,
-						'product_desc' => mb_substr( 'RENOVACION ' . strtoupper(get_bloginfo('name')) . ' ' . ( $plan_data['label'] ?? 'SOCIO' ), 0, 125 ),
+						'product_desc' => mb_substr( 'RENOVACION ' . strtoupper( get_bloginfo( 'name' ) ) . ' ' . ( $plan_data['label'] ?? 'SOCIO' ), 0, 125 ),
 					)
 				);
 

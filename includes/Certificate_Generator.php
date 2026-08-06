@@ -168,23 +168,23 @@ class Certificate_Generator {
 	}
 
 	private static function generate_qr_data( string $url ): string {
-	    return $url;
+		return $url;
 	}
 
 	private static function build_qr_svg( string $data ): string {
-	    // Generate a simple QR code using a free API.
-	    $api_url = 'https://api.qrserver.com/v1/create-qr-code/?size=120x120&data=' . rawurlencode($data);
-	    $response = wp_remote_get( $api_url, array( 'timeout' => 5 ) );
-	    $img_data = null;
-	    if ( ! is_wp_error( $response ) && wp_remote_retrieve_response_code( $response ) === 200 ) {
-	        $img_data = wp_remote_retrieve_body( $response );
-	    }
-	    if ($img_data) {
-	        $b64 = base64_encode($img_data);
-	        return '<img src="data:image/png;base64,' . $b64 . '" alt="QR" style="width:120px;height:120px;" />';
-	    }
-	    // Fallback: text QR
-	    return '<div style="width:120px;height:120px;background:#2d5a27;color:#fff;display:flex;align-items:center;justify-content:center;font-size:10px;text-align:center;">Escanee para verificar<br><small>' . esc_html($data) . '</small></div>';
+		// Generate a simple QR code using a free API.
+		$api_url  = 'https://api.qrserver.com/v1/create-qr-code/?size=120x120&data=' . rawurlencode( $data );
+		$response = wp_remote_get( $api_url, array( 'timeout' => 5 ) );
+		$img_data = null;
+		if ( ! is_wp_error( $response ) && wp_remote_retrieve_response_code( $response ) === 200 ) {
+			$img_data = wp_remote_retrieve_body( $response );
+		}
+		if ( $img_data ) {
+			$b64 = base64_encode( $img_data );
+			return '<img src="data:image/png;base64,' . $b64 . '" alt="QR" style="width:120px;height:120px;" />';
+		}
+		// Fallback: text QR
+		return '<div style="width:120px;height:120px;background:#2d5a27;color:#fff;display:flex;align-items:center;justify-content:center;font-size:10px;text-align:center;">Escanee para verificar<br><small>' . esc_html( $data ) . '</small></div>';
 	}
 
 	private static function build_html( string $nombre, float $horas, string $plan, array $proyectos, string $cert_id, string $qr_data, string $verify_url ): string {
@@ -219,9 +219,9 @@ class Certificate_Generator {
 		<body>
 		<div class="certificado">
 		<div class="header">
-		    <div class="logo">' . esc_html(get_bloginfo("name")) . '</div>
+		    <div class="logo">' . esc_html( get_bloginfo( 'name' ) ) . '</div>
 		    <h1>Certificado de Voluntariado</h1>
-		    <p>' . esc_html(get_bloginfo("name")) . '</p>
+		    <p>' . esc_html( get_bloginfo( 'name' ) ) . '</p>
 		</div>
 		<div class="contenido">
 		    <p>Certificamos que <span class="nombre">' . esc_html( $nombre ) . '</span></p>

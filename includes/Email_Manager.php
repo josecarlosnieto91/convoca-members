@@ -114,7 +114,7 @@ class Email_Manager {
 
 		$defaults = array(
 			'credenciales_acceso'              => array(
-				'subject' => 'Bienvenido/a a ' . get_bloginfo('name') . ' — Tus credenciales de acceso',
+				'subject' => 'Bienvenido/a a ' . get_bloginfo( 'name' ) . ' — Tus credenciales de acceso',
 				'body'    => __( '<h1>¡Bienvenido/a, {nombre}!</h1>', 'convoca-members' )
 					. __( '<p>Tu solicitud ha sido aprobada. Ya puedes acceder a tu área privada de socio/a.</p>', 'convoca-members' )
 					. Email_Layout::meta_table(
@@ -134,9 +134,9 @@ class Email_Manager {
 					. '<p>Si tienes cualquier problema, responde a este email o escribe a <a href="mailto:{admin_email}">{admin_email}</a>.</p>',
 			),
 			'solicitud_recibida'               => array(
-				'subject' => __( 'Hemos recibido tu solicitud — ', 'convoca-members' ) . get_bloginfo('name'),
+				'subject' => __( 'Hemos recibido tu solicitud — ', 'convoca-members' ) . get_bloginfo( 'name' ),
 				'body'    => __( '<h1>Hola {nombre},</h1>', 'convoca-members' )
-					. '<p>Hemos recibido correctamente tu solicitud como <strong>{tipo_miembro}</strong> en ' . esc_html(get_bloginfo('name')) . '.</p>'
+					. '<p>Hemos recibido correctamente tu solicitud como <strong>{tipo_miembro}</strong> en ' . esc_html( get_bloginfo( 'name' ) ) . '.</p>'
 					. Email_Layout::meta_table(
 						array(
 							array(
@@ -157,8 +157,8 @@ class Email_Manager {
 					. '<p>¡Gracias por unirte a la familia Convoca!</p>',
 			),
 			'bienvenida'                       => array(
-				'subject' => '\u00a1Bienvenido/a a ' . get_bloginfo('name') . ', {nombre}!',
-				'body'    => __( '<h1>00a1Bienvenido/a a ', 'convoca-members' ) . esc_html(get_bloginfo('name')) . ', {nombre}! 0001F389</H1>'
+				'subject' => '\u00a1Bienvenido/a a ' . get_bloginfo( 'name' ) . ', {nombre}!',
+				'body'    => __( '<h1>00a1Bienvenido/a a ', 'convoca-members' ) . esc_html( get_bloginfo( 'name' ) ) . ', {nombre}! 0001F389</H1>'
 					. __( '<p>Tu alta como <strong>{tipo_miembro}</strong> ha sido confirmada.</p>', 'convoca-members' )
 					. Email_Layout::meta_table(
 						array(
@@ -181,7 +181,7 @@ class Email_Manager {
 					. '<p>¡Nos vemos en el campo! 🌿</p>',
 			),
 			'recordatorio_pago'                => array(
-				'subject' => __( 'Recordatorio de pago (1/3) — ', 'convoca-members' ) . get_bloginfo('name'),
+				'subject' => __( 'Recordatorio de pago (1/3) — ', 'convoca-members' ) . get_bloginfo( 'name' ),
 				'body'    => __( '<h1>Hola {nombre},</h1>', 'convoca-members' )
 					. __( '<p>Tu solicitud de alta/renovación como <strong>{tipo_miembro}</strong> está pendiente de pago.</p>', 'convoca-members' )
 					. Email_Layout::meta_table(
@@ -200,7 +200,7 @@ class Email_Manager {
 					. '<p>Si ya has realizado el pago, ignora este mensaje.</p>',
 			),
 			'pago_pendiente_2'                 => array(
-				'subject' => __( 'Segundo aviso: pago pendiente — ', 'convoca-members' ) . get_bloginfo('name'),
+				'subject' => __( 'Segundo aviso: pago pendiente — ', 'convoca-members' ) . get_bloginfo( 'name' ),
 				'body'    => __( '<h1>Hola {nombre},</h1>', 'convoca-members' )
 					. __( '<p>Seguimos sin constancia del pago de tu cuota de <strong>{tipo_miembro}</strong>.</p>', 'convoca-members' )
 					. Email_Layout::meta_table(
@@ -214,7 +214,7 @@ class Email_Manager {
 					. '<p>Es importante completar el pago para mantener tu estado activo y acceder a las ventajas de socio.</p>',
 			),
 			'pago_pendiente_ultimo'            => array(
-				'subject' => __( 'Último aviso: suspensión inminente — ', 'convoca-members' ) . get_bloginfo('name'),
+				'subject' => __( 'Último aviso: suspensión inminente — ', 'convoca-members' ) . get_bloginfo( 'name' ),
 				'body'    => __( '<h1>Hola {nombre},</h1>', 'convoca-members' )
 					. __( '<p>Este es el <strong>último aviso</strong> respecto a tu cuota pendiente de <strong>{tipo_miembro}</strong>.</p>', 'convoca-members' )
 					. Email_Layout::meta_table(
@@ -228,7 +228,7 @@ class Email_Manager {
 					. '<p>Si no recibimos el pago en los próximos días, tu cuenta será suspendida automáticamente.</p>',
 			),
 			'renovacion'                       => array(
-				'subject' => 'Tu renovación en ' . get_bloginfo('name') . ' (30 días)',
+				'subject' => 'Tu renovación en ' . get_bloginfo( 'name' ) . ' (30 días)',
 				'body'    => __( '<h1>Hola {nombre},</h1>', 'convoca-members' )
 					. __( '<p>Faltan <strong>30 días</strong> para tu fecha de renovación como {tipo_miembro}.</p>', 'convoca-members' )
 					. Email_Layout::meta_table(
@@ -251,19 +251,19 @@ class Email_Manager {
 					. '<p>¡Gracias por seguir con nosotros!</p>',
 			),
 			'renovacion_15d'                   => array(
-				'subject' => 'Tu renovación en ' . get_bloginfo('name') . ' (15 días)',
+				'subject' => 'Tu renovación en ' . get_bloginfo( 'name' ) . ' (15 días)',
 				'body'    => __( '<h1>Hola {nombre},</h1>', 'convoca-members' )
 					. __( '<p>Faltan solo <strong>15 días</strong> para que venza tu membresía de {tipo_miembro}.</p>', 'convoca-members' )
 					. '<p>Recuerda renovar para no perder tu antigüedad y beneficios.</p>',
 			),
 			'renovacion_7d'                    => array(
-				'subject' => __( 'Última semana para tu renovación — ', 'convoca-members' ) . get_bloginfo('name'),
+				'subject' => __( 'Última semana para tu renovación — ', 'convoca-members' ) . get_bloginfo( 'name' ),
 				'body'    => __( '<h1>Hola {nombre},</h1>', 'convoca-members' )
 					. __( '<p>Tu membresía de {tipo_miembro} vencerá en <strong>7 días</strong>.</p>', 'convoca-members' )
 					. '<p>Evita la suspensión automática realizando el pago desde tu panel de socio.</p>',
 			),
 			'renovacion_automatica'            => array(
-				'subject' => __( 'Procesando tu renovación automática — ', 'convoca-members' ) . get_bloginfo('name'),
+				'subject' => __( 'Procesando tu renovación automática — ', 'convoca-members' ) . get_bloginfo( 'name' ),
 				'body'    => __( '<h1>Hola {nombre},</h1>', 'convoca-members' )
 					. __( '<p>Como tienes activada la renovación automática, hemos generado el cargo correspondiente a tu cuota de {tipo_miembro}.</p>', 'convoca-members' )
 					. Email_Layout::meta_table(
@@ -286,7 +286,7 @@ class Email_Manager {
 					. '<p>¡Gracias por seguir apoyando a Convoca!</p>',
 			),
 			'renovacion_completada'            => array(
-				'subject' => __( 'Renovación completada con éxito — ', 'convoca-members' ) . get_bloginfo('name'),
+				'subject' => __( 'Renovación completada con éxito — ', 'convoca-members' ) . get_bloginfo( 'name' ),
 				'body'    => __( '<h1>¡Buenas noticias, {nombre}! 🎉</h1>', 'convoca-members' )
 					. __( '<p>El pago de tu cuota anual como <strong>{tipo_miembro}</strong> se ha procesado correctamente.</p>', 'convoca-members' )
 					. Email_Layout::meta_table(
@@ -301,9 +301,9 @@ class Email_Manager {
 					. '<p>¡Gracias por tu compromiso con la naturaleza! 🌍</p>',
 			),
 			'voluntariado_recordatorio'        => array(
-				'subject' => __( 'Recuerda tus horas de voluntariado — ', 'convoca-members' ) . get_bloginfo('name'),
+				'subject' => __( 'Recuerda tus horas de voluntariado — ', 'convoca-members' ) . get_bloginfo( 'name' ),
 				'body'    => __( '<h1>Hola {nombre},</h1>', 'convoca-members' )
-					. '<p>Te escribimos para recordarte tu compromiso de voluntariado con ' . esc_html(get_bloginfo('name')) . '.</p>'
+					. '<p>Te escribimos para recordarte tu compromiso de voluntariado con ' . esc_html( get_bloginfo( 'name' ) ) . '.</p>'
 					. Email_Layout::meta_table(
 						array(
 							array(
@@ -324,7 +324,7 @@ class Email_Manager {
 					. '<p>¡Tus manos son fundamentales para la asociación! 🌱</p>',
 			),
 			'objetivo_voluntariado_completado' => array(
-				'subject' => '\U0001f389 ¡Felicidades! Has completado tu voluntariado — ' . get_bloginfo('name'),
+				'subject' => '\U0001f389 ¡Felicidades! Has completado tu voluntariado — ' . get_bloginfo( 'name' ),
 				'body'    => __( '<h1>¡Enhorabuena, {nombre}! 🎉</h1>', 'convoca-members' )
 					. __( '<p>Has completado las <strong>{horas_totales}h</strong> de voluntariado requeridas para el plan <strong>{plan_nombre}</strong>.</p>', 'convoca-members' )
 					. Email_Layout::meta_table(
@@ -486,7 +486,7 @@ class Email_Manager {
 			$admin_headers[] = 'From: ' . $sender_name . ' <' . $system_email . '>';
 			wp_mail(
 				$system_email,
-				'[' . esc_html(get_bloginfo('name')) . '] ' . $subject,
+				'[' . esc_html( get_bloginfo( 'name' ) ) . '] ' . $subject,
 				"Notificación automática — Miembro: {$vars['{nombre}']}\n\n" . $body,
 				$admin_headers
 			);

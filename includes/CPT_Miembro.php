@@ -105,7 +105,7 @@ class CPT_Miembro {
 
 	/** Plan definitions (price in €, hours in h). */
 	public const DEFAULT_PLANS = array(
-		'bronze'      => array(
+		'bronze'     => array(
 			'label'           => '🥉 Bronce',
 			'price'           => 30,
 			'hours'           => 15,
@@ -116,7 +116,7 @@ class CPT_Miembro {
 				'Prioridad en las inscripciones para actividades ambientales.',
 			),
 		),
-		'silver'      => array(
+		'silver'     => array(
 			'label'           => '🥈 Plata',
 			'price'           => 50,
 			'hours'           => 25,
@@ -128,7 +128,7 @@ class CPT_Miembro {
 				'Reserva el local 2 veces al año para eventos privados.',
 			),
 		),
-		'gold'        => array(
+		'gold'       => array(
 			'label'           => '🥇 Oro',
 			'price'           => 100,
 			'hours'           => 50,
@@ -141,7 +141,7 @@ class CPT_Miembro {
 				'Descuentos especiales con diferentes colaboradores.',
 			),
 		),
-		'fam-bronze'  => array(
+		'fam-bronze' => array(
 			'label'           => 'Familiar Bronce',
 			'price'           => 45,
 			'hours'           => 22.5,
@@ -153,7 +153,7 @@ class CPT_Miembro {
 				'Ventajas aplicables a toda la unidad familiar.',
 			),
 		),
-		'fam-silver'  => array(
+		'fam-silver' => array(
 			'label'           => 'Familiar Plata',
 			'price'           => 75,
 			'hours'           => 37.5,
@@ -166,7 +166,7 @@ class CPT_Miembro {
 				'Ventajas aplicables a toda la unidad familiar.',
 			),
 		),
-		'fam-gold'    => array(
+		'fam-gold'   => array(
 			'label'           => 'Familiar Oro',
 			'price'           => 150,
 			'hours'           => 75,
@@ -180,7 +180,7 @@ class CPT_Miembro {
 				'Ventajas aplicables a toda la unidad familiar.',
 			),
 		),
-		'juv-bronze'  => array(
+		'juv-bronze' => array(
 			'label'           => 'Juvenil Bronce',
 			'price'           => 15,
 			'hours'           => 7.5,
@@ -192,7 +192,7 @@ class CPT_Miembro {
 				'Espacio independiente para actuar y tomar decisiones.',
 			),
 		),
-		'juv-silver'  => array(
+		'juv-silver' => array(
 			'label'           => 'Juvenil Plata',
 			'price'           => 25,
 			'hours'           => 12.5,
@@ -205,7 +205,7 @@ class CPT_Miembro {
 				'Espacio independiente para actuar y tomar decisiones.',
 			),
 		),
-		'juv-gold'    => array(
+		'juv-gold'   => array(
 			'label'           => 'Juvenil Oro',
 			'price'           => 50,
 			'hours'           => 25,
@@ -219,7 +219,7 @@ class CPT_Miembro {
 				'Espacio independiente para actuar y tomar decisiones.',
 			),
 		),
-		'familiar'    => array(
+		'familiar'   => array(
 			'label'           => 'Modalidad Familiar',
 			'price'           => 0,
 			'hours'           => 0,
@@ -230,7 +230,7 @@ class CPT_Miembro {
 				'Mismas ventajas que el plan correspondiente, adaptadas al grupo familiar.',
 			),
 		),
-		'juvenil'     => array(
+		'juvenil'    => array(
 			'label'           => 'Modalidad Juvenil',
 			'price'           => 0,
 			'hours'           => 0,

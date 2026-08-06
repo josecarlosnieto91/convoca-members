@@ -190,7 +190,7 @@ class Admin_Settings {
 		}
 		$sanitized = array();
 		foreach ( $input as $track_key => $track ) {
-			$tk = sanitize_key( $track_key );
+			$tk          = sanitize_key( $track_key );
 			$valid_plans = array_keys( \Convoca\Members\CPT_Miembro::get_plans() );
 			if ( ! in_array( $tk, $valid_plans, true ) ) {
 				continue;

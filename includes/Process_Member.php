@@ -319,7 +319,7 @@ class Process_Member {
 					'method'       => $forma_pago,
 					'origin'       => 'members',
 					'origin_id'    => $post_id,
-					'product_desc' => mb_substr( strtoupper(get_bloginfo('name')) . ' CUOTA ' . ( $plan_data['label'] ?? '' ), 0, 125 ),
+					'product_desc' => mb_substr( strtoupper( get_bloginfo( 'name' ) ) . ' CUOTA ' . ( $plan_data['label'] ?? '' ), 0, 125 ),
 				)
 			);
 
