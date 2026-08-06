@@ -81,7 +81,7 @@ class Admin_Import_CSV {
 					<?php wp_nonce_field( 'convoca_import_csv' ); ?>
 					<input type="hidden" name="action" value="convoca_import_csv_preview">
 					<div class="convoca-field">
-						<input type="file" name="csv_file" accept=".csv" required>
+						<input type="file" name="csv_file" accept=".csv,.xlsx" required>
 					</div>
 					<button type="submit" class="convoca-btn convoca-btn-primary"><?php esc_html_e( 'Previsualizar', 'convoca-members' ); ?></button>
 				</form>
@@ -214,6 +214,20 @@ class Admin_Import_CSV {
 		}
 
 		$filename = $_FILES['csv_file']['tmp_name'];
+
+		// Convert .xlsx to CSV if needed (no external deps, first sheet only).
+		$ext = strtolower( pathinfo( $_FILES['csv_file']['name'] ?? '', PATHINFO_EXTENSION ) );
+		if ( 'xlsx' === $ext ) {
+			try {
+				$csv_data = \Convoca\Members\Admin\Xlsx_Reader::to_csv( $filename );
+				$temp_csv = tempnam( sys_get_temp_dir(), 'convoca_xlsx_' ) . '.csv';
+				file_put_contents( $temp_csv, $csv_data ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_file_put_contents -- temp file.
+				$filename = $temp_csv;
+			} catch ( \RuntimeException $e ) {
+				wp_die( esc_html__( 'No se pudo leer el archivo XLSX: ', 'convoca-members' ) . esc_html( $e->getMessage() ) );
+			}
+		}
+
 		// phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_fopen -- CSV parsing requires direct file access.
 		$handle = fopen( $filename, 'r' );
 		if ( ! $handle ) {
