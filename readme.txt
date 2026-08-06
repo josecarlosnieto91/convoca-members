@@ -16,6 +16,8 @@ Manage the complete lifecycle of members: registration, renewals, cancellations,
 
 Free features:
 * Member registration via public form or admin panel
+* Member area shortcodes `[convoca_mi_area]` and `[convoca_mi_perfil]`
+* Registration shortcode `[convoca_alta_socio]`
 * Customizable membership types
 * States: active, pending, suspended, expired, cancelled
 * Automatic and manual renewals

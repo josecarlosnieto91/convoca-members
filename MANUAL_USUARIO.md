@@ -240,7 +240,9 @@ Cada cambio en un socio genera una entrada de auditoría:
 | Shortcode | Descripción |
 |-----------|-------------|
 | `[convoca_alta_socio]` | Formulario de alta para nuevos socios |
+| `[convoca_mi_area]` | Panel completo del socio (carnet, inscripciones, voluntariado, pagos) |
 | `[convoca_mi_perfil]` | Perfil del socio logueado (nombre, email, estado, inscripciones) |
+| `[convoca_voluntariado]` | Formulario de alta de voluntariado |
 | `[convoca_verificar_socio]` | Verificación pública de membresía |
 | `[convoca_verificar_certificado]` | Verificación pública de certificados |
 
