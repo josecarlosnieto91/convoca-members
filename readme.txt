@@ -1,6 +1,6 @@
 === Convoca Members ===
 Contributors: josecarlosnietoramos
-Tags: members, volunteers, donations, certificates, asociaciones, ONG
+Tags: members, volunteers, membership, certificates, associations
 Requires at least: 6.4
 Tested up to: 7.0
 Requires PHP: 8.1
@@ -49,3 +49,30 @@ This plugin may contact getconvoca.app to validate PRO licenses, only when a key
 * Improvement: 92 unit tests, 250 assertions
 * New: Membership state transition tests
 * Fix: PDF certificate generation with real QR code
+
+== Screenshots ==
+
+1. Members list with filters
+2. Member profile with history
+3. Registration form (frontend)
+4. PDF certificate example
+5. Volunteer hours panel
+
+== Frequently Asked Questions ==
+
+= Does it require Convoca Core? =
+
+Yes. Convoca Members requires Convoca Core to be active.
+
+= Can I manage fees? =
+
+Yes. You can create manual payments and track fee status per member. Integration with Convoca Gateway enables online payments.
+
+= Are PDF certificates generated locally? =
+
+Yes. Certificates are generated on your server with Dompdf. No external service is involved.
+
+== Upgrade Notice ==
+
+= 2.6.2 =
+* Compatibility and stability improvements. Recommended update.
