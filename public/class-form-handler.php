@@ -96,7 +96,9 @@ class Form_Handler {
 			$html
 		);
 
-		return $html;
+		// Render inside an HTML block so wpautop does not wrap the grid
+		// labels in <p> tags (which breaks the plan grid layout).
+		return do_blocks( '<!-- wp:html -->' . $html . '<!-- /wp:html -->' );
 	}
 
 	/**
