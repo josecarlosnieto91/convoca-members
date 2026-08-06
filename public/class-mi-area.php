@@ -31,6 +31,7 @@ class Mi_Area {
 
 	public function __construct() {
 		add_shortcode( 'convoca_mi_area', array( $this, 'render' ) );
+		add_shortcode( 'convoca_mi_perfil', array( $this, 'render_perfil' ) );
 		add_action( 'wp_enqueue_scripts', array( $this, 'enqueue_assets' ) );
 	}
 
@@ -142,5 +143,107 @@ class Mi_Area {
 			</div>
 		</div>
 		<?php
+	}
+
+	/**
+	 * [convoca_mi_perfil] — Legacy profile shortcode (moved from theme).
+	 * Shows the member record + active inscriptions for the logged-in user.
+	 */
+	public function render_perfil(): string {
+		if ( ! is_user_logged_in() ) {
+			return sprintf(
+				'<div class="conv-profile-login">%s <a href="%s" class="button">%s</a></div>',
+				__( 'Inicia sesión para ver tu perfil.', 'convoca-members' ),
+				wp_login_url( get_permalink() ),
+				__( 'Iniciar sesión', 'convoca-members' )
+			);
+		}
+
+		$current_user = wp_get_current_user();
+		$email        = $current_user->user_email;
+
+		// 1. Get member record.
+		$members = get_posts( array(
+			'post_type'      => 'miembro',
+			'posts_per_page' => 1,
+			'meta_query'     => array(
+				array( 'key' => '_convoca_email', 'value' => $email ),
+			),
+		) );
+
+		$member_html = '';
+		if ( ! empty( $members ) ) {
+			$m          = $members[0];
+			$estado     = get_post_meta( $m->ID, '_convoca_estado_miembro', true );
+			$plan       = get_post_meta( $m->ID, '_convoca_plan', true );
+			$renovacion = get_post_meta( $m->ID, '_convoca_fecha_renovacion', true );
+
+			$member_html = sprintf(
+				'<div class="conv-member-info card glass">
+					<h3>%s</h3>
+					<p><strong>%s:</strong> <span class="badge state-%s">%s</span></p>
+					<p><strong>%s:</strong> %s</p>
+					<p><strong>%s:</strong> %s</p>
+				</div>',
+				__( 'Tu condición de socio/a', 'convoca-members' ),
+				__( 'Estado', 'convoca-members' ),
+				esc_attr( $estado ),
+				esc_html( ucfirst( $estado ) ),
+				__( 'Plan', 'convoca-members' ),
+				esc_html( ucfirst( $plan ) ),
+				__( 'Próxima renovación', 'convoca-members' ),
+				esc_html( $renovacion )
+			);
+		} else {
+			$member_html = sprintf(
+				'<div class="conv-member-info card glass">
+					<p>%s</p>
+					<a href="%s" class="button">%s</a>
+				</div>',
+				sprintf( __( 'Aún no eres socio/a de %s.', 'convoca-members' ), get_bloginfo( 'name' ) ),
+				home_url( '/hazte-socio/' ),
+				__( 'Hacerse socio/a', 'convoca-members' )
+			);
+		}
+
+		// 2. Get active inscriptions.
+		$inscriptions = get_posts( array(
+			'post_type'      => 'inscripcion',
+			'posts_per_page' => -1,
+			'meta_query'     => array(
+				'relation' => 'AND',
+				array( 'key' => '_convoca_email', 'value' => $email ),
+				array( 'key' => '_convoca_estado', 'value' => 'cancelada', 'compare' => '!=' ),
+			),
+		) );
+
+		$insc_html = '<h3>' . __( 'Tus inscripciones activas', 'convoca-members' ) . '</h3>';
+		if ( ! empty( $inscriptions ) ) {
+			$insc_html .= '<div class="conv-inscriptions-grid">';
+			foreach ( $inscriptions as $i ) {
+				$actividad_id = get_post_meta( $i->ID, '_convoca_actividad_id', true );
+				$estado       = get_post_meta( $i->ID, '_convoca_estado', true );
+				$fecha        = get_the_date( 'd/m/Y', $i->ID );
+
+				$insc_html .= sprintf(
+					'<div class="conv-insc-item card secondary">
+						<h4>%s</h4>
+						<p><span class="badge state-%s">%s</span> — %s</p>
+						<a href="%s" class="link-arrow">%s</a>
+					</div>',
+					get_the_title( $actividad_id ),
+					esc_attr( $estado ),
+					esc_html( ucfirst( $estado ) ),
+					$fecha,
+					get_permalink( $actividad_id ),
+					__( 'Ver actividad', 'convoca-members' )
+				);
+			}
+			$insc_html .= '</div>';
+		} else {
+			$insc_html .= '<p>' . __( 'No tienes inscripciones activas en este momento.', 'convoca-members' ) . '</p>';
+		}
+
+		return '<div class="convoca-my-profile">' . $member_html . $insc_html . '</div>';
 	}
 }
