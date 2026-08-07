@@ -295,7 +295,35 @@ El envío de emails (confirmaciones, renovaciones, avisos) usa un **proveedor co
 
 El proveedor se puede extender con el filtro `convoca_email_providers`.
 
-## 17. Problemas comunes
+## 17. API REST
+
+Namespace: `convoca-members/v1`. Los endpoints `/me/*` requieren sesión de socio (cookie `convoca_member_session` + nonce `X-WP-Nonce`); `/login` y `/alta` son públicos.
+
+| Método | Ruta | Descripción |
+|--------|------|-------------|
+| POST | `/login` | Iniciar sesión de socio (email + código) |
+| POST | `/alta` | Alta de socio |
+| GET | `/me` | Perfil del socio (datos, estado, verificación email/teléfono) |
+| POST | `/me/profile` | Editar perfil (dirección, teléfono, email con confirmación, cumpleaños una vez) |
+| POST | `/me/verify-phone` | Enviar enlace de verificación de teléfono al email |
+| POST | `/me/confirm-email` | Confirmar email pendiente con token |
+| POST | `/me/renovar` | Renovar membresía (genera pago y devuelve `payment_url`) |
+| POST | `/me/unsubscribe` | Solicitar baja (`baja_solicitada`) |
+| GET | `/me/card` | Datos del carnet digital |
+| GET | `/me/certificate` | Certificado de socio |
+| GET | `/me/certificate/download` | Descargar certificado PDF |
+| GET | `/me/pagos` | Historial de pagos |
+| GET | `/me/horas` | Horas de voluntariado |
+| GET | `/me/inscripciones` | Inscripciones del socio |
+| GET | `/proyectos` | Proyectos |
+| GET | `/search` | Búsqueda de socios (admin) |
+| GET | `/admin/members/search` | Búsqueda admin de miembros |
+| GET | `/documentos/{id}` | Documento del socio |
+| GET | `/member/notifications` | Notificaciones del socio |
+| POST | `/member/notifications/read` | Marcar notificación leída |
+| POST | `/member/notifications/read-all` | Marcar todas leídas |
+
+## 18. Problemas comunes
 
 | Problema | Solución |
 |----------|----------|
