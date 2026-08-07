@@ -449,7 +449,7 @@ class CPT_Miembro {
 		}
 
 		// Update legacy option for compatibility - use SELECT MAX to ensure consistency under concurrency.
-		$max_from_db = (int) $wpdb->get_var( "SELECT MAX(member_number) FROM $table" );
+		$max_from_db = (int) $wpdb->get_var( "SELECT MAX(id) FROM $table" );
 		if ( $max_from_db > 0 ) {
 			update_option( 'convoca_last_member_number', $max_from_db, false );
 		}
