@@ -58,6 +58,12 @@ convoca-core, WordPress 6.4+, PHP 8.1+, Dompdf (optional)
 - Added digital member card PDF
 - Added Mi Área shortcode with email+code auth
 - Added Gutenberg blocks
+## 📖 Documentación
+
+La documentación completa (manual de usuario, API REST, hooks, instalación) vive en la wiki:
+
+👉 **[docs.getconvoca.app/plugins/convoca-members](https://docs.getconvoca.app/plugins/convoca-members/)**
+
 ## 🧪 Demo
 
 Prueba Convoca sin instalar nada:
