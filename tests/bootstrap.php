@@ -207,7 +207,7 @@ namespace {
 
     if (!\function_exists('wp_get_post_terms')) {
         function wp_get_post_terms($id, $tax) {
-            if ($tax === 'convoca_shifts_actividad') return [ (object)['name' => 'Taller de Yoga', 'term_id' => 1] ];
+            if ($tax === 'convoca_shifts_actividad') return [ (object)['name' => 'Actividad Test', 'term_id' => 1] ];
             return [];
         }
     }
