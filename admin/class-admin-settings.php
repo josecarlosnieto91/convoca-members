@@ -109,6 +109,8 @@ class Admin_Settings {
 			'rgpd_version' => sanitize_text_field( $input['rgpd_version'] ?? '1.0' ),
 			'sender_name'  => sanitize_text_field( $input['sender_name'] ?? get_bloginfo( 'name' ) ),
 			'min_age'      => (int) ( $input['min_age'] ?? 0 ),
+			'telegram_bot_token'    => sanitize_text_field( $input['telegram_bot_token'] ?? '' ),
+			'telegram_bot_username' => sanitize_text_field( $input['telegram_bot_username'] ?? '' ),
 		);
 	}
 
@@ -319,6 +321,22 @@ class Admin_Settings {
 				<label for="iban"><?php esc_html_e( 'IBAN para transferencias', 'convoca-members' ); ?></label>
 				<input type="text" id="iban" name="convoca_members_settings[iban]"
 					value="<?php echo esc_attr( $settings['iban'] ?? '' ); ?>" placeholder="ES00 0000 0000 0000 0000 0000">
+			</div>
+
+			<h3><?php esc_html_e( 'Verificación de teléfono', 'convoca-members' ); ?></h3>
+			<p class="convoca-small"><?php esc_html_e( 'Los socios pueden verificar su teléfono compartiendo su contacto con el bot de Telegram. Crea el bot con @BotFather.', 'convoca-members' ); ?></p>
+
+			<div class="convoca-field">
+				<label for="telegram_bot_token"><?php esc_html_e( 'Token del bot de Telegram', 'convoca-members' ); ?></label>
+				<input type="password" id="telegram_bot_token" name="convoca_members_settings[telegram_bot_token]"
+					value="<?php echo esc_attr( $settings['telegram_bot_token'] ?? '' ); ?>" placeholder="123456789:AAF...">
+				<small class="convoca-small"><?php esc_html_e( 'Creado con @BotFather. Si está vacío, la verificación por Telegram no está disponible.', 'convoca-members' ); ?></small>
+			</div>
+
+			<div class="convoca-field">
+				<label for="telegram_bot_username"><?php esc_html_e( 'Usuario del bot (sin @)', 'convoca-members' ); ?></label>
+				<input type="text" id="telegram_bot_username" name="convoca_members_settings[telegram_bot_username]"
+					value="<?php echo esc_attr( $settings['telegram_bot_username'] ?? '' ); ?>" placeholder="convoca_verify_bot">
 			</div>
 
 			<div class="convoca-field">

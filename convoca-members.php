@@ -230,6 +230,7 @@ add_action(
 		new \Convoca\Members\Estados();
 		new \Convoca\Members\Email_Manager();
 		new \Convoca\Members\Rest_API();
+		\Convoca\Members\Phone_Verifier::register_webhooks();
 		new \Convoca\Members\Payment_Listener();
 		new \Convoca\Members\CPT_Registro_Hora();
 		new \Convoca\Members\CPT_Proyecto();
