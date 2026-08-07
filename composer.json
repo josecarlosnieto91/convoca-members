@@ -32,8 +32,7 @@
     },
     "autoload": {
         "psr-4": {
-            "Convoca\\Members\\": "includes/",
-            "Convoca\\Members\\Providers\\": "includes/providers/"
+            "Convoca\\Members\\": "includes/"
         },
         "classmap": [
             "admin/",

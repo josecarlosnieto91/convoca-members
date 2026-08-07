@@ -209,17 +209,6 @@ class Rest_API {
 			)
 		);
 
-		// Start phone verification with the active provider.
-		register_rest_route(
-			self::NAMESPACE,
-			'/me/verify-phone',
-			array(
-				'methods'             => 'POST',
-				'callback'            => array( $this, 'verify_phone' ),
-				'permission_callback' => array( $this, 'check_member_auth' ),
-			)
-		);
-
 		// Member notifications.
 		register_rest_route(
 			self::NAMESPACE,
@@ -392,7 +381,6 @@ class Rest_API {
 				'email_pendiente' => get_post_meta( $member_id, '_convoca_email_pendiente', true ),
 				'direccion'       => get_post_meta( $member_id, '_convoca_direccion', true ),
 				'telefono'        => get_post_meta( $member_id, '_convoca_telefono', true ),
-				'telefono_verificado' => Phone_Verifier::is_phone_verified( $member_id ),
 				'cumpleanos'      => get_post_meta( $member_id, '_convoca_cumpleanos', true ),
 				'codigo'          => $masked_code,
 				'estado'          => get_post_meta( $member_id, '_convoca_estado_miembro', true ),
@@ -1161,43 +1149,5 @@ class Rest_API {
 		\Convoca\Core\Utils::do_action( 'convoca_members_email_cambiado', 'convoca_email_cambiado', $member_id, $pendiente );
 
 		return new \WP_REST_Response( array( 'success' => true, 'email' => $pendiente ) );
-	}
-
-	/**
-	 * Start phone verification with the active provider.
-	 */
-	public function verify_phone( \WP_REST_Request $request ): \WP_REST_Response {
-		$member_id = Member_Auth::get_current_member_id();
-		$miembro   = get_post( $member_id );
-
-		if ( ! $miembro || $miembro->post_type !== 'miembro' ) {
-			return new \WP_REST_Response( array( 'error' => __( 'Miembro no encontrado.', 'convoca-members' ) ), 404 );
-		}
-
-		$provider = Phone_Verifier::get_active_provider();
-
-		if ( ! $provider ) {
-			return new \WP_REST_Response(
-				array(
-					'error' => __( 'No hay ningún proveedor de verificación configurado. Contacta con la administración.', 'convoca-members' ),
-				),
-				503
-			);
-		}
-
-		// If already verified, allow re-request but keep the verified flag.
-		$payload = $provider->request_verification( $member_id );
-
-		return new \WP_REST_Response(
-			array(
-				'success'      => true,
-				'provider'     => $provider->get_slug(),
-				'provider_label' => $provider->get_label(),
-				'instructions' => $payload['instructions'] ?? '',
-				'deep_link'    => $payload['deep_link'] ?? '',
-				'bot_username' => $payload['bot_username'] ?? '',
-				'verified'     => Phone_Verifier::is_phone_verified( $member_id ),
-			)
-		);
 	}
 }

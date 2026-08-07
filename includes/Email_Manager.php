@@ -487,7 +487,7 @@ class Email_Manager {
 			)
 		);
 
-		$sent = wp_mail( $email, $subject, $body, $headers );
+		$sent = \Convoca\Members\Email_Verifier::send( $email, $subject, $body, $headers );
 
 		if ( $sent ) {
 			// Update tracking and Audit Log.

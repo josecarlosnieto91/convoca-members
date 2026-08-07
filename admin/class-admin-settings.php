@@ -109,8 +109,10 @@ class Admin_Settings {
 			'rgpd_version' => sanitize_text_field( $input['rgpd_version'] ?? '1.0' ),
 			'sender_name'  => sanitize_text_field( $input['sender_name'] ?? get_bloginfo( 'name' ) ),
 			'min_age'      => (int) ( $input['min_age'] ?? 0 ),
-			'telegram_bot_token'    => sanitize_text_field( $input['telegram_bot_token'] ?? '' ),
-			'telegram_bot_username' => sanitize_text_field( $input['telegram_bot_username'] ?? '' ),
+			'email_provider'    => sanitize_key( $input['email_provider'] ?? 'wpmail' ),
+			'mailgun_api_key'   => sanitize_text_field( $input['mailgun_api_key'] ?? '' ),
+			'mailgun_domain'    => sanitize_text_field( $input['mailgun_domain'] ?? '' ),
+			'mailgun_region'    => sanitize_key( $input['mailgun_region'] ?? '' ),
 		);
 	}
 
@@ -323,20 +325,40 @@ class Admin_Settings {
 					value="<?php echo esc_attr( $settings['iban'] ?? '' ); ?>" placeholder="ES00 0000 0000 0000 0000 0000">
 			</div>
 
-			<h3><?php esc_html_e( 'Verificación de teléfono', 'convoca-members' ); ?></h3>
-			<p class="convoca-small"><?php esc_html_e( 'Los socios pueden verificar su teléfono compartiendo su contacto con el bot de Telegram. Crea el bot con @BotFather.', 'convoca-members' ); ?></p>
+			<h3><?php esc_html_e( 'Proveedor de email (verificación y avisos)', 'convoca-members' ); ?></h3>
+			<p class="convoca-small"><?php esc_html_e( 'El proveedor de email envía los correos de confirmación de email y las notificaciones a socios.', 'convoca-members' ); ?></p>
 
 			<div class="convoca-field">
-				<label for="telegram_bot_token"><?php esc_html_e( 'Token del bot de Telegram', 'convoca-members' ); ?></label>
-				<input type="password" id="telegram_bot_token" name="convoca_members_settings[telegram_bot_token]"
-					value="<?php echo esc_attr( $settings['telegram_bot_token'] ?? '' ); ?>" placeholder="123456789:AAF...">
-				<small class="convoca-small"><?php esc_html_e( 'Creado con @BotFather. Si está vacío, la verificación por Telegram no está disponible.', 'convoca-members' ); ?></small>
+				<label for="email_provider"><?php esc_html_e( 'Proveedor', 'convoca-members' ); ?></label>
+				<select id="email_provider" name="convoca_members_settings[email_provider]">
+					<option value="wpmail" <?php selected( $settings['email_provider'] ?? 'wpmail', 'wpmail' ); ?>>
+						<?php esc_html_e( 'WordPress (wp_mail)', 'convoca-members' ); ?>
+					</option>
+					<option value="mailgun" <?php selected( $settings['email_provider'] ?? '', 'mailgun' ); ?>>
+						<?php esc_html_e( 'Mailgun', 'convoca-members' ); ?>
+					</option>
+				</select>
+				<small class="convoca-small"><?php esc_html_e( 'wp_mail usa el correo configurado en WordPress. Mailgun requiere API key y dominio.', 'convoca-members' ); ?></small>
 			</div>
 
 			<div class="convoca-field">
-				<label for="telegram_bot_username"><?php esc_html_e( 'Usuario del bot (sin @)', 'convoca-members' ); ?></label>
-				<input type="text" id="telegram_bot_username" name="convoca_members_settings[telegram_bot_username]"
-					value="<?php echo esc_attr( $settings['telegram_bot_username'] ?? '' ); ?>" placeholder="convoca_verify_bot">
+				<label for="mailgun_api_key"><?php esc_html_e( 'Mailgun API Key', 'convoca-members' ); ?></label>
+				<input type="password" id="mailgun_api_key" name="convoca_members_settings[mailgun_api_key]"
+					value="<?php echo esc_attr( $settings['mailgun_api_key'] ?? '' ); ?>" placeholder="key-...">
+			</div>
+
+			<div class="convoca-field">
+				<label for="mailgun_domain"><?php esc_html_e( 'Mailgun Domain', 'convoca-members' ); ?></label>
+				<input type="text" id="mailgun_domain" name="convoca_members_settings[mailgun_domain]"
+					value="<?php echo esc_attr( $settings['mailgun_domain'] ?? '' ); ?>" placeholder="mg.tudominio.com">
+			</div>
+
+			<div class="convoca-field">
+				<label for="mailgun_region"><?php esc_html_e( 'Mailgun Region', 'convoca-members' ); ?></label>
+				<select id="mailgun_region" name="convoca_members_settings[mailgun_region]">
+					<option value="" <?php selected( $settings['mailgun_region'] ?? '', '' ); ?>>US (api.mailgun.net)</option>
+					<option value="eu" <?php selected( $settings['mailgun_region'] ?? '', 'eu' ); ?>>EU (api.eu.mailgun.net)</option>
+				</select>
 			</div>
 
 			<div class="convoca-field">
