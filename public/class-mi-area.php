@@ -32,7 +32,122 @@ class Mi_Area {
 	public function __construct() {
 		add_shortcode( 'convoca_mi_area', array( $this, 'render' ) );
 		add_shortcode( 'convoca_mi_perfil', array( $this, 'render_perfil' ) );
+		add_shortcode( 'convoca_renovar', array( $this, 'render_renovar' ) );
 		add_action( 'wp_enqueue_scripts', array( $this, 'enqueue_assets' ) );
+		add_action( 'template_redirect', array( $this, 'handle_email_confirmation' ) );
+	}
+
+	/**
+	 * Handle the email confirmation link (?convoca_confirm_email=1&member=X&token=Y).
+	 */
+	public function handle_email_confirmation(): void {
+		if ( empty( $_GET['convoca_confirm_email'] ) || empty( $_GET['member'] ) || empty( $_GET['token'] ) ) {
+			return;
+		}
+
+		$member_id = (int) $_GET['member'];
+		$token     = sanitize_text_field( wp_unslash( $_GET['token'] ) );
+		$stored    = get_post_meta( $member_id, '_convoca_email_token', true );
+		$exp       = (int) get_post_meta( $member_id, '_convoca_email_token_exp', true );
+		$pendiente = get_post_meta( $member_id, '_convoca_email_pendiente', true );
+
+		if ( empty( $token ) || empty( $stored ) || ! hash_equals( $stored, $token ) ) {
+			wp_safe_redirect( add_query_arg( 'convoca_confirm_error', 'token', home_url( '/mi-cuenta/' ) ) );
+			exit;
+		}
+		if ( time() > $exp ) {
+			wp_safe_redirect( add_query_arg( 'convoca_confirm_error', 'expirado', home_url( '/mi-cuenta/' ) ) );
+			exit;
+		}
+
+		update_post_meta( $member_id, '_convoca_email', $pendiente );
+		delete_post_meta( $member_id, '_convoca_email_pendiente' );
+		delete_post_meta( $member_id, '_convoca_email_token' );
+		delete_post_meta( $member_id, '_convoca_email_token_exp' );
+
+		\Convoca\Core\Utils::do_action( 'convoca_members_email_cambiado', 'convoca_email_cambiado', $member_id, $pendiente );
+
+		wp_safe_redirect( add_query_arg( 'convoca_confirm_ok', '1', home_url( '/mi-cuenta/' ) ) );
+		exit;
+	}
+
+	/**
+	 * [convoca_renovar] — Renewal shortcode.
+	 * For logged-in members: shows a renew button that generates the payment.
+	 * For guests: login prompt.
+	 */
+	public function render_renovar(): string {
+		$member_id = Member_Auth::get_current_member_id();
+		ob_start();
+
+		if ( $member_id <= 0 ) {
+			echo '<div class="convoca-alert convoca-alert--info">';
+			echo esc_html__( 'Para renovar tu membresía, inicia sesión con tu email y código.', 'convoca-members' );
+			echo ' <a href="' . esc_url( home_url( '/mi-cuenta/' ) ) . '">' . esc_html__( 'Acceder a Mi Cuenta', 'convoca-members' ) . '</a>';
+			echo '</div>';
+			return ob_get_clean();
+		}
+
+		$miembro   = get_post( $member_id );
+		$plan_key  = get_post_meta( $member_id, '_convoca_plan', true ) ?: get_post_meta( $member_id, '_convoca_sub_plan', true );
+		$plan_data = CPT_Miembro::get_plan( $plan_key );
+		$estado    = get_post_meta( $member_id, '_convoca_estado_miembro', true );
+		$renovacion = get_post_meta( $member_id, '_convoca_fecha_renovacion', true );
+		$importe   = (float) ( get_post_meta( $member_id, '_convoca_importe_cuota', true ) ?: ( $plan_data['price'] ?? 0 ) );
+
+		?>
+		<div class="convoca-renovar card glass">
+			<h2><?php esc_html_e( 'Renovación de membresía', 'convoca-members' ); ?></h2>
+			<p><strong><?php esc_html_e( 'Socio/a:', 'convoca-members' ); ?></strong> <?php echo esc_html( $miembro->post_title ); ?></p>
+			<p><strong><?php esc_html_e( 'Plan:', 'convoca-members' ); ?></strong> <?php echo esc_html( ucfirst( $plan_key ) ); ?></p>
+			<p><strong><?php esc_html_e( 'Estado:', 'convoca-members' ); ?></strong> <span class="badge state-<?php echo esc_attr( $estado ); ?>"><?php echo esc_html( ucfirst( $estado ) ); ?></span></p>
+			<?php if ( $renovacion ) : ?>
+				<p><strong><?php esc_html_e( 'Próxima renovación:', 'convoca-members' ); ?></strong> <?php echo esc_html( $renovacion ); ?></p>
+			<?php endif; ?>
+			<?php if ( $importe > 0 ) : ?>
+				<p><strong><?php esc_html_e( 'Importe de renovación:', 'convoca-members' ); ?></strong> <?php echo esc_html( number_format( $importe, 2 ) ); ?> €</p>
+			<?php endif; ?>
+			<button type="button" id="conv-btn-renovar" class="button button-primary">
+				<?php esc_html_e( 'Renovar membresía', 'convoca-members' ); ?>
+			</button>
+			<div id="conv-renovar-msg"></div>
+		</div>
+		<script>
+		document.addEventListener('click', function(e) {
+			if (e.target && e.target.id === 'conv-btn-renovar') {
+				e.preventDefault();
+				var btn = e.target;
+				var msg = document.getElementById('conv-renovar-msg');
+				btn.disabled = true;
+				msg.innerHTML = '<?php echo esc_js( __( 'Generando pago…', 'convoca-members' ) ); ?>';
+				fetch(window.convMiArea ? window.convMiArea.apiUrl : '<?php echo esc_url( rest_url( 'convoca-members/v1' ) ); ?>' + '/me/renovar', {
+					method: 'POST',
+					headers: {
+						'X-WP-Nonce': window.convMiArea ? window.convMiArea.nonce : '<?php echo esc_js( wp_create_nonce( 'wp_rest' ) ); ?>',
+						'Content-Type': 'application/json'
+					}
+				}).then(function(r) { return r.json(); }).then(function(d) {
+					if (d.payment_url) {
+						window.location.href = d.payment_url;
+					} else {
+						btn.disabled = false;
+						// Escape error message to prevent XSS (it may come from the API).
+						var err = d.error || 'Error';
+						var div = document.createElement('div');
+						div.className = 'convoca-alert convoca-alert--danger';
+						div.textContent = err;
+						msg.innerHTML = '';
+						msg.appendChild(div);
+					}
+				}).catch(function() {
+					btn.disabled = false;
+					msg.innerHTML = '<div class="convoca-alert convoca-alert--danger">Error de red.</div>';
+				});
+			}
+		});
+		</script>
+		<?php
+		return ob_get_clean();
 	}
 
 	/**
@@ -47,7 +162,7 @@ class Mi_Area {
 			'convoca-mi-area',
 			'convMiArea',
 			array(
-				'apiUrl'     => rest_url( 'convoca/v1' ),
+				'apiUrl'     => rest_url( 'convoca-members/v1' ),
 				'nonce'      => wp_create_nonce( 'wp_rest' ),
 				'isLoggedIn' => $member_id > 0,
 				'memberId'   => $member_id,

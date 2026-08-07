@@ -83,6 +83,8 @@ class Email_Manager {
 		'{password}',
 		'{login_url}',
 		'{admin_email}',
+		'{link_confirmacion}',
+		'{nuevo_email}',
 	);
 
 	public function __construct() {
@@ -93,6 +95,7 @@ class Email_Manager {
 		add_action( 'convoca_members_email_renovacion', array( $this, 'send_renovacion' ) );
 		add_action( 'convoca_members_email_renovacion_automatica', array( $this, 'send_renovacion_automatica' ), 10, 2 );
 		add_action( 'convoca_members_email_renovacion_completada', array( $this, 'send_renovacion_completada' ) );
+		add_action( 'convoca_members_email_confirm', array( $this, 'send_confirm' ), 10, 3 );
 		add_action( 'convoca_members_email_objetivo_voluntariado', array( $this, 'send_objetivo_voluntariado' ) );
 
 		// Legacy hooks removed. The do_action() call in Process_Member and.
@@ -300,6 +303,14 @@ class Email_Manager {
 					. __( '<p>Adjunto a este email encontrarás tu tarjeta de socio/a actualizada.</p>', 'convoca-members' )
 					. '<p>¡Gracias por tu compromiso con la naturaleza! 🌍</p>',
 			),
+			'confirm_email'                    => array(
+				'subject' => __( 'Confirma tu nuevo email — ', 'convoca-members' ) . get_bloginfo( 'name' ),
+				'body'    => __( '<h1>Hola {nombre},</h1>', 'convoca-members' )
+					. __( '<p>Has solicitado cambiar tu email de contacto a <strong>{nuevo_email}</strong>.</p>', 'convoca-members' )
+					. __( '<p>Para confirmar el cambio, haz clic en el siguiente enlace (válido por 24 horas):</p>', 'convoca-members' )
+					. '<p style="text-align:center;margin:24px 0;"><a href="{link_confirmacion}" style="background:#FF8700;color:#fff;padding:12px 24px;border-radius:6px;text-decoration:none;font-weight:bold;">' . esc_html__( 'Confirmar email', 'convoca-members' ) . '</a></p>'
+					. __( '<p>Si no has solicitado este cambio, ignora este mensaje. Tu email actual seguirá activo.</p>', 'convoca-members' ),
+			),
 			'voluntariado_recordatorio'        => array(
 				'subject' => __( 'Recuerda tus horas de voluntariado — ', 'convoca-members' ) . get_bloginfo( 'name' ),
 				'body'    => __( '<h1>Hola {nombre},</h1>', 'convoca-members' )
@@ -385,6 +396,25 @@ class Email_Manager {
 		$this->send( 'renovacion_completada', $post_id );
 	}
 
+	/**
+	 * Send email confirmation link.
+	 *
+	 * @param int    $post_id      Member ID.
+	 * @param string $confirm_url  Confirmation link.
+	 * @param string $nuevo_email  Pending new email.
+	 */
+	public function send_confirm( int $post_id, string $confirm_url, string $nuevo_email ): void {
+		$this->send(
+			'confirm_email',
+			$post_id,
+			array(
+				'{link_confirmacion}' => $confirm_url,
+				'{nuevo_email}'       => $nuevo_email,
+			),
+			$nuevo_email
+		);
+	}
+
 	public function send_objetivo_voluntariado( int $post_id ): void {
 		$this->send( 'objetivo_voluntariado_completado', $post_id );
 	}
@@ -399,7 +429,7 @@ class Email_Manager {
 
 	/* ── Core send logic ───────────────────────────────── */
 
-	private function send( string $template_slug, int $post_id, array $extra_vars = array() ): void {
+	private function send( string $template_slug, int $post_id, array $extra_vars = array(), string $to_email = '' ): void {
 		$templates = get_option( self::OPTION, array() );
 		$tpl       = $templates[ $template_slug ] ?? null;
 
@@ -407,7 +437,7 @@ class Email_Manager {
 			return;
 		}
 
-		$email = get_post_meta( $post_id, '_convoca_email', true ) ?: get_the_author_meta( 'user_email', get_post_field( 'post_author', $post_id ) );
+		$email = $to_email ?: ( get_post_meta( $post_id, '_convoca_email', true ) ?: get_the_author_meta( 'user_email', get_post_field( 'post_author', $post_id ) ) );
 		if ( empty( $email ) ) {
 			\Convoca\Core\Logger::warning( "Email vacío para miembro #{$post_id}, no se envía {$template_slug}.", 'Members/Emails' );
 			return;

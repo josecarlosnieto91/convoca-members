@@ -176,6 +176,39 @@ class Rest_API {
 			)
 		);
 
+		// Renew membership (generates payment link).
+		register_rest_route(
+			self::NAMESPACE,
+			'/me/renovar',
+			array(
+				'methods'             => 'POST',
+				'callback'            => array( $this, 'renew_membership' ),
+				'permission_callback' => array( $this, 'check_active_member' ),
+			)
+		);
+
+		// Update profile fields (address, phone, email with confirmation, birthday once).
+		register_rest_route(
+			self::NAMESPACE,
+			'/me/profile',
+			array(
+				'methods'             => 'POST',
+				'callback'            => array( $this, 'update_profile' ),
+				'permission_callback' => array( $this, 'check_member_auth' ),
+			)
+		);
+
+		// Confirm pending email via token.
+		register_rest_route(
+			self::NAMESPACE,
+			'/me/confirm-email',
+			array(
+				'methods'             => 'POST',
+				'callback'            => array( $this, 'confirm_email' ),
+				'permission_callback' => array( $this, 'check_member_auth' ),
+			)
+		);
+
 		// Member notifications.
 		register_rest_route(
 			self::NAMESPACE,
@@ -342,12 +375,16 @@ class Rest_API {
 
 		return new \WP_REST_Response(
 			array(
-				'id'     => $member_id,
-				'nombre' => $post->post_title,
-				'email'  => get_post_meta( $member_id, '_convoca_email', true ),
-				'codigo' => $masked_code,
-				'estado' => get_post_meta( $member_id, '_convoca_estado_miembro', true ),
-				'tipo'   => (array) get_post_meta( $member_id, '_convoca_modalidad', true ) ?: array( 'Socio/a' ),
+				'id'              => $member_id,
+				'nombre'          => $post->post_title,
+				'email'           => get_post_meta( $member_id, '_convoca_email', true ),
+				'email_pendiente' => get_post_meta( $member_id, '_convoca_email_pendiente', true ),
+				'direccion'       => get_post_meta( $member_id, '_convoca_direccion', true ),
+				'telefono'        => get_post_meta( $member_id, '_convoca_telefono', true ),
+				'cumpleanos'      => get_post_meta( $member_id, '_convoca_cumpleanos', true ),
+				'codigo'          => $masked_code,
+				'estado'          => get_post_meta( $member_id, '_convoca_estado_miembro', true ),
+				'tipo'            => (array) get_post_meta( $member_id, '_convoca_modalidad', true ) ?: array( 'Socio/a' ),
 			)
 		);
 	}
@@ -921,5 +958,196 @@ class Rest_API {
 		// phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_readfile -- PDF binary output, no WP_Filesystem equivalent.
 		readfile( $filepath );
 		exit;
+	}
+
+	/**
+	 * Renew membership: creates a payment for one more year.
+	 */
+	public function renew_membership( \WP_REST_Request $request ): \WP_REST_Response {
+		$member_id = Member_Auth::get_current_member_id();
+		$miembro   = get_post( $member_id );
+
+		if ( ! $miembro || $miembro->post_type !== 'miembro' ) {
+			return new \WP_REST_Response( array( 'error' => __( 'Miembro no encontrado.', 'convoca-members' ) ), 404 );
+		}
+
+		$plan_key  = get_post_meta( $member_id, '_convoca_plan', true ) ?: get_post_meta( $member_id, '_convoca_sub_plan', true );
+		$plan_data = CPT_Miembro::get_plan( $plan_key );
+
+		if ( ! $plan_data ) {
+			return new \WP_REST_Response( array( 'error' => __( 'No se encontró el plan de la membresía.', 'convoca-members' ) ), 400 );
+		}
+
+		$importe = (float) ( get_post_meta( $member_id, '_convoca_importe_cuota', true ) ?: ( $plan_data['price'] ?? 0 ) );
+
+		if ( $importe <= 0 ) {
+			return new \WP_REST_Response( array( 'error' => __( 'Este plan no requiere pago.', 'convoca-members' ) ), 400 );
+		}
+
+		if ( ! \Convoca\Core\Features::is_gateway_active() || ! function_exists( 'Convoca\Gateway\convoca_gateway_create_payment' ) ) {
+			return new \WP_REST_Response( array( 'error' => __( 'La pasarela de pago no está disponible.', 'convoca-members' ) ), 503 );
+		}
+
+		$payment = \Convoca\Gateway\convoca_gateway_create_payment(
+			array(
+				'amount_cents' => (int) round( $importe * 100 ),
+				'method'       => 'tarjeta',
+				'origin'       => 'members',
+				'origin_id'    => $member_id,
+				'product_desc' => mb_substr( 'RENOVACIÓN ' . strtoupper( get_bloginfo( 'name' ) ) . ' - ' . strtoupper( $plan_data['label'] ?? 'SOCIO' ), 0, 125 ),
+				'redirect_ok'  => home_url( '/pago-ok/' ),
+				'redirect_ko'  => home_url( '/pago-ko/' ),
+			)
+		);
+
+		if ( is_wp_error( $payment ) ) {
+			return new \WP_REST_Response( array( 'error' => $payment->get_error_message() ), 400 );
+		}
+
+		update_post_meta( $member_id, '_convoca_pago_id', $payment['pago_id'] );
+		\Convoca\Core\Logger::info( "Renovación manual solicitada (Pago #{$payment['pago_id']}) para el miembro #$member_id.", 'Members/Renewal', $member_id );
+
+		return new \WP_REST_Response(
+			array(
+				'success'     => true,
+				'payment_url' => $payment['payment_url'],
+				'pago_id'     => $payment['pago_id'],
+			)
+		);
+	}
+
+	/**
+	 * Update member profile fields.
+	 *
+	 * Rules:
+	 * - email: only applied after confirmation via link (pending email flow).
+	 * - cumpleaños: only settable once, never overwritten.
+	 * - dirección / teléfono: freely updatable.
+	 */
+	public function update_profile( \WP_REST_Request $request ): \WP_REST_Response {
+		$member_id = Member_Auth::get_current_member_id();
+		$miembro   = get_post( $member_id );
+
+		if ( ! $miembro || $miembro->post_type !== 'miembro' ) {
+			return new \WP_REST_Response( array( 'error' => __( 'Miembro no encontrado.', 'convoca-members' ) ), 404 );
+		}
+
+		$changes = array();
+
+		// ── Dirección ──
+		$direccion = sanitize_text_field( $request->get_param( 'direccion' ) ?? '' );
+		if ( $request->get_param( 'direccion' ) !== null ) {
+			update_post_meta( $member_id, '_convoca_direccion', $direccion );
+			$changes[] = 'direccion';
+		}
+
+		// ── Teléfono ──
+		$telefono = sanitize_text_field( $request->get_param( 'telefono' ) ?? '' );
+		if ( $request->get_param( 'telefono' ) !== null ) {
+			update_post_meta( $member_id, '_convoca_telefono', $telefono );
+			$changes[] = 'telefono';
+		}
+
+		// ── Cumpleaños (una sola vez) ──
+		$cumpleanos = sanitize_text_field( $request->get_param( 'cumpleanos' ) ?? '' );
+		$actual_c   = get_post_meta( $member_id, '_convoca_cumpleanos', true );
+		if ( $request->get_param( 'cumpleanos' ) !== null && ! empty( $cumpleanos ) ) {
+			if ( ! empty( $actual_c ) ) {
+				return new \WP_REST_Response(
+					array(
+						'error'   => __( 'El cumpleaños ya está establecido y no puede modificarse.', 'convoca-members' ),
+						'changes' => $changes,
+					),
+					400
+				);
+			}
+			// Validate YYYY-MM-DD and not in the future.
+			$ts = strtotime( $cumpleanos );
+			if ( $ts === false || $ts > strtotime( 'today' ) ) {
+				return new \WP_REST_Response( array( 'error' => __( 'Fecha de cumpleaños no válida.', 'convoca-members' ) ), 400 );
+			}
+			update_post_meta( $member_id, '_convoca_cumpleanos', gmdate( 'Y-m-d', $ts ) );
+			$changes[] = 'cumpleanos';
+		}
+
+		// ── Email (solo tras confirmación) ──
+		$nuevo_email = sanitize_email( $request->get_param( 'email' ) ?? '' );
+		$email_actual = get_post_meta( $member_id, '_convoca_email', true );
+		if ( $request->get_param( 'email' ) !== null && ! empty( $nuevo_email ) && $nuevo_email !== $email_actual ) {
+			if ( ! is_email( $nuevo_email ) ) {
+				return new \WP_REST_Response( array( 'error' => __( 'Email no válido.', 'convoca-members' ) ), 400 );
+			}
+
+			// Check not used by another member.
+			$duplicate = get_posts(
+				array(
+					'post_type'      => 'miembro',
+					'posts_per_page' => 1,
+					'meta_query'     => array(
+						array( 'key' => '_convoca_email', 'value' => $nuevo_email ),
+					),
+					'fields'         => 'ids',
+					'exclude'        => array( $member_id ),
+				)
+			);
+			if ( ! empty( $duplicate ) ) {
+				return new \WP_REST_Response( array( 'error' => __( 'Ese email ya está en uso por otro socio.', 'convoca-members' ) ), 400 );
+			}
+
+			// Generate confirmation token (24h validity).
+			$token = wp_generate_password( 32, false );
+			update_post_meta( $member_id, '_convoca_email_pendiente', $nuevo_email );
+			update_post_meta( $member_id, '_convoca_email_token', $token );
+			update_post_meta( $member_id, '_convoca_email_token_exp', time() + DAY_IN_SECONDS );
+
+			// Send confirmation link.
+			$confirm_url = add_query_arg(
+				array(
+					'convoca_confirm_email' => 1,
+					'member'                => $member_id,
+					'token'                 => $token,
+				),
+				home_url( '/mi-cuenta/' )
+			);
+			\Convoca\Core\Utils::do_action( 'convoca_members_email_confirm', 'convoca_email_confirm', $member_id, $confirm_url, $nuevo_email );
+
+			$changes[] = 'email_pendiente';
+		}
+
+		return new \WP_REST_Response(
+			array(
+				'success' => true,
+				'changes' => $changes,
+				'email_pendiente' => ! empty( get_post_meta( $member_id, '_convoca_email_pendiente', true ) ),
+			)
+		);
+	}
+
+	/**
+	 * Confirm a pending email change via token.
+	 */
+	public function confirm_email( \WP_REST_Request $request ): \WP_REST_Response {
+		$member_id = Member_Auth::get_current_member_id();
+		$token     = sanitize_text_field( $request->get_param( 'token' ) ?? '' );
+		$stored    = get_post_meta( $member_id, '_convoca_email_token', true );
+		$exp       = (int) get_post_meta( $member_id, '_convoca_email_token_exp', true );
+		$pendiente = get_post_meta( $member_id, '_convoca_email_pendiente', true );
+
+		if ( empty( $token ) || empty( $stored ) || ! hash_equals( $stored, $token ) ) {
+			return new \WP_REST_Response( array( 'error' => __( 'Token de confirmación no válido.', 'convoca-members' ) ), 400 );
+		}
+		if ( time() > $exp ) {
+			return new \WP_REST_Response( array( 'error' => __( 'El enlace de confirmación ha caducado. Solicítalo de nuevo.', 'convoca-members' ) ), 400 );
+		}
+
+		// Apply the email and clean up.
+		update_post_meta( $member_id, '_convoca_email', $pendiente );
+		delete_post_meta( $member_id, '_convoca_email_pendiente' );
+		delete_post_meta( $member_id, '_convoca_email_token' );
+		delete_post_meta( $member_id, '_convoca_email_token_exp' );
+
+		\Convoca\Core\Utils::do_action( 'convoca_members_email_cambiado', 'convoca_email_cambiado', $member_id, $pendiente );
+
+		return new \WP_REST_Response( array( 'success' => true, 'email' => $pendiente ) );
 	}
 }

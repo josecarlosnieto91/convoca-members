@@ -221,18 +221,93 @@
           <h2>👤 Mis Datos</h2>
           <div class="conv-meta-grid">
             <div class="meta-item"><strong>Nombre:</strong> <span>${profile.nombre}</span></div>
-            <div class="meta-item"><strong>Email:</strong> <span>${profile.email}</span></div>
+            <div class="meta-item"><strong>Email:</strong> <span>${profile.email}</span>${profile.email_pendiente ? ' <em class="text-muted">(cambio pendiente de confirmar)</em>' : ''}</div>
             <div class="meta-item"><strong>Código de Acceso:</strong> <span>${profile.codigo}</span></div>
             <div class="meta-item"><strong>Estado:</strong> ${this.formatEstado(profile.estado)}</div>
+            <div class="meta-item"><strong>Dirección:</strong> <span>${profile.direccion || '—'}</span></div>
+            <div class="meta-item"><strong>Teléfono:</strong> <span>${profile.telefono || '—'}</span></div>
+            <div class="meta-item"><strong>Cumpleaños:</strong> <span>${profile.cumpleanos || '—'}</span></div>
           </div>
+
+          <hr>
+          <h3>✏️ Editar mis datos</h3>
+          <form id="conv-profile-form" class="conv-form">
+            <label>Dirección
+              <input type="text" name="direccion" value="${this.escAttr(profile.direccion || '')}" placeholder="Calle, número, ciudad…">
+            </label>
+            <label>Teléfono
+              <input type="tel" name="telefono" value="${this.escAttr(profile.telefono || '')}" placeholder="600 000 000">
+            </label>
+            <label>Email
+              <input type="email" name="email" value="${this.escAttr(profile.email || '')}" placeholder="tucorreo@ejemplo.com">
+            </label>
+            <p class="text-muted">Al cambiar el email recibirás un correo con un enlace para confirmarlo. Hasta que no lo confirmes, se mantendrá el email actual.</p>
+            ${profile.cumpleanos ? '' : `
+            <label>Cumpleaños (solo se puede establecer una vez)
+              <input type="date" name="cumpleanos">
+            </label>`}
+            <button type="submit" class="btn-primary">Guardar cambios</button>
+            <div id="conv-profile-msg"></div>
+          </form>
           <hr>
           <h3>Zona de Peligro</h3>
           <p class="text-muted">Si deseas solicitar tu baja como socio/a, puedes hacerlo pulsando el siguiente botón. Se notificará a la administración para procesarla.</p>
           <button id="conv-btn-unsubscribe" class="btn-danger-outline">Solicitar Baja</button>
         `;
         this.$main.innerHTML = html;
+
+        const form = conv.$('#conv-profile-form');
+        if (form) {
+          form.addEventListener('submit', (e) => {
+            e.preventDefault();
+            this.saveProfile(form);
+          });
+        }
       })
       .catch(() => { this.$main.innerHTML = '<p>Error cargando perfil.</p>'; });
+    },
+
+    saveProfile: function(form) {
+      const btn = form.querySelector('button[type="submit"]');
+      const msg = conv.$('#conv-profile-msg');
+      const payload = {
+        direccion: form.querySelector('[name="direccion"]').value,
+        telefono: form.querySelector('[name="telefono"]').value,
+        email: form.querySelector('[name="email"]').value
+      };
+      const cumple = form.querySelector('[name="cumpleanos"]');
+      if (cumple && cumple.value) payload.cumpleanos = cumple.value;
+
+      btn.disabled = true;
+      msg.innerHTML = '<p class="text-muted">Guardando…</p>';
+
+      fetch(window.convMiArea.apiUrl + '/me/profile', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'X-WP-Nonce': window.convMiArea.nonce },
+        body: JSON.stringify(payload)
+      })
+      .then(res => res.json())
+      .then(d => {
+        btn.disabled = false;
+        if (d.success) {
+          msg.innerHTML = '<p class="text-success">' + (window.convTrans ? convTrans('Datos guardados correctamente.', 'convoca-members') : 'Datos guardados correctamente.') + '</p>';
+          if (d.email_pendiente) {
+            msg.innerHTML += '<p class="text-muted">Revisa tu correo nuevo para confirmar el cambio de email.</p>';
+          }
+          setTimeout(() => this.fetchProfile(), 1200);
+        } else {
+          // Escape API error before injecting (defense-in-depth).
+          msg.innerHTML = '<p class="text-error">' + this.escHtml(d.error || 'Error al guardar.') + '</p>';
+        }
+      })
+      .catch(() => {
+        btn.disabled = false;
+        msg.innerHTML = '<p class="text-error">Error de conexión.</p>';
+      });
+    },
+
+    escAttr: function(s) {
+      return String(s == null ? '' : s).replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
     },
 
     fetchInscriptions: function() {
@@ -312,10 +387,44 @@
               `).join('')}
             </tbody>
           </table>
+          <hr>
+          <h3>Renovación</h3>
+          <p class="text-muted">Tu membresía se renueva cada año. Puedes renovar por adelantado cuando quieras desde aquí.</p>
+          <button id="conv-btn-renovar-panel" class="btn-primary">🔄 Renovar membresía</button>
+          <div id="conv-renovar-panel-msg"></div>
         `;
         this.$main.innerHTML = html;
+
+        const btn = conv.$('#conv-btn-renovar-panel');
+        if (btn) {
+          btn.addEventListener('click', () => this.renewMembership(btn));
+        }
       })
       .catch(() => { this.$main.innerHTML = '<p>Error cargando pagos.</p>'; });
+    },
+
+    renewMembership: function(btn) {
+      const msg = conv.$('#conv-renovar-panel-msg');
+      btn.disabled = true;
+      msg.innerHTML = '<p class="text-muted">Generando pago…</p>';
+
+      fetch(window.convMiArea.apiUrl + '/me/renovar', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'X-WP-Nonce': window.convMiArea.nonce }
+      })
+      .then(res => res.json())
+      .then(d => {
+        if (d.payment_url) {
+          window.location.href = d.payment_url;
+        } else {
+          btn.disabled = false;
+          msg.innerHTML = '<p class="text-error">' + this.escHtml(d.error || 'Error al renovar.') + '</p>';
+        }
+      })
+      .catch(() => {
+        btn.disabled = false;
+        msg.innerHTML = '<p class="text-error">Error de conexión.</p>';
+      });
     },
 
     fetchHours: function() {
