@@ -347,7 +347,7 @@ add_action(
  * Verification shortcode: [convoca_verificar_socio]
  * Accessible publicly. Shows member name + plan if token is valid.
  */
-// Activar miembro del voluntario cuando se aprueba desde Centro Social.
+// Activate volunteer member when approved.
 add_action(
 	'convoca_voluntario_aprobado',
 	function ( int $user_id ): void {

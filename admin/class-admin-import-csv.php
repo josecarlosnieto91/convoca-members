@@ -278,7 +278,7 @@ class Admin_Import_CSV {
 		$filename = 'plantilla-socios.csv';
 
 		$headers = array( 'nombre', 'email', 'dni', 'plan', 'telefono', 'direccion', 'municipio' );
-		$example = array( 'Juan García López', 'juan@example.com', '12345678Z', 'socio-adulto', '612345678', 'C/ Mayor 123', 'Madrid' );
+		$example = array( 'Juan García López', 'juan@example.com', '12345678Z', 'socio-adulto', '612345678', 'Calle Ejemplo 1 123', 'Madrid' );
 
 		header( 'Content-Type: text/csv; charset=utf-8' );
 		header( 'Content-Disposition: attachment; filename="' . $filename . '"' );
