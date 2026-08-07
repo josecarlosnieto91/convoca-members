@@ -172,19 +172,30 @@ class Certificate_Generator {
 	}
 
 	private static function build_qr_svg( string $data ): string {
-		// Generate a simple QR code using a free API.
-		$api_url  = 'https://api.qrserver.com/v1/create-qr-code/?size=120x120&data=' . rawurlencode( $data );
-		$response = wp_remote_get( $api_url, array( 'timeout' => 5 ) );
-		$img_data = null;
-		if ( ! is_wp_error( $response ) && wp_remote_retrieve_response_code( $response ) === 200 ) {
-			$img_data = wp_remote_retrieve_body( $response );
+		// QR generado localmente con chillerlan/php-qrcode (sin API externa).
+		// Evita dependencia de terceros y filtración de datos del certificado.
+		if ( class_exists( '\\chillerlan\\QRCode\\QRCode' ) && class_exists( '\\chillerlan\\QRCode\\QROptions' ) && class_exists( '\\chillerlan\\QRCode\\Output\\QRGdImagePNG' ) ) {
+			try {
+				$options = new \chillerlan\QRCode\QROptions(
+					array(
+						'outputInterface'  => \chillerlan\QRCode\Output\QRGdImagePNG::class,
+						'eccLevel'         => \chillerlan\QRCode\Common\EccLevel::M,
+						'scale'            => 6,
+						'addQuietzone'     => true,
+						'quietzoneSize'    => 2,
+						'outputBase64'     => false,
+						'imageTransparent' => false,
+					)
+				);
+				$qrcode = new \chillerlan\QRCode\QRCode( $options );
+				$png    = $qrcode->render( $data );
+				return '<img src="data:image/png;base64,' . base64_encode( $png ) . '" alt="QR" style="width:120px;height:120px;" />';
+			} catch ( \Throwable $e ) {
+				\Convoca\Core\Logger::warning( 'QR local falló: ' . $e->getMessage(), 'Members/Certificates' );
+			}
 		}
-		if ( $img_data ) {
-			$b64 = base64_encode( $img_data );
-			return '<img src="data:image/png;base64,' . $b64 . '" alt="QR" style="width:120px;height:120px;" />';
-		}
-		// Fallback: text QR
-		return '<div style="width:120px;height:120px;background:#2d5a27;color:#fff;display:flex;align-items:center;justify-content:center;font-size:10px;text-align:center;">Escanee para verificar<br><small>' . esc_html( $data ) . '</small></div>';
+		// Fallback: texto QR
+		return '<div style="width:120px;height:120px;background:#2d5a27;color:#fff;display:flex;align-items:center;justify-content:center;font-size:9px;padding:4px;text-align:center;word-break:break-all;">' . esc_html( $data ) . '</div>';
 	}
 
 	private static function build_html( string $nombre, float $horas, string $plan, array $proyectos, string $cert_id, string $qr_data, string $verify_url ): string {
