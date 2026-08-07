@@ -35,6 +35,7 @@ class Mi_Area {
 		add_shortcode( 'convoca_renovar', array( $this, 'render_renovar' ) );
 		add_action( 'wp_enqueue_scripts', array( $this, 'enqueue_assets' ) );
 		add_action( 'template_redirect', array( $this, 'handle_email_confirmation' ) );
+		add_action( 'template_redirect', array( $this, 'handle_phone_confirmation' ) );
 	}
 
 	/**
@@ -68,6 +69,38 @@ class Mi_Area {
 		\Convoca\Core\Utils::do_action( 'convoca_members_email_cambiado', 'convoca_email_cambiado', $member_id, $pendiente );
 
 		wp_safe_redirect( add_query_arg( 'convoca_confirm_ok', '1', home_url( '/mi-cuenta/' ) ) );
+		exit;
+	}
+
+	/**
+	 * Handle the phone confirmation link (?convoca_confirm_phone=1&member=X&token=Y).
+	 */
+	public function handle_phone_confirmation(): void {
+		if ( empty( $_GET['convoca_confirm_phone'] ) || empty( $_GET['member'] ) || empty( $_GET['token'] ) ) {
+			return;
+		}
+
+		$member_id = (int) $_GET['member'];
+		$token     = sanitize_text_field( wp_unslash( $_GET['token'] ) );
+		$stored    = get_post_meta( $member_id, '_convoca_telefono_token', true );
+		$exp       = (int) get_post_meta( $member_id, '_convoca_telefono_token_exp', true );
+
+		if ( empty( $token ) || empty( $stored ) || ! hash_equals( $stored, $token ) ) {
+			wp_safe_redirect( add_query_arg( 'convoca_confirm_error', 'token', home_url( '/mi-cuenta/' ) ) );
+			exit;
+		}
+		if ( time() > $exp ) {
+			wp_safe_redirect( add_query_arg( 'convoca_confirm_error', 'expirado', home_url( '/mi-cuenta/' ) ) );
+			exit;
+		}
+
+		update_post_meta( $member_id, '_convoca_telefono_verificado', '1' );
+		delete_post_meta( $member_id, '_convoca_telefono_token' );
+		delete_post_meta( $member_id, '_convoca_telefono_token_exp' );
+
+		\Convoca\Core\Utils::do_action( 'convoca_members_phone_verificado', 'convoca_phone_verificado', $member_id );
+
+		wp_safe_redirect( add_query_arg( 'convoca_phone_ok', '1', home_url( '/mi-cuenta/' ) ) );
 		exit;
 	}
 

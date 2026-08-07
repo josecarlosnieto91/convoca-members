@@ -209,6 +209,17 @@ class Rest_API {
 			)
 		);
 
+		// Start phone verification (confirmation link sent by email).
+		register_rest_route(
+			self::NAMESPACE,
+			'/me/verify-phone',
+			array(
+				'methods'             => 'POST',
+				'callback'            => array( $this, 'verify_phone' ),
+				'permission_callback' => array( $this, 'check_member_auth' ),
+			)
+		);
+
 		// Member notifications.
 		register_rest_route(
 			self::NAMESPACE,
@@ -381,6 +392,7 @@ class Rest_API {
 				'email_pendiente' => get_post_meta( $member_id, '_convoca_email_pendiente', true ),
 				'direccion'       => get_post_meta( $member_id, '_convoca_direccion', true ),
 				'telefono'        => get_post_meta( $member_id, '_convoca_telefono', true ),
+				'telefono_verificado' => '1' === get_post_meta( $member_id, '_convoca_telefono_verificado', true ),
 				'cumpleanos'      => get_post_meta( $member_id, '_convoca_cumpleanos', true ),
 				'codigo'          => $masked_code,
 				'estado'          => get_post_meta( $member_id, '_convoca_estado_miembro', true ),
@@ -1149,5 +1161,55 @@ class Rest_API {
 		\Convoca\Core\Utils::do_action( 'convoca_members_email_cambiado', 'convoca_email_cambiado', $member_id, $pendiente );
 
 		return new \WP_REST_Response( array( 'success' => true, 'email' => $pendiente ) );
+	}
+
+	/**
+	 * Start phone verification: sends a confirmation link to the member's email.
+	 */
+	public function verify_phone( \WP_REST_Request $request ): \WP_REST_Response {
+		$member_id = Member_Auth::get_current_member_id();
+		$miembro   = get_post( $member_id );
+
+		if ( ! $miembro || $miembro->post_type !== 'miembro' ) {
+			return new \WP_REST_Response( array( 'error' => __( 'Miembro no encontrado.', 'convoca-members' ) ), 404 );
+		}
+
+		$telefono = get_post_meta( $member_id, '_convoca_telefono', true );
+		if ( empty( $telefono ) ) {
+			return new \WP_REST_Response(
+				array( 'error' => __( 'Guarda primero tu número de teléfono en el perfil.', 'convoca-members' ) ),
+				400
+			);
+		}
+
+		// Already verified? no-op success.
+		if ( '1' === get_post_meta( $member_id, '_convoca_telefono_verificado', true ) ) {
+			return new \WP_REST_Response( array( 'success' => true, 'verified' => true ) );
+		}
+
+		// Generate confirmation token (24h).
+		$token = wp_generate_password( 24, false );
+		update_post_meta( $member_id, '_convoca_telefono_token', $token );
+		update_post_meta( $member_id, '_convoca_telefono_token_exp', time() + DAY_IN_SECONDS );
+
+		$confirm_url = add_query_arg(
+			array(
+				'convoca_confirm_phone' => 1,
+				'member'                => $member_id,
+				'token'                 => $token,
+			),
+			home_url( '/mi-cuenta/' )
+		);
+
+		// Send the confirmation link to the member's email.
+		\Convoca\Core\Utils::do_action( 'convoca_members_email_verify_phone', 'convoca_email_verify_phone', $member_id, $confirm_url, $telefono );
+
+		return new \WP_REST_Response(
+			array(
+				'success'  => true,
+				'verified' => false,
+				'email'    => get_post_meta( $member_id, '_convoca_email', true ),
+			)
+		);
 	}
 }

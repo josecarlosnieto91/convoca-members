@@ -85,6 +85,7 @@ class Email_Manager {
 		'{admin_email}',
 		'{link_confirmacion}',
 		'{nuevo_email}',
+		'{telefono}',
 	);
 
 	public function __construct() {
@@ -96,6 +97,7 @@ class Email_Manager {
 		add_action( 'convoca_members_email_renovacion_automatica', array( $this, 'send_renovacion_automatica' ), 10, 2 );
 		add_action( 'convoca_members_email_renovacion_completada', array( $this, 'send_renovacion_completada' ) );
 		add_action( 'convoca_members_email_confirm', array( $this, 'send_confirm' ), 10, 3 );
+		add_action( 'convoca_members_email_verify_phone', array( $this, 'send_verify_phone' ), 10, 3 );
 		add_action( 'convoca_members_email_objetivo_voluntariado', array( $this, 'send_objetivo_voluntariado' ) );
 
 		// Legacy hooks removed. The do_action() call in Process_Member and.
@@ -311,6 +313,14 @@ class Email_Manager {
 					. '<p style="text-align:center;margin:24px 0;"><a href="{link_confirmacion}" style="background:#FF8700;color:#fff;padding:12px 24px;border-radius:6px;text-decoration:none;font-weight:bold;">' . esc_html__( 'Confirmar email', 'convoca-members' ) . '</a></p>'
 					. __( '<p>Si no has solicitado este cambio, ignora este mensaje. Tu email actual seguirá activo.</p>', 'convoca-members' ),
 			),
+			'verify_phone'                     => array(
+				'subject' => __( 'Verifica tu teléfono — ', 'convoca-members' ) . get_bloginfo( 'name' ),
+				'body'    => __( '<h1>Hola {nombre},</h1>', 'convoca-members' )
+					. __( '<p>Has solicitado verificar tu número de teléfono <strong>{telefono}</strong>.</p>', 'convoca-members' )
+					. __( '<p>Para confirmar que es tu número, haz clic en el siguiente enlace (válido por 24 horas):</p>', 'convoca-members' )
+					. '<p style="text-align:center;margin:24px 0;"><a href="{link_confirmacion}" style="background:#FF8700;color:#fff;padding:12px 24px;border-radius:6px;text-decoration:none;font-weight:bold;">' . esc_html__( 'Verificar teléfono', 'convoca-members' ) . '</a></p>'
+					. __( '<p>Si no has solicitado esta verificación, ignora este mensaje.</p>', 'convoca-members' ),
+			),
 			'voluntariado_recordatorio'        => array(
 				'subject' => __( 'Recuerda tus horas de voluntariado — ', 'convoca-members' ) . get_bloginfo( 'name' ),
 				'body'    => __( '<h1>Hola {nombre},</h1>', 'convoca-members' )
@@ -412,6 +422,24 @@ class Email_Manager {
 				'{nuevo_email}'       => $nuevo_email,
 			),
 			$nuevo_email
+		);
+	}
+
+	/**
+	 * Send phone verification link.
+	 *
+	 * @param int    $post_id      Member ID.
+	 * @param string $confirm_url  Confirmation link.
+	 * @param string $telefono     Phone being verified.
+	 */
+	public function send_verify_phone( int $post_id, string $confirm_url, string $telefono ): void {
+		$this->send(
+			'verify_phone',
+			$post_id,
+			array(
+				'{link_confirmacion}' => $confirm_url,
+				'{telefono}'          => $telefono,
+			)
 		);
 	}
 

@@ -238,6 +238,9 @@
             <label>Teléfono
               <input type="tel" name="telefono" value="${this.escAttr(profile.telefono || '')}" placeholder="600 000 000">
             </label>
+            <p class="text-muted">${profile.telefono_verificado ? '✅ Teléfono verificado' : 'Verifica tu teléfono con un enlace que recibirás por email.'}</p>
+            ${profile.telefono_verificado ? '' : `<button type="button" id="conv-btn-verify-phone" class="btn-secondary">Verificar teléfono</button>
+            <div id="conv-phone-verify-msg"></div>`}
             <label>Email
               <input type="email" name="email" value="${this.escAttr(profile.email || '')}" placeholder="tucorreo@ejemplo.com">
             </label>
@@ -263,8 +266,42 @@
             this.saveProfile(form);
           });
         }
+        const verifyBtn = conv.$('#conv-btn-verify-phone');
+        if (verifyBtn) {
+          verifyBtn.addEventListener('click', () => this.verifyPhone(verifyBtn));
+        }
       })
       .catch(() => { this.$main.innerHTML = '<p>Error cargando perfil.</p>'; });
+    },
+
+    verifyPhone: function(btn) {
+      const msg = conv.$('#conv-phone-verify-msg');
+      if (!msg) return;
+      btn.disabled = true;
+      msg.innerHTML = '<p class="text-muted">Enviando enlace de verificación…</p>';
+
+      fetch(window.convMiArea.apiUrl + '/me/verify-phone', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'X-WP-Nonce': window.convMiArea.nonce }
+      })
+      .then(res => res.json())
+      .then(d => {
+        btn.disabled = false;
+        if (d.success) {
+          if (d.verified) {
+            msg.innerHTML = '<p class="text-success">✅ Teléfono ya verificado.</p>';
+            setTimeout(() => this.fetchProfile(), 800);
+          } else {
+            msg.innerHTML = '<p class="text-success">📧 Revisa tu correo (' + this.escHtml(d.email || '') + ') y pulsa el enlace para verificar tu teléfono.</p>';
+          }
+        } else {
+          msg.innerHTML = '<p class="text-error">' + this.escHtml(d.error || 'No se pudo iniciar la verificación.') + '</p>';
+        }
+      })
+      .catch(() => {
+        btn.disabled = false;
+        msg.innerHTML = '<p class="text-error">Error de conexión.</p>';
+      });
     },
 
     saveProfile: function(form) {
