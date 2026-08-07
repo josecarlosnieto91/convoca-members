@@ -242,17 +242,68 @@ Cada cambio en un socio genera una entrada de auditoría:
 | `[convoca_alta_socio]` | Formulario de alta para nuevos socios |
 | `[convoca_mi_area]` | Panel completo del socio (carnet, inscripciones, voluntariado, pagos) |
 | `[convoca_mi_perfil]` | Perfil del socio logueado (nombre, email, estado, inscripciones) |
+| `[convoca_renovar]` | Renovación de membresía: muestra el plan y genera el pago (página `/renovar/`) |
 | `[convoca_voluntariado]` | Formulario de alta de voluntariado |
 | `[convoca_verificar_socio]` | Verificación pública de membresía |
 | `[convoca_verificar_certificado]` | Verificación pública de certificados |
 
-## 15. Problemas comunes
+## 15. Panel del socio (área personal)
+
+El panel `[convoca_mi_area]` (página **Mi Cuenta**) ofrece al socio autenticado:
+
+| Pestaña | Funcionalidad |
+|---------|---------------|
+| **Mis Datos** | Ver y **editar** dirección, teléfono, email y cumpleaños; solicitar baja |
+| **Carnet Digital** | Carnet de socio descargable |
+| **Inscripciones** | Actividades activas y pasadas |
+| **Voluntariado** | Registrar y consultar horas |
+| **Pagos y Cuotas** | Historial de pagos + **botón "Renovar membresía"** |
+| **Buscar** | Búsqueda de actividades |
+| **Notificaciones** | Avisos internos del sistema |
+
+### Reglas de edición de datos
+
+| Dato | Regla |
+|------|-------|
+| **Dirección** | Editable libremente |
+| **Teléfono** | Editable libremente; verificable con enlace por email |
+| **Email** | Cambio pendiente hasta confirmar con el enlace enviado al correo (24h) |
+| **Cumpleaños** | Solo se puede establecer **una vez**; no se modifica después |
+
+### Verificación de datos (email y teléfono)
+
+Ambos datos se verifican con un enlace enviado al email del socio:
+
+1. **Teléfono**: botón **"Verificar teléfono"** en Mis Datos → el socio recibe un email con enlace → al pulsarlo, el teléfono queda marcado como verificado.
+2. **Email**: al cambiar el email → queda en *pendiente* → el socio recibe un enlace de confirmación → solo se aplica al pulsarlo.
+
+El estado de verificación se muestra en el perfil (✅ verificado / pendiente).
+
+### Renovación de membresía
+
+- **Botón "Renovar membresía"** (Pagos y Cuotas): genera el pago de un año más y redirige al TPV.
+- **Página `/renovar/`** (shortcode `[convoca_renovar]`): la misma función desde un enlace directo (por ejemplo, el de los emails de renovación). Los socios con pago recurrente se renuevan automáticamente.
+
+## 16. Proveedor de email (verificación y avisos)
+
+El envío de emails (confirmaciones, renovaciones, avisos) usa un **proveedor configurable** en **Ajustes → General → Proveedor de email**:
+
+| Proveedor | Descripción |
+|-----------|-------------|
+| **WordPress (wp_mail)** | Usa el correo configurado en WordPress (por defecto) |
+| **Mailgun** | Envío transaccional vía API de Mailgun (requiere API Key, dominio y región US/EU) |
+
+El proveedor se puede extender con el filtro `convoca_email_providers`.
+
+## 17. Problemas comunes
 
 | Problema | Solución |
 |----------|----------|
-| **No se envían emails** | Verifica **Convoca → Registros** para ver errores de envío |
+| **No se envían emails** | Verifica **Convoca → Registros** para ver errores de envío; revisa el proveedor configurado |
 | **Socio duplicado** | Fusiona desde **Socios → Herramientas → Fusionar**. Detecta por DNI/email |
 | **Membresía no se renueva** | Verifica que el estado es "Activo" y la fecha de fin es futura |
 | **No aparece en listados** | Comprueba que el estado no es "Borrador" |
 | **Error al generar PDF** | Verifica que Dompdf está instalado (`composer install` en convoca-core) |
 | **Certificado no válido** | Si fue revocado, aparece como "Revocado" en la verificación |
+| **El email de verificación no llega** | Revisa que el proveedor de email está configurado y que la carpeta de spam no lo bloqueó |
+| **No puedo cambiar mi cumpleaños** | Es intencional: solo se puede establecer una vez |

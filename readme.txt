@@ -4,7 +4,7 @@ Tags: members, volunteers, membership, certificates, associations
 Requires at least: 6.4
 Tested up to: 7.0
 Requires PHP: 8.1
-Stable tag: 2.6.2
+Stable tag: 2.7.0
 License: GPL-2.0-or-later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -16,11 +16,14 @@ Manage the complete lifecycle of members: registration, renewals, cancellations,
 
 Free features:
 * Member registration via public form or admin panel
-* Member area shortcodes `[convoca_mi_area]` and `[convoca_mi_perfil]`
+* Member area shortcodes `[convoca_mi_area]`, `[convoca_mi_perfil]` and `[convoca_renovar]`
 * Registration shortcode `[convoca_alta_socio]`
 * Customizable membership types
 * States: active, pending, suspended, expired, cancelled
 * Automatic and manual renewals
+* Member profile editing (address, phone, email, birthday)
+* Email and phone verification via emailed confirmation links
+* Pluggable email provider (wp_mail / Mailgun)
 * Soft-delete with history preservation
 * Fee management and manual payments
 * Volunteer hours tracking and approval
@@ -46,6 +49,14 @@ This plugin may contact getconvoca.app to validate PRO licenses, only when a key
 3. Activate the plugin from the Plugins menu
 
 == Changelog ==
+
+= 2.7.0 =
+* New: Manual membership renewal (button in member panel + `[convoca_renovar]` shortcode)
+* New: Member profile editing (address, phone, email, birthday)
+* New: Email and phone verification via emailed confirmation links
+* New: Pluggable email provider (wp_mail / Mailgun)
+* Fix: Member panel REST namespace (convoca-members/v1)
+* Fix: Member sequence MAX(id) SQL error on paid signups
 
 = 2.6.2 =
 * Improvement: 92 unit tests, 250 assertions
@@ -75,6 +86,9 @@ Yes. You can create manual payments and track fee status per member. Integration
 Yes. Certificates are generated on your server with Dompdf. No external service is involved.
 
 == Upgrade Notice ==
+
+= 2.7.0 =
+* Manual renewal, profile editing and email/phone verification. Recommended update.
 
 = 2.6.2 =
 * Compatibility and stability improvements. Recommended update.
