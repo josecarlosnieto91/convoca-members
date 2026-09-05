@@ -4,6 +4,8 @@
 /test-results/
 *.zip
 .env
+/phpstan-stubs/
+/phpstan-convoca-core.stub.php
 
 # Translation files (user-generated)
 *.po

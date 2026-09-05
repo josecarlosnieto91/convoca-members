@@ -9,6 +9,7 @@
   <exclude-pattern>dev-tools/*</exclude-pattern>
   <exclude-pattern>phpstan-bootstrap.php</exclude-pattern>
   <exclude-pattern>phpstan-convoca-core.stub.php</exclude-pattern>
+  <exclude-pattern>phpstan-stubs/*</exclude-pattern>
 
   <arg name="extensions" value="php"/>
   <arg value="sp"/>
