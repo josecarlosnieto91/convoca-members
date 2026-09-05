@@ -69,3 +69,14 @@ parameters:
 			message: '#Negated boolean expression is always false#'
 			identifier: booleanNot.alwaysFalse
 			path: includes/Payment_Listener.php
+		# check_admin_referer() hace wp_die si el nonce falla: stub reciente lo tipa
+		# como siempre-true. Patrón WP estándar en admin handlers.
+		-
+			message: '#Right side of && is always true#'
+			identifier: booleanAnd.rightAlwaysTrue
+		# get_the_author_meta() con get_post_field(): el stub exige int|false pero
+		# el ID del autor viene de una cadena de fallbacks de metadatos (runtime OK).
+		-
+			message: '#Parameter \#2 \$user_id of function get_the_author_meta#'
+			identifier: argument.type
+			path: includes/Email_Manager.php
