@@ -4,7 +4,7 @@ Tags: members, volunteers, membership, certificates, associations
 Requires at least: 6.4
 Tested up to: 7.0
 Requires PHP: 8.1
-Stable tag: 2.7.0
+Stable tag: 2.7.1
 License: GPL-2.0-or-later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -49,6 +49,11 @@ This plugin may contact getconvoca.app to validate PRO licenses, only when a key
 3. Activate the plugin from the Plugins menu
 
 == Changelog ==
+
+= 2.7.1 =
+* Fix: el formulario de alta y el registro respetan el flag active de los planes — un plan desactivado ya no aparece ni puede contratarse.
+* Fix: los selectores Familiar/Juvenil solo se muestran si hay sub-planes activos de esa modalidad (evita min() sobre array vacío).
+* Fix: la validación de edad juvenil depende de la modalidad del plan, no del prefijo del slug (robusto al renombrar IDs cortos).
 
 = 2.7.0 =
 * New: Manual membership renewal (button in member panel + `[convoca_renovar]` shortcode)

@@ -188,6 +188,10 @@ class Process_Member {
 		if ( ! $plan_data ) {
 			return new \WP_Error( 'invalid_plan', __( 'El plan seleccionado no es válido.', 'convoca-members' ) );
 		}
+		// 3b. Reject inactive plans (desactivados desde Ajustes o el asistente).
+		if ( isset( $plan_data['active'] ) && false === $plan_data['active'] ) {
+			return new \WP_Error( 'inactive_plan', __( 'El plan seleccionado no está disponible en este momento.', 'convoca-members' ) );
+		}
 
 		// 5. Calculate age/minor status
 		$fecha_nac = sanitize_text_field( $data['fecha_nacimiento'] ?? '' );
@@ -438,7 +442,7 @@ class Process_Member {
 
 		if ( $plan_data && ! empty( $fecha_nac ) ) {
 			// Check if it's a juvenile modality or the plan name implies it.
-			$is_juvenil = ( isset( $plan_data['modalidad'] ) && $plan_data['modalidad'] === 'Juvenil' ) || $plan === 'juvenil' || str_starts_with( $plan_key, 'juv-' );
+			$is_juvenil = ( isset( $plan_data['modalidad'] ) && $plan_data['modalidad'] === 'Juvenil' ) || $plan === 'juvenil';
 
 			if ( $is_juvenil ) {
 				$dob   = new \DateTime( $fecha_nac );

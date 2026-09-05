@@ -52,9 +52,12 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 			<?php
 			$all_plans      = \Convoca\Members\CPT_Miembro::get_plans();
-			$main_plans     = array_filter( $all_plans, fn( $p ) => ( $p['modalidad'] ?? 'Numerario' ) === 'Numerario' );
-			$familiar_plans = array_filter( $all_plans, fn( $p ) => ( $p['modalidad'] ?? '' ) === 'Familiar' );
-			$juvenil_plans  = array_filter( $all_plans, fn( $p ) => ( $p['modalidad'] ?? '' ) === 'Juvenil' );
+			$is_active      = fn( $p ) => ! isset( $p['active'] ) || false !== $p['active'];
+			$main_plans     = array_filter( $all_plans, fn( $p ) => ( $p['modalidad'] ?? 'Numerario' ) === 'Numerario' && $is_active( $p ) );
+			$familiar_plans = array_filter( $all_plans, fn( $p ) => ( $p['modalidad'] ?? '' ) === 'Familiar' && $is_active( $p ) );
+			$juvenil_plans  = array_filter( $all_plans, fn( $p ) => ( $p['modalidad'] ?? '' ) === 'Juvenil' && $is_active( $p ) );
+			$has_familiar   = ! empty( $familiar_plans );
+			$has_juvenil    = ! empty( $juvenil_plans );
 			?>
 
 			<div class="conv-plan-grid" role="radiogroup" aria-label="Planes de colaboración">
@@ -69,6 +72,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 					</label>
 				<?php endforeach; ?>
 
+				<?php if ( $has_familiar ) : ?>
 				<label class="conv-plan-option">
 					<input type="radio" name="plan" value="familiar">
 					<div class="conv-plan-label">
@@ -79,6 +83,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 							<?php echo (float) min( array_column( $familiar_plans, 'hours' ) ); ?>h</span>
 					</div>
 				</label>
+				<?php endif; ?>
+				<?php if ( $has_juvenil ) : ?>
 				<label class="conv-plan-option">
 					<input type="radio" name="plan" value="juvenil">
 					<div class="conv-plan-label">
@@ -89,6 +95,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 							(14–30 años)</span>
 					</div>
 				</label>
+				<?php endif; ?>
 			</div>
 
 			<!-- Sub-plans: Familiar -->
