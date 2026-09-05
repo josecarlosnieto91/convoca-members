@@ -353,6 +353,7 @@ class Mi_Area {
 					<p>%s</p>
 					<a href="%s" class="button">%s</a>
 				</div>',
+				/* translators: %s: site name. */
 				sprintf( __( 'Aún no eres socio/a de %s.', 'convoca-members' ), get_bloginfo( 'name' ) ),
 				home_url( '/hazte-socio/' ),
 				__( 'Hacerse socio/a', 'convoca-members' )

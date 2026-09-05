@@ -523,11 +523,10 @@ class Admin_Page {
 					 WHERE pm.meta_key = '_convoca_estado_miembro' AND pm.meta_value = 'activo'
 					   AND p.post_type = 'miembro' AND p.post_status = 'publish'"
 				);
-				echo '<p>' . sprintf(
-					// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- inline HTML in translatable string, variables escaped separately
-					/* translators: 1: active count, 2: total count */                    __( '<strong>%1$d</strong> activos de <strong>%2$d</strong> registrados.', 'convoca-members' ),
-					$activos,
-					$total
+				echo '<p>' . wp_kses(
+					/* translators: 1: active count, 2: total count */
+					sprintf( __( '<strong>%1$d</strong> activos de <strong>%2$d</strong> registrados.', 'convoca-members' ), (int) $activos, (int) $total ),
+					array( 'strong' => array() )
 				) . '</p>';
 				echo '<a href="' . esc_url( admin_url( 'admin.php?page=conv-members' ) ) . '" class="button">' . esc_html__( 'Ver listado completo', 'convoca-members' ) . '</a>';
 			}
