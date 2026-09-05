@@ -23,7 +23,9 @@ jobs:
         with:
           dependency-versions: highest
           composer-options: '--ignore-platform-req=ext-iconv'
-      - run: vendor/bin/phpcs --standard=.phpcs.xml.dist --runtime-set ignore_warnings_on_exit 1 || true
+      # deuda preexistente: 22 errores y 351 warnings (WordPress Coding Standards)
+      - name: PHPCS
+        run: vendor/bin/phpcs --standard=.phpcs.xml.dist --runtime-set ignore_warnings_on_exit 1 || true
 
   phpstan:
     name: PHPStan
@@ -41,7 +43,8 @@ jobs:
         with:
           dependency-versions: highest
           composer-options: '--ignore-platform-req=ext-iconv'
-      - run: vendor/bin/phpstan analyse --configuration=phpstan.neon.dist --memory-limit=4G || true
+      - name: PHPStan
+        run: vendor/bin/phpstan analyse --configuration=phpstan.neon.dist --memory-limit=4G
 
   test:
     name: PHPUnit ${{ matrix.php }}
@@ -69,10 +72,8 @@ jobs:
         with:
           dependency-versions: highest
           composer-options: '--ignore-platform-req=ext-iconv'
-      - name: Create build directory
-        run: mkdir -p build
       - name: Run unit tests
-        run: vendor/bin/phpunit --testsuite unit --coverage-clover build/clover.xml --log-junit build/junit.xml || true
+        run: vendor/bin/phpunit --testsuite unit
 
   phpunit-summary:
     name: PHPUnit Summary
