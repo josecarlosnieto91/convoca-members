@@ -286,7 +286,7 @@ class CPT_Miembro {
 				'supports'     => array( 'title', 'custom-fields' ),
 				'rewrite'      => false,
 				'has_archive'  => false,
-				'show_in_rest' => true,
+				'show_in_rest' => false, // Datos personales: solo vía rutas REST propias autenticadas (Rest_API).
 				'map_meta_cap' => true,
 			)
 		);

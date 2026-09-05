@@ -214,15 +214,17 @@ class Process_Member {
 
 		try {
 			// Check for duplicates ATOMICALLY inside transaction to prevent race conditions.
+			// Nota: COUNT(*) ... FOR UPDATE no bloquea filas (MySQL ignora FOR UPDATE en agregados);
+			// usamos SELECT ... LIMIT 1 FOR UPDATE para serializar sobre la(s) fila(s) existente(s).
 			$exists = $wpdb->get_var(
 				$wpdb->prepare(
-					"SELECT COUNT(*) FROM {$wpdb->postmeta} pm
+					"SELECT pm.post_id FROM {$wpdb->postmeta} pm
                  JOIN {$wpdb->posts} p ON p.ID = pm.post_id
                  WHERE p.post_type = 'miembro' 
                    AND p.post_status = 'publish'
                    AND ((pm.meta_key = '_convoca_dni' AND pm.meta_value = %s)
                         OR (pm.meta_key = '_convoca_email' AND pm.meta_value = %s))
-                  FOR UPDATE",
+                 LIMIT 1 FOR UPDATE",
 					$dni,
 					$email
 				)

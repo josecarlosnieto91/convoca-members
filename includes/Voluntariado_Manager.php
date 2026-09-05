@@ -64,6 +64,39 @@ class Voluntariado_Manager {
 		}
 
 		if ( $total_horas >= $horas_objetivo ) {
+			// Reclamación atómica: solo un hilo puede fijar la bandera de 0/'' → '1'.
+			global $wpdb;
+			$claimed = $wpdb->query(
+				$wpdb->prepare(
+					"UPDATE {$wpdb->postmeta} SET meta_value = '1'
+                     WHERE post_id = %d AND meta_key = '_convoca_objetivo_horas_completado'
+                       AND (meta_value IS NULL OR meta_value = '' OR meta_value != '1')",
+					$miembro_id
+				)
+			);
+			// Si no existía la meta, insertarla atómicamente con INSERT ... ON DUPLICATE.
+			if ( ! $claimed ) {
+				$exists = $wpdb->get_var(
+					$wpdb->prepare(
+						"SELECT meta_id FROM {$wpdb->postmeta} WHERE post_id = %d AND meta_key = '_convoca_objetivo_horas_completado'",
+						$miembro_id
+					)
+				);
+				if ( ! $exists ) {
+					$wpdb->query(
+						$wpdb->prepare(
+							"INSERT INTO {$wpdb->postmeta} (post_id, meta_key, meta_value)
+                             VALUES (%d, '_convoca_objetivo_horas_completado', '1')",
+							$miembro_id
+						)
+					);
+					$claimed = 1;
+				}
+			}
+			if ( ! $claimed ) {
+				// Otro hilo ya completó la conversión.
+				return;
+			}
 			self::convertir_en_activo( $miembro_id, $total_horas, $plan );
 		}
 	}

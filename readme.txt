@@ -4,7 +4,7 @@ Tags: members, volunteers, membership, certificates, associations
 Requires at least: 6.4
 Tested up to: 7.0
 Requires PHP: 8.1
-Stable tag: 2.7.1
+Stable tag: 2.7.2
 License: GPL-2.0-or-later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -49,6 +49,15 @@ This plugin may contact getconvoca.app to validate PRO licenses, only when a key
 3. Activate the plugin from the Plugins menu
 
 == Changelog ==
+
+= 2.7.2 =
+* Security: CPT miembro ya no se expone vía REST por defecto (show_in_rest=false) — antes listaba nombres de socios en /wp/v2/miembro.
+* Security: búsqueda /search exige sesión de socio para miembros (anónimos solo actividades) y no devuelve emails.
+* Security: fix IDOR en descarga de documentos — propiedad resuelta desde la sesión de socio; huérfanos denegados a terceros.
+* Security: verificación de duplicados en alta usa SELECT ... LIMIT 1 FOR UPDATE (COUNT(*) FOR UPDATE no bloquea en MySQL).
+* Security: Estados::change usa lock atómico en BD en vez de transients no atómicos.
+* Security: transiciones de horas de voluntariado atómicas (UPDATE condicional) — sin hooks duplicados en doble aprobación.
+* Security: creación de miembro exige capability gestionar_miembros (antes edit_posts).
 
 = 2.7.1 =
 * Fix: el formulario de alta y el registro respetan el flag active de los planes — un plan desactivado ya no aparece ni puede contratarse.

@@ -161,7 +161,43 @@ class Hours_Manager {
 			return true;
 		}
 
-		update_post_meta( $record_id, '_convoca_estado', $new_status );
+		// Transición atómica condicional: solo el primer hilo que cambie el estado dispara el hook.
+		global $wpdb;
+		$updated = $wpdb->query(
+			$wpdb->prepare(
+				"UPDATE {$wpdb->postmeta} SET meta_value = %s
+                 WHERE post_id = %d AND meta_key = '_convoca_estado' AND meta_value != %s",
+				$new_status,
+				$record_id,
+				$new_status
+			)
+		);
+
+		if ( ! $updated ) {
+			// Puede que la meta no exista aún (registros antiguos sin meta explícita):
+			// insertarla solo si no existe (otro hilo pudo crearla ya).
+			$exists = $wpdb->get_var(
+				$wpdb->prepare(
+					"SELECT meta_id FROM {$wpdb->postmeta} WHERE post_id = %d AND meta_key = '_convoca_estado'",
+					$record_id
+				)
+			);
+			if ( ! $exists ) {
+				$wpdb->insert(
+					$wpdb->postmeta,
+					array(
+						'post_id'    => $record_id,
+						'meta_key'   => '_convoca_estado',
+						'meta_value' => $new_status,
+					),
+					array( '%d', '%s', '%s' )
+				);
+			} else {
+				// Ya estaba en el estado objetivo (otro hilo) → no repetir el hook.
+				return true;
+			}
+		}
+
 		update_post_meta( $record_id, '_convoca_aprobada_por', $admin_id );
 
 		if ( $new_status === 'aprobada' ) {

@@ -268,7 +268,7 @@ class Admin_Member_Editor {
 			if ( ! wp_verify_nonce( $data['_convoca_nonce'], 'convoca_save_member_0' ) ) {
 				wp_die( esc_html__( 'Nonce inválido.', 'convoca-members' ) );
 			}
-			if ( ! current_user_can( 'edit_posts' ) ) {
+			if ( ! current_user_can( 'gestionar_miembros' ) ) {
 				wp_die( esc_html__( 'No tienes permisos.', 'convoca-members' ) );
 			}
 		}

@@ -648,6 +648,12 @@ class Rest_API {
 		$type  = sanitize_text_field( $req->get_param( 'type' ) ?? '' ); // 'members', 'activities', or '' (both)
 		$limit = min( absint( $req->get_param( 'limit' ) ?: 20 ), 50 );
 
+		// Seguridad: la búsqueda de miembros (datos personales) exige sesión de socio/admin.
+		$is_member_auth = Member_Auth::is_authenticated();
+		if ( ! $is_member_auth ) {
+			$type = 'activities'; // Los anónimos solo consultan actividades públicas.
+		}
+
 		if ( strlen( $q ) < 2 ) {
 			return new \WP_REST_Response(
 				array(
@@ -660,8 +666,8 @@ class Rest_API {
 
 		$results = array();
 
-		// ── Search members (admin-accessible via REST) ──────────────
-		if ( ! $type || $type === 'members' ) {
+		// ── Search members (requires member/admin session) ─────────────
+		if ( ( ! $type || $type === 'members' ) && $is_member_auth ) {
 			$member_args  = array(
 				'post_type'      => 'miembro',
 				'post_status'    => 'any',
@@ -704,12 +710,11 @@ class Rest_API {
 			$member_query = new \WP_Query( $member_args );
 			foreach ( $member_query->posts as $p ) {
 				$results[] = array(
-					'type'   => 'member',
-					'id'     => $p->ID,
-					'title'  => $p->post_title,
-					'email'  => get_post_meta( $p->ID, '_convoca_email', true ),
-					'estado' => get_post_meta( $p->ID, '_convoca_estado_miembro', true ),
-					'url'    => rest_url( 'convoca-members/v1/me' ),
+					'type'  => 'member',
+					'id'    => $p->ID,
+					'title' => $p->post_title,
+					// Sin datos personales: el detalle se obtiene vía /me (autenticado) o el admin.
+					'url'   => rest_url( 'convoca-members/v1/me' ),
 				);
 			}
 		}
@@ -934,11 +939,21 @@ class Rest_API {
 			wp_die( esc_html__( 'Documento no encontrado.', 'convoca-members' ), esc_html__( 'Error', 'convoca-members' ), array( 'response' => 404 ) );
 		}
 
-		$user_id         = (int) get_post_meta( $id, '_convoca_usuario_id', true );
-		$current_user_id = get_current_user_id();
+		$user_id   = (int) get_post_meta( $id, '_convoca_usuario_id', true );
+		$member_id = Member_Auth::get_current_member_id();
+		// El documento puede estar vinculado al WP user del socio, o al propio miembro (CPT).
+		$member_user_id = 0;
+		if ( $member_id ) {
+			$member_user_id = (int) get_post_meta( $member_id, '_convoca_usuario_id', true );
+		}
+		$wp_user_id = get_current_user_id();
 
-		// Security check: Admin OR Owner.
-		if ( ! current_user_can( 'manage_options' ) && $user_id !== $current_user_id ) {
+		// Admin OR propietario real. La sesión de socio (cookie propia) NO setea el WP user,
+		// por eso comparamos contra el miembro autenticado y su user WP vinculado.
+		$is_owner = ( $user_id > 0 && ( $user_id === $wp_user_id || ( $member_user_id > 0 && $user_id === $member_user_id ) ) )
+			|| ( 0 === $user_id && $member_id > 0 && (int) get_post_meta( $id, '_convoca_member_id', true ) === $member_id );
+
+		if ( ! current_user_can( 'manage_options' ) && ! $is_owner ) {
 			wp_die( esc_html__( 'No tienes permiso para ver este documento.', 'convoca-members' ), esc_html__( 'Acceso Denegado', 'convoca-members' ), array( 'response' => 403 ) );
 		}
 

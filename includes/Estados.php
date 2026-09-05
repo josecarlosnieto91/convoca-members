@@ -86,9 +86,9 @@ class Estados {
 	 * @return bool|\WP_Error
 	 */
 	public static function change( int $post_id, string $new, string $note = '' ): bool|\WP_Error {
-		// Prevent concurrent state changes with transient lock.
+		// Prevenir cambios de estado concurrentes con lock atómico en BD (Utils::acquire_lock).
 		$lock_key = "convoca_state_change_{$post_id}";
-		if ( get_transient( $lock_key ) ) {
+		if ( ! \Convoca\Core\Utils::acquire_lock( $lock_key, 10 ) ) {
 			\Convoca\Core\Logger::warning(
 				"Intento de cambio de estado concurrente bloqueado para miembro #$post_id",
 				'Members/Estados',
@@ -97,25 +97,19 @@ class Estados {
 			return new \WP_Error( 'concurrent_change', __( 'Ya hay un cambio de estado en proceso para este miembro.', 'convoca-members' ) );
 		}
 
-		// Set lock for 10 seconds.
-		set_transient( $lock_key, 1, 10 );
-
-		// Register shutdown function to ensure lock is cleared even on fatal errors.
-		register_shutdown_function(
-			function () use ( $lock_key ) {
-				delete_transient( $lock_key );
-			}
-		);
+		$release = static function () use ( $lock_key ): void {
+			\Convoca\Core\Utils::release_lock( $lock_key );
+		};
 
 		if ( ! in_array( $new, self::STATES, true ) ) {
-			delete_transient( $lock_key );
+			$release();
 			return new \WP_Error( 'invalid_state', __( 'Estado no válido.', 'convoca-members' ) );
 		}
 
 		$old = get_post_meta( $post_id, '_convoca_estado_miembro', true );
 
 		if ( $old === $new && ! empty( $old ) ) {
-			delete_transient( $lock_key );
+			$release();
 			return true; // No-op if already in that state and state was set.
 		}
 
@@ -123,7 +117,7 @@ class Estados {
 		if ( ! empty( $old ) ) {
 			$allowed = self::TRANSITIONS[ $old ] ?? array();
 			if ( ! in_array( $new, $allowed, true ) ) {
-				delete_transient( $lock_key );
+				$release();
 				return new \WP_Error(
 					'invalid_transition',
 					sprintf(
@@ -150,7 +144,7 @@ class Estados {
 		self::log( $post_id, $old, $new, $note );
 
 		// Release lock.
-		delete_transient( $lock_key );
+		$release();
 
 		/**
 		 * Fires after a member's state has changed.
