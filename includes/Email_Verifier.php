@@ -27,7 +27,11 @@ use Convoca\Members\Providers\Mailgun_Provider;
  */
 class Email_Verifier {
 
-	/** @var Email_Verifier_Provider[]|null */
+	/**
+	 * Registered provider instances.
+	 *
+	 * @var Email_Verifier_Provider[]|null
+	 */
 	private static ?array $providers = null;
 
 	/**
@@ -53,8 +57,8 @@ class Email_Verifier {
 	 * otherwise first available provider (wp_mail always available).
 	 */
 	public static function get_active_provider(): Email_Verifier_Provider {
-		$settings    = get_option( 'convoca_members_settings', array() );
-		$configured  = $settings['email_provider'] ?? '';
+		$settings   = get_option( 'convoca_members_settings', array() );
+		$configured = $settings['email_provider'] ?? '';
 
 		foreach ( self::get_providers() as $provider ) {
 			if ( $configured && $provider->get_slug() === $configured && $provider->is_available() ) {

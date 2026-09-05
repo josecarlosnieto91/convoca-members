@@ -108,7 +108,7 @@ class Estados {
 
 		$old = get_post_meta( $post_id, '_convoca_estado_miembro', true );
 
-		if ( $old === $new && ! empty( $old ) ) {
+		if ( $old === $new ) {
 			$release();
 			return true; // No-op if already in that state and state was set.
 		}

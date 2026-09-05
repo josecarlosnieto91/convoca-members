@@ -330,12 +330,22 @@ class Admin_List extends \WP_List_Table {
 
 	/* ── Column renderers ──────────────────────── */
 
+	/**
+	 * Render a table column.
+	 *
+	 * @param \WP_Post $item Row item.
+	 */
 	public function column_default( $item, $column_name ): string {
 		return get_post_meta( $item->ID, '_convoca_' . $column_name, true ) ?: '—';
 	}
 
+	/**
+	 * Render a table column.
+	 *
+	 * @param \WP_Post $item Row item.
+	 */
 	public function column_cb( $item ): string {
-		return '<input type="checkbox" name="miembros[]" value="' . esc_attr( $item->ID ) . '" aria-label="' . esc_attr(
+		return '<input type="checkbox" name="miembros[]" value="' . esc_attr( (string) $item->ID ) . '" aria-label="' . esc_attr(
 			sprintf( 
 					/* translators: %s: member name */
 				__( 'Seleccionar %s', 'convoca-members' ),
@@ -344,6 +354,11 @@ class Admin_List extends \WP_List_Table {
 		) . '">';
 	}
 
+	/**
+	 * Render a table column.
+	 *
+	 * @param \WP_Post $item Row item.
+	 */
 	public function column_numero( $item ): string {
 		$num = get_post_meta( $item->ID, '_convoca_numero_socio', true );
 		if ( $num ) {

@@ -241,7 +241,8 @@ class Process_Member {
 					'post_type'   => 'miembro',
 					'post_title'  => $nombre,
 					'post_status' => 'publish', // CPT is private, so 'publish' means internally available.
-				)
+				),
+				true
 			);
 
 			if ( is_wp_error( $post_id ) ) {

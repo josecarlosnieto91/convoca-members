@@ -196,34 +196,6 @@ class PDF_Card {
 	}
 
 	/**
-	 * Get the dynamic URL for the reservation panel.
-	 */
-	private static function get_panel_url(): string {
-		$panel_page_id = (int) get_option( 'convoca_enroll_panel_reservas_page_id' );
-		if ( $panel_page_id ) {
-			return get_permalink( $panel_page_id );
-		}
-
-		global $wpdb;
-		$page_id = $wpdb->get_var(
-			"
-            SELECT ID FROM {$wpdb->posts} 
-            WHERE post_content LIKE '%[convoca_panel_reservas]%' 
-            AND post_status = 'publish' 
-            AND post_type = 'page'
-            LIMIT 1
-        "
-		);
-
-		if ( $page_id ) {
-			update_option( 'convoca_enroll_panel_reservas_page_id', $page_id );
-			return get_permalink( $page_id );
-		}
-
-		return home_url( '/' );
-	}
-
-	/**
 	 * Generate a PDF for the member card using Signature (Dompdf).
 	 *
 	 * @param int $post_id Member post ID.

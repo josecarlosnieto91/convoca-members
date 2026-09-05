@@ -103,9 +103,9 @@ class Hours_Manager {
 		if ( $record_id ) {
 			$post_data['ID'] = $record_id;
 			$old_status      = get_post_meta( $record_id, '_convoca_estado', true );
-			$post_id         = wp_update_post( $post_data );
+			$post_id         = wp_update_post( $post_data, true );
 		} else {
-			$post_id    = wp_insert_post( $post_data );
+			$post_id    = wp_insert_post( $post_data, true );
 			$old_status = '';
 		}
 

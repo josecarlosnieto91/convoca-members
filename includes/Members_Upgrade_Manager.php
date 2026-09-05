@@ -124,7 +124,7 @@ class Members_Upgrade_Manager extends Upgrade_Manager {
 			$current = trim( (string) $meta->meta_value );
 
 			// Skip empty, zero, or '0' values (not parseable as dates).
-			if ( empty( $current ) || $current === '0' || $current === '0000-00-00' ) {
+			if ( empty( $current ) || $current === '0000-00-00' ) {
 				continue;
 			}
 

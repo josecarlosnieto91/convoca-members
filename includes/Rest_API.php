@@ -847,7 +847,6 @@ class Rest_API {
 
 		if ( ! $member_id || ! $post || $post->post_type !== 'miembro' ) {
 			wp_send_json_error( __( 'Miembro no encontrado o no autorizado', 'convoca-members' ), 404 );
-			return;
 		}
 
 		Certificate_Generator::serve_pdf( $member_id );
@@ -1111,7 +1110,10 @@ class Rest_API {
 					'post_type'      => 'miembro',
 					'posts_per_page' => 1,
 					'meta_query'     => array(
-						array( 'key' => '_convoca_email', 'value' => $nuevo_email ),
+						array(
+							'key'   => '_convoca_email',
+							'value' => $nuevo_email,
+						),
 					),
 					'fields'         => 'ids',
 					'exclude'        => array( $member_id ),
@@ -1175,7 +1177,12 @@ class Rest_API {
 
 		\Convoca\Core\Utils::do_action( 'convoca_members_email_cambiado', 'convoca_email_cambiado', $member_id, $pendiente );
 
-		return new \WP_REST_Response( array( 'success' => true, 'email' => $pendiente ) );
+		return new \WP_REST_Response(
+			array(
+				'success' => true,
+				'email'   => $pendiente,
+			)
+		);
 	}
 
 	/**
@@ -1199,7 +1206,12 @@ class Rest_API {
 
 		// Already verified? no-op success.
 		if ( '1' === get_post_meta( $member_id, '_convoca_telefono_verificado', true ) ) {
-			return new \WP_REST_Response( array( 'success' => true, 'verified' => true ) );
+			return new \WP_REST_Response(
+				array(
+					'success'  => true,
+					'verified' => true,
+				)
+			);
 		}
 
 		// Generate confirmation token (24h).

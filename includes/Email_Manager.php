@@ -483,7 +483,7 @@ class Email_Manager {
 			return;
 		}
 
-		$vars = array_merge( $this->build_variables( $post_id ), $extra_vars );
+		$vars = array_merge( $this->build_variables( $post_id, $extra_vars ), $extra_vars );
 
 		$subject = $this->replace_vars( $tpl['subject'], $vars );
 		$body    = $this->replace_vars( $tpl['body'] ?? '', $vars );
@@ -553,9 +553,17 @@ class Email_Manager {
 
 	/**
 	 * Build variable replacements from post meta.
+	 *
+	 * @param int   $post_id    Member post ID.
+	 * @param array $extra_vars Vars inyectadas por el caller (credenciales, etc.).
 	 */
-	private function build_variables( int $post_id ): array {
+	private function build_variables( int $post_id, array $extra_vars = array() ): array {
 		$meta = fn( string $key ) => get_post_meta( $post_id, '_convoca_' . $key, true );
+
+		// Las credenciales ({usuario}, {password}, {login_url}) se inyectan
+		// vía $extra_vars desde send() (array_merge). Aquí solo se definen
+		// defaults para cuando no aplican (p. ej. plantillas sin credenciales).
+		$extra_vars = (array) $extra_vars;
 
 		$plan_key  = $meta( 'plan' ) ?: $meta( 'sub_plan' );
 		$plan_data = CPT_Miembro::get_plan( $plan_key );
@@ -614,8 +622,11 @@ class Email_Manager {
 			$nombres_proyecto = array();
 			foreach ( $proyecto_ids as $pid ) {
 				$proy_id = get_post_meta( $pid, '_convoca_proyecto_id', true );
-				if ( $proy_id && ( $titulo = get_the_title( $proy_id ) ) ) {
-					$nombres_proyecto[ $proy_id ] = $titulo;
+				if ( $proy_id ) {
+					$titulo = get_the_title( $proy_id );
+					if ( $titulo ) {
+						$nombres_proyecto[ $proy_id ] = $titulo;
+					}
 				}
 			}
 			$proyectos = implode( ', ', array_unique( $nombres_proyecto ) ) ?: '—';

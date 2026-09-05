@@ -311,13 +311,18 @@ class Mi_Area {
 		$email        = $current_user->user_email;
 
 		// 1. Get member record.
-		$members = get_posts( array(
-			'post_type'      => 'miembro',
-			'posts_per_page' => 1,
-			'meta_query'     => array(
-				array( 'key' => '_convoca_email', 'value' => $email ),
-			),
-		) );
+		$members = get_posts(
+			array(
+				'post_type'      => 'miembro',
+				'posts_per_page' => 1,
+				'meta_query'     => array(
+					array(
+						'key'   => '_convoca_email',
+						'value' => $email,
+					),
+				),
+			)
+		);
 
 		$member_html = '';
 		if ( ! empty( $members ) ) {
@@ -355,15 +360,24 @@ class Mi_Area {
 		}
 
 		// 2. Get active inscriptions.
-		$inscriptions = get_posts( array(
-			'post_type'      => 'inscripcion',
-			'posts_per_page' => -1,
-			'meta_query'     => array(
-				'relation' => 'AND',
-				array( 'key' => '_convoca_email', 'value' => $email ),
-				array( 'key' => '_convoca_estado', 'value' => 'cancelada', 'compare' => '!=' ),
-			),
-		) );
+		$inscriptions = get_posts(
+			array(
+				'post_type'      => 'inscripcion',
+				'posts_per_page' => -1,
+				'meta_query'     => array(
+					'relation' => 'AND',
+					array(
+						'key'   => '_convoca_email',
+						'value' => $email,
+					),
+					array(
+						'key'     => '_convoca_estado',
+						'value'   => 'cancelada',
+						'compare' => '!=',
+					),
+				),
+			)
+		);
 
 		$insc_html = '<h3>' . __( 'Tus inscripciones activas', 'convoca-members' ) . '</h3>';
 		if ( ! empty( $inscriptions ) ) {

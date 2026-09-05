@@ -128,7 +128,7 @@ class Xlsx_Reader {
 					$row_count = count( $current_row );
 					while ( $row_count < $col ) {
 						$current_row[] = '';
-						$row_count++;
+						++$row_count;
 					}
 					$current_row[] = $current_cell_value;
 					$in_cell       = false;

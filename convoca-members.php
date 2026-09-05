@@ -29,7 +29,8 @@ if ( file_exists( $composer_autoload ) ) {
 }
 
 /*
-── Convoca Core fallback ────────────────────────── */
+── Convoca Core fallback ──────────────────────────
+*/
 // Core classes auto-loaded via Convoca Core's Composer PSR-4
 
 // Compatibility Check: Ensure Convoca Common is loaded.
@@ -64,7 +65,8 @@ if ( ! defined( 'CONVOCA_MEMBERS_URL' ) ) {
 }
 
 /*
-── Autoloader ───────────────────────────────────────────── */
+── Autoloader ─────────────────────────────────────────────
+*/
 // PSR-4 autoloading handled by Composer (vendor/autoload.php)
 
 /* ── Activation / Deactivation ────────────────────────────── */
@@ -187,7 +189,7 @@ register_activation_hook(
 			);
 		} else {
 			$v_role = get_role( 'voluntario_aprobado' );
-			if ( $v_role && ! $v_role->has_cap( 'gestionar_mis_turnos' ) ) {
+			if ( ! $v_role->has_cap( 'gestionar_mis_turnos' ) ) {
 				$v_role->add_cap( 'gestionar_mis_turnos' );
 			}
 		}
@@ -208,7 +210,8 @@ register_deactivation_hook(
 );
 
 /*
-── Boot ─────────────────────────────────────────────────── */
+── Boot ───────────────────────────────────────────────────
+*/
 /* ── Script translations (JS i18n) ──────────────────────── */
 add_action(
 	'init',
@@ -225,14 +228,12 @@ add_action(
 		// Load translations.
 		load_plugin_textdomain( 'convoca-members', false, dirname( plugin_basename( __FILE__ ) ) . '/languages' );
 
-		// Core.
-		new \Convoca\Members\CPT_Miembro();
+		// Core. Los CPT se registran en init (add_action más abajo); aquí solo
+		// se instancian las clases cuyo constructor engancha hooks.
 		new \Convoca\Members\Estados();
 		new \Convoca\Members\Email_Manager();
 		new \Convoca\Members\Rest_API();
 		new \Convoca\Members\Payment_Listener();
-		new \Convoca\Members\CPT_Registro_Hora();
-		new \Convoca\Members\CPT_Proyecto();
 		new \Convoca\Members\CPT_Documento();
 		\Convoca\Members\PDF_Document::init();
 		\Convoca\Members\Certificate_Generator::init();

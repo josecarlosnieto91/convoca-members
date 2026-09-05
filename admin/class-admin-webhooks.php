@@ -171,7 +171,7 @@ class Admin_Webhooks {
 		if ( ! empty( $msg ) && isset( $messages[ $msg ] ) ) {
 			\Convoca\Core\Utils::admin_notice(
 				$messages[ $msg ][1],
-				$messages[ $msg ][0] === 'success' ? 'success' : ( $messages[ $msg ][0] === 'error' ? 'danger' : 'warning' )
+				'success' === $messages[ $msg ][0] ? 'success' : 'warning'
 			);
 		}
 

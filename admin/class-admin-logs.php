@@ -61,7 +61,7 @@ class Admin_Logs {
 				'%Members%'
 			)
 		);
-		$num_pages   = ceil( $total_items / $per_page );
+		$num_pages   = (int) ceil( $total_items / $per_page );
 
 		$logs = $wpdb->get_results(
 			$wpdb->prepare(

@@ -47,7 +47,8 @@ class GDPR_Tools {
 	/*
 	────────────────────────────────────────────
 	 * CONSENT LOGGING
-	 * ──────────────────────────────────────────── */
+	 * ────────────────────────────────────────────
+	 */
 
 	/**
 	 * Record consent when a member registers.
@@ -68,7 +69,8 @@ class GDPR_Tools {
 	/*
 	────────────────────────────────────────────
 	 * DATA EXPORTER (WordPress Privacy Tools)
-	 * ──────────────────────────────────────────── */
+	 * ────────────────────────────────────────────
+	 */
 
 	/**
 	 * Register the Convoca data exporter.
@@ -318,7 +320,8 @@ class GDPR_Tools {
 	/*
 	────────────────────────────────────────────
 	 * DATA ERASER (WordPress Privacy Tools)
-	 * ──────────────────────────────────────────── */
+	 * ────────────────────────────────────────────
+	 */
 
 	/**
 	 * Register the Convoca data exporter.eraser.

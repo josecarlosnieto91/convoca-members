@@ -526,8 +526,8 @@ class Admin_Page {
 				echo '<p>' . sprintf(
 					// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- inline HTML in translatable string, variables escaped separately
 					/* translators: 1: active count, 2: total count */                    __( '<strong>%1$d</strong> activos de <strong>%2$d</strong> registrados.', 'convoca-members' ),
-					esc_html( $activos ),
-					esc_html( $total )
+					$activos,
+					$total
 				) . '</p>';
 				echo '<a href="' . esc_url( admin_url( 'admin.php?page=conv-members' ) ) . '" class="button">' . esc_html__( 'Ver listado completo', 'convoca-members' ) . '</a>';
 			}

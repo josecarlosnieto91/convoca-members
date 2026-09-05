@@ -96,11 +96,11 @@ class Mailgun_Provider implements Email_Verifier_Provider {
 				'timeout' => 20,
 				'headers' => array( 'Authorization' => 'Basic ' . base64_encode( 'api:' . $api_key ) ),
 				'body'    => array(
-					'from'       => $from,
-					'to'         => $to,
-					'subject'    => $subject,
-					'html'       => $body,
-					'text'       => wp_strip_all_tags( $body ),
+					'from'    => $from,
+					'to'      => $to,
+					'subject' => $subject,
+					'html'    => $body,
+					'text'    => wp_strip_all_tags( $body ),
 				),
 			)
 		);

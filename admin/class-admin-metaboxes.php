@@ -77,7 +77,7 @@ class Admin_Metaboxes {
 				'post_status'    => 'any',
 				'posts_per_page' => -1,
 				'meta_key'       => '_convoca_usuario_id',
-				'meta_value'     => $user->ID,
+				'meta_value'     => (string) $user->ID,
 			)
 		);
 
@@ -621,7 +621,7 @@ class Admin_Metaboxes {
 				'post_type'      => 'registro_hora',
 				'posts_per_page' => -1,
 				'meta_key'       => '_convoca_member_id',
-				'meta_value'     => $member_id,
+				'meta_value'     => (string) $member_id,
 			)
 		);
 		foreach ( $hours as $hour ) {
@@ -675,7 +675,7 @@ class Admin_Metaboxes {
 				'post_type'      => 'registro_hora',
 				'posts_per_page' => -1,
 				'meta_key'       => '_convoca_member_id',
-				'meta_value'     => $member_id,
+				'meta_value'     => (string) $member_id,
 			)
 		);
 		foreach ( $hours as $hour ) {

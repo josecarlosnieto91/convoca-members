@@ -1,6 +1,3 @@
-includes:
-	- phpstan-baseline.neon
-
 parameters:
 	level: 5
 	paths:
@@ -21,3 +18,54 @@ parameters:
 	bootstrapFiles:
 		- vendor/php-stubs/wordpress-stubs/wordpress-stubs.php
 		- phpstan-bootstrap.php
+	ignoreErrors:
+		# ── Falsos positivos del harness de análisis (NO deuda de código) ──
+		# get_post() puede devolver null en runtime; el ?-> ?? '' es defensivo
+		# correcto, pero el stub de wordpress-stubs declara WP_Post no-null
+		# cuando se le pasa un ID numérico.
+		-
+			message: '#Using nullsafe property access "\?->post_title" on left side of \?\? is unnecessary#'
+			identifier: nullsafe.neverNull
+			path: admin/class-admin-horas.php
+		# En análisis aislado ABSPATH=/tmp/convoca-members/, así que
+		# require_once/include de rutas relativas no existen en disco. En
+		# runtime WP las resuelve respecto al plugin real.
+		-
+			message: '#Path in require_once\(\) "/tmp/convoca-members/#'
+			identifier: requireOnce.fileNotFound
+		-
+			message: '#Path in include\(\) "/tmp/convoca-members/#'
+			identifier: include.fileNotFound
+		# WP_Admin_Bar::add_node() acepta un objeto WP_Admin_Bar_Node en runtime
+		# (get_node() devuelve objeto); el stub solo declara array.
+		-
+			message: '#Parameter \#1 \$args of method WP_Admin_Bar::add_node#'
+			identifier: argument.type
+			path: admin/class-admin-proyectos.php
+		# add_submenu_page(null) es un patrón válido de WP para ocultar una
+		# página del menú (slug como parent); el stub exige string.
+		-
+			message: '#Parameter \#1 \$parent_slug of function add_submenu_page#'
+			identifier: argument.type
+			path: admin/class-admin-proyectos.php
+		# get_userdata() puede devolver false en runtime; el ?-> ?? '' es
+		# defensivo correcto, pero el stub declara WP_User no-null.
+		-
+			message: '#Expression on left side of \?\? is not nullable#'
+			identifier: nullCoalesce.expr
+			path: admin/class-admin-proyectos.php
+		# $temp_post_id se asigna antes del try, pero hooks de save_post pueden
+		# lanzar excepción a mitad de wp_insert_post dejándola sin asignar;
+		# el isset() en el catch es defensivo correcto.
+		-
+			message: '#Variable \$temp_post_id in isset\(\) always exists and is not nullable#'
+			identifier: isset.variable
+			path: includes/PDF_Document.php
+		# is_gateway_active() comprueba class_exists de la clase Gateway, que
+		# el propio stub declara para resolver tipos → PHPStan la ve siempre
+		# true. En runtime, si Gateway no está activo, la clase no existe y el
+		# guard corta correctamente.
+		-
+			message: '#Negated boolean expression is always false#'
+			identifier: booleanNot.alwaysFalse
+			path: includes/Payment_Listener.php

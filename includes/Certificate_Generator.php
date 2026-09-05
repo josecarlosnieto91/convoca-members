@@ -187,8 +187,8 @@ class Certificate_Generator {
 						'imageTransparent' => false,
 					)
 				);
-				$qrcode = new \chillerlan\QRCode\QRCode( $options );
-				$png    = $qrcode->render( $data );
+				$qrcode  = new \chillerlan\QRCode\QRCode( $options );
+				$png     = $qrcode->render( $data );
 				return '<img src="data:image/png;base64,' . base64_encode( $png ) . '" alt="QR" style="width:120px;height:120px;" />';
 			} catch ( \Throwable $e ) {
 				\Convoca\Core\Logger::warning( 'QR local falló: ' . $e->getMessage(), 'Members/Certificates' );

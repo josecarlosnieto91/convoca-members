@@ -175,7 +175,7 @@ class Cron_Manager {
 					$reminder_key = 'primero';
 				}
 
-				if ( $template && $reminder_key ) {
+				if ( $template ) {
 					$pago_id = (int) get_post_meta( $post_id, '_convoca_pago_id', true );
 					$link    = '';
 					if ( $pago_id ) {
@@ -429,11 +429,6 @@ class Cron_Manager {
 					$member_id
 				);
 
-				// Notificar al socio que la renovación falló.
-				if ( method_exists( $email_manager, 'send_renovacion_fallida' ) ) {
-					$email_manager->send_renovacion_fallida( $member_id );
-				}
-
 				// Cambiar estado a pendiente_pago via state machine (triggers audit log).
 				Estados::change( $member_id, 'pendiente_pago', 'Renovación automática fallida - requerido pago manual' );
 
@@ -607,7 +602,7 @@ class Cron_Manager {
 		);
 
 		// Pending payments.
-		$pending_payments = $status_counts['pendiente_pago'] ?? 0;
+		$pending_payments = $status_counts['pendiente_pago'];
 
 		// Volunteer hours logged this week.
 		$hours_logged = (float) $wpdb->get_var(
@@ -638,7 +633,7 @@ class Cron_Manager {
 			'pending_payments' => $pending_payments,
 			'hours_logged'     => $hours_logged,
 			'recent_errors'    => $recent_errors,
-			'total_active'     => $status_counts['activo'] ?? 0,
+			'total_active'     => $status_counts['activo'],
 		);
 	}
 

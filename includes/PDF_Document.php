@@ -62,7 +62,7 @@ class PDF_Document {
 			array(
 				'post_type'      => 'convoca_documento',
 				'meta_key'       => '_convoca_usuario_id',
-				'meta_value'     => $user_id,
+				'meta_value'     => (string) $user_id,
 				'posts_per_page' => 1,
 			)
 		);
@@ -109,7 +109,8 @@ class PDF_Document {
 				'post_title'  => __( 'Acuerdo Voluntariado - ', 'convoca-members' ) . $nombre,
 				'post_status' => 'draft',
 				'post_author' => 1, // System.
-			)
+			),
+			true
 		);
 
 		if ( is_wp_error( $temp_post_id ) ) {

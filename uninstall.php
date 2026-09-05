@@ -41,7 +41,7 @@ delete_option( 'convoca_last_member_number' );
 delete_option( 'convoca_last_member_number_fallback' );
 
 // Delete all miembro posts and their meta.
-$posts = get_posts(
+$miembro_posts = get_posts(
 	array(
 		'post_type'      => 'miembro',
 		'posts_per_page' => -1,
@@ -50,8 +50,8 @@ $posts = get_posts(
 	)
 );
 
-foreach ( $posts as $post_id ) {
-	wp_delete_post( $post_id, true );
+foreach ( $miembro_posts as $miembro_post_id ) {
+	wp_delete_post( $miembro_post_id, true );
 }
 
 // Delete taxonomy terms.

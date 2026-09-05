@@ -104,15 +104,15 @@ class Admin_Settings {
 		}
 		$input = wp_unslash( $input );
 		return array(
-			'admin_email'  => sanitize_email( $input['admin_email'] ?? '' ),
-			'iban'         => sanitize_text_field( $input['iban'] ?? '' ),
-			'rgpd_version' => sanitize_text_field( $input['rgpd_version'] ?? '1.0' ),
-			'sender_name'  => sanitize_text_field( $input['sender_name'] ?? get_bloginfo( 'name' ) ),
-			'min_age'      => (int) ( $input['min_age'] ?? 0 ),
-			'email_provider'    => sanitize_key( $input['email_provider'] ?? 'wpmail' ),
-			'mailgun_api_key'   => sanitize_text_field( $input['mailgun_api_key'] ?? '' ),
-			'mailgun_domain'    => sanitize_text_field( $input['mailgun_domain'] ?? '' ),
-			'mailgun_region'    => sanitize_key( $input['mailgun_region'] ?? '' ),
+			'admin_email'     => sanitize_email( $input['admin_email'] ?? '' ),
+			'iban'            => sanitize_text_field( $input['iban'] ?? '' ),
+			'rgpd_version'    => sanitize_text_field( $input['rgpd_version'] ?? '1.0' ),
+			'sender_name'     => sanitize_text_field( $input['sender_name'] ?? get_bloginfo( 'name' ) ),
+			'min_age'         => (int) ( $input['min_age'] ?? 0 ),
+			'email_provider'  => sanitize_key( $input['email_provider'] ?? 'wpmail' ),
+			'mailgun_api_key' => sanitize_text_field( $input['mailgun_api_key'] ?? '' ),
+			'mailgun_domain'  => sanitize_text_field( $input['mailgun_domain'] ?? '' ),
+			'mailgun_region'  => sanitize_key( $input['mailgun_region'] ?? '' ),
 		);
 	}
 
@@ -152,7 +152,7 @@ class Admin_Settings {
 		uasort(
 			$sanitized,
 			function ( $a, $b ) {
-				return ( $a['order'] ?? 0 ) <=> ( $b['order'] ?? 0 );
+				return $a['order'] <=> $b['order'];
 			}
 		);
 

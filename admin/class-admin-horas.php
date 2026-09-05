@@ -112,7 +112,7 @@ class Admin_Horas extends \WP_List_Table {
 		if ( in_array( $estado_solicitado, array( 'aprobada', 'rechazada' ), true ) ) {
 			$current_user_id = get_current_user_id();
 			$current_user    = wp_get_current_user();
-			$current_roles   = $current_user ? (array) $current_user->roles : array();
+			$current_roles   = (array) $current_user->roles;
 			$is_admin        = in_array( 'administrator', $current_roles, true );
 			$is_monitor      = in_array( 'monitor_actividad', $current_roles, true );
 
@@ -505,20 +505,29 @@ class Admin_Horas extends \WP_List_Table {
 			array(
 				'total_items' => $query->found_posts,
 				'per_page'    => $per_page,
-				'total_pages' => ceil( $query->found_posts / $per_page ),
+				'total_pages' => (int) ceil( $query->found_posts / $per_page ),
 			)
 		);
 	}
 
+	/**
+	 * Render a table column.
+	 *
+	 * @param \WP_Post $item Row item.
+	 */
 	public function column_cb( $item ) {
 		return sprintf( '<input type="checkbox" name="bulk-delete[]" value="%s" />', $item->ID );
 	}
 
+	/**
+	 * Render a table column.
+	 *
+	 * @param \WP_Post $item Row item.
+	 */
 	public function column_fecha( $item ) {
 		$fecha = get_post_meta( $item->ID, '_convoca_fecha', true );
 		return $fecha ?: get_the_date( '', $item->ID );
 	}
-
 	public function column_socio( $item ) {
 		$socio_id = get_post_meta( $item->ID, '_convoca_member_id', true );
 		if ( ! $socio_id ) {
@@ -648,7 +657,7 @@ class Admin_Horas extends \WP_List_Table {
 
 			// --- Approval authority check ---
 			$current_user  = wp_get_current_user();
-			$current_roles = $current_user ? (array) $current_user->roles : array();
+			$current_roles = (array) $current_user->roles;
 			$is_admin      = in_array( 'administrator', $current_roles, true );
 			$is_monitor    = in_array( 'monitor_actividad', $current_roles, true );
 

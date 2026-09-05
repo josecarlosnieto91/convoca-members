@@ -176,20 +176,20 @@ $areas = \Convoca\Members\Form_Voluntariado::interest_areas();
 		if ( ! empty( $dynamic_fields ) ) :
 			echo '<h3 style="margin-top:2rem">' . esc_html__( '📋 Información adicional', 'convoca-members' ) . '</h3>';
 			foreach ( $dynamic_fields as $field ) :
-				$id       = 'conv-vol-' . esc_attr( $field['name'] );
+				$field_id = 'conv-vol-' . esc_attr( $field['name'] );
 				$name     = 'dyn_' . esc_attr( $field['name'] );
 				$required = ! empty( $field['required'] ) ? 'required' : '';
 				$req_mark = ! empty( $field['required'] ) ? ' *' : '';
 				?>
 				<div class="convoca-field">
-					<label for="<?php echo esc_attr( $id ); ?>"><?php echo esc_html( $field['label'] ); ?><?php echo esc_html( $req_mark ); ?></label>
+					<label for="<?php echo esc_attr( $field_id ); ?>"><?php echo esc_html( $field['label'] ); ?><?php echo esc_html( $req_mark ); ?></label>
 					<?php if ( $field['type'] === 'textarea' ) : ?>
-						<textarea id="<?php echo esc_attr( $id ); ?>" name="<?php echo esc_attr( $name ); ?>" rows="3" <?php echo esc_attr( $required ); ?>></textarea>
+						<textarea id="<?php echo esc_attr( $field_id ); ?>" name="<?php echo esc_attr( $name ); ?>" rows="3" <?php echo esc_attr( $required ); ?>></textarea>
 						<?php
 					elseif ( $field['type'] === 'select' ) :
 						$options = array_filter( array_map( 'trim', explode( "\n", $field['options'] ?? '' ) ) );
 						?>
-						<select id="<?php echo esc_attr( $id ); ?>" name="<?php echo esc_attr( $name ); ?>" <?php echo esc_attr( $required ); ?>>
+						<select id="<?php echo esc_attr( $field_id ); ?>" name="<?php echo esc_attr( $name ); ?>" <?php echo esc_attr( $required ); ?>>
 							<option value="">Selecciona una opción</option>
 							<?php foreach ( $options as $opt ) : ?>
 								<option value="<?php echo esc_attr( $opt ); ?>"><?php echo esc_html( $opt ); ?></option>
@@ -197,11 +197,11 @@ $areas = \Convoca\Members\Form_Voluntariado::interest_areas();
 						</select>
 					<?php elseif ( $field['type'] === 'checkbox' ) : ?>
 						<div class="convoca-check-group">
-							<input type="checkbox" id="<?php echo esc_attr( $id ); ?>" name="<?php echo esc_attr( $name ); ?>" <?php echo esc_attr( $required ); ?>>
-							<label for="<?php echo esc_attr( $id ); ?>">Sí</label>
+							<input type="checkbox" id="<?php echo esc_attr( $field_id ); ?>" name="<?php echo esc_attr( $name ); ?>" <?php echo esc_attr( $required ); ?>>
+							<label for="<?php echo esc_attr( $field_id ); ?>">Sí</label>
 						</div>
 					<?php else : ?>
-						<input type="<?php echo esc_attr( $field['type'] ); ?>" id="<?php echo esc_attr( $id ); ?>" name="<?php echo esc_attr( $name ); ?>" <?php echo esc_attr( $required ); ?>>
+						<input type="<?php echo esc_attr( $field['type'] ); ?>" id="<?php echo esc_attr( $field_id ); ?>" name="<?php echo esc_attr( $name ); ?>" <?php echo esc_attr( $required ); ?>>
 					<?php endif; ?>
 				</div>
 				<?php

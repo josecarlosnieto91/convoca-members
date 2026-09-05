@@ -84,7 +84,8 @@ class Admin_Member_Editor {
 		<div class="wrap" style="max-width: 960px; margin: 20px auto;">
 			<h1><?php echo $is_edit ? esc_html__( 'Editar Miembro', 'convoca-members' ) : esc_html__( 'Añadir nuevo miembro', 'convoca-members' ); ?></h1>
 
-			<?php if ( $saved = get_transient( 'convoca_member_saved_' . get_current_user_id() ) ) : ?>
+			<?php $saved = get_transient( 'convoca_member_saved_' . get_current_user_id() ); ?>
+			<?php if ( $saved ) : ?>
 				<div class="convoca-alert convoca-alert--success" style="display:block;margin-bottom:20px;">
 					<p><?php echo esc_html( $saved ); ?></p>
 				</div>
@@ -93,7 +94,7 @@ class Admin_Member_Editor {
 
 			<form method="post" action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>" class="convoca-box" style="background:#fff;border-radius:12px;box-shadow:0 10px 25px rgba(0,0,0,0.05);padding:40px;margin-top:20px;">
 				<input type="hidden" name="action" value="convoca_save_member">
-				<input type="hidden" name="post_id" value="<?php echo $is_edit ? esc_attr( $post_id ) : 0; ?>">
+				<input type="hidden" name="post_id" value="<?php echo $is_edit ? esc_attr( (string) $post_id ) : 0; ?>">
 				<?php wp_nonce_field( 'convoca_save_member_' . $post_id, '_convoca_nonce' ); ?>
 
 				<div class="convoca-grid-2">
@@ -295,7 +296,8 @@ class Admin_Member_Editor {
 					'post_title'  => $nombre,
 					'post_status' => 'publish',
 					'post_author' => get_current_user_id(),
-				)
+				),
+				true
 			);
 
 			if ( is_wp_error( $post_id ) ) {
@@ -326,7 +328,7 @@ class Admin_Member_Editor {
 
 		foreach ( $fields as $key => $sanitizer ) {
 			$raw = $data[ 'convoca_' . $key ] ?? '';
-			$val = is_callable( $sanitizer ) ? $sanitizer( $raw ) : $raw;
+			$val = $sanitizer( $raw );
 			update_post_meta( $post_id, '_convoca_' . $key, $val );
 		}
 

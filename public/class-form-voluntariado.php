@@ -250,7 +250,8 @@ class Form_Voluntariado {
 				'post_type'   => 'miembro',
 				'post_title'  => $nombre,
 				'post_status' => 'publish',
-			)
+			),
+			true
 		);
 
 		if ( ! is_wp_error( $member_post_id ) ) {

@@ -257,7 +257,7 @@ class Admin_Proyectos extends \WP_List_Table {
 			array(
 				'total_items' => $query->found_posts,
 				'per_page'    => $per_page,
-				'total_pages' => ceil( $query->found_posts / $per_page ),
+				'total_pages' => (int) ceil( $query->found_posts / $per_page ),
 			)
 		);
 
@@ -268,10 +268,20 @@ class Admin_Proyectos extends \WP_List_Table {
 		);
 	}
 
+	/**
+	 * Render a table column.
+	 *
+	 * @param \WP_Post $item Row item.
+	 */
 	public function column_cb( $item ) {
 		return sprintf( '<input type="checkbox" name="bulk-delete[]" value="%s" />', $item->ID );
 	}
 
+	/**
+	 * Render a table column.
+	 *
+	 * @param \WP_Post $item Row item.
+	 */
 	public function column_default( $item, $column_name ) {
 		$meta = CPT_Proyecto::get_meta( $item->ID );
 
@@ -339,7 +349,7 @@ class Admin_Proyectos extends \WP_List_Table {
 
 			<form method="post" action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>" class="conv-form-custom">
 				<input type="hidden" name="action" value="convoca_save_proyecto_admin">
-				<input type="hidden" name="id" value="<?php echo esc_attr( $post_id ); ?>">
+				<input type="hidden" name="id" value="<?php echo esc_attr( (string) $post_id ); ?>">
 				<?php wp_nonce_field( 'convoca_save_proyecto_nonce' ); ?>
 
 				<div class="conv-grid conv-grid--2">
@@ -428,9 +438,9 @@ class Admin_Proyectos extends \WP_List_Table {
 
 		if ( $post_id ) {
 			$post_data['ID'] = $post_id;
-			$result          = wp_update_post( $post_data );
+			$result          = wp_update_post( $post_data, true );
 		} else {
-			$result  = wp_insert_post( $post_data );
+			$result  = wp_insert_post( $post_data, true );
 			$post_id = $result;
 		}
 

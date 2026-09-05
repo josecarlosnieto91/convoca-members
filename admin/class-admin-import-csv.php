@@ -541,7 +541,8 @@ class Admin_Import_CSV {
 					'post_type'   => 'miembro',
 					'post_title'  => $nombre,
 					'post_status' => 'publish',
-				)
+				),
+				true
 			);
 
 			if ( is_wp_error( $post_id ) ) {
