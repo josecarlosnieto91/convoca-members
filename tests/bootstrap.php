@@ -22,6 +22,23 @@ namespace Convoca\Core {
                 return \gmdate($format, \strtotime($modify));
             }
 
+            public static function acquire_lock(string $key, int $ttl = 60): bool {
+                if (\function_exists('get_transient') && false !== \get_transient($key)) {
+                    return false;
+                }
+                if (\function_exists('set_transient')) {
+                    \set_transient($key, 1, $ttl);
+                }
+                return true;
+            }
+
+            public static function release_lock(string $key): bool {
+                if (\function_exists('delete_transient')) {
+                    \delete_transient($key);
+                }
+                return true;
+            }
+
             public static function clear_fired(): void { self::$actions_fired = []; }
         }
     }
@@ -297,7 +314,18 @@ namespace {
             }
 
             public function get_results($q = null, $o = 'OBJECT') { return []; }
-            public function query($q) { return 1; }
+
+            public function query($q) {
+                $qs = (string)$q;
+                // Emular el UPDATE atómico de postmeta que hace Hours_Manager::process_approval,
+                // aplicando el cambio al almacén en memoria para que get_post_meta lo refleje.
+                if (preg_match('/UPDATE\s+.*?postmeta\s+SET\s+meta_value\s*=\s*([^\s]+).*?post_id\s*=\s*(\d+).*?meta_key\s*=\s*\'([^\']+)\'/is', $qs, $m)) {
+                    $GLOBALS['_wp_stores']['post_meta'][(int)$m[2]][$m[3]] = $m[1];
+                    return 1;
+                }
+                return 1;
+            }
+
             public function insert($t, $d, $f = []) { $this->insert_id = 42; return 1; }
 
             public function prepare($q, ...$args) {
