@@ -189,13 +189,14 @@ class Certificate_Generator {
 				);
 				$qrcode  = new \chillerlan\QRCode\QRCode( $options );
 				$png     = $qrcode->render( $data );
-				return '<img src="data:image/png;base64,' . base64_encode( $png ) . '" alt="QR" style="width:120px;height:120px;" />';
+				// Sin width/height inline: el CSS contenedor (.qr img{width:100%}) escala el QR.
+				return '<img src="data:image/png;base64,' . base64_encode( $png ) . '" alt="QR" />';
 			} catch ( \Throwable $e ) {
 				\Convoca\Core\Logger::warning( 'QR local falló: ' . $e->getMessage(), 'Members/Certificates' );
 			}
 		}
-		// Fallback: texto QR
-		return '<div style="width:120px;height:120px;background:#2d5a27;color:#fff;display:flex;align-items:center;justify-content:center;font-size:9px;padding:4px;text-align:center;word-break:break-all;">' . esc_html( $data ) . '</div>';
+		// Fallback: texto legible con la URL de verificación (rellena la caja .qr).
+		return '<div style="width:100%;height:100%;background:#fff;color:#320028;font-size:9px;padding:4px;text-align:center;word-break:break-all;box-sizing:border-box;display:table-cell;vertical-align:middle;border-radius:6px;">' . esc_html( $data ) . '</div>';
 	}
 
 	private static function build_html( string $nombre, float $horas, string $plan, array $proyectos, string $cert_id, string $qr_data, string $verify_url ): string {
