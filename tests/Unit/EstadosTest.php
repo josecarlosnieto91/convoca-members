@@ -202,4 +202,50 @@ class EstadosTest extends TestCase
         $this->assertTrue($result);
         $this->assertEquals('pendiente_documentacion', get_post_meta(self::POST_ID, '_convoca_estado_miembro', true));
     }
+
+    // ── Re-entry transitions (lifecycle redesign 2026-09) ──
+
+    public function test_baja_can_reenter_as_pendiente_pago(): void
+    {
+        update_post_meta(self::POST_ID, '_convoca_estado_miembro', 'baja');
+
+        $result = Estados::change(self::POST_ID, 'pendiente_pago', 'Re-alta cuota');
+        $this->assertTrue($result);
+        $this->assertEquals('pendiente_pago', get_post_meta(self::POST_ID, '_convoca_estado_miembro', true));
+    }
+
+    public function test_baja_can_reenter_as_pendiente_documentacion(): void
+    {
+        update_post_meta(self::POST_ID, '_convoca_estado_miembro', 'baja');
+
+        $result = Estados::change(self::POST_ID, 'pendiente_documentacion', 'Re-alta voluntariado');
+        $this->assertTrue($result);
+        $this->assertEquals('pendiente_documentacion', get_post_meta(self::POST_ID, '_convoca_estado_miembro', true));
+    }
+
+    public function test_baja_can_reactivate_directly_to_activo(): void
+    {
+        update_post_meta(self::POST_ID, '_convoca_estado_miembro', 'baja');
+
+        $result = Estados::change(self::POST_ID, 'activo', 'Reactivación directa (pago/admin)');
+        $this->assertTrue($result);
+        $this->assertEquals('activo', get_post_meta(self::POST_ID, '_convoca_estado_miembro', true));
+    }
+
+    public function test_suspendido_can_reactivate_to_activo(): void
+    {
+        update_post_meta(self::POST_ID, '_convoca_estado_miembro', 'suspendido');
+
+        $result = Estados::change(self::POST_ID, 'activo', 'Renovación en gracia');
+        $this->assertTrue($result);
+        $this->assertEquals('activo', get_post_meta(self::POST_ID, '_convoca_estado_miembro', true));
+    }
+
+    public function test_baja_cannot_go_directly_to_suspendido(): void
+    {
+        update_post_meta(self::POST_ID, '_convoca_estado_miembro', 'baja');
+
+        $result = Estados::change(self::POST_ID, 'suspendido');
+        $this->assertInstanceOf(\WP_Error::class, $result);
+    }
 }

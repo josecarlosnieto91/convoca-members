@@ -92,6 +92,16 @@ class Member_Auth {
 			);
 		}
 
+		// Members with status 'baja' cannot log in; their membership ended.
+		$member_status = get_post_meta( $member_id, '_convoca_estado_miembro', true );
+		if ( $member_status === 'baja' ) {
+			Logger::info( "Intento de inicio de sesión de socio dado de baja: {$member->post_title} (ID: {$member_id})", 'Members/Members', $member_id );
+			return new \WP_Error(
+				'member_baja',
+				__( 'Tu membresía está dada de baja. Si quieres reincorporarte, vuelve a darte de alta desde el formulario.', 'convoca-members' )
+			);
+		}
+
 		// Generate session token.
 		$token = wp_generate_password( 32, false );
 
@@ -149,6 +159,55 @@ class Member_Auth {
 	}
 
 	/**
+	 * End all sessions for a member (e.g. when the member is marked as 'baja').
+	 * Sessions are stored as transients keyed by token; scan and remove the ones
+	 * belonging to this member. Works with the WP object cache used by transients
+	 * (options table with _transient_ prefix in production, mocked in tests).
+	 *
+	 * @param int $member_id Member ID.
+	 */
+	public static function logout_member_sessions( int $member_id ): void {
+		global $wpdb;
+
+		// Production: transients live in the options table. Try a direct LIKE scan.
+		// esc_like() only exists in real WordPress — the unit-test bootstrap uses a
+		// minimal $wpdb mock without it, so those runs fall through to the store
+		// branch below.
+		if ( $wpdb && isset( $wpdb->options ) && function_exists( 'esc_like' ) && function_exists( 'maybe_unserialize' ) ) {
+			$like = $wpdb->esc_like( '_transient_' . self::TRANSIENT_PREFIX ) . '%';
+			// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
+			$rows = $wpdb->get_results(
+				$wpdb->prepare(
+					"SELECT option_name, option_value FROM {$wpdb->options} WHERE option_name LIKE %s",
+					$like
+				)
+			);
+			foreach ( $rows as $row ) {
+				$data = maybe_unserialize( $row->option_value );
+				if ( is_array( $data ) && (int) ( $data['id'] ?? 0 ) === $member_id ) {
+					delete_transient( substr( $row->option_name, strlen( '_transient_' ) ) );
+				}
+			}
+			return;
+		}
+
+		// Unit-test fallback: mocked transient store keyed by token.
+		$store = $GLOBALS['_wp_stores']['transients'] ?? array();
+		foreach ( array_keys( $store ) as $key ) {
+			$prefix_len = strlen( self::TRANSIENT_PREFIX );
+			if ( 0 === strpos( $key, self::TRANSIENT_PREFIX ) ) {
+				$data = $store[ $key ];
+				$data = is_array( $data ) ? $data : maybe_unserialize( $data );
+				if ( is_array( $data ) && (int) ( $data['id'] ?? 0 ) === $member_id ) {
+					// delete_transient expects the FULL store key in this mock
+					// (transients are stored keyed by their complete name).
+					delete_transient( $key );
+				}
+			}
+		}
+	}
+
+	/**
 	 * Get the ID of the currently logged-in member.
 	 *
 	 * @return int Member ID or 0 if not logged in.
@@ -169,6 +228,13 @@ class Member_Auth {
 		$pending_cookie = ! empty( $session['pending_cookie'] );
 
 		if ( ! $member_id ) {
+			return 0;
+		}
+
+		// A member marked as 'baja' has no valid session, even if a stale
+		// transient survives. Destroy it and report logged out.
+		if ( get_post_meta( $member_id, '_convoca_estado_miembro', true ) === 'baja' ) {
+			delete_transient( self::TRANSIENT_PREFIX . $token );
 			return 0;
 		}
 

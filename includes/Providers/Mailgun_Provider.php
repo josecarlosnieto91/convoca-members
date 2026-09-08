@@ -69,7 +69,7 @@ class Mailgun_Provider implements Email_Verifier_Provider {
 	/**
 	 * {@inheritDoc}
 	 */
-	public function send( string $to, string $subject, string $body, array $headers = array() ): bool {
+	public function send( string $to, string $subject, string $body, array $headers = array(), array $attachments = array() ): bool {
 		$settings = get_option( 'convoca_members_settings', array() );
 		$api_key  = (string) ( $settings['mailgun_api_key'] ?? '' );
 		$domain   = (string) ( $settings['mailgun_domain'] ?? '' );
@@ -90,18 +90,28 @@ class Mailgun_Provider implements Email_Verifier_Provider {
 			$from = get_option( 'admin_email' );
 		}
 
+		$body_params = array(
+			'from'    => $from,
+			'to'      => $to,
+			'subject' => $subject,
+			'html'    => $body,
+			'text'    => wp_strip_all_tags( $body ),
+		);
+
+		// Attachments: Mailgun expects multipart/form-data with file[] fields.
+		foreach ( $attachments as $file_path ) {
+			if ( is_string( $file_path ) && file_exists( $file_path ) ) {
+				$attachment_key             = 'attachment[' . basename( $file_path ) . ']';
+				$body_params[ $attachment_key ] = new \CURLFile( $file_path );
+			}
+		}
+
 		$response = wp_remote_post(
 			$base . '/' . $domain . '/messages',
 			array(
 				'timeout' => 20,
 				'headers' => array( 'Authorization' => 'Basic ' . base64_encode( 'api:' . $api_key ) ),
-				'body'    => array(
-					'from'    => $from,
-					'to'      => $to,
-					'subject' => $subject,
-					'html'    => $body,
-					'text'    => wp_strip_all_tags( $body ),
-				),
+				'body'    => $body_params,
 			)
 		);
 

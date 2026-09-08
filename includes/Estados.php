@@ -47,7 +47,8 @@ class Estados {
 		'activo'                  => array( 'suspendido', 'baja_solicitada', 'baja' ),
 		'suspendido'              => array( 'activo', 'baja_solicitada', 'baja' ),
 		'baja_solicitada'         => array( 'baja', 'activo' ),  // Admin can reactivate or confirm baja.
-		'baja'                    => array( 'pendiente_documentacion' ),  // Re-entry.
+		// Re-entry: voluntario o cuota (formulario) o reactivación directa admin/pago.
+		'baja'                    => array( 'pendiente_documentacion', 'pendiente_pago', 'activo' ),
 	);
 
 	/** Human-readable labels. */

@@ -481,10 +481,23 @@ class CPT_Miembro {
 			}
 			update_post_meta( $post_id, '_convoca_estado_cuota', 'activa' );
 
-			// Set dates.
+			// Set dates. Keep an existing fecha_alta (historical reactivation
+			// preserves seniority); only first activation sets it to today.
 			$now = current_time( 'Y-m-d' );
-			update_post_meta( $post_id, '_convoca_fecha_alta', $now );
-			update_post_meta( $post_id, '_convoca_fecha_renovacion', \Convoca\Core\Utils::format_date( '+1 year', 'Y-m-d' ) );
+			$fecha_alta_existente = get_post_meta( $post_id, '_convoca_fecha_alta', true );
+			if ( empty( $fecha_alta_existente ) ) {
+				update_post_meta( $post_id, '_convoca_fecha_alta', $now );
+			}
+
+			// Renewal date: only when none exists. Payment_Listener computes the
+			// late-renewal date from the previous vencimiento and must not have
+			// it overwritten here.
+			$renewal_existente = get_post_meta( $post_id, '_convoca_fecha_renovacion', true );
+			if ( empty( $renewal_existente ) ) {
+				update_post_meta( $post_id, '_convoca_fecha_renovacion', \Convoca\Core\Utils::format_date( '+1 year', 'Y-m-d' ) );
+			}
+			// Reactivation clears any baja date.
+			delete_post_meta( $post_id, '_convoca_fecha_baja' );
 
 			// Activate via state machine (triggers audit log + hooks).
 			Estados::change( $post_id, 'activo', "Aprobado manualmente. Socio #$num" );
@@ -503,7 +516,15 @@ class CPT_Miembro {
 	}
 	/**
 	 * Centralized member status validation logic.
-	 * Checks if a member should be suspended or marked as baja based on renewal date.
+	 * Checks if a member should be suspended (grace period) or marked as baja
+	 * based on the renewal date.
+	 *
+	 * Policies (configurable via convoca_members_settings):
+	 *  - grace_suspend_days (default 1): days after renewal before the member
+	 *    loses benefits and can only renew (state 'suspendido').
+	 *  - grace_baja_days (default 30): days after renewal before automatic 'baja'.
+	 * Volunteers (forma_pago=voluntariado): their cycle is evaluated by annual
+	 * hours (see check_volunteer_cycle); they are not suspended by fee dates.
 	 *
 	 * @param int $post_id Member ID.
 	 */
@@ -516,27 +537,124 @@ class CPT_Miembro {
 			return;
 		}
 
-		// Skip volunteers — their renewal is handled by Voluntariado_Manager, not by payment.
 		$forma_pago = get_post_meta( $post_id, '_convoca_forma_pago', true );
 		if ( $forma_pago === 'voluntariado' ) {
+			// Volunteer annual cycle (hours). Not fee-driven.
+			self::check_volunteer_cycle( $post_id, $status, $renewal_date );
 			return;
 		}
 
-		// 1. Final Baja logic (Renewal date + 30 days) — check FIRST (most severe).
-		$baja_date = \Convoca\Core\Utils::format_date( $renewal_date . ' +30 days', 'Y-m-d' );
+		$settings = get_option( 'convoca_members_settings', array() );
+		$baja_days = (int) ( $settings['grace_baja_days'] ?? 30 );
+		$baja_days = max( 1, min( 90, $baja_days ) );
+
+		// 1. Final Baja logic (renewal + grace_baja_days) — check FIRST (most severe).
+		$baja_date = \Convoca\Core\Utils::format_date( $renewal_date . " +{$baja_days} days", 'Y-m-d' );
 		if ( $today > $baja_date ) {
-			Estados::change( $post_id, 'baja', 'Baja automática por falta de pago (30 días tras vencimiento).' );
+			// Log out all sessions BEFORE the state change so the member
+			// cannot keep using the panel afterwards.
+			Member_Auth::logout_member_sessions( $post_id );
+			Estados::change( $post_id, 'baja', "Baja automática por falta de pago ({$baja_days} días tras vencimiento)." );
 			update_post_meta( $post_id, '_convoca_estado_cuota', 'vencida' );
 			update_post_meta( $post_id, '_convoca_fecha_baja', $today );
+			\Convoca\Core\Utils::do_action( 'convoca_members_miembro_dado_de_baja', 'convoca_miembro_dado_de_baja', $post_id );
 			return;
 		}
 
-		// 2. Suspension logic (Renewal date + 15 days).
-		$suspension_date = \Convoca\Core\Utils::format_date( $renewal_date . ' +15 days', 'Y-m-d' );
+		// 2. Grace suspension (renewal + grace_suspend_days): loses benefits,
+		//    keeps access ONLY to renew.
+		$suspend_days = (int) ( $settings['grace_suspend_days'] ?? 1 );
+		$suspend_days = max( 0, min( 30, $suspend_days ) );
+		$suspension_date = \Convoca\Core\Utils::format_date( $renewal_date . " +{$suspend_days} days", 'Y-m-d' );
 		if ( $today > $suspension_date && $status !== 'suspendido' ) {
-			Estados::change( $post_id, 'suspendido', 'Suspendido automáticamente por falta de pago (15 días tras vencimiento).' );
+			Estados::change( $post_id, 'suspendido', "Periodo de gracia: vencido el {$renewal_date}. Solo puede renovar." );
 			update_post_meta( $post_id, '_convoca_estado_cuota', 'vencida' );
 			return;
 		}
+	}
+
+	/**
+	 * Volunteer annual cycle evaluation.
+	 *
+	 * Volunteers earn the "socio" status by completing the plan's annual hours.
+	 * A volunteer in 'activo' whose renewal date has passed is checked here:
+	 *  - If enough approved hours were registered since the cycle start → renew
+	 *    (fecha_renovacion + 1 year, keep 'activo').
+	 *  - Otherwise → back to 'pendiente_documentacion' (volunteer only, no
+	 *    member benefits) until hours are completed again.
+	 *
+	 * @param int    $post_id      Member ID.
+	 * @param string $status       Current member state.
+	 * @param string $renewal_date Current renewal date (Y-m-d).
+	 */
+	private static function check_volunteer_cycle( int $post_id, string $status, string $renewal_date ): void {
+		$today = current_time( 'Y-m-d' );
+
+		// Only active members can "lose" their status at renewal time.
+		if ( $status !== 'activo' ) {
+			return;
+		}
+
+		// Not due yet.
+		if ( $today <= $renewal_date ) {
+			return;
+		}
+
+		$plan_key  = get_post_meta( $post_id, '_convoca_plan', true );
+		$plan_data = self::get_plan( $plan_key );
+		if ( ! $plan_data ) {
+			return;
+		}
+		$objetivo = (float) ( $plan_data['hours'] ?? 0 );
+		if ( $objetivo <= 0 ) {
+			// No hour objective → nothing to evaluate.
+			return;
+		}
+
+		// Cycle start = explicit period start; fallback to one year before the
+		// renewal, then fecha_alta.
+		$cycle_start = get_post_meta( $post_id, '_convoca_fecha_inicio_periodo', true );
+		if ( empty( $cycle_start ) ) {
+			$cycle_start = \Convoca\Core\Utils::format_date( $renewal_date . ' -1 year', 'Y-m-d' );
+		}
+		$fecha_alta = get_post_meta( $post_id, '_convoca_fecha_alta', true );
+		if ( $fecha_alta && $fecha_alta > $cycle_start ) {
+			$cycle_start = $fecha_alta;
+		}
+
+		$horas = Voluntariado_Manager::get_horas_aprobadas_desde( $post_id, $cycle_start );
+
+		if ( $horas >= $objetivo ) {
+			// Met the annual hours → renew the cycle, keep status. The new period
+			// starts the day this renewal was due.
+			$next = \Convoca\Core\Utils::format_date( $renewal_date . ' +1 year', 'Y-m-d' );
+			update_post_meta( $post_id, '_convoca_fecha_renovacion', $next );
+			update_post_meta( $post_id, '_convoca_fecha_inicio_periodo', $renewal_date );
+			update_post_meta( $post_id, '_convoca_estado_cuota', 'activa' );
+			\Convoca\Core\Logger::info(
+				"Voluntario #$post_id renueva ciclo anual ({$horas}h >= {$objetivo}h). Nueva renovación: {$next}.",
+				'Members/Cron',
+				$post_id
+			);
+			return;
+		}
+
+		// Did not meet hours → volunteer only (no member benefits). The next
+		// activation attempt counts hours from today onward.
+		Estados::change(
+			$post_id,
+			'pendiente_documentacion',
+			"No renovó el ciclo anual: {$horas}h de {$objetivo}h requeridas (venció {$renewal_date}). Vuelve a ser solo voluntario."
+		);
+		update_post_meta( $post_id, '_convoca_estado_cuota', '' );
+		update_post_meta( $post_id, '_convoca_objetivo_horas_completado', '' );
+		update_post_meta( $post_id, '_convoca_fecha_objetivo_completado', '' );
+		update_post_meta( $post_id, '_convoca_fecha_inicio_periodo', $today );
+		delete_post_meta( $post_id, '_convoca_fecha_renovacion' );
+		\Convoca\Core\Logger::info(
+			"Voluntario #$post_id no cumplió el ciclo anual ({$horas}h < {$objetivo}h). Vuelve a pendiente_documentacion.",
+			'Members/Cron',
+			$post_id
+		);
 	}
 }

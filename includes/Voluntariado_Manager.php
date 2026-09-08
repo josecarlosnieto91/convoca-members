@@ -40,7 +40,16 @@ class Voluntariado_Manager {
 	 * Handle hora approved - check if volunteer should be converted to active.
 	 */
 	public static function on_hora_aprobada( int $hora_id, int $miembro_id ): void {
-		$total_horas = self::get_horas_aprobadas( $miembro_id );
+		// Hours count per volunteer cycle (period), not all-time history, so a
+		// volunteer who returned to 'pendiente_documentacion' must earn fresh
+		// hours again instead of reactivating on historical totals.
+		$inicio_periodo = get_post_meta( $miembro_id, '_convoca_fecha_inicio_periodo', true );
+		if ( empty( $inicio_periodo ) ) {
+			$inicio_periodo = get_post_meta( $miembro_id, '_convoca_fecha_alta', true );
+		}
+		$total_horas = $inicio_periodo
+			? self::get_horas_aprobadas_desde( $miembro_id, $inicio_periodo )
+			: self::get_horas_aprobadas( $miembro_id );
 
 		$plan = get_post_meta( $miembro_id, '_convoca_plan', true );
 		if ( empty( $plan ) ) {
@@ -133,6 +142,36 @@ class Voluntariado_Manager {
 	}
 
 	/**
+	 * Sum approved hours registered on or after a given date (inclusive).
+	 * Used for annual volunteer cycles: hours count per period, not all-time.
+	 *
+	 * @param int    $miembro_id Member ID.
+	 * @param string $desde      Y-m-d start date (inclusive).
+	 * @return float
+	 */
+	public static function get_horas_aprobadas_desde( int $miembro_id, string $desde ): float {
+		global $wpdb;
+
+		$result = $wpdb->get_var(
+			$wpdb->prepare(
+				"SELECT SUM(CAST(pm_h.meta_value AS DECIMAL(10,2))) 
+             FROM {$wpdb->posts} p
+             JOIN {$wpdb->postmeta} pm_h ON p.ID = pm_h.post_id AND pm_h.meta_key = '_convoca_horas'
+             JOIN {$wpdb->postmeta} pm_m ON p.ID = pm_m.post_id AND pm_m.meta_key = '_convoca_member_id' AND pm_m.meta_value = %d
+             JOIN {$wpdb->postmeta} pm_e ON p.ID = pm_e.post_id AND pm_e.meta_key = '_convoca_estado' AND pm_e.meta_value = 'aprobada'
+             LEFT JOIN {$wpdb->postmeta} pm_f ON p.ID = pm_f.post_id AND pm_f.meta_key = '_convoca_fecha'
+             WHERE p.post_type = 'registro_hora'
+               AND p.post_status = 'publish'
+               AND (COALESCE(NULLIF(pm_f.meta_value, ''), DATE(p.post_date)) >= %s)",
+				$miembro_id,
+				$desde
+			)
+		);
+
+		return (float) ( $result ?: 0 );
+	}
+
+	/**
 	 * Convert volunteer to active member.
 	 */
 	private static function convertir_en_activo( int $miembro_id, float $total_horas, string $plan ): void {
@@ -145,6 +184,28 @@ class Voluntariado_Manager {
 		if ( $estado_actual !== 'activo' ) {
 			update_post_meta( $miembro_id, '_convoca_estado_cuota', 'activa' );
 			Estados::change( $miembro_id, 'activo', "Completadas {$total_horas}h del plan {$plan}" );
+
+			// Volunteer annual cycle management.
+			// Cycle start: explicit period start, else fecha_alta, else today.
+			$inicio_periodo = get_post_meta( $miembro_id, '_convoca_fecha_inicio_periodo', true );
+			if ( empty( $inicio_periodo ) ) {
+				$inicio_periodo = get_post_meta( $miembro_id, '_convoca_fecha_alta', true );
+			}
+			if ( empty( $inicio_periodo ) ) {
+				$inicio_periodo = current_time( 'Y-m-d' );
+				update_post_meta( $miembro_id, '_convoca_fecha_inicio_periodo', $inicio_periodo );
+			}
+
+			// Renewal date = one year after the cycle start (first cycle) or the
+			// existing future date (kept on reactivation without expiry change).
+			$renewal = get_post_meta( $miembro_id, '_convoca_fecha_renovacion', true );
+			if ( empty( $renewal ) ) {
+				update_post_meta(
+					$miembro_id,
+					'_convoca_fecha_renovacion',
+					\Convoca\Core\Utils::format_date( $inicio_periodo . ' +1 year', 'Y-m-d' )
+				);
+			}
 		}
 
 		\Convoca\Core\Logger::info(

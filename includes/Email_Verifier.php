@@ -78,13 +78,14 @@ class Email_Verifier {
 	/**
 	 * Send an email through the active provider.
 	 *
-	 * @param string $to      Recipient email.
-	 * @param string $subject Subject.
-	 * @param string $body    HTML body.
-	 * @param array  $headers Headers (associative).
+	 * @param string $to          Recipient email.
+	 * @param string $subject     Subject.
+	 * @param string $body        HTML body.
+	 * @param array  $headers     Headers (associative).
+	 * @param array  $attachments Absolute file paths to attach.
 	 * @return bool
 	 */
-	public static function send( string $to, string $subject, string $body, array $headers = array() ): bool {
-		return self::get_active_provider()->send( $to, $subject, $body, $headers );
+	public static function send( string $to, string $subject, string $body, array $headers = array(), array $attachments = array() ): bool {
+		return self::get_active_provider()->send( $to, $subject, $body, $headers, $attachments );
 	}
 }

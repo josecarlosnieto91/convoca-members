@@ -53,6 +53,9 @@ class Admin_Settings {
 			foreach ( $raw as $key => $val ) {
 				$settings[ $key ] = sanitize_text_field( $val );
 			}
+			// Clamp grace period fields (also enforced by sanitize_settings).
+			$settings['grace_suspend_days'] = max( 0, min( 30, (int) ( $settings['grace_suspend_days'] ?? 1 ) ) );
+			$settings['grace_baja_days']    = max( 1, min( 90, (int) ( $settings['grace_baja_days'] ?? 30 ) ) );
 			update_option( 'convoca_members_settings', $settings );
 
 			// Tema de los documentos (opción compartida del ecosistema, default light).
@@ -120,6 +123,10 @@ class Admin_Settings {
 			'mailgun_api_key' => sanitize_text_field( $input['mailgun_api_key'] ?? '' ),
 			'mailgun_domain'  => sanitize_text_field( $input['mailgun_domain'] ?? '' ),
 			'mailgun_region'  => sanitize_key( $input['mailgun_region'] ?? '' ),
+			// Grace period: days after renewal before benefits are lost
+			// (suspendido, default 1) and before automatic baja (default 30).
+			'grace_suspend_days' => max( 0, min( 30, (int) ( $input['grace_suspend_days'] ?? 1 ) ) ),
+			'grace_baja_days'    => max( 1, min( 90, (int) ( $input['grace_baja_days'] ?? 30 ) ) ),
 		);
 	}
 
@@ -379,6 +386,23 @@ class Admin_Settings {
 				<input type="number" id="min_age" name="convoca_members_settings[min_age]"
 					value="<?php echo esc_attr( $settings['min_age'] ?? '0' ); ?>" min="0">
 				<small class="convoca-small"><?php esc_html_e( 'Edad mínima permitida para el alta de socios (0 para desactivar).', 'convoca-members' ); ?></small>
+			</div>
+
+			<h3 style="margin-top:32px;"><?php esc_html_e( 'Ciclo de vida de la membresía', 'convoca-members' ); ?></h3>
+			<p class="convoca-small"><?php esc_html_e( 'Tras la fecha de renovación, el socio pierde beneficios (solo puede renovar) y, si no renueva, se da de baja automáticamente al agotar el periodo de gracia.', 'convoca-members' ); ?></p>
+
+			<div class="convoca-field">
+				<label for="grace_suspend_days"><?php esc_html_e( 'Días hasta perder beneficios (suspensión)', 'convoca-members' ); ?></label>
+				<input type="number" id="grace_suspend_days" name="convoca_members_settings[grace_suspend_days]"
+					value="<?php echo esc_attr( $settings['grace_suspend_days'] ?? '1' ); ?>" min="0" max="30" step="1">
+				<small class="convoca-small"><?php esc_html_e( 'Días tras el vencimiento antes de pasar a "suspendido" (pierde beneficios, conserva acceso solo para renovar). Por defecto: 1 (el día siguiente al vencimiento).', 'convoca-members' ); ?></small>
+			</div>
+
+			<div class="convoca-field">
+				<label for="grace_baja_days"><?php esc_html_e( 'Días hasta la baja automática', 'convoca-members' ); ?></label>
+				<input type="number" id="grace_baja_days" name="convoca_members_settings[grace_baja_days]"
+					value="<?php echo esc_attr( $settings['grace_baja_days'] ?? '30' ); ?>" min="1" max="90" step="1">
+				<small class="convoca-small"><?php esc_html_e( 'Días tras el vencimiento antes de dar de baja al socio y cerrar su sesión. Por defecto: 30 (1 mes).', 'convoca-members' ); ?></small>
 			</div>
 
 			<h3 style="margin-top:32px;"><?php esc_html_e( 'Tema de los documentos', 'convoca-members' ); ?></h3>

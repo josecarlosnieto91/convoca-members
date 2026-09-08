@@ -70,14 +70,15 @@ class Rest_API {
 			)
 		);
 
-		// Inscriptions.
+		// Inscriptions (read-only for any authenticated member; only active
+		// members may create new ones via convoca-enroll).
 		register_rest_route(
 			self::NAMESPACE,
 			'/me/inscripciones',
 			array(
 				'methods'             => 'GET',
 				'callback'            => array( $this, 'get_inscriptions' ),
-				'permission_callback' => array( $this, 'check_active_member' ),
+				'permission_callback' => array( $this, 'check_member_auth' ),
 			)
 		);
 
@@ -92,7 +93,8 @@ class Rest_API {
 			)
 		);
 
-		// Volunteering hours.
+		// Volunteering hours: read-only for authenticated members (including
+		// grace/suspendido); submitting new hours requires an active member.
 		register_rest_route(
 			self::NAMESPACE,
 			'/me/horas',
@@ -100,7 +102,7 @@ class Rest_API {
 				array(
 					'methods'             => 'GET',
 					'callback'            => array( $this, 'get_hours' ),
-					'permission_callback' => array( $this, 'check_active_member' ),
+					'permission_callback' => array( $this, 'check_member_auth' ),
 				),
 				array(
 					'methods'             => 'POST',
@@ -183,18 +185,22 @@ class Rest_API {
 			array(
 				'methods'             => 'POST',
 				'callback'            => array( $this, 'renew_membership' ),
-				'permission_callback' => array( $this, 'check_active_member' ),
+				// Renewal is allowed for 'activo' and for 'suspendido' (grace
+				// period: the member kept access ONLY to renew).
+				'permission_callback' => array( $this, 'check_renewable_member' ),
 			)
 		);
 
 		// Update profile fields (address, phone, email with confirmation, birthday once).
+		// Profile update is an action: only active members may change their data.
+		// Members in grace (suspendido) can view but not edit.
 		register_rest_route(
 			self::NAMESPACE,
 			'/me/profile',
 			array(
 				'methods'             => 'POST',
 				'callback'            => array( $this, 'update_profile' ),
-				'permission_callback' => array( $this, 'check_member_auth' ),
+				'permission_callback' => array( $this, 'check_active_member' ),
 			)
 		);
 
@@ -315,6 +321,38 @@ class Rest_API {
 	}
 
 	/**
+	 * Check if a member is logged in AND may renew: 'activo' (normal renewal)
+	 * or 'suspendido' (grace period — access restricted to renewing).
+	 * Members with 'baja' cannot renew here; they must re-register.
+	 */
+	public static function check_renewable_member(): bool|\WP_Error {
+		if ( ! Member_Auth::is_authenticated() ) {
+			return false;
+		}
+
+		$member_id = Member_Auth::get_current_member_id();
+		$status    = get_post_meta( $member_id, '_convoca_estado_miembro', true );
+
+		if ( in_array( $status, array( 'activo', 'suspendido' ), true ) ) {
+			return true;
+		}
+
+		if ( $status === 'baja' ) {
+			return new \WP_Error(
+				'member_baja',
+				__( 'Tu membresía está dada de baja. Vuelve a darte de alta desde el formulario para reincorporarte.', 'convoca-members' ),
+				array( 'status' => 403 )
+			);
+		}
+
+		return new \WP_Error(
+			'inactive_member',
+			__( 'Tu cuenta no puede renovar en este estado. Contacta con coordinación.', 'convoca-members' ),
+			array( 'status' => 403 )
+		);
+	}
+
+	/**
 	 * Login handler — WordPress credentials (username or email + password).
 	 */
 	public function login( \WP_REST_Request $request ): \WP_REST_Response {
@@ -384,6 +422,13 @@ class Rest_API {
 		$access_code = get_post_meta( $member_id, '_convoca_access_code', true );
 		$masked_code = ! empty( $access_code ) ? substr( $access_code, 0, 4 ) . '****' : '';
 
+		$estado        = get_post_meta( $member_id, '_convoca_estado_miembro', true );
+		$fecha_renov   = get_post_meta( $member_id, '_convoca_fecha_renovacion', true );
+		$fecha_baja    = get_post_meta( $member_id, '_convoca_fecha_baja', true );
+		$today         = current_time( 'Y-m-d' );
+		$puede_renovar = in_array( $estado, array( 'activo', 'suspendido' ), true );
+		$vencida       = ( ! empty( $fecha_renov ) && $fecha_renov < $today );
+
 		return new \WP_REST_Response(
 			array(
 				'id'              => $member_id,
@@ -395,7 +440,15 @@ class Rest_API {
 				'telefono_verificado' => '1' === get_post_meta( $member_id, '_convoca_telefono_verificado', true ),
 				'cumpleanos'      => get_post_meta( $member_id, '_convoca_cumpleanos', true ),
 				'codigo'          => $masked_code,
-				'estado'          => get_post_meta( $member_id, '_convoca_estado_miembro', true ),
+				'estado'          => $estado,
+				'plan'            => get_post_meta( $member_id, '_convoca_plan_label', true ) ?: get_post_meta( $member_id, '_convoca_plan', true ),
+				'forma_pago'      => get_post_meta( $member_id, '_convoca_forma_pago', true ),
+				'fecha_renovacion' => $fecha_renov,
+				'fecha_alta'      => get_post_meta( $member_id, '_convoca_fecha_alta', true ),
+				'fecha_baja'      => $fecha_baja,
+				'cuota_vencida'   => $vencida,
+				'puede_renovar'   => $puede_renovar,
+				'renovable'       => $puede_renovar && ( get_post_meta( $member_id, '_convoca_forma_pago', true ) !== 'voluntariado' ),
 				'tipo'            => (array) get_post_meta( $member_id, '_convoca_modalidad', true ) ?: array( 'Socio/a' ),
 			)
 		);

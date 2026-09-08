@@ -96,14 +96,15 @@ class Payment_Listener {
 		}
 
 		// Update renewal date.
-		// If it's a renewal (already active), we add 1 year to the OLD date if it was in the future,.
-		// or 1 year to TODAY if it was in the past.
+		// Policy (2026-09): a late renewal always adds one year to the previous
+		// vencimiento — never from today. First activation (no previous date)
+		// starts from today.
 		$today = current_time( 'Y-m-d' );
-		if ( $current_member_state === 'activo' && ! empty( $old_renewal_date ) ) {
-			$base_date   = ( $old_renewal_date > $today ) ? $old_renewal_date : $today;
-			$new_renewal = \Convoca\Core\Utils::format_date( $base_date . ' +1 year', 'Y-m-d' );
+		if ( ! empty( $old_renewal_date ) && in_array( $current_member_state, array( 'activo', 'suspendido', 'baja_solicitada' ), true ) ) {
+			// Renewal (on time or late, in grace): base = previous vencimiento.
+			$new_renewal = \Convoca\Core\Utils::format_date( $old_renewal_date . ' +1 year', 'Y-m-d' );
 		} else {
-			// First activation: +1 year from today.
+			// First activation or re-entry after baja: new cycle from today.
 			$new_renewal = \Convoca\Core\Utils::format_date( $today . ' +1 year', 'Y-m-d' );
 		}
 
@@ -114,14 +115,22 @@ class Payment_Listener {
 		$email_manager = new Email_Manager();
 
 		// Activation / Renewal logic.
-		if ( $current_member_state !== 'activo' ) {
+		if ( $current_member_state === 'pendiente_pago' || $current_member_state === 'pendiente_documentacion' ) {
 			// First activation via approve_member (assigns number, sets dates, etc.).
 			CPT_Miembro::approve_member( $origin_id );
 			// Generate WP user + send credentials.
 			Process_Member::handle_approved( $origin_id );
 			\Convoca\Core\Logger::info( "Membresía activada tras pago completado (ID: $pago_id) para el miembro #$origin_id.", 'Members/Payment', $origin_id );
 		} else {
-			// It's a renewal.
+			// Renewal (activo, suspendido in grace, or re-entry from baja).
+			// Return to 'activo' when needed — approve_member is NOT used here so
+			// the computed $new_renewal (from vencimiento) is preserved and the
+			// WP user / credentials are left untouched.
+			if ( $current_member_state !== 'activo' ) {
+				Estados::change( $origin_id, 'activo', "Cuota renovada tras pago (ID: $pago_id). Reactivación desde {$current_member_state}." );
+			}
+			delete_post_meta( $origin_id, '_convoca_fecha_baja' );
+			update_post_meta( $origin_id, '_convoca_fecha_inicio_periodo', '' );
 			\Convoca\Core\Logger::info( "Cuota renovada por un año (Nueva fecha: $new_renewal) para el miembro #$origin_id.", 'Members/Payment', $origin_id );
 
 			// Send renewal completed email.

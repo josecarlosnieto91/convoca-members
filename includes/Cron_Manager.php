@@ -432,6 +432,20 @@ class Cron_Manager {
 				// Cambiar estado a pendiente_pago via state machine (triggers audit log).
 				Estados::change( $member_id, 'pendiente_pago', 'Renovación automática fallida - requerido pago manual' );
 
+				// Policy (2026-09): if the automatic charge fails, send the
+				// member a payment link so they can renew manually.
+				$link = $this->get_renewal_link( $member_id );
+				if ( $link && $link !== home_url( '/renovar/' ) ) {
+					$email_manager->send_recordatorio_pago( $member_id, array( '{link_pago}' => $link ) );
+					\Convoca\Core\Logger::info(
+						"Renovación automática fallida: enlace de pago manual enviado al miembro #$member_id.",
+						'Members/Cron',
+						$member_id
+					);
+				} else {
+					$email_manager->send_renovacion( $member_id, array( '{link_pago}' => $link ) );
+				}
+
 				continue;
 			}
 
@@ -743,35 +757,60 @@ class Cron_Manager {
 	 * Get renewal link for a member (try existing payment, fallback to renew page).
 	 */
 	private function get_renewal_link( int $post_id ): string {
-		// If recurrent, create payment automatically.
-		$es_recurrente = get_post_meta( $post_id, '_convoca_pago_recurrente', true );
-		$forma_pago    = get_post_meta( $post_id, '_convoca_forma_pago', true );
+		$forma_pago = get_post_meta( $post_id, '_convoca_forma_pago', true );
 
-		if ( $es_recurrente && in_array( $forma_pago, array( 'tarjeta', 'bizum', 'cuota' ), true ) ) {
-			$plan_key  = get_post_meta( $post_id, '_convoca_plan', true );
-			$plan_data = CPT_Miembro::get_plan( $plan_key );
-			$importe   = (float) ( get_post_meta( $post_id, '_convoca_importe_cuota', true ) ?: ( $plan_data ? $plan_data['price'] : 0 ) );
+		// Volunteers renew by hours, not by payment: no payment link.
+		if ( $forma_pago === 'voluntariado' ) {
+			return home_url( '/renovar/' );
+		}
 
-			if ( $importe > 0 && \Convoca\Core\Features::is_gateway_active() && function_exists( 'Convoca\Gateway\convoca_gateway_create_payment' ) ) {
-				$payment = \Convoca\Gateway\convoca_gateway_create_payment(
-					array(
-						'amount_cents' => (int) round( $importe * 100 ),
-						'method'       => ( $forma_pago === 'cuota' ) ? 'tarjeta' : $forma_pago,
-						'origin'       => 'members',
-						'origin_id'    => $post_id,
-						'product_desc' => mb_substr( 'RENOVACION ' . strtoupper( get_bloginfo( 'name' ) ) . ' ' . ( $plan_data['label'] ?? 'SOCIO' ), 0, 125 ),
-					)
+		$plan_key  = get_post_meta( $post_id, '_convoca_plan', true );
+		$plan_data = CPT_Miembro::get_plan( $plan_key );
+		$importe   = (float) ( get_post_meta( $post_id, '_convoca_importe_cuota', true ) ?: ( $plan_data ? $plan_data['price'] : 0 ) );
+
+		$can_pay = $importe > 0 && \Convoca\Core\Features::is_gateway_active() && function_exists( 'Convoca\Gateway\convoca_gateway_create_payment' );
+
+		if ( $can_pay ) {
+			// Reuse a pending renewal payment when one already exists for this
+			// member (avoids stacking duplicate pending payments on every notice).
+			global $wpdb;
+			$pending = (int) $wpdb->get_var(
+				$wpdb->prepare(
+					"SELECT pm.post_id FROM {$wpdb->postmeta} pm
+                 JOIN {$wpdb->posts} p ON p.ID = pm.post_id
+                 WHERE p.post_type = 'pago'
+                   AND p.post_status = 'publish'
+                   AND pm.meta_key = '_convoca_origin_id' AND pm.meta_value = %d
+                   AND pm.post_id IN (
+                       SELECT post_id FROM {$wpdb->postmeta} WHERE meta_key = '_convoca_estado' AND meta_value = 'pendiente'
+                   )
+                 ORDER BY p.ID DESC LIMIT 1",
+					$post_id
+				)
+			);
+
+			if ( $pending ) {
+				return $this->get_payment_link( $pending );
+			}
+
+			$payment = \Convoca\Gateway\convoca_gateway_create_payment(
+				array(
+					'amount_cents' => (int) round( $importe * 100 ),
+					'method'       => ( in_array( $forma_pago, array( 'tarjeta', 'cuota' ), true ) ) ? 'tarjeta' : $forma_pago,
+					'origin'       => 'members',
+					'origin_id'    => $post_id,
+					'product_desc' => mb_substr( 'RENOVACION ' . strtoupper( get_bloginfo( 'name' ) ) . ' ' . ( $plan_data['label'] ?? 'SOCIO' ), 0, 125 ),
+				)
+			);
+
+			if ( ! is_wp_error( $payment ) ) {
+				update_post_meta( $post_id, '_convoca_pago_id', $payment['pago_id'] );
+				\Convoca\Core\Logger::info(
+					"Enlace de renovación generado (Pago #{$payment['pago_id']}) para el miembro #$post_id.",
+					'Members/Renewal',
+					$post_id
 				);
-
-				if ( ! is_wp_error( $payment ) ) {
-					update_post_meta( $post_id, '_convoca_pago_id', $payment['pago_id'] );
-					\Convoca\Core\Logger::info(
-						"Renovación automática generada (Pago #{$payment['pago_id']}) para el miembro #$post_id.",
-						'Members/Renewal',
-						$post_id
-					);
-					return $this->get_payment_link( (int) $payment['pago_id'] );
-				}
+				return $this->get_payment_link( (int) $payment['pago_id'] );
 			}
 		}
 

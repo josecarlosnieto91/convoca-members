@@ -213,6 +213,8 @@ class Process_Member {
 		$wpdb->query( 'START TRANSACTION' );
 
 		try {
+			$settings = get_option( 'convoca_members_settings', array() );
+
 			// Check for duplicates ATOMICALLY inside transaction to prevent race conditions.
 			// Nota: COUNT(*) ... FOR UPDATE no bloquea filas (MySQL ignora FOR UPDATE en agregados);
 			// usamos SELECT ... LIMIT 1 FOR UPDATE para serializar sobre la(s) fila(s) existente(s).
@@ -231,6 +233,18 @@ class Process_Member {
 			);
 
 			if ( ! empty( $exists ) ) {
+				$existing_id     = (int) $exists;
+				$existing_status = get_post_meta( $existing_id, '_convoca_estado_miembro', true );
+
+				// Re-alta policy (2026-09): if the existing record is 'baja',
+				// reactivate the historical record (same number, same seniority)
+				// instead of rejecting or duplicating.
+				if ( $existing_status === 'baja' ) {
+					$wpdb->query( 'ROLLBACK' );
+					Logger::info( "Re-alta detectada: se reactiva la ficha histórica #$existing_id ($dni_masked / $email).", 'Members' );
+					return self::reactivar_ficha( $existing_id, $data, $plan_key, $plan_data, $forma_pago, $estado, $sub_plan, $menor, $settings );
+				}
+
 				$wpdb->query( 'ROLLBACK' );
 				\Convoca\Core\Logger::warning( "Intento de registro duplicado detectado en transacción: $dni_masked / $email", 'Members' );
 				return new \WP_Error( 'duplicate', __( 'Ya existe un miembro registrado con este DNI o email.', 'convoca-members' ) );
@@ -252,8 +266,6 @@ class Process_Member {
 			}
 
 			// 8. Save Meta
-			$settings = get_option( 'convoca_members_settings', array() );
-
 			$meta = array(
 				'estado_miembro'    => $estado,
 				'plan'              => $plan,
@@ -264,6 +276,9 @@ class Process_Member {
 				'modalidad'         => $plan_data['modalidad'] ?? 'Numerario',
 				'importe_cuota'     => $plan_data['price'] ?? 0,
 				'estado_cuota'      => ( $forma_pago === 'voluntariado' ) ? 'activa' : 'pendiente',
+				// Volunteer annual cycle starts at registration.
+				'fecha_inicio_periodo' => ( $forma_pago === 'voluntariado' ) ? current_time( 'Y-m-d' ) : '',
+				'fecha_alta'        => current_time( 'Y-m-d' ),
 				'dni'               => $dni,
 				'fecha_nacimiento'  => $fecha_nac,
 				'email'             => $email,
@@ -357,6 +372,169 @@ class Process_Member {
 
 		return array(
 			'id'       => $post_id,
+			'nombre'   => $nombre,
+			'estado'   => $estado,
+			'redirect' => add_query_arg( 'members_success', '1', home_url() ),
+		);
+	}
+
+	/**
+	 * Re-activate a historical member record on re-registration after 'baja'.
+	 *
+	 * Policy (2026-09): re-registration with the same DNI/email reactivates the
+	 * same record — number, seniority (fecha_alta) and history are preserved;
+	 * nothing is duplicated. A new cycle starts from the new plan/payment.
+	 *
+	 * @param int    $existing_id Existing member post ID (currently 'baja').
+	 * @param array  $data        Sanitized registration data.
+	 * @param string $plan_key    Resolved plan key.
+	 * @param array  $plan_data   Plan config.
+	 * @param string $forma_pago  Payment method (cuota/voluntariado/tarjeta...).
+	 * @param string $estado      Initial state for this entry (pendiente_*).
+	 * @param string $sub_plan    Sub-plan key.
+	 * @param bool   $menor       Whether the member is a minor.
+	 * @param array  $settings    Members settings.
+	 * @return array|\WP_Error
+	 */
+	private static function reactivar_ficha(
+		int $existing_id,
+		array $data,
+		string $plan_key,
+		array $plan_data,
+		string $forma_pago,
+		string $estado,
+		string $sub_plan,
+		bool $menor,
+		array $settings
+	) {
+		$nombre = sanitize_text_field( $data['nombre'] ?? '' );
+		$dni    = strtoupper( str_replace( array( ' ', '-' ), '', trim( $data['dni'] ?? '' ) ) );
+		$email  = sanitize_email( $data['email'] ?? '' );
+
+		$post = get_post( $existing_id );
+		if ( ! $post || $post->post_type !== 'miembro' ) {
+			return new \WP_Error( 'reactivation_failed', __( 'No se pudo reactivar tu ficha. Contacta con coordinación.', 'convoca-members' ) );
+		}
+
+		// Keep the member number — do not allocate a new one.
+		$numero_socio = get_post_meta( $existing_id, '_convoca_numero_socio', true );
+
+		// Update the record with the new entry data.
+		$meta = array(
+			'estado_miembro'    => $estado,
+			'plan'              => $plan_key,
+			'plan_label'        => $plan_data['label'] ?? $plan_key,
+			'sub_plan'          => $sub_plan,
+			'forma_pago'        => $forma_pago,
+			'cuota'             => $plan_key,
+			'modalidad'         => $plan_data['modalidad'] ?? 'Numerario',
+			'importe_cuota'     => $plan_data['price'] ?? 0,
+			'estado_cuota'      => ( $forma_pago === 'voluntariado' ) ? 'activa' : 'pendiente',
+			'dni'               => $dni,
+			'email'             => $email,
+			'telefono'          => sanitize_text_field( $data['telefono'] ?? '' ),
+			'whatsapp'          => sanitize_text_field( $data['whatsapp'] ?? 'si' ),
+			'direccion'         => sanitize_text_field( $data['direccion'] ?? '' ),
+			'municipio'         => sanitize_text_field( $data['municipio'] ?? '' ),
+			'canal_contacto'    => sanitize_text_field( $data['canal_contacto'] ?? 'whatsapp' ),
+			'es_voluntario'     => ( $forma_pago === 'voluntariado' ) ? '1' : '0',
+			'comunicaciones_ok' => ! empty( $data['comunicaciones'] ) ? '1' : '0',
+			'pago_recurrente'   => ! empty( $data['pago_recurrente'] ) ? '1' : '0',
+		);
+		if ( ! empty( $data['fecha_nacimiento'] ) ) {
+			$meta['fecha_nacimiento'] = sanitize_text_field( $data['fecha_nacimiento'] );
+		}
+		if ( $menor ) {
+			$meta['tutor_nombre']       = sanitize_text_field( $data['tutor_nombre'] ?? '' );
+			$meta['tutor_dni']          = sanitize_text_field( $data['tutor_dni'] ?? '' );
+			$meta['tutor_autorizacion'] = '1';
+		}
+
+		// A re-entry starts a new volunteer cycle at today when applicable.
+		if ( $forma_pago === 'voluntariado' ) {
+			$meta['fecha_inicio_periodo'] = current_time( 'Y-m-d' );
+			$meta['fecha_alta']           = get_post_meta( $existing_id, '_convoca_fecha_alta', true ) ?: current_time( 'Y-m-d' );
+		}
+
+		$wpdb = isset( $GLOBALS['wpdb'] ) ? $GLOBALS['wpdb'] : null;
+		if ( $wpdb ) {
+			$wpdb->query( 'START TRANSACTION' );
+		}
+		try {
+			wp_update_post(
+				array(
+					'ID'         => $existing_id,
+					'post_title' => $nombre,
+				)
+			);
+
+			foreach ( $meta as $key => $value ) {
+				update_post_meta( $existing_id, '_convoca_' . $key, $value );
+			}
+
+			// Clear expiry artifacts; the record leaves 'baja'.
+			delete_post_meta( $existing_id, '_convoca_fecha_baja' );
+			delete_post_meta( $existing_id, '_convoca_ultimo_aviso_vencimiento' );
+			update_post_meta( $existing_id, '_convoca_estado_cuota', $meta['estado_cuota'] );
+
+			// Re-entry through the state machine (audit trail preserved).
+			Estados::change( $existing_id, $estado, "Re-alta tras baja. Histórico reactivado (nº $numero_socio)." );
+
+			if ( $wpdb ) {
+				$wpdb->query( 'COMMIT' );
+			}
+		} catch ( \Throwable $e ) {
+			if ( $wpdb ) {
+				$wpdb->query( 'ROLLBACK' );
+			}
+			Logger::error( 'Excepción durante reactivación de ficha: ' . $e->getMessage(), 'Members' );
+			return new \WP_Error( 'create_failed', __( 'Error inesperado al reactivar el registro.', 'convoca-members' ) );
+		}
+
+		// Notifications (solicitud email, created hook).
+		\Convoca\Core\Utils::do_action( 'convoca_members_email_solicitud', 'convoca_email_solicitud', $existing_id );
+		\Convoca\Core\Utils::do_action( 'convoca_members_reactivado', 'convoca_miembro_reactivado', $existing_id );
+
+		// Gateway redirection when a payment applies.
+		$importe = (float) ( $plan_data['price'] ?? 0 );
+		if ( in_array( $forma_pago, array( 'tarjeta', 'bizum', 'transferencia' ), true ) && $importe > 0 && \Convoca\Core\Features::is_gateway_active() && function_exists( 'Convoca\Gateway\convoca_gateway_create_payment' ) ) {
+			$amount_cents = (int) round( $importe * 100 );
+
+			$payment = \Convoca\Gateway\convoca_gateway_create_payment(
+				array(
+					'amount_cents' => $amount_cents,
+					'method'       => $forma_pago,
+					'origin'       => 'members',
+					'origin_id'    => $existing_id,
+					'product_desc' => mb_substr( strtoupper( get_bloginfo( 'name' ) ) . ' CUOTA ' . ( $plan_data['label'] ?? '' ), 0, 125 ),
+				)
+			);
+
+			if ( ! is_wp_error( $payment ) ) {
+				update_post_meta( $existing_id, '_convoca_pago_id', $payment['pago_id'] );
+				return array(
+					'id'       => $existing_id,
+					'nombre'   => $nombre,
+					'redirect' => $payment['payment_url'],
+					'estado'   => $estado,
+				);
+			}
+
+			Logger::error( 'Error al crear pago en pasarela (reactivación): ' . $payment->get_error_message(), 'Members', $existing_id );
+			update_post_meta( $existing_id, '_convoca_needs_manual_review', '1' );
+			update_post_meta( $existing_id, '_convoca_review_note', 'Error pasarela: ' . $payment->get_error_message() );
+
+			return array(
+				'id'            => $existing_id,
+				'nombre'        => $nombre,
+				'gateway_error' => true,
+				'error_message' => __( 'No se ha podido contactar con la pasarela. Tu registro está guardado pero el pago está pendiente.', 'convoca-members' ),
+				'estado'        => $estado,
+			);
+		}
+
+		return array(
+			'id'       => $existing_id,
 			'nombre'   => $nombre,
 			'estado'   => $estado,
 			'redirect' => add_query_arg( 'members_success', '1', home_url() ),

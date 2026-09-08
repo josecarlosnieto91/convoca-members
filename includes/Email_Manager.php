@@ -201,7 +201,8 @@ class Email_Manager {
 							),
 						)
 					)
-					. __( '<p>Puedes realizar el pago de forma segura desde tu panel de socio.</p>', 'convoca-members' )
+					. __( '<p>Puedes realizar el pago de forma segura desde tu panel de socio o con un clic en el botón:</p>', 'convoca-members' )
+					. Email_Layout::button_html( '{link_pago}', __( 'Pagar ahora', 'convoca-members' ) )
 					. '<p>Si ya has realizado el pago, ignora este mensaje.</p>',
 			),
 			'pago_pendiente_2'                 => array(
@@ -216,7 +217,8 @@ class Email_Manager {
 							),
 						)
 					)
-					. '<p>Es importante completar el pago para mantener tu estado activo y acceder a las ventajas de socio.</p>',
+					. __( '<p>Es importante completar el pago para mantener tu estado activo y acceder a las ventajas de socio.</p>', 'convoca-members' )
+					. Email_Layout::button_html( '{link_pago}', __( 'Pagar ahora', 'convoca-members' ) ),
 			),
 			'pago_pendiente_ultimo'            => array(
 				'subject' => __( 'Último aviso: suspensión inminente — ', 'convoca-members' ) . get_bloginfo( 'name' ),
@@ -230,7 +232,8 @@ class Email_Manager {
 							),
 						)
 					)
-					. '<p>Si no recibimos el pago en los próximos días, tu cuenta será suspendida automáticamente.</p>',
+					. '<p>Si no recibimos el pago en los próximos días, tu cuenta será suspendida automáticamente. Aún estás a tiempo con este enlace:</p>'
+					. Email_Layout::button_html( '{link_pago}', __( 'Pagar ahora', 'convoca-members' ) ),
 			),
 			'renovacion'                       => array(
 				'subject' => 'Tu renovación en ' . get_bloginfo( 'name' ) . ' (30 días)',
@@ -252,20 +255,23 @@ class Email_Manager {
 							),
 						)
 					)
-					. __( '<p>Puedes renovar desde tu panel de socio.</p>', 'convoca-members' )
+					. __( '<p>Puedes renovar con un clic. El enlace es seguro y seguirá siendo válido aunque se acerque o pase la fecha de vencimiento:</p>', 'convoca-members' )
+					. Email_Layout::button_html( '{link_pago}', __( 'Renovar ahora', 'convoca-members' ) )
 					. '<p>¡Gracias por seguir con nosotros!</p>',
 			),
 			'renovacion_15d'                   => array(
 				'subject' => 'Tu renovación en ' . get_bloginfo( 'name' ) . ' (15 días)',
 				'body'    => __( '<h1>Hola {nombre},</h1>', 'convoca-members' )
 					. __( '<p>Faltan solo <strong>15 días</strong> para que venza tu membresía de {tipo_miembro}.</p>', 'convoca-members' )
-					. '<p>Recuerda renovar para no perder tu antigüedad y beneficios.</p>',
+					. '<p>Recuerda renovar para no perder tu antigüedad y beneficios.</p>'
+					. Email_Layout::button_html( '{link_pago}', __( 'Renovar ahora', 'convoca-members' ) ),
 			),
 			'renovacion_7d'                    => array(
 				'subject' => __( 'Última semana para tu renovación — ', 'convoca-members' ) . get_bloginfo( 'name' ),
 				'body'    => __( '<h1>Hola {nombre},</h1>', 'convoca-members' )
 					. __( '<p>Tu membresía de {tipo_miembro} vencerá en <strong>7 días</strong>.</p>', 'convoca-members' )
-					. '<p>Evita la suspensión automática realizando el pago desde tu panel de socio.</p>',
+					. '<p>Evita la suspensión automática renovando ahora. Si la fecha ya ha pasado, el enlace sigue siendo válido durante el periodo de gracia:</p>'
+					. Email_Layout::button_html( '{link_pago}', __( 'Renovar ahora', 'convoca-members' ) ),
 			),
 			'renovacion_automatica'            => array(
 				'subject' => __( 'Procesando tu renovación automática — ', 'convoca-members' ) . get_bloginfo( 'name' ),
@@ -403,7 +409,34 @@ class Email_Manager {
 	}
 
 	public function send_renovacion_completada( int $post_id ): void {
-		$this->send( 'renovacion_completada', $post_id );
+		$attachments = array();
+
+		// Attach the member card as a PDF (renewal confirmation).
+		if ( class_exists( '\Convoca\Members\PDF_Card' ) ) {
+			try {
+				$pdf_binary = \Convoca\Members\PDF_Card::generate_pdf( $post_id );
+				if ( strlen( $pdf_binary ) > 500 ) {
+					$tmp_file = tempnam( sys_get_temp_dir(), 'convoca-card-' );
+					if ( $tmp_file ) {
+						$pdf_path = $tmp_file . '.pdf';
+						rename( $tmp_file, $pdf_path );
+						file_put_contents( $pdf_path, $pdf_binary ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_file_put_contents
+						$attachments[] = $pdf_path;
+					}
+				}
+			} catch ( \Throwable $e ) {
+				\Convoca\Core\Logger::warning( 'No se pudo adjuntar el carnet al email de renovación: ' . $e->getMessage(), 'Members/Emails', $post_id );
+			}
+		}
+
+		$this->send( 'renovacion_completada', $post_id, array(), '', $attachments );
+
+		// Cleanup attachment after dispatch.
+		foreach ( $attachments as $file ) {
+			if ( file_exists( $file ) ) {
+				unlink( $file ); // phpcs:ignore WordPress.WP.AlternativeFunctions.unlink_unlink
+			}
+		}
 	}
 
 	/**
@@ -457,7 +490,7 @@ class Email_Manager {
 
 	/* ── Core send logic ───────────────────────────────── */
 
-	private function send( string $template_slug, int $post_id, array $extra_vars = array(), string $to_email = '' ): void {
+	private function send( string $template_slug, int $post_id, array $extra_vars = array(), string $to_email = '', array $attachments = array() ): void {
 		$templates = get_option( self::OPTION, array() );
 		$tpl       = $templates[ $template_slug ] ?? null;
 
@@ -515,7 +548,7 @@ class Email_Manager {
 			)
 		);
 
-		$sent = \Convoca\Members\Email_Verifier::send( $email, $subject, $body, $headers );
+		$sent = \Convoca\Members\Email_Verifier::send( $email, $subject, $body, $headers, $attachments );
 
 		if ( $sent ) {
 			// Update tracking and Audit Log.

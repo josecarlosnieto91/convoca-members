@@ -54,7 +54,7 @@ class WPMail_Provider implements Email_Verifier_Provider {
 	/**
 	 * {@inheritDoc}
 	 */
-	public function send( string $to, string $subject, string $body, array $headers = array() ): bool {
+	public function send( string $to, string $subject, string $body, array $headers = array(), array $attachments = array() ): bool {
 		// wp_mail expects string[] headers; our contract receives associative.
 		$header_lines = array();
 		foreach ( $headers as $key => $value ) {
@@ -64,6 +64,6 @@ class WPMail_Provider implements Email_Verifier_Provider {
 				$header_lines[] = $key . ': ' . $value;
 			}
 		}
-		return wp_mail( $to, $subject, $body, $header_lines );
+		return wp_mail( $to, $subject, $body, $header_lines, $attachments );
 	}
 }

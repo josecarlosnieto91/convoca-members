@@ -217,18 +217,34 @@
       fetch(window.convMiArea.apiUrl + '/me', { headers: { 'X-WP-Nonce': window.convMiArea.nonce } })
       .then(res => res.json())
       .then(profile => {
-        const html = `
-          <h2>👤 Mis Datos</h2>
-          <div class="conv-meta-grid">
-            <div class="meta-item"><strong>Nombre:</strong> <span>${profile.nombre}</span></div>
-            <div class="meta-item"><strong>Email:</strong> <span>${profile.email}</span>${profile.email_pendiente ? ' <em class="text-muted">(cambio pendiente de confirmar)</em>' : ''}</div>
-            <div class="meta-item"><strong>Código de Acceso:</strong> <span>${profile.codigo}</span></div>
-            <div class="meta-item"><strong>Estado:</strong> ${this.formatEstado(profile.estado)}</div>
-            <div class="meta-item"><strong>Dirección:</strong> <span>${profile.direccion || '—'}</span></div>
-            <div class="meta-item"><strong>Teléfono:</strong> <span>${profile.telefono || '—'}</span></div>
-            <div class="meta-item"><strong>Cumpleaños:</strong> <span>${profile.cumpleanos || '—'}</span></div>
-          </div>
+        const isActive = profile.estado === 'activo';
+        const canRenew = profile.puede_renovar && profile.renovable && !isActive;
+        const vencida  = profile.cuota_vencida;
 
+        // Read-only notice for non-active states (grace period / volunteer-only).
+        let noticeHtml = '';
+        if (!isActive && profile.estado !== 'pendiente_pago' && profile.estado !== 'pendiente_documentacion') {
+          noticeHtml = `
+            <div class="conv-alert conv-alert-warning" style="padding:14px 16px;border-radius:8px;background:#fff7e6;border:1px solid #ffd591;margin-bottom:16px;">
+              <strong>Tu membresía no está activa.</strong> Puedes ver tu información pero no realizar cambios ni acciones.
+              ${canRenew ? '<br>Tu cuota está vencida. Renueva para recuperar los beneficios de socio/a.' : ''}
+            </div>`;
+        }
+
+        // Expired / grace banner with renewal button.
+        let renewBanner = '';
+        if (vencida && profile.estado === 'activo') {
+          renewBanner = `
+            <div class="conv-alert conv-alert-warning" style="padding:14px 16px;border-radius:8px;background:#fff7e6;border:1px solid #ffd591;margin-bottom:16px;">
+              <strong>Tu cuota venció el ${this.formatDate(profile.fecha_renovacion)}.</strong> Durante el periodo de gracia puedes renovar; pasado un mes se dará de baja.
+            </div>`;
+        }
+
+        const renewalRow = profile.fecha_renovacion
+          ? `<div class="meta-item"><strong>Próxima renovación:</strong> <span>${this.formatDate(profile.fecha_renovacion)}</span></div>`
+          : '';
+
+        const editSection = isActive ? `
           <hr>
           <h3>✏️ Editar mis datos</h3>
           <form id="conv-profile-form" class="conv-form">
@@ -251,11 +267,41 @@
             </label>`}
             <button type="submit" class="btn-primary">Guardar cambios</button>
             <div id="conv-profile-msg"></div>
-          </form>
+          </form>` : '';
+
+        const dangerSection = isActive ? `
           <hr>
           <h3>Zona de Peligro</h3>
           <p class="text-muted">Si deseas solicitar tu baja como socio/a, puedes hacerlo pulsando el siguiente botón. Se notificará a la administración para procesarla.</p>
-          <button id="conv-btn-unsubscribe" class="btn-danger-outline">Solicitar Baja</button>
+          <button id="conv-btn-unsubscribe" class="btn-danger-outline">Solicitar Baja</button>` : '';
+
+        // Renewal CTA shown to expired/grace members.
+        const ctaSection = canRenew ? `
+          <hr>
+          <div style="text-align:center;padding:8px 0;">
+            <p><strong>Renueva tu membresía para seguir disfrutando de los beneficios de socio/a.</strong></p>
+            <button id="conv-btn-renew-cta" class="btn-primary">🔄 Renovar membresía</button>
+            <div id="conv-renovar-cta-msg"></div>
+          </div>` : '';
+
+        const html = `
+          ${noticeHtml}
+          ${renewBanner}
+          <h2>👤 Mis Datos</h2>
+          <div class="conv-meta-grid">
+            <div class="meta-item"><strong>Nombre:</strong> <span>${profile.nombre}</span></div>
+            <div class="meta-item"><strong>Email:</strong> <span>${profile.email}</span>${profile.email_pendiente ? ' <em class="text-muted">(cambio pendiente de confirmar)</em>' : ''}</div>
+            <div class="meta-item"><strong>Código de Acceso:</strong> <span>${profile.codigo}</span></div>
+            <div class="meta-item"><strong>Estado:</strong> ${this.formatEstado(profile.estado)}</div>
+            ${renewalRow}
+            <div class="meta-item"><strong>Dirección:</strong> <span>${profile.direccion || '—'}</span></div>
+            <div class="meta-item"><strong>Teléfono:</strong> <span>${profile.telefono || '—'}</span></div>
+            <div class="meta-item"><strong>Cumpleaños:</strong> <span>${profile.cumpleanos || '—'}</span></div>
+          </div>
+
+          ${editSection}
+          ${ctaSection}
+          ${dangerSection}
         `;
         this.$main.innerHTML = html;
 
@@ -270,8 +316,51 @@
         if (verifyBtn) {
           verifyBtn.addEventListener('click', () => this.verifyPhone(verifyBtn));
         }
+        const renewCta = conv.$('#conv-btn-renew-cta');
+        if (renewCta) {
+          renewCta.addEventListener('click', () => this.renewMembershipFromCta(renewCta));
+        }
       })
       .catch(() => { this.$main.innerHTML = '<p>Error cargando perfil.</p>'; });
+    },
+
+    renewMembershipFromCta: function(btn) {
+      const msg = conv.$('#conv-renovar-cta-msg');
+      if (!msg) return;
+      btn.disabled = true;
+      msg.innerHTML = '<p class="text-muted">Generando pago…</p>';
+
+      fetch(window.convMiArea.apiUrl + '/me/renovar', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'X-WP-Nonce': window.convMiArea.nonce }
+      })
+      .then(res => res.json())
+      .then(d => {
+        if (d.payment_url) {
+          window.location.href = d.payment_url;
+        } else {
+          btn.disabled = false;
+          msg.innerHTML = '<p class="text-error">' + this.escHtml(d.error || 'Error al renovar.') + '</p>';
+        }
+      })
+      .catch(() => {
+        btn.disabled = false;
+        msg.innerHTML = '<p class="text-error">Error de conexión.</p>';
+      });
+    },
+
+    formatDate: function(dateStr) {
+      if (!dateStr) return '—';
+      // Accepts Y-m-d or d/m/Y; try to normalise.
+      var parts = String(dateStr).split(/[-/]/);
+      if (parts.length === 3) {
+        var isYmd = parts[0].length === 4;
+        var y = isYmd ? parts[0] : parts[2];
+        var m = parts[1];
+        var d = isYmd ? parts[2] : parts[0];
+        return d + '/' + m + '/' + y;
+      }
+      return dateStr;
     },
 
     verifyPhone: function(btn) {
@@ -469,9 +558,11 @@
         fetch(window.convMiArea.apiUrl + '/me/horas', { headers: { 'X-WP-Nonce': window.convMiArea.nonce } }).then(res => res.json()),
         fetch(window.convMiArea.apiUrl + '/activities', { headers: { 'X-WP-Nonce': window.convMiArea.nonce } }).then(res => res.json()),
         fetch(window.convMiArea.apiUrl + '/proyectos').then(res => res.json()),
-        fetch(window.convMiArea.apiUrl + '/me/gamification', { headers: { 'X-WP-Nonce': window.convMiArea.nonce } }).then(res => res.json().catch(function(){return null;}))
+        fetch(window.convMiArea.apiUrl + '/me/gamification', { headers: { 'X-WP-Nonce': window.convMiArea.nonce } }).then(res => res.json().catch(function(){return null;})),
+        fetch(window.convMiArea.apiUrl + '/me', { headers: { 'X-WP-Nonce': window.convMiArea.nonce } }).then(res => res.json().catch(function(){return null;}))
       ])
-      .then(([data, activities, proyectos, gamification]) => {
+      .then(([data, activities, proyectos, gamification, profile]) => {
+        const canSubmitHours = profile && profile.estado === 'activo';
         let itemsHtml = '<p>No tienes registros de horas.</p>';
         if (data && data.items && data.items.length > 0) {
           itemsHtml = `
@@ -560,6 +651,7 @@
 
             ${gamifyHtml}
             
+            ${canSubmitHours ? `
             <section class="card-inner">
               <h3>Añadir Nuevo Registro</h3>
               <form id="conv-hours-form" class="conv-inline-form">
@@ -583,7 +675,10 @@
                 <div class="form-group"><input type="text" name="descripcion" placeholder="Descripción breve (opcional)"></div>
                 <button type="submit" class="btn-primary-mini">Añadir</button>
               </form>
-            </section>
+            </section>` : `
+            <section class="card-inner" style="background:#fff7e6;border:1px solid #ffd591;">
+              <p class="text-muted" style="margin:0"><strong>Solo lectura:</strong> para registrar horas de voluntariado tu membresía debe estar activa.</p>
+            </section>`}
 
             <section class="history-section">
               <h3>Historial</h3>
@@ -807,8 +902,10 @@
     formatEstado: function(estado) {
       const map = {
         'activo': '<span class="text-success">Activo/a</span>',
+        'suspendido': '<span class="text-warning">En periodo de gracia</span>',
         'pendiente_pago': '<span class="text-warning">Pendiente de Pago</span>',
-        'pendiente_documentacion': '<span class="text-warning">Pendiente de Documentación</span>',
+        'pendiente_documentacion': '<span class="text-warning">Solo voluntario/a</span>',
+        'baja': '<span class="text-error">Dado/a de baja</span>',
         'baja_solicitada': '<span class="text-error">Baja Solicitada</span>',
       };
       return map[estado] || estado;

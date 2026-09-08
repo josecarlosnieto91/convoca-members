@@ -42,13 +42,14 @@ interface Email_Verifier_Provider {
 	/**
 	 * Send an email.
 	 *
-	 * @param string $to      Recipient email.
-	 * @param string $subject Subject.
-	 * @param string $body    HTML body.
-	 * @param array  $headers Headers (associative).
+	 * @param string $to          Recipient email.
+	 * @param string $subject     Subject.
+	 * @param string $body        HTML body.
+	 * @param array  $headers     Headers (associative).
+	 * @param array  $attachments Array of absolute file paths to attach.
 	 * @return bool True on success.
 	 */
-	public function send( string $to, string $subject, string $body, array $headers = array() ): bool;
+	public function send( string $to, string $subject, string $body, array $headers = array(), array $attachments = array() ): bool;
 
 	/**
 	 * Admin settings fields for this provider.
