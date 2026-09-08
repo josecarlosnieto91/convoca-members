@@ -92,10 +92,6 @@ class PDF_Card {
                     color: #fff;
                     position: relative;
                     box-shadow: 0 15px 35px rgba(50, 0, 40, 0.4);
-                    padding: 30px;
-                    display: flex;
-                    flex-direction: column;
-                    justify-content: space-between;
                     overflow: hidden;
                     box-sizing: border-box;
                     border: 1px solid rgba(255,255,255,0.1);
@@ -169,6 +165,17 @@ class PDF_Card {
                     transition: all 0.3s ease;
                 }
                 .btn-print:hover { background: #e67a00; transform: translateY(-2px); }
+                /* ── Layout por tablas (compatible dompdf; flexbox NO lo soporta) ── */
+                .card { padding: 0; }
+                .layout { width: 100%; height: 100%; border-collapse: collapse; table-layout: fixed; position: relative; z-index: 1; }
+                .layout td { border: none; }
+                .cell-header { height: 86px; padding: 26px 30px 0; vertical-align: top; }
+                .cell-body { padding: 0 30px; vertical-align: middle; }
+                .cell-footer { height: 92px; padding: 0 30px 26px; vertical-align: bottom; }
+                .row { width: 100%; border-collapse: collapse; }
+                .row td { border: none; vertical-align: middle; }
+                .row .left { text-align: left; }
+                .row .right { text-align: right; }
                 ' . ( $light ? '
                 /* ── Tema claro: tarjeta blanca/crema con textos púrpura ── */
                 body { background: #f7f3f0; }
@@ -189,25 +196,29 @@ class PDF_Card {
         </head>
         <body>
             <div class="card">
-                <div class="header">
-                    ' . $logo_html . '
-                    <div class="plan-badge">' . esc_html( $plan ) . '</div>
-                </div>
-                
-                <div class="body">
-                    <div class="member-number">' . esc_html__( 'NO.', 'convoca-members' ) . ' ' . esc_html( $num_socio_display ) . '</div>
-                    <div class="member-name">' . esc_html( $nombre ) . '</div>
-                </div>
-                
-                <div class="footer">
-                    <div class="info">
-                        <div>' . esc_html__( 'FECHA DE ALTA:', 'convoca-members' ) . ' ' . esc_html( $fecha_fmt ) . '</div>
-                        <div style="margin-top:4px;">WWW.' . esc_html( $site_domain ) . '</div>
-                    </div>
-                    <div class="qr-code">
-                        ' . $qr_img . '
-                    </div>
-                </div>
+                <table class="layout"><tr>
+                    <td class="cell-header">
+                        <table class="row"><tr>
+                            <td class="left">' . $logo_html . '</td>
+                            <td class="right"><div class="plan-badge">' . esc_html( $plan ) . '</div></td>
+                        </tr></table>
+                    </td>
+                </tr><tr>
+                    <td class="cell-body">
+                        <div class="member-number">' . esc_html__( 'NO.', 'convoca-members' ) . ' ' . esc_html( $num_socio_display ) . '</div>
+                        <div class="member-name">' . esc_html( $nombre ) . '</div>
+                    </td>
+                </tr><tr>
+                    <td class="cell-footer">
+                        <table class="row"><tr>
+                            <td class="left info">
+                                <div>' . esc_html__( 'FECHA DE ALTA:', 'convoca-members' ) . ' ' . esc_html( $fecha_fmt ) . '</div>
+                                <div style="margin-top:4px;">WWW.' . esc_html( $site_domain ) . '</div>
+                            </td>
+                            <td class="right"><div class="qr-code">' . $qr_img . '</div></td>
+                        </tr></table>
+                    </td>
+                </tr></table>
             </div>
             
             <button class="btn-print no-print" onclick="window.print()">
