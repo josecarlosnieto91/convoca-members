@@ -234,8 +234,12 @@ class PDF_Card {
 	 * Reuses chillerlan/php-qrcode when available (same as Certificate_Generator),
 	 * with a graceful text fallback so the card never breaks.
 	 *
-	 * @param string $data  Content to encode (verification URL).
-	 * @param int    $size  Output size in px.
+	 * NOTE: el <img> NO lleva style de tamaño inline: PDF_Card lo inserta dentro
+	 * de .qr-code (75px) cuyo CSS `.qr-code img { width:100%; height:100%; }`
+	 * lo escala; un width inline ganaría y desbordaría la caja.
+	 *
+	 * @param string $data Content to encode (verification URL).
+	 * @param int    $size  Render scale hint (used only for the PNG pixels).
 	 */
 	private static function qr_data_uri( string $data, int $size = 150 ): string {
 		if (
@@ -257,13 +261,14 @@ class PDF_Card {
 				);
 				$qrcode  = new \chillerlan\QRCode\QRCode( $options );
 				$png     = $qrcode->render( $data );
-				return '<img src="data:image/png;base64,' . base64_encode( $png ) . '" alt="' . esc_attr__( 'QR Verification', 'convoca-members' ) . '" style="width:' . (int) $size . 'px;height:' . (int) $size . 'px;" />';
+				// Sin width/height inline: el CSS contenedor (.qr-code) escala el QR.
+				return '<img src="data:image/png;base64,' . base64_encode( $png ) . '" alt="' . esc_attr__( 'QR Verification', 'convoca-members' ) . '" />';
 			} catch ( \Throwable $e ) {
 				\Convoca\Core\Logger::warning( 'QR local del carnet falló: ' . $e->getMessage(), 'Members/Card' );
 			}
 		}
 
-		// Fallback: texto legible con la URL de verificación.
-		return '<div style="width:' . (int) $size . 'px;height:' . (int) $size . 'px;background:#fff;color:#333;display:flex;align-items:center;justify-content:center;font-size:9px;padding:4px;text-align:center;word-break:break-all;box-sizing:border-box;">' . esc_html( $data ) . '</div>';
+		// Fallback: texto legible con la URL de verificación (rellena la caja contenedora).
+		return '<div style="width:100%;height:100%;background:#fff;color:#333;display:flex;align-items:center;justify-content:center;font-size:9px;padding:4px;text-align:center;word-break:break-all;box-sizing:border-box;">' . esc_html( $data ) . '</div>';
 	}
 }
