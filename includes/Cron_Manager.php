@@ -385,6 +385,7 @@ class Cron_Manager {
 					'Members/Cron',
 					$member_id
 				);
+				\Convoca\Core\Utils::release_lock( $lock_key );
 				continue;
 			}
 
@@ -398,6 +399,7 @@ class Cron_Manager {
 					'Members/Cron',
 					$member_id
 				);
+				\Convoca\Core\Utils::release_lock( $lock_key );
 				continue;
 			}
 
@@ -416,6 +418,7 @@ class Cron_Manager {
 
 				// Si el último intento fue hace menos de retry_days, esperar al próximo ciclo.
 				if ( $last_try && strtotime( $last_try ) > strtotime( "-{$retry_days} days" ) ) {
+					\Convoca\Core\Utils::release_lock( $lock_key );
 					continue;
 				}
 
@@ -433,6 +436,7 @@ class Cron_Manager {
 						$member_id
 					);
 					do_action( 'convoca_members_auto_renewal_completed', $member_id, $charge['pago_id'] );
+					\Convoca\Core\Utils::release_lock( $lock_key );
 					continue;
 				}
 
@@ -450,6 +454,7 @@ class Cron_Manager {
 
 				// ¿Agotados? Caer a enlace de pago manual (gracia estándar).
 				if ( $attempts < $max_attempts ) {
+					\Convoca\Core\Utils::release_lock( $lock_key );
 					continue; // Se reintenta en el próximo ciclo diario; el socio conserva beneficios.
 				}
 
@@ -464,6 +469,7 @@ class Cron_Manager {
 				} else {
 					$email_manager->send_renovacion( $member_id, array( '{link_pago}' => $link ) );
 				}
+				\Convoca\Core\Utils::release_lock( $lock_key );
 				continue;
 			}
 
@@ -509,7 +515,7 @@ class Cron_Manager {
 				} else {
 					$email_manager->send_renovacion( $member_id, array( '{link_pago}' => $link ) );
 				}
-
+				\Convoca\Core\Utils::release_lock( $lock_key );
 				continue;
 			}
 
@@ -528,6 +534,8 @@ class Cron_Manager {
 
 			// Fire webhook.
 			do_action( 'convoca_members_auto_renewal_created', $member_id, $pago_id );
+
+			\Convoca\Core\Utils::release_lock( $lock_key );
 		}
 	}
 
