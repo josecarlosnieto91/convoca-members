@@ -71,9 +71,12 @@ class Payment_Listener {
 		// Fetch specific meta fields individually to avoid array-vs-string comparison issues.
 		$current_member_state = get_post_meta( $origin_id, '_convoca_estado_miembro', true );
 		$old_renewal_date     = get_post_meta( $origin_id, '_convoca_fecha_renovacion', true );
-		$last_pago_id         = (int) get_post_meta( $origin_id, '_convoca_pago_id', true );
+		// E2E-9: dedupe contra el pago realmente APLICADO (lo escribe este listener
+		// al procesar). Comparar con _convoca_pago_id era incorrecto porque el
+		// flujo de alta lo pre-vincula al crear el pago → skip siempre.
+		$applied_pago_id = (int) get_post_meta( $origin_id, '_convoca_pago_aplicado_id', true );
 
-		if ( $last_pago_id === (int) $pago_id ) {
+		if ( $applied_pago_id === (int) $pago_id ) {
 			\Convoca\Core\Logger::info( "Member payment $pago_id already applied to member #$origin_id, skipping.", 'Members/Payment' );
 			return;
 		}
@@ -126,6 +129,8 @@ class Payment_Listener {
 		}
 
 		// Fire custom action for other integrations.
+		// E2E-9: marcar el pago como aplicado SOLO tras procesar con éxito.
+		update_post_meta( $origin_id, '_convoca_pago_aplicado_id', $pago_id );
 		\Convoca\Core\Utils::do_action( 'convoca_members_cuota_pagada', 'convoca_miembro_cuota_pagada', $origin_id, $pago_id );
 	}
 
