@@ -206,48 +206,88 @@ class Certificate_Generator {
 		}
 
 		return '<!DOCTYPE html>
-		<html>
+		<html lang="es">
 		<head>
 		<meta charset="UTF-8">
+		<title>Certificado de Voluntariado</title>
 		<style>
-		body { font-family: Arial, sans-serif; margin: 20px; color: #333; }
-		.certificado { border: 3px solid #2d5a27; padding: 25px; max-width: 750px; margin: 0 auto; background: #f9fff9; }
-		.header { text-align: center; border-bottom: 2px solid #2d5a27; padding-bottom: 15px; margin-bottom: 20px; }
-		.logo { font-size: 36px; color: #2d5a27; font-weight: bold; letter-spacing: 2px; }
-		h1 { color: #2d5a27; margin: 10px 0; }
-		h3 { color: #2d5a27; margin-top: 25px; }
-		.contenido { font-size: 18px; line-height: 1.5; }
-		.nombre { font-size: 22px; font-weight: bold; color: #1a3a15; }
-		.horas { font-size: 18px; color: #2d5a27; font-weight: bold; }
-		.proyectos { margin: 15px 0; padding: 12px; background: #e8f5e9; border-radius: 8px; }
-		.proyecto { margin: 8px 0; }
-		.footer { margin-top: 25px; text-align: center; border-top: 1px solid #ccc; padding-top: 15px; }
-		.qr { margin: 20px auto; width: 120px; height: 120px; }
-		.cert-id { font-size: 12px; color: #666; }
-		.sin-proyectos { color: #888; font-style: italic; }
+		@page { margin: 25px; }
+		body { font-family: "Segoe UI", Roboto, Helvetica, Arial, sans-serif; margin: 0; color: #333; background: #f4f7f6; }
+		.certificado {
+			max-width: 750px; margin: 20px auto; background: #fff;
+			border: 3px solid #320028; border-radius: 16px; overflow: hidden;
+			box-shadow: 0 12px 30px rgba(50, 0, 40, 0.25);
+			position: relative;
+		}
+		.certificado::before {
+			content: ""; position: absolute; top: -70px; right: -70px;
+			width: 220px; height: 220px; border-radius: 50%;
+			background: linear-gradient(135deg, rgba(255, 135, 0, 0.16) 0%, rgba(255, 135, 0, 0) 70%);
+			pointer-events: none;
+		}
+		.header {
+			background: #320028; color: #fff; text-align: center;
+			padding: 26px 20px 22px; border-bottom: 4px solid #ff8700;
+			position: relative;
+		}
+		.header .logo { font-size: 30px; font-weight: 900; letter-spacing: 3px; text-transform: uppercase; color: #fff; text-shadow: 0 2px 4px rgba(0,0,0,0.25); }
+		.header .logo-org { font-size: 12px; letter-spacing: 1.5px; color: #ffc680; text-transform: uppercase; margin-top: 4px; }
+		.cert-badge {
+			display: inline-block; margin-top: 14px; background: #ff8700; color: #fff;
+			padding: 6px 18px; border-radius: 30px; font-size: 12px; font-weight: 800;
+			text-transform: uppercase; letter-spacing: 1px; box-shadow: 0 4px 10px rgba(255, 135, 0, 0.35);
+		}
+		h1 { font-size: 20px; color: #320028; text-align: center; letter-spacing: 0.5px; margin: 26px 0 4px; text-transform: uppercase; }
+		.contenido { padding: 0 34px 10px; font-size: 16px; line-height: 1.6; }
+		.contenido p { text-align: center; margin: 10px 0; }
+		.nombre { font-size: 22px; font-weight: 800; color: #320028; text-transform: uppercase; letter-spacing: 1px; }
+		.horas { color: #ff8700; font-weight: 800; font-size: 18px; }
+		.plan-line { color: #666; }
+		.plan-line strong { color: #320028; }
+		h3 { color: #320028; font-size: 13px; letter-spacing: 1.5px; text-transform: uppercase; text-align: center; margin: 24px 0 12px; }
+		.proyectos { margin: 0 0 8px; padding: 14px 18px; background: #fdf3e9; border: 1px solid #ffe0c2; border-radius: 10px; }
+		.proyecto { margin: 7px 0; color: #4a4a4a; text-align: left; }
+		.proyecto strong { color: #320028; }
+		.proyecto small { color: #888; }
+		.sin-proyectos { color: #888; font-style: italic; text-align: center; }
+		.footer { margin-top: 18px; border-top: 1px solid #320028; padding: 16px 0 0; background: #faf6f4; }
+		.footer-table { width: 100%; border-collapse: collapse; }
+		.footer-table td { padding: 0 34px; vertical-align: middle; }
+		.footer-left { font-size: 12px; color: #666; line-height: 1.5; }
+		.footer-left strong { color: #320028; }
+		.qr-cell { text-align: right; }
+		.qr { display: inline-block; width: 85px; height: 85px; background: #fff; padding: 6px; border-radius: 12px; box-shadow: 0 6px 16px rgba(50, 0, 40, 0.25); }
+		.qr img, .qr svg { width: 100%; height: 100%; display: block; }
+		.cert-id { font-size: 11px; color: #999; margin-top: 4px; }
+		.verify-url { font-size: 10px; color: #999; text-align: center; margin: 8px 34px 16px; word-break: break-all; }
 		</style>
 		</head>
 		<body>
 		<div class="certificado">
 		<div class="header">
 		    <div class="logo">' . esc_html( get_bloginfo( 'name' ) ) . '</div>
-		    <h1>Certificado de Voluntariado</h1>
-		    <p>' . esc_html( get_bloginfo( 'name' ) ) . '</p>
+		    <div class="cert-badge">Certificado de Voluntariado</div>
 		</div>
+		<h1>Certificado de Voluntariado</h1>
 		<div class="contenido">
-		    <p>Certificamos que <span class="nombre">' . esc_html( $nombre ) . '</span></p>
+		    <p>Certificamos que</p>
+		    <p><span class="nombre">' . esc_html( $nombre ) . '</span></p>
 		    <p>ha completado un total de <span class="horas">' . number_format( $horas, 1 ) . ' horas</span> de voluntariado</p>
-		    <p>como parte del plan <strong>' . ( $plan ? esc_html( $plan ) : 'Voluntariado General' ) . '</strong></p>
-            
+		    <p class="plan-line">como parte del plan <strong>' . ( $plan ? esc_html( $plan ) : 'Voluntariado General' ) . '</strong></p>
+
 		    <h3>Proyectos Participados</h3>
 		    <div class="proyectos">' . ( $proyectos_html ?: '<p class="sin-proyectos">Voluntariado en diversas actividades</p>' ) . '</div>
 		</div>
 		<div class="footer">
-		    <p>Fecha de emisión: ' . wp_date( 'd/m/Y' ) . '</p>
-		    <p class="cert-id">ID: ' . esc_html( $cert_id ) . '</p>
-		    <div class="qr">' . self::build_qr_svg( $verify_url ) . '</div>
-		    <p><small>Verificar en: ' . esc_html( $verify_url ) . '</small></p>
+		    <table class="footer-table"><tr>
+		        <td class="footer-left">
+		            <div>Fecha de emisión: <strong>' . wp_date( 'd/m/Y' ) . '</strong></div>
+		            <div class="cert-id">ID: ' . esc_html( $cert_id ) . '</div>
+		        </td>
+		        <td class="qr-cell"><div class="qr">' . self::build_qr_svg( $verify_url ) . '</div></td>
+		    </tr></table>
 		</div>
+		<div class="verify-url">Verificar en: ' . esc_html( $verify_url ) . '</div>
 		</div>
 		</body>
 		</html>';
