@@ -122,9 +122,13 @@ namespace Convoca\Core {
 
 namespace Convoca\Gateway {
 	final class Payment_Handler {
-		public static function get_member_token( int $member_id ): string { return ''; }
-		public static function create_payment( array $data ): array|\WP_Error { return array(); }
-		public static function get_payment_link( int $pago_id, string $token = '', ?int $expires_ts = null ): string { return ''; }
+	public static function get_member_token( int $member_id ): string { return ''; }
+	public static function create_payment( array $data ): array|\WP_Error { return array(); }
+	public static function get_payment_link( int $pago_id, string $token = '', ?int $expires_ts = null ): string { return ''; }
+	/**
+	 * @return array{pago_id:int, payment_url:string, status:string, response:string}|\WP_Error
+	 */
+	public static function auto_renew_charge( int $member_id, int $amount_cents, string $product_desc ): array|\WP_Error { return array(); }
 	}
 
 	final class CPT_Pago {

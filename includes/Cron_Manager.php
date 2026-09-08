@@ -392,15 +392,6 @@ class Cron_Manager {
 			$token              = \Convoca\Gateway\Payment_Handler::get_member_token( $member_id );
 			$needs_tokenization = empty( $token );
 
-			if ( $needs_tokenization ) {
-				\Convoca\Core\Logger::warning(
-					"Renovación automática: Miembro #$member_id no tiene token guardado. Se solicitará tokenización en el nuevo pago.",
-					'Members/Cron',
-					$member_id
-				);
-			}
-
-			// Create payment via Gateway.
 			if ( ! \Convoca\Core\Features::is_gateway_active() ) {
 				\Convoca\Core\Logger::error(
 					"Gateway no disponible para renovación automática del miembro #$member_id.",
@@ -410,14 +401,87 @@ class Cron_Manager {
 				continue;
 			}
 
+			$amount_cents  = (int) round( $plan_data['price'] * 100 );
+			$product_desc  = mb_substr( 'RENOVACIÓN ' . strtoupper( get_bloginfo( 'name' ) ) . ' - ' . strtoupper( $plan_data['label'] ), 0, 125 );
+			$members_settings = get_option( 'convoca_members_settings', array() );
+			$max_attempts  = max( 1, (int) ( $members_settings['auto_renew_max_attempts'] ?? 3 ) );
+
+			// ── 1) Cargo automático real con token almacenado (decisión 2026-09).
+			// Si el socio tiene merchant id, intentamos cobrar por REST; si falla,
+			// se reintenta en los siguientes ciclos diarios hasta agotar intentos.
+			if ( ! $needs_tokenization ) {
+				$attempts = (int) get_post_meta( $member_id, '_convoca_autorenew_attempts', true );
+				$last_try = get_post_meta( $member_id, '_convoca_autorenew_last_attempt', true );
+				$retry_days = max( 1, (int) ( $members_settings['auto_renew_retry_days'] ?? 5 ) );
+
+				// Si el último intento fue hace menos de retry_days, esperar al próximo ciclo.
+				if ( $last_try && strtotime( $last_try ) > strtotime( "-{$retry_days} days" ) ) {
+					continue;
+				}
+
+				$charge = \Convoca\Gateway\Payment_Handler::auto_renew_charge( $member_id, $amount_cents, $product_desc );
+
+				if ( ! is_wp_error( $charge ) && $charge['status'] === 'paid' ) {
+					// Cobro aprobado: el listener de gateway ya reactivó la cuota.
+					delete_post_meta( $member_id, '_convoca_autorenew_attempts' );
+					delete_post_meta( $member_id, '_convoca_autorenew_last_attempt' );
+					update_post_meta( $member_id, '_convoca_last_auto_renewal', $today );
+
+					\Convoca\Core\Logger::info(
+						"Renovación automática por token completada para el miembro #$member_id (Pago: #{$charge['pago_id']}).",
+						'Members/Cron',
+						$member_id
+					);
+					do_action( 'convoca_members_auto_renewal_completed', $member_id, $charge['pago_id'] );
+					continue;
+				}
+
+				// Cargo rechazado o error: registrar intento.
+				$attempts++;
+				update_post_meta( $member_id, '_convoca_autorenew_attempts', $attempts );
+				update_post_meta( $member_id, '_convoca_autorenew_last_attempt', current_time( 'mysql' ) );
+
+				$reason = is_wp_error( $charge ) ? $charge->get_error_message() : $charge['response'];
+				\Convoca\Core\Logger::warning(
+					"Intento $attempts/$max_attempts de cargo automático fallido para el miembro #$member_id: $reason.",
+					'Members/Cron',
+					$member_id
+				);
+
+				// ¿Agotados? Caer a enlace de pago manual (gracia estándar).
+				if ( $attempts < $max_attempts ) {
+					continue; // Se reintenta en el próximo ciclo diario; el socio conserva beneficios.
+				}
+
+				// Agotados: resetear contador y pasar a pago manual.
+				delete_post_meta( $member_id, '_convoca_autorenew_attempts' );
+				delete_post_meta( $member_id, '_convoca_autorenew_last_attempt' );
+				Estados::change( $member_id, 'pendiente_pago', "Renovación automática fallida tras {$max_attempts} intentos - requerido pago manual" );
+
+				$link = $this->get_renewal_link( $member_id );
+				if ( $link && $link !== home_url( '/renovar/' ) ) {
+					$email_manager->send_recordatorio_pago( $member_id, array( '{link_pago}' => $link ) );
+				} else {
+					$email_manager->send_renovacion( $member_id, array( '{link_pago}' => $link ) );
+				}
+				continue;
+			}
+
+			// ── 2) Sin token: crear pago con tokenize (el pago capturará el token).
+			\Convoca\Core\Logger::warning(
+				"Renovación automática: Miembro #$member_id no tiene token guardado. Se solicitará tokenización en el nuevo pago.",
+				'Members/Cron',
+				$member_id
+			);
+
 			$payment_result = \Convoca\Gateway\Payment_Handler::create_payment(
 				array(
 					'origin'       => 'members',
 					'origin_id'    => $member_id,
-					'amount_cents' => (int) round( $plan_data['price'] * 100 ),
-					'product_desc' => mb_substr( 'RENOVACIÓN ' . strtoupper( get_bloginfo( 'name' ) ) . ' - ' . strtoupper( $plan_data['label'] ), 0, 125 ),
+					'amount_cents' => $amount_cents,
+					'product_desc' => $product_desc,
 					'method'       => 'tarjeta',
-					'tokenize'     => $needs_tokenization,
+					'tokenize'     => true,
 				)
 			);
 

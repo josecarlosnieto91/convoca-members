@@ -56,6 +56,8 @@ class Admin_Settings {
 			// Clamp grace period fields (also enforced by sanitize_settings).
 			$settings['grace_suspend_days'] = max( 0, min( 30, (int) ( $settings['grace_suspend_days'] ?? 1 ) ) );
 			$settings['grace_baja_days']    = max( 1, min( 90, (int) ( $settings['grace_baja_days'] ?? 30 ) ) );
+			$settings['auto_renew_max_attempts'] = max( 1, min( 10, (int) ( $settings['auto_renew_max_attempts'] ?? 3 ) ) );
+			$settings['auto_renew_retry_days']   = max( 1, min( 30, (int) ( $settings['auto_renew_retry_days'] ?? 5 ) ) );
 			update_option( 'convoca_members_settings', $settings );
 
 			// Tema de los documentos (opción compartida del ecosistema, default light).
@@ -127,6 +129,9 @@ class Admin_Settings {
 			// (suspendido, default 1) and before automatic baja (default 30).
 			'grace_suspend_days' => max( 0, min( 30, (int) ( $input['grace_suspend_days'] ?? 1 ) ) ),
 			'grace_baja_days'    => max( 1, min( 90, (int) ( $input['grace_baja_days'] ?? 30 ) ) ),
+			// Automatic renewal retries (token charge policy).
+			'auto_renew_max_attempts' => max( 1, min( 10, (int) ( $input['auto_renew_max_attempts'] ?? 3 ) ) ),
+			'auto_renew_retry_days'   => max( 1, min( 30, (int) ( $input['auto_renew_retry_days'] ?? 5 ) ) ),
 		);
 	}
 
@@ -403,6 +408,20 @@ class Admin_Settings {
 				<input type="number" id="grace_baja_days" name="convoca_members_settings[grace_baja_days]"
 					value="<?php echo esc_attr( $settings['grace_baja_days'] ?? '30' ); ?>" min="1" max="90" step="1">
 				<small class="convoca-small"><?php esc_html_e( 'Días tras el vencimiento antes de dar de baja al socio y cerrar su sesión. Por defecto: 30 (1 mes).', 'convoca-members' ); ?></small>
+			</div>
+
+			<div class="convoca-field">
+				<label for="auto_renew_max_attempts"><?php esc_html_e( 'Reintentos de cobro automático (tarjeta)', 'convoca-members' ); ?></label>
+				<input type="number" id="auto_renew_max_attempts" name="convoca_members_settings[auto_renew_max_attempts]"
+					value="<?php echo esc_attr( $settings['auto_renew_max_attempts'] ?? '3' ); ?>" min="1" max="10" step="1">
+				<small class="convoca-small"><?php esc_html_e( 'Número de intentos de cargo automático por token antes de pasar al socio a pago manual. Mientras haya reintentos pendientes, el socio con pago recurrente conserva beneficios. Por defecto: 3.', 'convoca-members' ); ?></small>
+			</div>
+
+			<div class="convoca-field">
+				<label for="auto_renew_retry_days"><?php esc_html_e( 'Días entre reintentos de cobro', 'convoca-members' ); ?></label>
+				<input type="number" id="auto_renew_retry_days" name="convoca_members_settings[auto_renew_retry_days]"
+					value="<?php echo esc_attr( $settings['auto_renew_retry_days'] ?? '5' ); ?>" min="1" max="30" step="1">
+				<small class="convoca-small"><?php esc_html_e( 'Separación mínima entre intentos de cargo automático. Por defecto: 5 días.', 'convoca-members' ); ?></small>
 			</div>
 
 			<h3 style="margin-top:32px;"><?php esc_html_e( 'Tema de los documentos', 'convoca-members' ); ?></h3>

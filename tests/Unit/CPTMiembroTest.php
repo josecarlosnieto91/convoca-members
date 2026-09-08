@@ -61,4 +61,32 @@ class CPTMiembroTest extends TestCase
     {
         $this->assertTrue(method_exists('Convoca\Members\CPT_Miembro', 'get_plan'));
     }
+
+    /**
+     * La política de gracia con reintentos (2026-09) se implementa en
+     * check_member_status: consulta pago_recurrente y el contador de intentos.
+     */
+    public function test_check_member_status_references_renew_credit_meta(): void
+    {
+        $src = file_get_contents(dirname(__DIR__, 2) . '/includes/CPT_Miembro.php');
+
+        $this->assertStringContainsString('_convoca_pago_recurrente', $src);
+        $this->assertStringContainsString('_convoca_autorenew_attempts', $src);
+        $this->assertStringContainsString('auto_renew_max_attempts', $src);
+        // El crédito de reintentos debe impedir suspender/bajar (condición negada).
+        $this->assertStringContainsString('! $has_renew_credit', $src);
+    }
+
+    public function test_cron_manager_has_auto_renew_charge_branch(): void
+    {
+        $src = file_get_contents(dirname(__DIR__, 2) . '/includes/Cron_Manager.php');
+
+        // El cron debe intentar el cargo automático real con token…
+        $this->assertStringContainsString('auto_renew_charge', $src);
+        // …gestionar un contador de reintentos…
+        $this->assertStringContainsString('_convoca_autorenew_attempts', $src);
+        // …y solo caer a pago manual cuando se agotan.
+        $this->assertStringContainsString('auto_renew_max_attempts', $src);
+        $this->assertStringContainsString('$attempts < $max_attempts', $src);
+    }
 }
