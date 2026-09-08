@@ -589,7 +589,19 @@ class Email_Manager {
 		}
 
 		$terms      = wp_get_object_terms( $post_id, 'tipo_miembro', array( 'fields' => 'names' ) );
-		$tipo_label = is_array( $terms ) && ! empty( $terms ) ? $terms[0] : '—';
+		$tipo_label = is_array( $terms ) && ! empty( $terms ) ? $terms[0] : '';
+
+		// Fallback E2E-6: si la taxonomía tipo_miembro no tiene término asignado
+		// (no se asigna en el alta), derivar una etiqueta legible del contexto.
+		if ( empty( $tipo_label ) ) {
+			if ( $forma === 'voluntariado' ) {
+				$tipo_label = __( 'Voluntario/a', 'convoca-members' );
+			} elseif ( $plan_data && ! empty( $plan_data['label'] ) ) {
+				$tipo_label = $plan_data['label'];
+			} else {
+				$tipo_label = __( 'Socio/a', 'convoca-members' );
+			}
+		}
 
 		$estado       = $meta( 'estado_miembro' );
 		$estado_label = Estados::labels()[ $estado ] ?? $estado;

@@ -154,7 +154,7 @@ class Admin_Member_Editor {
 
 					<div class="convoca-field">
 						<label for="conv_email"><?php esc_html_e( 'Email', 'convoca-members' ); ?></label>
-						<input type="email" id="conv_email" name="conv_email" value="<?php echo esc_attr( $m( 'email' ) ); ?>">
+						<input type="email" id="conv_email" name="convoca_email" value="<?php echo esc_attr( $m( 'email' ) ); ?>">
 					</div>
 
 					<div class="convoca-field">
@@ -188,7 +188,7 @@ class Admin_Member_Editor {
 
 					<div class="convoca-field" style="grid-column:1/-1;">
 						<div class="convoca-check-group">
-							<input type="checkbox" id="conv_es_voluntario" name="conv_es_voluntario" value="1" <?php checked( $voluntario_flag, '1' ); ?>>
+							<input type="checkbox" id="conv_es_voluntario" name="convoca_es_voluntario" value="1" <?php checked( $voluntario_flag, '1' ); ?>>
 							<label for="conv_es_voluntario"><?php esc_html_e( 'Es voluntario', 'convoca-members' ); ?></label>
 						</div>
 					</div>
@@ -210,7 +210,7 @@ class Admin_Member_Editor {
 
 					<div class="convoca-field">
 						<label for="conv_experiencia"><?php esc_html_e( 'Experiencia', 'convoca-members' ); ?></label>
-						<textarea id="conv_experiencia" name="conv_experiencia" rows="3"><?php echo esc_textarea( $m( 'experiencia' ) ); ?></textarea>
+						<textarea id="conv_experiencia" name="convoca_experiencia" rows="3"><?php echo esc_textarea( $m( 'experiencia' ) ); ?></textarea>
 					</div>
 
 					<div class="convoca-field">
@@ -323,7 +323,9 @@ class Admin_Member_Editor {
 			'disponibilidad'    => 'sanitize_text_field',
 			'experiencia'       => 'sanitize_textarea_field',
 			'motivacion'        => 'sanitize_textarea_field',
-			'estado_miembro'    => 'sanitize_text_field',
+			// NOTA: 'estado_miembro' se excluye del loop a propósito (E2E-1):
+			// si se escribe aquí antes de leer $old_state, la máquina de estados
+			// ve old === new y nunca numera/activa. Se gestiona más abajo.
 		);
 
 		foreach ( $fields as $key => $sanitizer ) {
@@ -340,12 +342,14 @@ class Admin_Member_Editor {
 		}
 
 		// Handle state change via state machine.
+		// Leer $old_state ANTES de tocar el meta (el post puede ser nuevo → '').
 		$new_state = $data['convoca_estado_miembro'] ?? '';
 		$old_state = get_post_meta( $post_id, '_convoca_estado_miembro', true );
 
 		if ( $new_state && $new_state !== $old_state ) {
-			Estados::change( $post_id, $new_state, esc_html__( 'Cambio manual desde editor de miembro.', 'convoca-members' ) );
-
+			// Si se activa: asignar número y cuota ANTES de Estados::change,
+			// porque el change dispara el email de bienvenida (hook estado_changed)
+			// y ese email debe llevar número/plan ya resueltos (E2E-6).
 			if ( $new_state === 'activo' ) {
 				$num = get_post_meta( $post_id, '_convoca_numero_socio', true );
 				if ( ! $num ) {
@@ -357,6 +361,18 @@ class Admin_Member_Editor {
 				if ( $estado_cuota !== 'activa' ) {
 					update_post_meta( $post_id, '_convoca_estado_cuota', 'activa' );
 				}
+			}
+
+			Estados::change( $post_id, $new_state, esc_html__( 'Cambio manual desde editor de miembro.', 'convoca-members' ) );
+		} elseif ( $new_state && $new_state === $old_state && $new_state === 'activo' ) {
+			// Miembro ya activo: garantizar número/cuota si por algún flujo anterior faltaron.
+			$num = get_post_meta( $post_id, '_convoca_numero_socio', true );
+			if ( ! $num ) {
+				$num = CPT_Miembro::get_next_member_number( $post_id );
+				update_post_meta( $post_id, '_convoca_numero_socio', $num );
+			}
+			if ( get_post_meta( $post_id, '_convoca_estado_cuota', true ) !== 'activa' ) {
+				update_post_meta( $post_id, '_convoca_estado_cuota', 'activa' );
 			}
 		}
 

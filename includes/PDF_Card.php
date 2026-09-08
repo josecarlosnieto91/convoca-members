@@ -50,7 +50,11 @@ class PDF_Card {
 
 		$verification_hash = hash_hmac( 'sha256', 'member_' . $post_id, \Convoca\Core\Utils::get_persistent_salt() );
 		$site_domain       = strtoupper( wp_parse_url( home_url(), PHP_URL_HOST ) );
-		$qr_url            = 'https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=' . urlencode( home_url( '/verificar-socio/?id=' . $post_id . '&token=' . $verification_hash ) );
+		$verify_url        = home_url( '/verificar-socio/?id=' . $post_id . '&token=' . $verification_hash );
+
+		// QR local (E2E-7): generar con chillerlan como Certificate_Generator,
+		// sin depender de api.qrserver.com (API externa / filtración de datos).
+		$qr_img = self::qr_data_uri( $verify_url, 150 );
 
 		return '
         <!DOCTYPE html>
@@ -179,7 +183,7 @@ class PDF_Card {
                         <div style="margin-top:4px;">WWW.' . esc_html( $site_domain ) . '</div>
                     </div>
                     <div class="qr-code">
-                        <img src="' . esc_url( $qr_url ) . '" alt="' . esc_attr__( 'QR Verification', 'convoca-members' ) . '">
+                        ' . $qr_img . '
                     </div>
                 </div>
             </div>
@@ -222,5 +226,44 @@ class PDF_Card {
 		$pdf_content = file_get_contents( $result );
 		wp_delete_file( $result );
 		return $pdf_content;
+	}
+
+	/**
+	 * Generate a QR code image as a local data-URI (no external API).
+	 *
+	 * Reuses chillerlan/php-qrcode when available (same as Certificate_Generator),
+	 * with a graceful text fallback so the card never breaks.
+	 *
+	 * @param string $data  Content to encode (verification URL).
+	 * @param int    $size  Output size in px.
+	 */
+	private static function qr_data_uri( string $data, int $size = 150 ): string {
+		if (
+			class_exists( '\chillerlan\QRCode\QRCode' )
+			&& class_exists( '\chillerlan\QRCode\QROptions' )
+			&& class_exists( '\chillerlan\QRCode\Output\QRGdImagePNG' )
+		) {
+			try {
+				$options = new \chillerlan\QRCode\QROptions(
+					array(
+						'outputInterface'  => \chillerlan\QRCode\Output\QRGdImagePNG::class,
+						'eccLevel'         => \chillerlan\QRCode\Common\EccLevel::M,
+						'scale'            => 6,
+						'addQuietzone'     => true,
+						'quietzoneSize'    => 2,
+						'outputBase64'     => false,
+						'imageTransparent' => false,
+					)
+				);
+				$qrcode  = new \chillerlan\QRCode\QRCode( $options );
+				$png     = $qrcode->render( $data );
+				return '<img src="data:image/png;base64,' . base64_encode( $png ) . '" alt="' . esc_attr__( 'QR Verification', 'convoca-members' ) . '" style="width:' . (int) $size . 'px;height:' . (int) $size . 'px;" />';
+			} catch ( \Throwable $e ) {
+				\Convoca\Core\Logger::warning( 'QR local del carnet falló: ' . $e->getMessage(), 'Members/Card' );
+			}
+		}
+
+		// Fallback: texto legible con la URL de verificación.
+		return '<div style="width:' . (int) $size . 'px;height:' . (int) $size . 'px;background:#fff;color:#333;display:flex;align-items:center;justify-content:center;font-size:9px;padding:4px;text-align:center;word-break:break-all;box-sizing:border-box;">' . esc_html( $data ) . '</div>';
 	}
 }

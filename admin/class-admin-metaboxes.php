@@ -331,7 +331,7 @@ class Admin_Metaboxes {
 
 			<div class="convoca-field">
 				<label for="conv_email">Email</label>
-				<input type="email" name="conv_email" value="<?php echo esc_attr( $get( 'email' ) ); ?>">
+				<input type="email" name="convoca_email" value="<?php echo esc_attr( $get( 'email' ) ); ?>">
 			</div>
 
 			<div class="convoca-field">
@@ -382,7 +382,7 @@ class Admin_Metaboxes {
 						$is_vol = '1';
 					}
 					?>
-					<input type="checkbox" name="conv_es_voluntario" value="1" <?php checked( $is_vol, '1' ); ?>>
+					<input type="checkbox" name="convoca_es_voluntario" value="1" <?php checked( $is_vol, '1' ); ?>>
 					<label>¿Es voluntario?</label>
 				</div>
 			</div>
@@ -404,7 +404,7 @@ class Admin_Metaboxes {
 
 			<div class="convoca-field" style="grid-column: 1 / -1;">
 				<label for="conv_experiencia">Experiencia previa</label>
-				<textarea name="conv_experiencia" rows="2"><?php echo esc_textarea( $get( 'experiencia' ) ); ?></textarea>
+				<textarea name="convoca_experiencia" rows="2"><?php echo esc_textarea( $get( 'experiencia' ) ); ?></textarea>
 			</div>
 
 			<div class="convoca-field" style="grid-column: 1 / -1;">
