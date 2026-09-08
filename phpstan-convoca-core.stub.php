@@ -59,6 +59,7 @@ namespace Convoca\Core {
 		public static function acquire_lock( string $key, int $ttl = 60 ): bool { return true; }
 		public static function release_lock( string $key ): bool { return true; }
 		public static function get_branding_html( string $filter_suffix = 'common', string $css_class = '', string $style = 'color:#ffffff;margin:0;font-size:24px;' ): string { return ''; }
+		public static function get_document_theme( string $suffix = '' ): string { return 'light'; }
 		public static function get_persistent_salt(): string { return ''; }
 		public static function render_diagnostic_panel( array $checks, string $title = '' ): void {}
 		public static function render_log_level_badge( string $level ): string { return ''; }
