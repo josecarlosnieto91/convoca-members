@@ -566,7 +566,10 @@ class CPT_Miembro {
 		$suspend_days = (int) ( $settings['grace_suspend_days'] ?? 1 );
 		$suspend_days = max( 0, min( 30, $suspend_days ) );
 		$suspension_date = \Convoca\Core\Utils::format_date( $renewal_date . " +{$suspend_days} days", 'Y-m-d' );
-		if ( $today > $suspension_date && $status !== 'suspendido' ) {
+		// '>=' so a member with default grace_suspend_days=1 loses benefits on
+		// the day AFTER the renewal (renewal yesterday → suspend today), not on
+		// day +2. With 0 they lose benefits on the renewal day itself.
+		if ( $today >= $suspension_date && $status !== 'suspendido' ) {
 			Estados::change( $post_id, 'suspendido', "Periodo de gracia: vencido el {$renewal_date}. Solo puede renovar." );
 			update_post_meta( $post_id, '_convoca_estado_cuota', 'vencida' );
 			return;

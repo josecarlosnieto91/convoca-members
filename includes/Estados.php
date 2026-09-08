@@ -44,7 +44,7 @@ class Estados {
 	public const TRANSITIONS = array(
 		'pendiente_documentacion' => array( 'pendiente_pago', 'activo', 'baja' ),
 		'pendiente_pago'          => array( 'activo', 'suspendido', 'baja' ),
-		'activo'                  => array( 'suspendido', 'baja_solicitada', 'baja' ),
+		'activo'                  => array( 'suspendido', 'baja_solicitada', 'baja', 'pendiente_documentacion' ),
 		'suspendido'              => array( 'activo', 'baja_solicitada', 'baja' ),
 		'baja_solicitada'         => array( 'baja', 'activo' ),  // Admin can reactivate or confirm baja.
 		// Re-entry: voluntario o cuota (formulario) o reactivación directa admin/pago.

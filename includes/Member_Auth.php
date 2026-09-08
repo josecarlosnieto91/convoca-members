@@ -170,10 +170,11 @@ class Member_Auth {
 		global $wpdb;
 
 		// Production: transients live in the options table. Try a direct LIKE scan.
-		// esc_like() only exists in real WordPress — the unit-test bootstrap uses a
+		// Guard on $wpdb's esc_like() method: the unit-test bootstrap uses a
 		// minimal $wpdb mock without it, so those runs fall through to the store
-		// branch below.
-		if ( $wpdb && isset( $wpdb->options ) && function_exists( 'esc_like' ) && function_exists( 'maybe_unserialize' ) ) {
+		// branch below. The standalone esc_like() function may be missing in some
+		// CLI contexts, but the wpdb method is always present.
+		if ( $wpdb && isset( $wpdb->options ) && method_exists( $wpdb, 'esc_like' ) && function_exists( 'maybe_unserialize' ) ) {
 			$like = $wpdb->esc_like( '_transient_' . self::TRANSIENT_PREFIX ) . '%';
 			// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
 			$rows = $wpdb->get_results(

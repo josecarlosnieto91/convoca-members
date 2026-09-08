@@ -416,11 +416,9 @@ class Email_Manager {
 			try {
 				$pdf_binary = \Convoca\Members\PDF_Card::generate_pdf( $post_id );
 				if ( strlen( $pdf_binary ) > 500 ) {
-					$tmp_file = tempnam( sys_get_temp_dir(), 'convoca-card-' );
-					if ( $tmp_file ) {
-						$pdf_path = $tmp_file . '.pdf';
-						rename( $tmp_file, $pdf_path );
-						file_put_contents( $pdf_path, $pdf_binary ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_file_put_contents
+					$pdf_path = sys_get_temp_dir() . '/convoca-card-' . wp_generate_password( 12, false, false ) . '.pdf';
+					file_put_contents( $pdf_path, $pdf_binary ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_file_put_contents
+					if ( file_exists( $pdf_path ) ) {
 						$attachments[] = $pdf_path;
 					}
 				}
