@@ -39,7 +39,7 @@ class Certificate_Generator {
 		}
 	}
 
-	public static function generate( int $miembro_id ): array|\WP_Error {
+	public static function generate( int $miembro_id, string $theme = '' ): array|\WP_Error {
 		$miembro = get_post( $miembro_id );
 		if ( ! $miembro || $miembro->post_type !== 'miembro' ) {
 			return new \WP_Error( 'invalid_member', __( 'Miembro no encontrado', 'convoca-members' ) );
@@ -60,7 +60,7 @@ class Certificate_Generator {
 		$verify_url = home_url( '/verificar-certificado/?id=' . $cert_id );
 		$qr_data    = self::generate_qr_data( $verify_url );
 
-		$html = self::build_html( $nombre, $total_horas, $plan_label, $proyectos, $cert_id, $qr_data, $verify_url );
+		$html = self::build_html( $nombre, $total_horas, $plan_label, $proyectos, $cert_id, $qr_data, $verify_url, $theme );
 
 		$pdf_content = self::render_pdf_to_buffer( $html );
 
@@ -199,7 +199,9 @@ class Certificate_Generator {
 		return '<div style="width:100%;height:100%;background:#fff;color:#320028;font-size:9px;padding:4px;text-align:center;word-break:break-all;box-sizing:border-box;display:table-cell;vertical-align:middle;border-radius:6px;">' . esc_html( $data ) . '</div>';
 	}
 
-	private static function build_html( string $nombre, float $horas, string $plan, array $proyectos, string $cert_id, string $qr_data, string $verify_url ): string {
+	private static function build_html( string $nombre, float $horas, string $plan, array $proyectos, string $cert_id, string $qr_data, string $verify_url, string $theme = '' ): string {
+		$theme = in_array( $theme, array( 'light', 'dark' ), true ) ? $theme : \Convoca\Core\Utils::get_document_theme( 'certificate' );
+		$light = 'light' === $theme;
 		$proyectos_html = '';
 		foreach ( $proyectos as $p ) {
 			$tareas_resumen  = ! empty( $p['tareas'] ) ? implode( '. ', array_map( 'substr', $p['tareas'], array_fill( 0, count( $p['tareas'] ), 0 ), array_fill( 0, count( $p['tareas'] ), 60 ) ) ) : 'Sin descripción';
@@ -261,6 +263,18 @@ class Certificate_Generator {
 		.qr img, .qr svg { width: 100%; height: 100%; display: block; }
 		.cert-id { font-size: 11px; color: #999; margin-top: 4px; }
 		.verify-url { font-size: 10px; color: #999; text-align: center; margin: 8px 34px 16px; word-break: break-all; }
+		' . ( $light ? '
+		/* ── Tema claro: cabecera clara con nombre en púrpura ── */
+		.header {
+			background: #ffffff;
+			border: 1px solid rgba(50, 0, 40, 0.08);
+			border-bottom: 4px solid #ff8700;
+		}
+		.header .logo { color: #320028; text-shadow: none; }
+		.header .logo-org { color: #b05a2e; }
+		.certificado { box-shadow: 0 12px 30px rgba(50, 0, 40, 0.12); }
+		.footer { background: #fbf7f4; }
+		' : '' ) . '
 		</style>
 		</head>
 		<body>
@@ -294,11 +308,11 @@ class Certificate_Generator {
 		</html>';
 	}
 
-	public static function serve_pdf( int $miembro_id ): void {
+	public static function serve_pdf( int $miembro_id, string $theme = '' ): void {
 		$cert_id = get_post_meta( $miembro_id, '_convoca_certificado_id', true );
 
 		if ( ! $cert_id ) {
-			$result = self::generate( $miembro_id );
+			$result = self::generate( $miembro_id, $theme );
 			if ( is_wp_error( $result ) ) {
 				wp_die( esc_html( $result->get_error_message() ) );
 			}

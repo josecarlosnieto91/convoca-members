@@ -872,7 +872,8 @@ class Rest_API {
 	 */
 	public function get_card( \WP_REST_Request $request ): \WP_REST_Response {
 		$member_id = Member_Auth::get_current_member_id();
-		$html      = PDF_Card::get_html( $member_id );
+		$theme     = sanitize_key( (string) $request->get_param( 'theme' ) );
+		$html      = PDF_Card::get_html( $member_id, $theme );
 		return new \WP_REST_Response( array( 'html' => $html ) );
 	}
 

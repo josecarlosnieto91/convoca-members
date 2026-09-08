@@ -33,8 +33,13 @@ class PDF_Card {
 
 	/**
 	 * Generate HTML for the member card.
+	 *
+	 * @param int    $post_id Member post ID.
+	 * @param string $theme   'light'|'dark'. Default: opción global convoca_document_theme.
 	 */
-	public static function get_html( int $post_id ): string {
+	public static function get_html( int $post_id, string $theme = '' ): string {
+		$theme = in_array( $theme, array( 'light', 'dark' ), true ) ? $theme : \Convoca\Core\Utils::get_document_theme( 'card' );
+		$light = 'light' === $theme;
 		$nombre            = get_the_title( $post_id );
 		$num_socio         = get_post_meta( $post_id, '_convoca_numero_socio', true );
 		$num_socio_display = $num_socio ? str_pad( $num_socio, 4, '0', STR_PAD_LEFT ) : esc_html__( 'PENDIENTE', 'convoca-members' );
@@ -46,7 +51,8 @@ class PDF_Card {
 		$fecha     = get_post_meta( $post_id, '_convoca_fecha_alta', true );
 		$fecha_fmt = $fecha ? wp_date( 'd/m/Y', strtotime( $fecha ) ) : wp_date( 'd/m/Y', strtotime( get_the_date( 'Y-m-d', $post_id ) ) );
 
-		$logo_html = \Convoca\Core\Utils::get_branding_html( 'members', '', 'height: 45px; width: auto; color: #fff; margin: 0; font-size: 24px;' );
+		$logo_style = $light ? 'height: 45px; width: auto; margin: 0; font-size: 24px; color: #320028;' : 'height: 45px; width: auto; color: #fff; margin: 0; font-size: 24px;';
+		$logo_html  = \Convoca\Core\Utils::get_branding_html( 'members', '', $logo_style );
 
 		$verification_hash = hash_hmac( 'sha256', 'member_' . $post_id, \Convoca\Core\Utils::get_persistent_salt() );
 		$site_domain       = strtoupper( wp_parse_url( home_url(), PHP_URL_HOST ) );
@@ -163,6 +169,22 @@ class PDF_Card {
                     transition: all 0.3s ease;
                 }
                 .btn-print:hover { background: #e67a00; transform: translateY(-2px); }
+                ' . ( $light ? '
+                /* ── Tema claro: tarjeta blanca/crema con textos púrpura ── */
+                body { background: #f7f3f0; }
+                .card {
+                    background: #ffffff;
+                    color: #320028;
+                    border: 1px solid rgba(50, 0, 40, 0.18);
+                    box-shadow: 0 15px 35px rgba(50, 0, 40, 0.14);
+                }
+                .card::before { background: linear-gradient(135deg, rgba(255, 135, 0, 0.16) 0%, rgba(255, 135, 0, 0) 70%); }
+                .card::after { background: rgba(157, 78, 221, 0.07); }
+                .logo-text, .header h1, .header .logo-text { color: #320028; text-shadow: none; }
+                .member-name { color: #320028; }
+                .info { color: #5c4250; opacity: 1; }
+                .qr-code { box-shadow: 0 8px 20px rgba(50, 0, 40, 0.12); }
+                ' : '' ) . '
             </style>
         </head>
         <body>
@@ -202,11 +224,12 @@ class PDF_Card {
 	/**
 	 * Generate a PDF for the member card using Signature (Dompdf).
 	 *
-	 * @param int $post_id Member post ID.
+	 * @param int    $post_id Member post ID.
+	 * @param string $theme   'light'|'dark'. Default: opción global convoca_document_theme.
 	 * @return string PDF binary content.
 	 */
-	public static function generate_pdf( int $post_id ): string {
-		$html     = self::get_html( $post_id );
+	public static function generate_pdf( int $post_id, string $theme = '' ): string {
+		$html     = self::get_html( $post_id, $theme );
 		$tmp_path = wp_tempnam( 'member-card-' ) . '.pdf';
 
 		$signature = new \Convoca\Core\Signature();

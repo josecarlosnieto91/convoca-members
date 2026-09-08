@@ -54,6 +54,13 @@ class Admin_Settings {
 				$settings[ $key ] = sanitize_text_field( $val );
 			}
 			update_option( 'convoca_members_settings', $settings );
+
+			// Tema de los documentos (opción compartida del ecosistema, default light).
+			if ( isset( $_POST['convoca_document_theme'] ) ) {
+				$theme = sanitize_key( wp_unslash( $_POST['convoca_document_theme'] ) );
+				update_option( 'convoca_document_theme', in_array( $theme, array( 'light', 'dark' ), true ) ? $theme : 'light' );
+			}
+
 			wp_safe_redirect( add_query_arg( 'updated', '1', wp_get_referer() ) );
 			exit;
 		}
@@ -372,6 +379,19 @@ class Admin_Settings {
 				<input type="number" id="min_age" name="convoca_members_settings[min_age]"
 					value="<?php echo esc_attr( $settings['min_age'] ?? '0' ); ?>" min="0">
 				<small class="convoca-small"><?php esc_html_e( 'Edad mínima permitida para el alta de socios (0 para desactivar).', 'convoca-members' ); ?></small>
+			</div>
+
+			<h3 style="margin-top:32px;"><?php esc_html_e( 'Tema de los documentos', 'convoca-members' ); ?></h3>
+			<p class="convoca-small"><?php esc_html_e( 'Estilo por defecto de carnets de socio, certificados de voluntariado y emails transaccionales.', 'convoca-members' ); ?></p>
+			<div class="convoca-field">
+				<label style="display:inline-flex;align-items:center;gap:8px;margin-right:20px;cursor:pointer;">
+					<input type="radio" name="convoca_document_theme" value="light" <?php checked( \Convoca\Core\Utils::get_document_theme(), 'light' ); ?>>
+					<?php esc_html_e( 'Claro (por defecto)', 'convoca-members' ); ?>
+				</label>
+				<label style="display:inline-flex;align-items:center;gap:8px;cursor:pointer;">
+					<input type="radio" name="convoca_document_theme" value="dark" <?php checked( \Convoca\Core\Utils::get_document_theme(), 'dark' ); ?>>
+					<?php esc_html_e( 'Oscuro', 'convoca-members' ); ?>
+				</label>
 			</div>
 
 			<div style="margin-top:30px;">
