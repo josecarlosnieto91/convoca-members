@@ -296,8 +296,13 @@ class Rest_API {
 
 	/**
 	 * Check if a member is logged in via session cookie.
+	 * Sends no-cache headers so the browser never serves stale private data
+	 * (member status/renovation must always be fresh).
 	 */
 	public static function check_member_auth(): bool {
+		if ( function_exists( 'nocache_headers' ) ) {
+			nocache_headers();
+		}
 		return Member_Auth::is_authenticated();
 	}
 
@@ -305,6 +310,9 @@ class Rest_API {
 	 * Check if a member is logged in AND is active.
 	 */
 	public static function check_active_member(): bool|\WP_Error {
+		if ( function_exists( 'nocache_headers' ) ) {
+			nocache_headers();
+		}
 		if ( ! Member_Auth::is_authenticated() ) {
 			return false;
 		}
@@ -326,6 +334,9 @@ class Rest_API {
 	 * Members with 'baja' cannot renew here; they must re-register.
 	 */
 	public static function check_renewable_member(): bool|\WP_Error {
+		if ( function_exists( 'nocache_headers' ) ) {
+			nocache_headers();
+		}
 		if ( ! Member_Auth::is_authenticated() ) {
 			return false;
 		}
