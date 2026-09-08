@@ -76,20 +76,26 @@ class PDF_Card {
                 body { 
                     font-family: "Segoe UI", Roboto, Helvetica, Arial, sans-serif; 
                     background: #f4f7f6; 
+                    display: flex; 
+                    flex-direction: column; 
+                    align-items: center; 
+                    justify-content: center; 
                     min-height: 100vh;
                     margin: 0;
-                    padding: 20px;
                     color: #333;
                 }
                 .card {
                     width: 450px; 
                     height: 280px;
-                    margin: 0 auto;
                     border-radius: 20px;
                     background: #320028;
                     color: #fff;
                     position: relative;
                     box-shadow: 0 15px 35px rgba(50, 0, 40, 0.4);
+                    padding: 30px;
+                    display: flex;
+                    flex-direction: column;
+                    justify-content: space-between;
                     overflow: hidden;
                     box-sizing: border-box;
                     border: 1px solid rgba(255,255,255,0.1);
@@ -114,7 +120,9 @@ class PDF_Card {
                     background: rgba(157, 78, 221, 0.1);
                     border-radius: 50%;
                 }
+                .header { display: flex; justify-content: space-between; align-items: flex-start; z-index: 1; }
                 .header img { max-height: 45px; width: auto; display: block; }
+                .logo-container { display: flex; align-items: center; gap: 10px; }
                 .logo-text { font-size: 24px; font-weight: 900; letter-spacing: 2px; color: #fff; text-shadow: 0 2px 4px rgba(0,0,0,0.2); }
                 .plan-badge { 
                     background: #ff8700; 
@@ -137,6 +145,7 @@ class PDF_Card {
                     font-weight: bold;
                 }
                 .member-name { font-size: 20px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; }
+                .footer { display: flex; justify-content: space-between; align-items: flex-end; z-index: 1; }
                 .info { font-size: 11px; opacity: 0.9; line-height: 1.4; }
                 .qr-code { 
                     width: 75px; 
@@ -160,17 +169,6 @@ class PDF_Card {
                     transition: all 0.3s ease;
                 }
                 .btn-print:hover { background: #e67a00; transform: translateY(-2px); }
-                /* ── Layout por tablas (compatible dompdf; flexbox NO lo soporta) ── */
-                .card { padding: 0; }
-                .layout { width: 100%; height: 100%; border-collapse: collapse; table-layout: fixed; position: relative; z-index: 1; }
-                .layout td { border: none; }
-                .cell-header { height: 86px; padding: 26px 30px 0; vertical-align: top; }
-                .cell-body { padding: 0 30px; vertical-align: middle; }
-                .cell-footer { height: 92px; padding: 0 30px 26px; vertical-align: bottom; }
-                .row { width: 100%; border-collapse: collapse; }
-                .row td { border: none; vertical-align: middle; }
-                .row .left { text-align: left; }
-                .row .right { text-align: right; }
                 ' . ( $light ? '
                 /* ── Tema claro: tarjeta blanca/crema con textos púrpura ── */
                 body { background: #f7f3f0; }
@@ -182,7 +180,7 @@ class PDF_Card {
                 }
                 .card::before { background: linear-gradient(135deg, rgba(255, 135, 0, 0.16) 0%, rgba(255, 135, 0, 0) 70%); }
                 .card::after { background: rgba(157, 78, 221, 0.07); }
-                .row .left h1, .logo-text, .row .left .logo-text { color: #320028; text-shadow: none; }
+                .logo-text, .header h1, .header .logo-text { color: #320028; text-shadow: none; }
                 .member-name { color: #320028; }
                 .info { color: #5c4250; opacity: 1; }
                 .qr-code { box-shadow: 0 8px 20px rgba(50, 0, 40, 0.12); }
@@ -191,29 +189,25 @@ class PDF_Card {
         </head>
         <body>
             <div class="card">
-                <table class="layout"><tr>
-                    <td class="cell-header">
-                        <table class="row"><tr>
-                            <td class="left">' . $logo_html . '</td>
-                            <td class="right"><div class="plan-badge">' . esc_html( $plan ) . '</div></td>
-                        </tr></table>
-                    </td>
-                </tr><tr>
-                    <td class="cell-body">
-                        <div class="member-number">' . esc_html__( 'NO.', 'convoca-members' ) . ' ' . esc_html( $num_socio_display ) . '</div>
-                        <div class="member-name">' . esc_html( $nombre ) . '</div>
-                    </td>
-                </tr><tr>
-                    <td class="cell-footer">
-                        <table class="row"><tr>
-                            <td class="left info">
-                                <div>' . esc_html__( 'FECHA DE ALTA:', 'convoca-members' ) . ' ' . esc_html( $fecha_fmt ) . '</div>
-                                <div style="margin-top:4px;">WWW.' . esc_html( $site_domain ) . '</div>
-                            </td>
-                            <td class="right"><div class="qr-code">' . $qr_img . '</div></td>
-                        </tr></table>
-                    </td>
-                </tr></table>
+                <div class="header">
+                    ' . $logo_html . '
+                    <div class="plan-badge">' . esc_html( $plan ) . '</div>
+                </div>
+                
+                <div class="body">
+                    <div class="member-number">' . esc_html__( 'NO.', 'convoca-members' ) . ' ' . esc_html( $num_socio_display ) . '</div>
+                    <div class="member-name">' . esc_html( $nombre ) . '</div>
+                </div>
+                
+                <div class="footer">
+                    <div class="info">
+                        <div>' . esc_html__( 'FECHA DE ALTA:', 'convoca-members' ) . ' ' . esc_html( $fecha_fmt ) . '</div>
+                        <div style="margin-top:4px;">WWW.' . esc_html( $site_domain ) . '</div>
+                    </div>
+                    <div class="qr-code">
+                        ' . $qr_img . '
+                    </div>
+                </div>
             </div>
             
             <button class="btn-print no-print" onclick="window.print()">
@@ -298,6 +292,6 @@ class PDF_Card {
 		}
 
 		// Fallback: texto legible con la URL de verificación (rellena la caja contenedora).
-		return '<div style="width:100%;height:100%;background:#fff;color:#333;font-size:9px;padding:4px;text-align:center;word-break:break-all;box-sizing:border-box;display:table-cell;vertical-align:middle;">' . esc_html( $data ) . '</div>';
+		return '<div style="width:100%;height:100%;background:#fff;color:#333;display:flex;align-items:center;justify-content:center;font-size:9px;padding:4px;text-align:center;word-break:break-all;box-sizing:border-box;">' . esc_html( $data ) . '</div>';
 	}
 }
