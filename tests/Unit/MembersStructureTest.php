@@ -72,4 +72,17 @@ class MembersStructureTest extends TestCase
         $this->loadClass('Audit_Logger.php');
         $this->assertTrue(class_exists('Convoca\Members\Audit_Logger'));
     }
+
+    /**
+     * D13 (2026-09-09): el certificado tiene validez configurable (1 año por
+     * defecto) y expone los métodos de la política.
+     */
+    public function test_certificate_validity_policy_d13(): void
+    {
+        $this->loadClass('Certificate_Generator.php');
+
+        $this->assertTrue(method_exists('Convoca\Members\Certificate_Generator', 'validity_years'));
+        $this->assertTrue(method_exists('Convoca\Members\Certificate_Generator', 'refresh_validity_on_new_hours'));
+        $this->assertSame(1, \Convoca\Members\Certificate_Generator::validity_years());
+    }
 }

@@ -46,11 +46,13 @@ class Verificar_Certificado {
 			$result = Certificate_Generator::verify( $search );
 
 			if ( $result ) {
+				$caducado = ( $result['estado'] ?? 'vigente' ) === 'caducado';
+				$valido_hasta = ! empty( $result['valido_hasta'] ) ? wp_date( 'd/m/Y', strtotime( $result['valido_hasta'] ) ) : '';
 				?>
-				<div class="convoca-alert convoca-alert--ok convoca-card conv-cert-result">
+				<div class="convoca-alert <?php echo $caducado ? 'convoca-alert--warning convoca-card conv-cert-result' : 'convoca-alert--ok convoca-card conv-cert-result'; ?>">
 					<div class="conv-cert-header">
-						<span class="conv-cert-icon">✅</span>
-						<h2 class="text-gradient"><?php esc_html_e( 'Certificado Válido', 'convoca-members' ); ?></h2>
+						<span class="conv-cert-icon"><?php echo $caducado ? '⚠️' : '✅'; ?></span>
+						<h2 class="text-gradient"><?php echo $caducado ? esc_html__( 'Certificado Caducado', 'convoca-members' ) : esc_html__( 'Certificado Válido', 'convoca-members' ); ?></h2>
 					</div>
 					<div class="conv-cert-details">
 						<div class="detail-row">
@@ -63,8 +65,14 @@ class Verificar_Certificado {
 						</div>
 						<div class="detail-row">
 							<span class="detail-label"><?php esc_html_e( 'Emisión:', 'convoca-members' ); ?></span>
-							<span class="detail-value"><?php echo esc_html( wp_date( 'd/m/Y', strtotime( $result['emitido'] ) ) ); ?></span>
+							<span class="detail-value"><?php echo esc_html( $result['emitido'] ? wp_date( 'd/m/Y', strtotime( $result['emitido'] ) ) : '—' ); ?></span>
 						</div>
+						<?php if ( $valido_hasta ) : ?>
+						<div class="detail-row">
+							<span class="detail-label"><?php esc_html_e( 'Válido hasta:', 'convoca-members' ); ?></span>
+							<span class="detail-value"><?php echo esc_html( $valido_hasta ); ?></span>
+						</div>
+						<?php endif; ?>
 						<div class="detail-row">
 							<span class="detail-label"><?php esc_html_e( 'ID:', 'convoca-members' ); ?></span>
 							<span class="detail-value"><code><?php echo esc_html( $result['certificado_id'] ); ?></code></span>

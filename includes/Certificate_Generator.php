@@ -19,8 +19,41 @@ class Certificate_Generator {
 
 	private const ERROR_TRANSIENT = 'convoca_cert_gen_error_';
 
+	/**
+	 * Años de validez del certificado desde su emisión (decisión D13 2026-09-09:
+	 * 1 año; regeneración al completar nuevas horas). Filtrable por sitio.
+	 */
+	public static function validity_years(): int {
+		return max( 1, (int) apply_filters( 'convoca_members_certificado_validez_anios', 1 ) );
+	}
+
+	/**
+	 * Registra el hook de regeneración de validez al aprobarse horas nuevas.
+	 */
 	public static function init(): void {
 		add_action( 'admin_notices', array( self::class, 'show_pdf_error_notice' ) );
+		add_action( 'convoca_members_hora_aprobada', array( self::class, 'refresh_validity_on_new_hours' ), 10, 2 );
+	}
+
+	/**
+	 * Al aprobarse una hora nueva, la validez del certificado se extiende desde
+	 * hoy (el certificado se considera regenerado: cubre las horas completadas).
+	 *
+	 * @param int $record_id  ID del registro de horas aprobado.
+	 * @param int $miembro_id ID del miembro.
+	 */
+	public static function refresh_validity_on_new_hours( int $record_id, int $miembro_id ): void {
+		if ( get_post_meta( $miembro_id, '_convoca_certificado_id', true ) ) {
+			update_post_meta( $miembro_id, '_convoca_certificado_emitido', current_time( 'mysql' ) );
+			update_post_meta( $miembro_id, '_convoca_certificado_valido_hasta', self::validity_expiry_mysql() );
+		}
+	}
+
+	/**
+	 * Fecha de caducidad (emisión + validez) en formato MySQL.
+	 */
+	private static function validity_expiry_mysql(): string {
+		return wp_date( 'Y-m-d H:i:s', time() + ( self::validity_years() * YEAR_IN_SECONDS ) );
 	}
 
 	/**
@@ -60,7 +93,8 @@ class Certificate_Generator {
 		$verify_url = home_url( '/verificar-certificado/?id=' . $cert_id );
 		$qr_data    = self::generate_qr_data( $verify_url );
 
-		$html = self::build_html( $nombre, $total_horas, $plan_label, $proyectos, $cert_id, $qr_data, $verify_url, $theme );
+		$valido_hasta = self::validity_expiry_mysql();
+		$html = self::build_html( $nombre, $total_horas, $plan_label, $proyectos, $cert_id, $qr_data, $verify_url, $valido_hasta, $theme );
 
 		$pdf_content = self::render_pdf_to_buffer( $html );
 
@@ -72,8 +106,10 @@ class Certificate_Generator {
 		}
 
 		// Update meta only if PDF generated successfully.
+		$expiry_mysql = self::validity_expiry_mysql();
 		update_post_meta( $miembro_id, '_convoca_certificado_id', $cert_id );
 		update_post_meta( $miembro_id, '_convoca_certificado_emitido', current_time( 'mysql' ) );
+		update_post_meta( $miembro_id, '_convoca_certificado_valido_hasta', $expiry_mysql );
 
 		return array(
 			'id'     => $cert_id,
@@ -82,6 +118,7 @@ class Certificate_Generator {
 			'horas'  => $total_horas,
 			'plan'   => $plan_label,
 			'fecha'  => current_time( 'mysql' ),
+			'valido_hasta' => $expiry_mysql,
 			'url'    => $verify_url,
 		);
 	}
@@ -199,7 +236,7 @@ class Certificate_Generator {
 		return '<div style="width:100%;height:100%;background:#fff;color:#320028;font-size:9px;padding:4px;text-align:center;word-break:break-all;box-sizing:border-box;display:table-cell;vertical-align:middle;border-radius:6px;">' . esc_html( $data ) . '</div>';
 	}
 
-	private static function build_html( string $nombre, float $horas, string $plan, array $proyectos, string $cert_id, string $qr_data, string $verify_url, string $theme = '' ): string {
+	private static function build_html( string $nombre, float $horas, string $plan, array $proyectos, string $cert_id, string $qr_data, string $verify_url, string $valido_hasta = '', string $theme = '' ): string {
 		$theme = in_array( $theme, array( 'light', 'dark' ), true ) ? $theme : \Convoca\Core\Utils::get_document_theme( 'certificate' );
 		$light = 'light' === $theme;
 		$proyectos_html = '';
@@ -297,6 +334,7 @@ class Certificate_Generator {
 		    <table class="footer-table"><tr>
 		        <td class="footer-left">
 		            <div>Fecha de emisión: <strong>' . wp_date( 'd/m/Y' ) . '</strong></div>
+		            <div>Válido hasta: <strong>' . esc_html( $valido_hasta ? wp_date( 'd/m/Y', strtotime( $valido_hasta ) ) : '—' ) . '</strong> <span style="color:#999">(' . esc_html( sprintf( _n( '%d año', '%d años', self::validity_years(), 'convoca-members' ), self::validity_years() ) ) . ')</span></div>
 		            <div class="cert-id">ID: ' . esc_html( $cert_id ) . '</div>
 		        </td>
 		        <td class="qr-cell"><div class="qr">' . self::build_qr_svg( $verify_url ) . '</div></td>
@@ -346,11 +384,21 @@ class Certificate_Generator {
 
 		$miembro = get_post( $miembro_id );
 
+		$emitido = get_post_meta( $miembro_id, '_convoca_certificado_emitido', true );
+		$valido_hasta = get_post_meta( $miembro_id, '_convoca_certificado_valido_hasta', true );
+		if ( empty( $valido_hasta ) && $emitido ) {
+			// Certificados anteriores a la política D13: validez desde emisión.
+			$valido_hasta = wp_date( 'Y-m-d H:i:s', strtotime( $emitido ) + ( self::validity_years() * YEAR_IN_SECONDS ) );
+		}
+		$caducado = ! empty( $valido_hasta ) && strtotime( $valido_hasta ) < time();
+
 		return array(
 			'nombre'         => $miembro->post_title,
 			'horas'          => Voluntariado_Manager::get_horas_aprobadas( $miembro_id ),
 			'certificado_id' => $cert_id,
-			'emitido'        => get_post_meta( $miembro_id, '_convoca_certificado_emitido', true ),
+			'emitido'        => $emitido,
+			'valido_hasta'   => $valido_hasta ?: null,
+			'estado'         => $caducado ? 'caducado' : 'vigente',
 		);
 	}
 }
