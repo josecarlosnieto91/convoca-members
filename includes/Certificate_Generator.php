@@ -245,6 +245,14 @@ class Certificate_Generator {
 			$proyectos_html .= '<div class="proyecto"><strong>' . esc_html( $p['titulo'] ) . '</strong>: ' . number_format( $p['horas'], 1 ) . 'h<br><small>' . esc_html( mb_substr( $tareas_resumen, 0, 100 ) ) . '</small></div>';
 		}
 
+		// Texto de validez: duración legible del certificado (D13).
+		$validez_anios = self::validity_years();
+		/* translators: %d: número de años de validez del certificado */
+		$validez_label = sprintf( _n( '%d año', '%d años', $validez_anios, 'convoca-members' ), $validez_anios );
+		$validez_html  = $valido_hasta
+			? '<div>Válido hasta: <strong>' . esc_html( wp_date( 'd/m/Y', strtotime( $valido_hasta ) ) ) . '</strong> <span style="color:#999">(' . esc_html( $validez_label ) . ')</span></div>'
+			: '';
+
 		return '<!DOCTYPE html>
 		<html lang="es">
 		<head>
@@ -334,7 +342,7 @@ class Certificate_Generator {
 		    <table class="footer-table"><tr>
 		        <td class="footer-left">
 		            <div>Fecha de emisión: <strong>' . wp_date( 'd/m/Y' ) . '</strong></div>
-		            <div>Válido hasta: <strong>' . esc_html( $valido_hasta ? wp_date( 'd/m/Y', strtotime( $valido_hasta ) ) : '—' ) . '</strong> <span style="color:#999">(' . esc_html( sprintf( _n( '%d año', '%d años', self::validity_years(), 'convoca-members' ), self::validity_years() ) ) . ')</span></div>
+		            ' . $validez_html . '
 		            <div class="cert-id">ID: ' . esc_html( $cert_id ) . '</div>
 		        </td>
 		        <td class="qr-cell"><div class="qr">' . self::build_qr_svg( $verify_url ) . '</div></td>
