@@ -38,8 +38,8 @@ class PDF_Card {
 	 * @param string $theme   'light'|'dark'. Default: opción global convoca_document_theme.
 	 */
 	public static function get_html( int $post_id, string $theme = '' ): string {
-		$theme = in_array( $theme, array( 'light', 'dark' ), true ) ? $theme : \Convoca\Core\Utils::get_document_theme( 'card' );
-		$light = 'light' === $theme;
+		$theme             = in_array( $theme, array( 'light', 'dark' ), true ) ? $theme : \Convoca\Core\Utils::get_document_theme( 'card' );
+		$light             = 'light' === $theme;
 		$nombre            = get_the_title( $post_id );
 		$num_socio         = get_post_meta( $post_id, '_convoca_numero_socio', true );
 		$num_socio_display = $num_socio ? str_pad( $num_socio, 4, '0', STR_PAD_LEFT ) : esc_html__( 'PENDIENTE', 'convoca-members' );
@@ -50,6 +50,21 @@ class PDF_Card {
 
 		$fecha     = get_post_meta( $post_id, '_convoca_fecha_alta', true );
 		$fecha_fmt = $fecha ? wp_date( 'd/m/Y', strtotime( $fecha ) ) : wp_date( 'd/m/Y', strtotime( get_the_date( 'Y-m-d', $post_id ) ) );
+
+		// Seniority badge (D3): whole years since registration (fecha_alta,
+		// preserved on reactivation). Hidden for members with < 1 year.
+		$fecha_alta_raw  = $fecha ? $fecha : get_the_date( 'Y-m-d', $post_id );
+		$seniority_ts    = $fecha_alta_raw ? strtotime( $fecha_alta_raw ) : 0;
+		$anios           = $seniority_ts > 0 ? max( 0, (int) floor( ( time() - $seniority_ts ) / YEAR_IN_SECONDS ) ) : 0;
+		$seniority_badge = $anios >= 1
+			? '<div class="seniority-badge">' . esc_html(
+				sprintf(
+					/* translators: %d: number of years as a member */
+					_n( '%d año', '%d años', $anios, 'convoca-members' ),
+					$anios
+				)
+			) . '</div>'
+			: '';
 
 		$logo_style = $light ? 'height: 45px; width: auto; margin: 0; font-size: 24px; color: #320028;' : 'height: 45px; width: auto; color: #fff; margin: 0; font-size: 24px;';
 		$logo_html  = \Convoca\Core\Utils::get_branding_html( 'members', '', $logo_style );
@@ -121,19 +136,31 @@ class PDF_Card {
                     border-radius: 50%;
                 }
                 .header { display: flex; justify-content: space-between; align-items: flex-start; z-index: 1; }
+                .header-right { display: flex; align-items: center; gap: 8px; }
                 .header img { max-height: 45px; width: auto; display: block; }
                 .logo-container { display: flex; align-items: center; gap: 10px; }
                 .logo-text { font-size: 24px; font-weight: 900; letter-spacing: 2px; color: #fff; text-shadow: 0 2px 4px rgba(0,0,0,0.2); }
-                .plan-badge { 
-                    background: #ff8700; 
-                    color: #fff; 
-                    padding: 6px 16px; 
-                    border-radius: 30px; 
-                    font-size: 11px; 
-                    font-weight: 800; 
+                .plan-badge {
+                    background: #ff8700;
+                    color: #fff;
+                    padding: 6px 16px;
+                    border-radius: 30px;
+                    font-size: 11px;
+                    font-weight: 800;
                     text-transform: uppercase;
                     box-shadow: 0 4px 10px rgba(255, 135, 0, 0.3);
                     letter-spacing: 0.5px;
+                }
+                .seniority-badge {
+                    background: rgba(255,255,255,0.16);
+                    border: 1px solid rgba(255,255,255,0.35);
+                    color: #fff;
+                    padding: 6px 12px;
+                    border-radius: 30px;
+                    font-size: 11px;
+                    font-weight: 700;
+                    letter-spacing: 0.5px;
+                    white-space: nowrap;
                 }
                 .body { margin-top: 20px; z-index: 1; }
                 .member-number { 
@@ -184,6 +211,11 @@ class PDF_Card {
                 .member-name { color: #320028; }
                 .info { color: #5c4250; opacity: 1; }
                 .qr-code { box-shadow: 0 8px 20px rgba(50, 0, 40, 0.12); }
+                .seniority-badge {
+                    background: rgba(50, 0, 40, 0.06);
+                    border: 1px solid rgba(50, 0, 40, 0.28);
+                    color: #320028;
+                }
                 ' : '' ) . '
             </style>
         </head>
@@ -191,7 +223,10 @@ class PDF_Card {
             <div class="card">
                 <div class="header">
                     ' . $logo_html . '
-                    <div class="plan-badge">' . esc_html( $plan ) . '</div>
+                    <div class="header-right">
+                        ' . $seniority_badge . '
+                        <div class="plan-badge">' . esc_html( $plan ) . '</div>
+                    </div>
                 </div>
                 
                 <div class="body">
