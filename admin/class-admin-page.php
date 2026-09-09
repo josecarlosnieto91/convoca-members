@@ -90,6 +90,9 @@ class Admin_Page {
 			array( new Admin_Member_Editor(), 'render' )
 		);
 
+		// Volunteer approval/management (moved from convoca-shifts, 2026-09-10).
+		Admin_Voluntariado::register_menu();
+
 		add_submenu_page(
 			'conv-members',
 			__( 'Ajustes', 'convoca-members' ),

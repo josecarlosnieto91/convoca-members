@@ -202,7 +202,7 @@ class Form_Voluntariado {
 			if ( ! empty( $field['required'] ) && empty( $val ) ) {
 				$errors[] = sprintf( 'El campo "%s" es obligatorio.', $field['label'] );
 			}
-			$dynamic_data[ '_convoca_shifts_' . $field['name'] ] = $val;
+			$dynamic_data[ '_convoca_voluntario_' . $field['name'] ] = $val;
 		}
 
 		if ( ! empty( $errors ) ) {
@@ -214,14 +214,24 @@ class Form_Voluntariado {
 			wp_send_json_error( array( 'errors' => array( 'Ese correo ya está registrado en el sistema.' ) ) );
 		}
 
-		// Check for duplicate DNI in user meta.
+		// Check for duplicate DNI in user meta (new canonical key; legacy _convoca_shifts_dni covered by migration).
 		$existing_dni = get_users(
 			array(
-				'meta_key'   => '_convoca_shifts_dni',
+				'meta_key'   => '_convoca_dni',
 				'meta_value' => $dni,
 				'number'     => 1,
 			)
 		);
+		if ( empty( $existing_dni ) ) {
+			// Still check the legacy key during transition.
+			$existing_dni = get_users(
+				array(
+					'meta_key'   => '_convoca_shifts_dni',
+					'meta_value' => $dni,
+					'number'     => 1,
+				)
+			);
+		}
 		if ( ! empty( $existing_dni ) ) {
 			wp_send_json_error( array( 'errors' => array( 'Ese DNI ya está registrado en el sistema.' ) ) );
 		}
@@ -286,28 +296,28 @@ class Form_Voluntariado {
 		$settings = get_option( 'convoca_members_settings', array() );
 
 		$meta_map = array(
-			'_convoca_shifts_aprobado'                => 0, // Pending approval.
-			'_convoca_shifts_dni'                     => $dni,
-			'_convoca_shifts_fecha_nacimiento'        => $fecha_nac,
-			'_convoca_shifts_telefono'                => $telefono,
-			'_convoca_shifts_whatsapp'                => $whatsapp,
-			'_convoca_shifts_direccion'               => $direccion,
-			'_convoca_shifts_municipio'               => $municipio,
-			'_convoca_shifts_canal_contacto'          => $canal,
-			'_convoca_shifts_intereses'               => $intereses,
-			'_convoca_shifts_disponibilidad'          => $disponibilidad,
-			'_convoca_shifts_experiencia'             => $experiencia,
-			'_convoca_shifts_motivacion'              => $motivacion,
-			'_convoca_shifts_menor_edad'              => $menor ? '1' : '0',
-			'_convoca_shifts_rgpd_version'            => $settings['rgpd_version'] ?? '1.0',
-			'_convoca_shifts_rgpd_timestamp'          => current_time( 'mysql' ),
-			'_convoca_shifts_comunicaciones_ok'       => $comunicaciones ? '1' : '0',
-			'_convoca_shifts_declaracion_responsable' => '1',
+			'_convoca_voluntario_aprobado'                => 0, // Pending approval.
+			'_convoca_dni'                                => $dni,
+			'_convoca_fecha_nacimiento'                   => $fecha_nac,
+			'_convoca_telefono'                           => $telefono,
+			'_convoca_voluntario_whatsapp'                => $whatsapp,
+			'_convoca_voluntario_direccion'               => $direccion,
+			'_convoca_voluntario_municipio'               => $municipio,
+			'_convoca_voluntario_canal_contacto'          => $canal,
+			'_convoca_voluntario_intereses'               => $intereses,
+			'_convoca_voluntario_disponibilidad'          => $disponibilidad,
+			'_convoca_voluntario_experiencia'             => $experiencia,
+			'_convoca_voluntario_motivacion'              => $motivacion,
+			'_convoca_voluntario_menor_edad'              => $menor ? '1' : '0',
+			'_convoca_voluntario_rgpd_version'            => $settings['rgpd_version'] ?? '1.0',
+			'_convoca_voluntario_rgpd_timestamp'          => current_time( 'mysql' ),
+			'_convoca_voluntario_comunicaciones_ok'       => $comunicaciones ? '1' : '0',
+			'_convoca_voluntario_declaracion_responsable' => '1',
 		);
 
 		if ( $menor ) {
-			$meta_map['_convoca_shifts_tutor_nombre'] = sanitize_text_field( $post_data['tutor_nombre'] ?? '' );
-			$meta_map['_convoca_shifts_tutor_dni']    = sanitize_text_field( $post_data['tutor_dni'] ?? '' );
+			$meta_map['_convoca_voluntario_tutor_nombre'] = sanitize_text_field( $post_data['tutor_nombre'] ?? '' );
+			$meta_map['_convoca_voluntario_tutor_dni']    = sanitize_text_field( $post_data['tutor_dni'] ?? '' );
 		}
 
 		// Merge dynamic fields.
