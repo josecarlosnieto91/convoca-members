@@ -107,7 +107,10 @@ class Admin_Logs {
 							);
 							?>
 							<option value="<?php echo esc_url( $per_page_url ); ?>" <?php selected( $per_page, $n ); ?>>
-								<?php printf( esc_html__( '%d por página', 'convoca-members' ), (int) $n ); ?>
+								<?php
+								/* translators: %d: number of log entries shown per page. */
+								printf( esc_html__( '%d por página', 'convoca-members' ), (int) $n );
+								?>
 							</option>
 						<?php endforeach; ?>
 					</select>
@@ -116,6 +119,7 @@ class Admin_Logs {
 					<span class="displaying-num">
 						<?php
 						printf(
+							/* translators: 1: first record number, 2: last record number, 3: total number of records. */
 							esc_html__( 'Mostrando %1$d–%2$d de %3$d registros', 'convoca-members' ),
 							$total_items ? (int) ( $offset + 1 ) : 0,
 							(int) min( $offset + $per_page, $total_items ),
@@ -183,6 +187,7 @@ class Admin_Logs {
 					<span class="displaying-num">
 						<?php
 						printf(
+							/* translators: 1: first record number, 2: last record number, 3: total number of records. */
 							esc_html__( 'Mostrando %1$d–%2$d de %3$d registros', 'convoca-members' ),
 							$total_items ? (int) ( $offset + 1 ) : 0,
 							(int) min( $offset + $per_page, $total_items ),

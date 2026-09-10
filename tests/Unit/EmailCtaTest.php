@@ -8,6 +8,10 @@
  * texto literal y deja el botón roto. Las plantillas que ya llevan botón en su
  * cuerpo no necesitan respaldo y devuelven array() — de ahí que el primero de
  * los tests sea condicional a propósito.
+ *
+ * El CI de este repo clona solo convoca-members, así que la comprobación que
+ * necesita los cuerpos por defecto (construidos con Email_Layout de core) se
+ * salta cuando core no está; la de los placeholders del CTA corre siempre.
  */
 
 namespace Convoca\Members\Tests;
@@ -74,6 +78,10 @@ class EmailCtaTest extends TestCase
 
     public function test_toda_plantilla_sin_boton_tiene_cta_de_respaldo(): void
     {
+        if ( ! class_exists( '\Convoca\Core\Email_Layout' ) ) {
+            $this->markTestSkipped( 'Necesita convoca-core en el workspace para construir los cuerpos por defecto.' );
+        }
+
         $ctas = $this->ctas();
 
         foreach ( $this->bodies() as $slug => $body ) {
