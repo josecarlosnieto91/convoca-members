@@ -442,6 +442,7 @@ class Admin_Settings {
 			</div>
 		</form>
 
+		<?php
 		// PRO Features Section. El estado se consulta a la licencia real: con una
 		// licencia activa las funcionalidades YA están desbloqueadas y el aviso no
 		// debe pedir activarla.
