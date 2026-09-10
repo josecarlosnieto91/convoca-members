@@ -1086,6 +1086,7 @@ class Rest_API {
 				'origin'       => 'members',
 				'origin_id'    => $member_id,
 				'product_desc' => mb_substr( 'RENOVACIÓN ' . strtoupper( get_bloginfo( 'name' ) ) . ' - ' . strtoupper( $plan_data['label'] ?? 'SOCIO' ), 0, 125 ),
+				'payer_email'  => get_post_meta( $member_id, '_convoca_email', true ),
 				'redirect_ok'  => home_url( '/pago-ok/' ),
 				'redirect_ko'  => home_url( '/pago-ko/' ),
 			)

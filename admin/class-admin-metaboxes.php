@@ -444,6 +444,7 @@ class Admin_Metaboxes {
 				'origin'       => 'members',
 				'origin_id'    => $post_id,
 				'product_desc' => 'Cuota Socio: ' . $plan['label'],
+				'payer_email'  => get_post_meta( $post_id, '_convoca_email', true ),
 			)
 		);
 

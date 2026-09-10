@@ -486,6 +486,7 @@ class Cron_Manager {
 					'origin_id'    => $member_id,
 					'amount_cents' => $amount_cents,
 					'product_desc' => $product_desc,
+					'payer_email'  => get_post_meta( $member_id, '_convoca_email', true ),
 					'method'       => 'tarjeta',
 					'tokenize'     => true,
 				)
@@ -872,6 +873,7 @@ class Cron_Manager {
 					'origin'       => 'members',
 					'origin_id'    => $post_id,
 					'product_desc' => mb_substr( 'RENOVACION ' . strtoupper( get_bloginfo( 'name' ) ) . ' ' . ( $plan_data['label'] ?? 'SOCIO' ), 0, 125 ),
+					'payer_email'  => get_post_meta( $post_id, '_convoca_email', true ),
 				)
 			);
 

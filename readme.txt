@@ -4,7 +4,7 @@ Tags: members, volunteers, membership, certificates, associations
 Requires at least: 6.4
 Tested up to: 7.1
 Requires PHP: 8.1
-Stable tag: 2.8.3
+Stable tag: 2.8.4
 License: GPL-2.0-or-later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -49,6 +49,9 @@ This plugin may contact getconvoca.app to validate PRO licenses, only when a key
 3. Activate the plugin from the Plugins menu
 
 == Changelog ==
+
+= 2.8.4 =
+* Al generar el pago de la cuota se entrega el correo del socio, para que reciba el recibo y el aviso de caducidad del enlace. Se aplica al alta, la reactivación, la renovación, el recordatorio y el pago manual desde la ficha.
 
 = 2.8.3 =
 * Rendimiento: mi-area.css y mi-area.js solo se cargan en las páginas que pintan el área de socios (antes, en todo el front).

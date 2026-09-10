@@ -342,6 +342,8 @@ class Process_Member {
 					'origin'       => 'members',
 					'origin_id'    => $post_id,
 					'product_desc' => mb_substr( strtoupper( get_bloginfo( 'name' ) ) . ' CUOTA ' . ( $plan_data['label'] ?? '' ), 0, 125 ),
+					// El correo del alta: con él se envía el recibo y se avisa de la caducidad.
+					'payer_email'  => (string) get_post_meta( $post_id, '_convoca_email', true ),
 				)
 			);
 
@@ -507,6 +509,8 @@ class Process_Member {
 					'origin'       => 'members',
 					'origin_id'    => $existing_id,
 					'product_desc' => mb_substr( strtoupper( get_bloginfo( 'name' ) ) . ' CUOTA ' . ( $plan_data['label'] ?? '' ), 0, 125 ),
+					// El correo del alta: con él se envía el recibo y se avisa de la caducidad.
+					'payer_email'  => (string) get_post_meta( $existing_id, '_convoca_email', true ),
 				)
 			);
 
