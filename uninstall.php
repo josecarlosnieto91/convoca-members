@@ -28,7 +28,10 @@ if ( ! defined( 'WP_UNINSTALL_PLUGIN' ) ) {
 // ─── Keep data mode ───
 // Define CONVOCA_KEEP_DATA_ON_UNINSTALL in wp-config.php to preserve all data
 // when uninstalling. Useful for temporary deactivation + reactivation.
-if ( defined( 'CONVOCA_KEEP_DATA_ON_UNINSTALL' ) && CONVOCA_KEEP_DATA_ON_UNINSTALL ) {
+$convoca_conservar = ( defined( 'CONVOCA_KEEP_DATA_ON_UNINSTALL' ) && CONVOCA_KEEP_DATA_ON_UNINSTALL )
+	|| 1 === (int) get_option( 'convoca_uninstall_keep_data', 0 );
+
+if ( $convoca_conservar ) {
 	return;
 }
 
@@ -36,6 +39,9 @@ if ( defined( 'CONVOCA_KEEP_DATA_ON_UNINSTALL' ) && CONVOCA_KEEP_DATA_ON_UNINSTA
 delete_option( 'convoca_members_settings' );
 delete_option( 'convoca_email_templates' );
 delete_option( 'convoca_members_db_version' );
+delete_option( 'convoca_members_diagnostic_cache' );
+delete_option( 'convoca_document_theme' );
+delete_option( 'convoca_gamification_tracks' );
 delete_option( 'convoca_members_plans' );
 delete_option( 'convoca_last_member_number' );
 delete_option( 'convoca_last_member_number_fallback' );
