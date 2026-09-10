@@ -72,12 +72,15 @@ class Admin_Page {
 			array( new Admin_Member_Editor(), 'render' )
 		);
 
+		// Página única de voluntariado: solicitudes (aprobar/revocar) + voluntarios
+		// activos. Antes había dos entradas de menú («Voluntarios» y «Gestionar
+		// Voluntarios») apuntando a lo mismo desde ángulos distintos.
 		add_submenu_page(
 			'conv-members',
-			__( 'Gestionar Voluntarios', 'convoca-members' ),
+			__( 'Voluntarios', 'convoca-members' ),
 			__( 'Voluntarios', 'convoca-members' ),
 			'gestionar_miembros',
-			'conv-members-voluntarios',
+			Admin_Voluntariado::SLUG,
 			array( $this, 'render_list_page' )
 		);
 
@@ -89,9 +92,6 @@ class Admin_Page {
 			Admin_Member_Editor::SLUG . '-voluntario',
 			array( new Admin_Member_Editor(), 'render' )
 		);
-
-		// Volunteer approval/management (moved from convoca-shifts, 2026-09-10).
-		Admin_Voluntariado::register_menu();
 
 		add_submenu_page(
 			'conv-members',
@@ -195,6 +195,15 @@ class Admin_Page {
 				<?php esc_html_e( 'Añadir nuevo', 'convoca-members' ); ?>
 			</a>
 			<hr class="wp-header-end">
+
+			<?php if ( $is_voluntarios ) : ?>
+				<?php
+				// Gestión de voluntariado (solicitudes + activos) en la misma página
+				// que el listado: antes eran dos entradas de menú distintas.
+				Admin_Voluntariado::render_management();
+				?>
+				<hr style="margin:32px 0;">
+			<?php endif; ?>
 
 			<!-- Stats bar -->
 			<?php $this->render_stats_bar(); ?>

@@ -442,26 +442,63 @@ class Admin_Settings {
 			</div>
 		</form>
 
+		// PRO Features Section. El estado se consulta a la licencia real: con una
+		// licencia activa las funcionalidades YA están desbloqueadas y el aviso no
+		// debe pedir activarla.
+		$pro_items = array(
+			array(
+				'key'   => 'gamification',
+				'icon'  => '🏆',
+				'title' => __( 'Gamificación', 'convoca-members' ),
+				'desc'  => __( 'Badges, niveles y puntos de voluntariado', 'convoca-members' ),
+			),
+			array(
+				'key'   => 'pdf_memories',
+				'icon'  => '📄',
+				'title' => __( 'PDF Memories', 'convoca-members' ),
+				'desc'  => __( 'Exportación PDF y tarjetas de socio', 'convoca-members' ),
+			),
+			array(
+				'key'   => 'webhooks',
+				'icon'  => '🔗',
+				'title' => __( 'Webhooks salientes', 'convoca-members' ),
+				'desc'  => __( 'Integración con sistemas externos', 'convoca-members' ),
+			),
+		);
+
+		$has_license_api = class_exists( '\Convoca\Core\License_Manager' );
+		$pro_status      = array();
+		foreach ( $pro_items as $item ) {
+			$pro_status[ $item['key'] ] = $has_license_api && \Convoca\Core\License_Manager::has_pro( $item['key'] );
+		}
+		$all_unlocked = ! in_array( false, $pro_status, true );
+		?>
 		<!-- PRO Features Section -->
-		<div class="conv-pro-section" style="margin-top:40px;padding:25px;background:#fefce8;border:2px dashed #eab308;border-radius:12px;">
-			<h2 style="margin-top:0;color:#a16207;">✨ Funcionalidades PRO</h2>
-			<p style="color:#713f12;">Las siguientes funcionalidades están disponibles con una licencia PRO. <a href="<?php echo esc_url( admin_url( 'admin.php?page=convoca-license' ) ); ?>">Activa tu licencia</a> para desbloquearlas.</p>
+		<div class="conv-pro-section" style="margin-top:40px;padding:25px;background:<?php echo $all_unlocked ? '#f0fdf4' : '#fefce8'; ?>;border:2px dashed <?php echo $all_unlocked ? '#4ade80' : '#eab308'; ?>;border-radius:12px;">
+			<h2 style="margin-top:0;color:<?php echo $all_unlocked ? '#166534' : '#a16207'; ?>;">✨ <?php esc_html_e( 'Funcionalidades PRO', 'convoca-members' ); ?></h2>
+			<p style="color:<?php echo $all_unlocked ? '#166534' : '#713f12'; ?>;">
+				<?php if ( $all_unlocked ) : ?>
+					✅ <strong><?php esc_html_e( 'Licencia PRO activa', 'convoca-members' ); ?></strong> —
+					<?php esc_html_e( 'estas funcionalidades están desbloqueadas.', 'convoca-members' ); ?>
+					<a href="<?php echo esc_url( admin_url( 'admin.php?page=convoca-license' ) ); ?>"><?php esc_html_e( 'Ver licencia', 'convoca-members' ); ?></a>
+				<?php else : ?>
+					🔒 <?php esc_html_e( 'Las siguientes funcionalidades están disponibles con una licencia PRO.', 'convoca-members' ); ?>
+					<a href="<?php echo esc_url( admin_url( 'admin.php?page=convoca-license' ) ); ?>"><?php esc_html_e( 'Activa tu licencia', 'convoca-members' ); ?></a>
+					<?php esc_html_e( 'para desbloquearlas.', 'convoca-members' ); ?>
+				<?php endif; ?>
+			</p>
 			<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:12px;margin-top:15px;">
-				<div style="background:#fff;border-radius:8px;padding:15px;border:1px solid #e2e8f0;opacity:0.7;">
-					<span style="font-size:1.2rem;">🏆</span>
-					<span style="font-weight:600;margin-left:8px;">Gamificación</span>
-					<span style="display:block;font-size:11px;color:#94a3b8;margin-top:4px;">Badges, niveles y puntos de voluntariado</span>
-				</div>
-				<div style="background:#fff;border-radius:8px;padding:15px;border:1px solid #e2e8f0;opacity:0.7;">
-					<span style="font-size:1.2rem;">📄</span>
-					<span style="font-weight:600;margin-left:8px;">PDF Memories</span>
-					<span style="display:block;font-size:11px;color:#94a3b8;margin-top:4px;">Exportación PDF y tarjetas de socio</span>
-				</div>
-				<div style="background:#fff;border-radius:8px;padding:15px;border:1px solid #e2e8f0;opacity:0.7;">
-					<span style="font-size:1.2rem;">🔗</span>
-					<span style="font-weight:600;margin-left:8px;">Webhooks salientes</span>
-					<span style="display:block;font-size:11px;color:#94a3b8;margin-top:4px;">Integración con sistemas externos</span>
-				</div>
+				<?php foreach ( $pro_items as $item ) : ?>
+					<?php $is_on = $pro_status[ $item['key'] ]; ?>
+					<div style="background:#fff;border-radius:8px;padding:15px;border:1px solid <?php echo $is_on ? '#bbf7d0' : '#e2e8f0'; ?>;opacity:<?php echo $is_on ? '1' : '0.7'; ?>;">
+						<span style="font-size:1.2rem;"><?php echo esc_html( $item['icon'] ); ?></span>
+						<span style="font-weight:600;margin-left:8px;"><?php echo esc_html( $item['title'] ); ?></span>
+						<span style="float:right;font-size:11px;font-weight:600;color:<?php echo $is_on ? '#16a34a' : '#94a3b8'; ?>;">
+							<?php echo $is_on ? '✓ ' . esc_html__( 'Activada', 'convoca-members' ) : '🔒 ' . esc_html__( 'Bloqueada', 'convoca-members' ); ?>
+						</span>
+						<span style="display:block;font-size:11px;color:#94a3b8;margin-top:4px;"><?php echo esc_html( $item['desc'] ); ?></span>
+					</div>
+				<?php endforeach; ?>
 			</div>
 		</div>
 		<?php
@@ -677,12 +714,19 @@ class Admin_Settings {
 
 		$templates  = Email_Manager::get_templates();
 		$tpl_labels = array(
-			'solicitud_recibida'    => __( 'Solicitud recibida', 'convoca-members' ),
-			'bienvenida'            => __( 'Bienvenida (activación)', 'convoca-members' ),
-			'recordatorio_pago'     => __( 'Recordatorio de pago', 'convoca-members' ),
-			'renovacion'            => __( 'Renovación anual (30 días)', 'convoca-members' ),
-			'renovacion_automatica' => __( 'Aviso renovación automática', 'convoca-members' ),
-			'renovacion_completada' => __( 'Renovación completada 🎉', 'convoca-members' ),
+			'solicitud_recibida'              => __( 'Solicitud recibida', 'convoca-members' ),
+			'bienvenida'                      => __( 'Bienvenida (activación)', 'convoca-members' ),
+			'credenciales_acceso'             => __( 'Credenciales de acceso', 'convoca-members' ),
+			'recordatorio_pago'               => __( 'Recordatorio de pago (1/3)', 'convoca-members' ),
+			'pago_pendiente_2'                => __( 'Segundo aviso de pago (2/3)', 'convoca-members' ),
+			'pago_pendiente_ultimo'           => __( 'Último aviso de pago (3/3)', 'convoca-members' ),
+			'renovacion'                      => __( 'Renovación anual (30 días)', 'convoca-members' ),
+			'renovacion_15d'                  => __( 'Renovación (15 días)', 'convoca-members' ),
+			'renovacion_7d'                   => __( 'Renovación (última semana)', 'convoca-members' ),
+			'renovacion_automatica'           => __( 'Aviso renovación automática', 'convoca-members' ),
+			'renovacion_completada'           => __( 'Renovación completada 🎉', 'convoca-members' ),
+			'voluntariado_recordatorio'       => __( 'Recordatorio de horas de voluntariado', 'convoca-members' ),
+			'objetivo_voluntariado_completado' => __( 'Objetivo de voluntariado completado 🏅', 'convoca-members' ),
 		);
 
 		?>
@@ -715,8 +759,16 @@ class Admin_Settings {
 							<label><strong><?php esc_html_e( 'Cuerpo (HTML permitido):', 'convoca-members' ); ?></strong></label>
 							<textarea name="tpl_<?php echo esc_attr( $slug ); ?>_body" rows="12"><?php echo esc_textarea( $tpl['body'] ); ?></textarea>
 						</p>
-					</div>
-				</div>
+						<details class="conv-tpl-preview">
+							<summary style="cursor:pointer;font-weight:600;"><?php esc_html_e( '👁️ Ver ejemplo con datos de prueba', 'convoca-members' ); ?></summary>
+							<iframe class="conv-tpl-preview-frame"
+								srcdoc="<?php echo esc_attr( Email_Manager::preview_html( $slug ) ); ?>"
+								style="width:100%;height:420px;margin-top:8px;border:1px solid #e2e8f0;border-radius:8px;background:#fff;"
+								loading="lazy"
+								title="<?php echo esc_attr( $tpl_labels[ $slug ] ?? $slug ); ?>"></iframe>
+						</details>
+						</div>
+						</div>
 			<?php endforeach; ?>
 
 			<input type="hidden" name="convoca_save_templates" value="1">

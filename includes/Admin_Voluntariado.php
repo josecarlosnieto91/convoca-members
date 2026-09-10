@@ -25,30 +25,36 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 class Admin_Voluntariado {
 
-	const SLUG = 'conv-members-voluntariado-gestion';
+	/**
+	 * Página única de voluntariado (registrada desde Admin_Page bajo el menú
+	 * «Miembros»). Antes tenía su propio submenú, duplicando «Voluntarios».
+	 */
+	const SLUG = 'conv-members-voluntarios';
 
 	const META_APROBADO = '_convoca_voluntario_aprobado'; // 0 = pending, 1 = approved, -1 = revoked.
 
 	/**
-	 * Register the admin submenu under Members.
-	 */
-	public static function register_menu(): void {
-		add_submenu_page(
-			'conv-members',
-			__( 'Gestionar Voluntarios', 'convoca-members' ),
-			__( 'Gestionar Voluntarios', 'convoca-members' ),
-			'manage_options',
-			self::SLUG,
-			array( self::class, 'render_page' )
-		);
-	}
-
-	/**
-	 * Render the volunteer management page.
+	 * Render the volunteer page (standalone: contenedor + título).
 	 */
 	public static function render_page(): void {
 		if ( ! current_user_can( 'manage_options' ) ) {
 			wp_die( esc_html__( 'No tienes permisos suficientes.', 'convoca-members' ) );
+		}
+
+		echo '<div class="wrap">';
+		echo '<h1>' . esc_html__( 'Voluntarios', 'convoca-members' ) . '</h1>';
+		self::render_management();
+		echo '</div>';
+	}
+
+	/**
+	 * Sección de gestión (solicitudes pendientes + voluntarios activos), sin
+	 * contenedor ni título: se incrusta en la página unificada de Voluntarios,
+	 * junto al listado de voluntarios.
+	 */
+	public static function render_management(): void {
+		if ( ! current_user_can( 'manage_options' ) ) {
+			return;
 		}
 
 		self::handle_actions();
@@ -56,8 +62,6 @@ class Admin_Voluntariado {
 		$pending_users = self::get_pending_users();
 		$active_users  = self::get_active_users();
 
-		echo '<div class="wrap">';
-		echo '<h1>' . esc_html__( 'Gestión de Voluntariado', 'convoca-members' ) . '</h1>';
 		echo '<p>' . esc_html__( 'Solicitudes de personas que quieren colaborar como voluntarias en el centro. Al aprobar se activa su ficha de miembro y puede gestionar turnos.', 'convoca-members' ) . '</p>';
 
 		// ── PENDING ──.
@@ -114,8 +118,6 @@ class Admin_Voluntariado {
 		} else {
 			echo '<p>' . esc_html__( 'No hay voluntarios activos registrados.', 'convoca-members' ) . '</p>';
 		}
-
-		echo '</div>';
 	}
 
 	/**

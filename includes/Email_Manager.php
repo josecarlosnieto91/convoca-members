@@ -108,6 +108,9 @@ class Email_Manager {
 
 		// Credentials hook (called by Process_Member::handle_approved).
 		add_action( 'convoca_members_email_credenciales', array( $this, 'send_credenciales' ), 10, 2 );
+
+		// Corrección de plantillas guardadas por versiones anteriores.
+		add_action( 'admin_init', array( __CLASS__, 'maybe_migrate' ) );
 	}
 
 	/* ── Default templates (installed on activation) ───── */
@@ -159,11 +162,11 @@ class Email_Manager {
 						)
 					)
 					. __( '<p>Un miembro del equipo revisará tu solicitud y te contactaremos pronto.</p>', 'convoca-members' )
-					. '<p>¡Gracias por unirte a la familia Convoca!</p>',
+					. sprintf( /* translators: %s: site name */ __( '<p>¡Gracias por unirte a la familia %s!</p>', 'convoca-members' ), esc_html( get_bloginfo( 'name' ) ) ),
 			),
 			'bienvenida'                       => array(
-				'subject' => '\u00a1Bienvenido/a a ' . get_bloginfo( 'name' ) . ', {nombre}!',
-				'body'    => __( '<h1>00a1Bienvenido/a a ', 'convoca-members' ) . esc_html( get_bloginfo( 'name' ) ) . ', {nombre}! 0001F389</H1>'
+				'subject' => sprintf( /* translators: %s: site name */ __( '¡Bienvenido/a a %s, {nombre}!', 'convoca-members' ), get_bloginfo( 'name' ) ),
+				'body'    => __( '<h1>¡Bienvenido/a a ', 'convoca-members' ) . esc_html( get_bloginfo( 'name' ) ) . ', {nombre}! 🎉</h1>'
 					. __( '<p>Tu alta como <strong>{tipo_miembro}</strong> ha sido confirmada.</p>', 'convoca-members' )
 					. Email_Layout::meta_table(
 						array(
@@ -181,7 +184,7 @@ class Email_Manager {
 							),
 						)
 					)
-					. __( '<p>Ya formas parte de la comunidad Convoca. Puedes participar en todas nuestras actividades y proyectos.</p>', 'convoca-members' )
+					. sprintf( /* translators: %s: site name */ __( '<p>Ya formas parte de la comunidad %s. Puedes participar en todas nuestras actividades y proyectos.</p>', 'convoca-members' ), esc_html( get_bloginfo( 'name' ) ) )
 					. __( '<p>Si tienes cualquier duda, escríbenos a <a href="mailto:{admin_email}">{admin_email}</a>.</p>', 'convoca-members' )
 					. '<p>¡Nos vemos en el campo! 🌿</p>',
 			),
@@ -294,7 +297,7 @@ class Email_Manager {
 						)
 					)
 					. __( '<p>No tienes que hacer nada. Si hay algún problema con el cargo, te avisaremos.</p>', 'convoca-members' )
-					. '<p>¡Gracias por seguir apoyando a Convoca!</p>',
+					. sprintf( /* translators: %s: site name */ __( '<p>¡Gracias por seguir apoyando a %s!</p>', 'convoca-members' ), esc_html( get_bloginfo( 'name' ) ) ),
 			),
 			'renovacion_completada'            => array(
 				'subject' => __( 'Renovación completada con éxito — ', 'convoca-members' ) . get_bloginfo( 'name' ),
@@ -351,7 +354,7 @@ class Email_Manager {
 					. '<p>¡Tus manos son fundamentales para la asociación! 🌱</p>',
 			),
 			'objetivo_voluntariado_completado' => array(
-				'subject' => '\U0001f389 ¡Felicidades! Has completado tu voluntariado — ' . get_bloginfo( 'name' ),
+				'subject' => '🎉 ' . sprintf( /* translators: %s: site name */ __( '¡Felicidades! Has completado tu voluntariado — %s', 'convoca-members' ), get_bloginfo( 'name' ) ),
 				'body'    => __( '<h1>¡Enhorabuena, {nombre}! 🎉</h1>', 'convoca-members' )
 					. __( '<p>Has completado las <strong>{horas_totales}h</strong> de voluntariado requeridas para el plan <strong>{plan_nombre}</strong>.</p>', 'convoca-members' )
 					. Email_Layout::meta_table(
@@ -716,6 +719,76 @@ class Email_Manager {
 		return str_replace( array_keys( $vars ), array_values( $vars ), $text );
 	}
 
+	/* ── Vista previa (datos de ejemplo) ─────────────── */
+
+	/**
+	 * Valores de ejemplo para previsualizar una plantilla: cubre TODAS las
+	 * variables soportadas (VARIABLES) para que ninguna quede sin sustituir.
+	 *
+	 * Nota: `{importe}` va sin el símbolo € a propósito — el € lo añade la propia
+	 * plantilla (p. ej. `{importe}€`), incluirlo aquí lo duplicaba.
+	 *
+	 * @return array<string,string>
+	 */
+	public static function preview_vars(): array {
+		return array(
+			'{nombre}'                       => 'María García López',
+			'{email}'                        => 'maria@ejemplo.com',
+			'{tipo_miembro}'                 => __( 'Socia', 'convoca-members' ),
+			'{plan}'                         => '🥈 Lugg',
+			'{cuota}'                        => '50€/año',
+			'{importe}'                      => '50',
+			'{estado}'                       => __( 'Activo', 'convoca-members' ),
+			'{numero_socio}'                 => '042',
+			'{fecha_alta}'                   => '01/01/2026',
+			'{fecha_renovacion}'             => '01/01/2027',
+			'{fecha_baja}'                   => '—',
+			'{link_pago}'                    => 'https://ejemplo.test/pago',
+			'{horas_actuales}'               => '25',
+			'{horas_objetivo}'               => '25',
+			'{porcentaje_cumplimiento}'      => '100',
+			'{horas_totales}'                => '25',
+			'{plan_nombre}'                  => '🥈 Lugg',
+			'{proyectos_participados}'       => 'Limpieza Playa Xago, Plantación de árboles',
+			'{certificado_id}'               => 'CERT-2026-042',
+			'{certificado_url_verificacion}' => 'https://ejemplo.test/certificado/CERT-2026-042',
+			'{usuario}'                      => 'maria.garcia',
+			'{password}'                     => '••••••••',
+			'{login_url}'                    => 'https://ejemplo.test/mi-area/',
+			'{admin_email}'                  => get_bloginfo( 'admin_email' ),
+			'{link_confirmacion}'            => 'https://ejemplo.test/confirmar',
+			'{nuevo_email}'                  => 'nuevo@ejemplo.com',
+			'{telefono}'                     => '600 000 000',
+		);
+	}
+
+	/**
+	 * HTML completo (con el layout de email) de una plantilla con datos de ejemplo.
+	 */
+	public static function preview_html( string $slug ): string {
+		$templates = self::get_templates();
+		$tpl       = $templates[ $slug ] ?? array(
+			'subject' => '',
+			'body'    => '',
+		);
+
+		$vars    = self::preview_vars();
+		$subject = strtr( (string) ( $tpl['subject'] ?? '' ), $vars );
+		$body    = strtr( (string) ( $tpl['body'] ?? '' ), $vars );
+
+		return Email_Layout::render(
+			$body,
+			$subject,
+			array(
+				'footer_text' => sprintf(
+					/* translators: %s: site name */
+					__( 'Has recibido este email porque eres miembro de %s.', 'convoca-members' ),
+					get_bloginfo( 'name' )
+				),
+			)
+		);
+	}
+
 	/* ── Getters / Setters for admin ───────────────────── */
 
 	public static function get_templates(): array {
@@ -724,5 +797,63 @@ class Email_Manager {
 
 	public static function save_templates( array $templates ): void {
 		update_option( self::OPTION, $templates );
+	}
+
+	/* ── Migración de plantillas ya guardadas ─────────── */
+
+	const TEMPLATES_VERSION_OPTION = 'convoca_email_templates_version';
+	const TEMPLATES_VERSION        = '2026-09-10';
+
+	/**
+	 * Corrige las plantillas ya guardadas en sitios existentes: `install_defaults()`
+	 * solo actúa al activar, así que los textos rotos de versiones anteriores
+	 * (escapes `\u00a1`/`\U0001f389`, enlaces sin llaves y la marca «Convoca» donde
+	 * debe ir el nombre del sitio) seguirían ahí indefinidamente.
+	 *
+	 * Las sustituciones son literales y acotadas: no reescribe las plantillas
+	 * personalizadas más allá de esos patrones.
+	 */
+	public static function maybe_migrate(): void {
+		if ( self::TEMPLATES_VERSION === get_option( self::TEMPLATES_VERSION_OPTION ) ) {
+			return;
+		}
+
+		$templates = get_option( self::OPTION );
+
+		if ( is_array( $templates ) && ! empty( $templates ) ) {
+			$site = get_bloginfo( 'name' );
+			$map  = array(
+				// Escapes Unicode que se guardaron como texto literal.
+				'\u00a1'                              => '¡',
+				'\u0001F389'                          => '🎉',
+				'\U0001f389'                          => '🎉',
+				// Residuo del doble escape (el \u se perdió al guardar).
+				'<h1>00a1Bienvenido/a'                => '<h1>¡Bienvenido/a',
+				'! 0001F389</H1>'                     => '! 🎉</h1>',
+				// Placeholders que perdieron las llaves: enlaces roto.
+				'http://login_url'                    => '{login_url}',
+				'http://certificado_url_verificacion' => '{certificado_url_verificacion}',
+				// La marca debe ser el nombre del sitio.
+				'familia Convoca'                     => 'familia ' . $site,
+				'comunidad Convoca'                   => 'comunidad ' . $site,
+				'apoyando a Convoca'                  => 'apoyando a ' . $site,
+			);
+
+			foreach ( $templates as $slug => $tpl ) {
+				foreach ( array( 'subject', 'body' ) as $field ) {
+					if ( isset( $tpl[ $field ] ) ) {
+						$templates[ $slug ][ $field ] = str_replace(
+							array_keys( $map ),
+							array_values( $map ),
+							(string) $tpl[ $field ]
+						);
+					}
+				}
+			}
+
+			update_option( self::OPTION, $templates );
+		}
+
+		update_option( self::TEMPLATES_VERSION_OPTION, self::TEMPLATES_VERSION );
 	}
 }
