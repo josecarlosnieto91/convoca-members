@@ -97,8 +97,16 @@ class Admin_Logs {
 				<div class="alignleft actions">
 					<label for="conv-logs-per-page" class="screen-reader-text"><?php esc_html_e( 'Registros por página', 'convoca-members' ); ?></label>
 					<select id="conv-logs-per-page" onchange="if(this.value){location.href=this.value;}">
-						<?php foreach ( array( 25, 50, 100, 200 ) as $n ) : ?>
-							<option value="<?php echo esc_url( add_query_arg( array( 'paged' => 1, 'per_page' => $n ) ) ); ?>" <?php selected( $per_page, $n ); ?>>
+						<?php
+						foreach ( array( 25, 50, 100, 200 ) as $n ) :
+							$per_page_url = add_query_arg(
+								array(
+									'paged'    => 1,
+									'per_page' => $n,
+								)
+							);
+							?>
+							<option value="<?php echo esc_url( $per_page_url ); ?>" <?php selected( $per_page, $n ); ?>>
 								<?php printf( esc_html__( '%d por página', 'convoca-members' ), (int) $n ); ?>
 							</option>
 						<?php endforeach; ?>

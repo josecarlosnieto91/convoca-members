@@ -42,12 +42,6 @@ parameters:
 			message: '#Parameter \#1 \$args of method WP_Admin_Bar::add_node#'
 			identifier: argument.type
 			path: admin/class-admin-proyectos.php
-		# add_submenu_page(null) es un patrón válido de WP para ocultar una
-		# página del menú (slug como parent); el stub exige string.
-		-
-			message: '#Parameter \#1 \$parent_slug of function add_submenu_page#'
-			identifier: argument.type
-			path: admin/class-admin-proyectos.php
 		# get_userdata() puede devolver false en runtime; el ?-> ?? '' es
 		# defensivo correcto, pero el stub declara WP_User no-null.
 		-

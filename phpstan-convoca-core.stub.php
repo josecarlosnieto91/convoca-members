@@ -15,6 +15,12 @@
  */
 
 namespace Convoca\Core {
+	/**
+	 * Definida en convoca-core/includes/admin-appearance.php; se usa desde la
+	 * exportación a PDF de listados. El análisis es aislado (core no está en el
+	 * repo), así que la firma se declara aquí.
+	 */
+	function convoca_export_pdf( string $title, array $headers, array $rows, string $filename ): void {}
 	abstract class Upgrade_Manager {
 		public function init(): void {}
 		public function maybe_upgrade(): void {}

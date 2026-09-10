@@ -713,7 +713,16 @@ class Admin_Settings {
 			echo '<div class="updated"><p>' . esc_html__( 'Plantillas guardadas.', 'convoca-members' ) . '</p></div>';
 		}
 
-		$templates  = Email_Manager::get_templates();
+		$templates = Email_Manager::get_templates();
+
+		/**
+		 * Etiquetas legibles por slug.
+		 *
+		 * Cubre las 13 plantillas; `?? $slug` deja pasar sin romper cualquier
+		 * plantilla que se añada en el futuro sin etiqueta.
+		 *
+		 * @var array<string, string> $tpl_labels
+		 */
 		$tpl_labels = array(
 			'solicitud_recibida'              => __( 'Solicitud recibida', 'convoca-members' ),
 			'bienvenida'                      => __( 'Bienvenida (activación)', 'convoca-members' ),
