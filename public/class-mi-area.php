@@ -33,7 +33,6 @@ class Mi_Area {
 		add_shortcode( 'convoca_mi_area', array( $this, 'render' ) );
 		add_shortcode( 'convoca_mi_perfil', array( $this, 'render_perfil' ) );
 		add_shortcode( 'convoca_renovar', array( $this, 'render_renovar' ) );
-		add_action( 'wp_enqueue_scripts', array( $this, 'enqueue_assets' ) );
 		add_action( 'template_redirect', array( $this, 'handle_email_confirmation' ) );
 		add_action( 'template_redirect', array( $this, 'handle_phone_confirmation' ) );
 	}
@@ -110,6 +109,7 @@ class Mi_Area {
 	 * For guests: login prompt.
 	 */
 	public function render_renovar(): string {
+		self::enqueue_front_assets();
 		$member_id = Member_Auth::get_current_member_id();
 		ob_start();
 
@@ -184,9 +184,15 @@ class Mi_Area {
 	}
 
 	/**
-	 * Enqueue CSS/JS.
+	 * Enqueue CSS/JS of the members area.
+	 *
+	 * Se llama desde cada punto de render (shortcodes y bloques), no en
+	 * wp_enqueue_scripts: el área privada solo existe en las páginas que la pintan,
+	 * y encolarla en todas metía ~14 KiB en cada visita del sitio. Hacerlo en el
+	 * render cubre también las plantillas FSE y los bloques reutilizables, que un
+	 * heurístico sobre el contenido de la entrada no vería.
 	 */
-	public function enqueue_assets(): void {
+	public static function enqueue_front_assets(): void {
 		wp_enqueue_style( 'convoca-mi-area', CONVOCA_MEMBERS_URL . 'public/assets/mi-area.css', array(), CONVOCA_MEMBERS_VERSION );
 		wp_enqueue_script( 'convoca-mi-area', CONVOCA_MEMBERS_URL . 'public/assets/mi-area.js', array( 'convoca-common-js' ), CONVOCA_MEMBERS_VERSION, true );
 
@@ -213,6 +219,7 @@ class Mi_Area {
 	 * Render the panel.
 	 */
 	public function render(): string {
+		self::enqueue_front_assets();
 		ob_start();
 		$member_id = Member_Auth::get_current_member_id();
 
@@ -298,6 +305,8 @@ class Mi_Area {
 	 * Shows the member record + active inscriptions for the logged-in user.
 	 */
 	public function render_perfil(): string {
+		self::enqueue_front_assets();
+
 		if ( ! is_user_logged_in() ) {
 			return sprintf(
 				'<div class="conv-profile-login">%s <a href="%s" class="button">%s</a></div>',

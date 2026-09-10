@@ -60,6 +60,8 @@ class Form_Handler {
 	 * Render the multi-step form via template.
 	 */
 	public function render(): string {
+		Mi_Area::enqueue_front_assets();
+
 		wp_enqueue_style(
 			'conv-members-public',
 			CONVOCA_MEMBERS_URL . 'assets/css/convoca-members-public.css',
