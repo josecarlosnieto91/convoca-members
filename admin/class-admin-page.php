@@ -655,6 +655,6 @@ class Admin_Page {
 			);
 		}
 
-		\convoca_export_pdf( __( 'Listado de Miembros', 'convoca-members' ), $headers, $rows, 'socios-convoca' );
+		\Convoca\Core\convoca_export_pdf( __( 'Listado de Miembros', 'convoca-members' ), $headers, $rows, 'socios-convoca' );
 	}
 }

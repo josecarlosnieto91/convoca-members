@@ -44,6 +44,31 @@ class Admin_Horas extends \WP_List_Table {
 	}
 
 	/**
+	 * Register submenu pages under Miembros (list + hidden custom editor).
+	 * The dashboard "Horas voluntariado" button points to page=conv-horas;
+	 * load-post-(new).php redirects registro_hora to page=conv-horas-editor.
+	 */
+	public function add_menu(): void {
+		add_submenu_page(
+			'conv-members',
+			__( 'Horas de Voluntariado', 'convoca-members' ),
+			__( 'Horas', 'convoca-members' ),
+			'gestionar_miembros',
+			'conv-horas',
+			array( $this, 'render_page' )
+		);
+
+		add_submenu_page(
+			null, // Hidden from menu — reached via load-post redirection.
+			__( 'Editor de Registro de Horas', 'convoca-members' ),
+			__( 'Editor de Horas', 'convoca-members' ),
+			'gestionar_miembros',
+			'conv-horas-editor',
+			array( $this, 'render_editor_page' )
+		);
+	}
+
+	/**
 	 * Initialize WP_List_Table (must be called after admin screen is available).
 	 */
 	private function init_table(): void {
