@@ -9,6 +9,10 @@
  */
 define('ABSPATH', dirname(__DIR__) . '/');
 
+// 0. Stub de Convoca\Core\Utils (locks por transients) ANTES del bootstrap de
+//    core: ver tests/stubs-utils.php para el porqué.
+require_once __DIR__ . '/stubs-utils.php';
+
 // 1. Mocks de WordPress (stubs) del core — deben cargarse ANTES del autoloader.
 $core_bootstrap = dirname(__DIR__, 2) . '/convoca-core/tests/bootstrap-unit.php';
 if (file_exists($core_bootstrap)) {
