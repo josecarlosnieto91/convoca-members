@@ -59,9 +59,9 @@ class Admin_Horas extends \WP_List_Table {
 		);
 
 		add_submenu_page(
-			null, // Hidden from menu — reached via load-post redirection.
-			__( 'Editor de Registro de Horas', 'convoca-members' ),
-			__( 'Editor de Horas', 'convoca-members' ),
+			'conv-members',
+			__( 'Añadir horas de voluntariado', 'convoca-members' ),
+			__( 'Añadir horas', 'convoca-members' ),
 			'gestionar_miembros',
 			'conv-horas-editor',
 			array( $this, 'render_editor_page' )

@@ -109,9 +109,9 @@ class Admin_Proyectos extends \WP_List_Table {
 		);
 
 		add_submenu_page(
-			null, // Hidden from menu.
-			__( 'Editor de Proyecto', 'convoca-members' ),
-			__( 'Editor de Proyecto', 'convoca-members' ),
+			'conv-members',
+			__( 'Añadir proyecto', 'convoca-members' ),
+			__( 'Añadir proyecto', 'convoca-members' ),
 			'gestionar_miembros',
 			'conv-proyecto-editor',
 			array( $this, 'render_editor' )

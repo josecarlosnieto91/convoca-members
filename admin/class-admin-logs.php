@@ -50,9 +50,13 @@ class Admin_Logs {
 			echo '<div class="updated"><p>Logs de Members borrados.</p></div>';
 		}
 
-		$pagenum  = isset( $_GET['paged'] ) ? max( 1, intval( $_GET['paged'] ) ) : 1;
-		$per_page = 50;
-		$offset   = ( $pagenum - 1 ) * $per_page;
+		$pagenum = isset( $_GET['paged'] ) ? max( 1, intval( $_GET['paged'] ) ) : 1;
+
+		// Registros por página seleccionable (10-200).
+		$per_page = isset( $_GET['per_page'] ) ? (int) $_GET['per_page'] : 50;
+		$per_page = ( $per_page >= 10 && $per_page <= 200 ) ? $per_page : 50;
+
+		$offset = ( $pagenum - 1 ) * $per_page;
 
 		// Filter to Members-related logs.
 		$total_items = (int) $wpdb->get_var(
@@ -89,6 +93,48 @@ class Admin_Logs {
 				</a>
 			</p>
 
+			<div class="tablenav top">
+				<div class="alignleft actions">
+					<label for="conv-logs-per-page" class="screen-reader-text"><?php esc_html_e( 'Registros por página', 'convoca-members' ); ?></label>
+					<select id="conv-logs-per-page" onchange="if(this.value){location.href=this.value;}">
+						<?php foreach ( array( 25, 50, 100, 200 ) as $n ) : ?>
+							<option value="<?php echo esc_url( add_query_arg( array( 'paged' => 1, 'per_page' => $n ) ) ); ?>" <?php selected( $per_page, $n ); ?>>
+								<?php printf( esc_html__( '%d por página', 'convoca-members' ), (int) $n ); ?>
+							</option>
+						<?php endforeach; ?>
+					</select>
+				</div>
+				<div class="tablenav-pages">
+					<span class="displaying-num">
+						<?php
+						printf(
+							esc_html__( 'Mostrando %1$d–%2$d de %3$d registros', 'convoca-members' ),
+							$total_items ? (int) ( $offset + 1 ) : 0,
+							(int) min( $offset + $per_page, $total_items ),
+							(int) $total_items
+						);
+						?>
+					</span>
+					<?php if ( $num_pages > 1 ) : ?>
+						<?php
+						echo wp_kses_post(
+							paginate_links(
+								array(
+									'base'      => add_query_arg( 'paged', '%#%' ),
+									'format'    => '',
+									'prev_text' => '&laquo;',
+									'next_text' => '&raquo;',
+									'total'     => $num_pages,
+									'current'   => $pagenum,
+								)
+							)
+						);
+						?>
+					<?php endif; ?>
+				</div>
+				<br class="clear">
+			</div>
+
 			<table class="wp-list-table widefat fixed striped">
 				<thead>
 					<tr>
@@ -124,9 +170,19 @@ class Admin_Logs {
 				</tbody>
 			</table>
 
-			<?php if ( $num_pages > 1 ) : ?>
-				<div class="tablenav">
-					<div class="tablenav-pages">
+			<div class="tablenav bottom">
+				<div class="tablenav-pages">
+					<span class="displaying-num">
+						<?php
+						printf(
+							esc_html__( 'Mostrando %1$d–%2$d de %3$d registros', 'convoca-members' ),
+							$total_items ? (int) ( $offset + 1 ) : 0,
+							(int) min( $offset + $per_page, $total_items ),
+							(int) $total_items
+						);
+						?>
+					</span>
+					<?php if ( $num_pages > 1 ) : ?>
 						<?php
 						echo wp_kses_post(
 							paginate_links(
@@ -138,12 +194,13 @@ class Admin_Logs {
 									'total'     => $num_pages,
 									'current'   => $pagenum,
 								)
-							) 
+							)
 						);
 						?>
-					</div>
+					<?php endif; ?>
 				</div>
-			<?php endif; ?>
+				<br class="clear">
+			</div>
 		</div>
 		<?php
 	}
