@@ -36,7 +36,7 @@ convoca-core, WordPress 6.4+, PHP 8.1+, Dompdf (optional)
 
 ## Version
 
-2.6.0
+2.8.2
 
 ### 2.6.2
 - docs: add MANUAL_USUARIO.md with 15-section admin guide
@@ -84,4 +84,38 @@ Prueba Convoca sin instalar nada:
 - [Convoca Gateway](https://github.com/josecarlosnieto91/convoca-gateway)
 - [Convoca Shifts](https://github.com/josecarlosnieto91/convoca-shifts)
 - [Convoca Publisher](https://github.com/josecarlosnieto91/convoca-publisher)
+
+## 🧑‍💻 Developer Guide — Hooks & Filters
+
+La API pública de Convoca para desarrolladores son los **hooks y filtros** que emiten los plugins. La referencia completa, generada desde el código, vive en [`convoca-core/HOOKS.md`](https://github.com/josecarlosnieto91/convoca-core/blob/main/HOOKS.md).
+
+### Acciones principales
+
+| Hook | Descripción |
+|------|-------------|
+| `convoca_members_created` | Se dispara al crear un miembro (alta o importación CSV). |
+| `convoca_members_estado_changed` | Cambio de estado de un miembro (activo, suspendido, baja, etc.). |
+| `convoca_members_cuota_pagada` | Tras confirmar el pago de una cuota en la pasarela. |
+| `convoca_members_hours_submitted` | Un voluntario registra horas desde su panel. |
+| `convoca_members_hora_aprobada` | Un administrador aprueba un registro de horas. |
+| `convoca_members_hora_rechazada` | Un administrador rechaza un registro de horas. |
+| `convoca_members_unsubscribe_request` | Un miembro solicita la baja desde su panel. |
+| `convoca_members_membership_expired` | Una membresía vence por falta de pago o renovación. |
+| `convoca_members_auto_renewal_completed` | Se completa una renovación automática con cargo. |
+
+### Filtros
+
+| Filtro | Descripción |
+|--------|-------------|
+| `convoca_members_plans` | Modifica los planes de membresía disponibles. |
+| `convoca_members_interest_areas` | Personaliza las áreas de interés del voluntariado. |
+| `convoca_email_providers` | Registra proveedores de email (wp_mail, Mailgun…). |
+
+## Pruebas
+
+```bash
+composer install
+composer test          # phpcs + phpstan + phpunit
+vendor/bin/phpunit     # solo unit tests
+```
 
