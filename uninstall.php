@@ -28,10 +28,10 @@ if ( ! defined( 'WP_UNINSTALL_PLUGIN' ) ) {
 // ─── Keep data mode ───
 // Define CONVOCA_KEEP_DATA_ON_UNINSTALL in wp-config.php to preserve all data
 // when uninstalling. Useful for temporary deactivation + reactivation.
-$convoca_conservar = ( defined( 'CONVOCA_KEEP_DATA_ON_UNINSTALL' ) && CONVOCA_KEEP_DATA_ON_UNINSTALL )
-	|| 1 === (int) get_option( 'convoca_uninstall_keep_data', 0 );
-
-if ( $convoca_conservar ) {
+if (
+	( defined( 'CONVOCA_KEEP_DATA_ON_UNINSTALL' ) && CONVOCA_KEEP_DATA_ON_UNINSTALL )
+	|| 1 === (int) get_option( 'convoca_uninstall_keep_data', 0 )
+) {
 	return;
 }
 

@@ -4,7 +4,7 @@ Tags: members, volunteers, membership, certificates, associations
 Requires at least: 6.4
 Tested up to: 7.1
 Requires PHP: 8.1
-Stable tag: 2.8.2
+Stable tag: 2.8.3
 License: GPL-2.0-or-later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -49,6 +49,10 @@ This plugin may contact getconvoca.app to validate PRO licenses, only when a key
 3. Activate the plugin from the Plugins menu
 
 == Changelog ==
+
+= 2.8.3 =
+* Rendimiento: mi-area.css y mi-area.js solo se cargan en las páginas que pintan el área de socios (antes, en todo el front).
+* Desinstalación: borra sus tablas, opciones y cron pendientes; respeta el ajuste de conservar datos.
 
 = 2.7.2 =
 * Security: CPT miembro ya no se expone vía REST por defecto (show_in_rest=false) — antes listaba nombres de socios en /wp/v2/miembro.
