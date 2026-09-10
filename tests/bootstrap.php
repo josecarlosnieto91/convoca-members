@@ -199,6 +199,7 @@ namespace {
     if (!\function_exists('wp_unslash')) { function wp_unslash($s) { return \is_string($s) ? \stripslashes($s) : $s; } }
     if (!\function_exists('wp_kses_post')) { function wp_kses_post($s) { return $s; } }
     if (!\function_exists('home_url')) { function home_url($p = '') { return "https://example.com$p"; } }
+    if (!\function_exists('get_bloginfo')) { function get_bloginfo($show = 'name') { return 'Sitio de Prueba'; } }
     if (!\function_exists('admin_url')) { function admin_url($p = '') { return "/wp-admin/$p"; } }
     if (!\function_exists('wp_next_scheduled')) { function wp_next_scheduled($h) { return false; } }
     if (!\function_exists('wp_schedule_event')) { function wp_schedule_event($ts, $r, $h, $a = []) { return true; } }
