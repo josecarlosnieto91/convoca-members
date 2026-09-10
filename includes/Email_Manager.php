@@ -537,17 +537,38 @@ class Email_Manager {
 			$headers[] = 'Reply-To: ' . $vars['{email}'];
 		}
 
-		$body = Email_Layout::render(
-			$body,
-			$subject,
-			array(
-				'footer_text' => sprintf(
-					/* translators: %s: site name */
-					__( 'Has recibido este email porque eres miembro de %s.', 'convoca-members' ),
-					get_bloginfo( 'name' )
-				),
-			)
+		$layout_opts = array(
+			'footer_text' => sprintf(
+				/* translators: %s: site name */
+				__( 'Has recibido este email porque eres miembro de %s.', 'convoca-members' ),
+				get_bloginfo( 'name' )
+			),
 		);
+
+		// CTA: si la plantilla no trae botón, se añade uno para que el email no
+		// llegue sin acción. Muchas plantillas guardadas vienen de versiones
+		// anteriores que no lo incluían (el texto pedía «paga desde tu panel»
+		// pero no había forma de llegar).
+		if ( false === strpos( $body, 'email-btn' ) ) {
+			$cta = self::default_cta( $template_slug );
+			if ( $cta ) {
+				$cta_url  = strtr( (string) $cta[0], $vars );
+				$cta_text = (string) $cta[1];
+
+				// {link_pago} puede venir vacío (p. ej. sin pasarela configurada):
+				// en ese caso el CTA apunta al panel del socio.
+				if ( '' === trim( $cta_url ) || '#' === trim( $cta_url ) ) {
+					$cta_url = (string) ( $vars['{login_url}'] ?? '' );
+				}
+
+				if ( '' !== trim( $cta_url ) && '' !== $cta_text ) {
+					$layout_opts['button_url']  = $cta_url;
+					$layout_opts['button_text'] = $cta_text;
+				}
+			}
+		}
+
+		$body = Email_Layout::render( $body, $subject, $layout_opts );
 
 		$sent = \Convoca\Members\Email_Verifier::send( $email, $subject, $body, $headers, $attachments );
 
@@ -722,6 +743,33 @@ class Email_Manager {
 	/* ── Vista previa (datos de ejemplo) ─────────────── */
 
 	/**
+	 * Acción por defecto de cada plantilla: [url_placeholder, texto].
+	 *
+	 * Garantiza que ningún email llegue sin una acción clara. Se usa solo cuando
+	 * el cuerpo no incluye ya un botón (las plantillas guardadas de versiones
+	 * anteriores pedían «paga desde tu panel» sin enlace).
+	 *
+	 * @return array<int,string>|array{}
+	 */
+	private static function default_cta( string $slug ): array {
+		$ctas = array(
+			'solicitud_recibida'        => array( '{login_url}', __( 'Acceder a Mi Área', 'convoca-members' ) ),
+			'bienvenida'                => array( '{login_url}', __( 'Acceder a Mi Área', 'convoca-members' ) ),
+			'recordatorio_pago'         => array( '{link_pago}', __( 'Pagar ahora', 'convoca-members' ) ),
+			'pago_pendiente_2'          => array( '{link_pago}', __( 'Pagar ahora', 'convoca-members' ) ),
+			'pago_pendiente_ultimo'     => array( '{link_pago}', __( 'Pagar ahora', 'convoca-members' ) ),
+			'renovacion'                => array( '{link_pago}', __( 'Renovar ahora', 'convoca-members' ) ),
+			'renovacion_15d'            => array( '{login_url}', __( 'Renovar mi cuota', 'convoca-members' ) ),
+			'renovacion_7d'             => array( '{login_url}', __( 'Renovar mi cuota', 'convoca-members' ) ),
+			'renovacion_automatica'     => array( '{login_url}', __( 'Ver mi membresía', 'convoca-members' ) ),
+			'renovacion_completada'     => array( '{login_url}', __( 'Ver mi carnet', 'convoca-members' ) ),
+			'voluntariado_recordatorio' => array( '{login_url}', __( 'Registrar mis horas', 'convoca-members' ) ),
+		);
+
+		return $ctas[ $slug ] ?? array();
+	}
+
+	/**
 	 * Valores de ejemplo para previsualizar una plantilla: cubre TODAS las
 	 * variables soportadas (VARIABLES) para que ninguna quede sin sustituir.
 	 *
@@ -776,17 +824,31 @@ class Email_Manager {
 		$subject = strtr( (string) ( $tpl['subject'] ?? '' ), $vars );
 		$body    = strtr( (string) ( $tpl['body'] ?? '' ), $vars );
 
-		return Email_Layout::render(
-			$body,
-			$subject,
-			array(
-				'footer_text' => sprintf(
-					/* translators: %s: site name */
-					__( 'Has recibido este email porque eres miembro de %s.', 'convoca-members' ),
-					get_bloginfo( 'name' )
-				),
-			)
+		$opts = array(
+			'footer_text' => sprintf(
+				/* translators: %s: site name */
+				__( 'Has recibido este email porque eres miembro de %s.', 'convoca-members' ),
+				get_bloginfo( 'name' )
+			),
 		);
+
+		// Igual que en el envío: si la plantilla no trae botón, el ejemplo muestra
+		// el CTA que se añadirá realmente.
+		if ( false === strpos( $body, 'email-btn' ) ) {
+			$cta = self::default_cta( $slug );
+			if ( $cta ) {
+				$cta_url = strtr( (string) $cta[0], $vars );
+				if ( '' === trim( $cta_url ) || '#' === trim( $cta_url ) ) {
+					$cta_url = (string) ( $vars['{login_url}'] ?? '' );
+				}
+				if ( '' !== trim( $cta_url ) ) {
+					$opts['button_url']  = $cta_url;
+					$opts['button_text'] = (string) $cta[1];
+				}
+			}
+		}
+
+		return Email_Layout::render( $body, $subject, $opts );
 	}
 
 	/* ── Getters / Setters for admin ───────────────────── */
@@ -802,7 +864,7 @@ class Email_Manager {
 	/* ── Migración de plantillas ya guardadas ─────────── */
 
 	const TEMPLATES_VERSION_OPTION = 'convoca_email_templates_version';
-	const TEMPLATES_VERSION        = '2026-09-10';
+	const TEMPLATES_VERSION        = '2026-09-10-2';
 
 	/**
 	 * Corrige las plantillas ya guardadas en sitios existentes: `install_defaults()`
@@ -842,11 +904,22 @@ class Email_Manager {
 			foreach ( $templates as $slug => $tpl ) {
 				foreach ( array( 'subject', 'body' ) as $field ) {
 					if ( isset( $tpl[ $field ] ) ) {
-						$templates[ $slug ][ $field ] = str_replace(
+						$text = str_replace(
 							array_keys( $map ),
 							array_values( $map ),
 							(string) $tpl[ $field ]
 						);
+
+						// Emails fijos («escribe a coordinacion@…») → la variable del
+						// email configurado en WordPress, para que cada sitio envíe
+						// al suyo sin tocar plantillas.
+						$text = preg_replace(
+							'/[a-z0-9._%+\-]+@(?:getconvoca\.app|biodevas\.org|unbosquepamaria\.org)/i',
+							'{admin_email}',
+							$text
+						);
+
+						$templates[ $slug ][ $field ] = $text;
 					}
 				}
 			}
