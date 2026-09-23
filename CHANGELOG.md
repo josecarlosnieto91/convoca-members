@@ -1,5 +1,10 @@
 # Changelog — convoca-members
 
+## v2.8.5 (2026-09-23)
+
+### 🐛 Correcciones
+- Ajustes → Salud: la comprobación de la página de alta buscaba el shortcode `[convoca_alta]`, que no existe en el plugin, y avisaba de un fallo que el admin no podía arreglar creando la página por ese nombre. Ahora busca el real, `[convoca_alta_socio]`.
+
 ## v2.8.4 (2026-09-11)
 
 ### ✨ New features

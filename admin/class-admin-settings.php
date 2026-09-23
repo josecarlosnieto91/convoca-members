@@ -1119,8 +1119,8 @@ class Admin_Settings {
 		$required_pages = array(
 			'convoca_alta_socio'            => array(
 				'title'     => __( 'Página: Alta de Socio', 'convoca-members' ),
-				'shortcode' => '[convoca_alta]',
-				'fix'       => __( 'Crea una página con el shortcode [convoca_alta].', 'convoca-members' ),
+				'shortcode' => '[convoca_alta_socio]',
+				'fix'       => __( 'Crea una página con el shortcode [convoca_alta_socio].', 'convoca-members' ),
 			),
 			'convoca_voluntariado'          => array(
 				'title'     => __( 'Página: Registro Voluntariado', 'convoca-members' ),

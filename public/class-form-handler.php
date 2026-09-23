@@ -16,7 +16,7 @@
  */
 
 /**
- * Multi-step member registration form (shortcode [convoca_alta]).
+ * Multi-step member registration form (shortcode [convoca_alta_socio]).
  *
  * @package Convoca\Members
  */

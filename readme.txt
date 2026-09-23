@@ -4,7 +4,7 @@ Tags: members, volunteers, membership, certificates, associations
 Requires at least: 6.4
 Tested up to: 7.1
 Requires PHP: 8.1
-Stable tag: 2.8.4
+Stable tag: 2.8.5
 License: GPL-2.0-or-later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -49,6 +49,9 @@ This plugin may contact getconvoca.app to validate PRO licenses, only when a key
 3. Activate the plugin from the Plugins menu
 
 == Changelog ==
+
+= 2.8.5 =
+* Ajustes → Salud: la comprobación de la página de alta buscaba el shortcode `[convoca_alta]`, que no existe, y daba error permanente. Ahora busca el real, `[convoca_alta_socio]`.
 
 = 2.8.4 =
 * Al generar el pago de la cuota se entrega el correo del socio, para que reciba el recibo y el aviso de caducidad del enlace. Se aplica al alta, la reactivación, la renovación, el recordatorio y el pago manual desde la ficha.
