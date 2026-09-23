@@ -30,7 +30,7 @@ class CronRoutesTest extends TestCase
      * Página de prueba. El WP_Post del bootstrap no tiene constructor: se rellena
      * propiedad a propiedad a propósito.
      */
-    private function pagina(int $id, string $estado = 'publish'): \WP_Post
+    private function pagina(int $id, string $estado = 'publish'): object
     {
         $page = new \WP_Post();
         $page->ID = $id;
