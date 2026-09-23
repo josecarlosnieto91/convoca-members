@@ -1729,10 +1729,6 @@ msgstr "Install and activate the %s plugin."
 msgid "Página: Alta de Socio"
 msgstr "Page: Member Signup"
 
-#: admin/class-admin-settings.php:1123
-msgid "Crea una página con el shortcode [convoca_alta]."
-msgstr "Create a page with the [convoca_alta] shortcode."
-
 #: admin/class-admin-settings.php:1126
 msgid "Página: Registro Voluntariado"
 msgstr "Page: Volunteer Registration"

@@ -18,7 +18,7 @@
 /**
  * Template: Multi-step member registration form v2.
  *
- * Rendered by [convoca_alta] shortcode.
+ * Rendered by [convoca_alta_socio] shortcode.
  * Aligned with Convoca Theme v2 and static alta-socios.html.
  *
  * @package Convoca\Members
