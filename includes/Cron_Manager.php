@@ -464,7 +464,7 @@ class Cron_Manager {
 				Estados::change( $member_id, 'pendiente_pago', "Renovación automática fallida tras {$max_attempts} intentos - requerido pago manual" );
 
 				$link = $this->get_renewal_link( $member_id );
-				if ( $link && $link !== home_url( '/renovar/' ) ) {
+				if ( $link && $link !== self::renewal_page_url() ) {
 					$email_manager->send_recordatorio_pago( $member_id, array( '{link_pago}' => $link ) );
 				} else {
 					$email_manager->send_renovacion( $member_id, array( '{link_pago}' => $link ) );
@@ -506,7 +506,7 @@ class Cron_Manager {
 				// Policy (2026-09): if the automatic charge fails, send the
 				// member a payment link so they can renew manually.
 				$link = $this->get_renewal_link( $member_id );
-				if ( $link && $link !== home_url( '/renovar/' ) ) {
+				if ( $link && $link !== self::renewal_page_url() ) {
 					$email_manager->send_recordatorio_pago( $member_id, array( '{link_pago}' => $link ) );
 					\Convoca\Core\Logger::info(
 						"Renovación automática fallida: enlace de pago manual enviado al miembro #$member_id.",
@@ -810,6 +810,86 @@ class Cron_Manager {
 
 	/* ── Helpers ────────────────────────────────────────────── */
 
+	/*
+	 * ── Rutas reales de la instalación ──
+	 *
+	 * Los avisos de renovación llevaban a `home_url( '/renovar/' )` y el enlace de
+	 * pago caía a `home_url( '/pagar/' )`: dos rutas escritas a mano. Si el sitio no
+	 * tiene esas páginas (ninguna de las dos la crea Convoca), el correo manda al
+	 * socio a un 404. Ahora se resuelve la página REAL y, si no existe, se cae al
+	 * panel del socio, que sí permite renovar y pagar: nunca un enlace muerto.
+	 */
+
+	/**
+	 * Página real de renovación (`[convoca_renovar]`).
+	 *
+	 * @return string URL absoluta.
+	 */
+	public static function renewal_page_url(): string {
+		$url = self::page_url_by_shortcode( 'convoca_renovar' );
+
+		if ( '' === $url ) {
+			$page = function_exists( 'get_page_by_path' ) ? get_page_by_path( 'renovar' ) : null;
+			if ( $page instanceof \WP_Post && 'publish' === $page->post_status ) {
+				$url = (string) get_permalink( $page );
+			}
+		}
+
+		return '' !== $url ? $url : self::member_panel_url();
+	}
+
+	/**
+	 * Página real de pago (la que sirve el Gateway).
+	 *
+	 * @return string URL absoluta.
+	 */
+	public static function payment_page_url(): string {
+		$url = self::page_url_by_shortcode( 'convoca_pago' );
+
+		return '' !== $url ? $url : self::member_panel_url();
+	}
+
+	/**
+	 * Página del panel del socio (renueva y paga desde ahí).
+	 *
+	 * @return string URL absoluta.
+	 */
+	private static function member_panel_url(): string {
+		$url = self::page_url_by_shortcode( 'convoca_mi_area' );
+
+		if ( '' === $url ) {
+			$page = function_exists( 'get_page_by_path' ) ? get_page_by_path( 'mi-area' ) : null;
+			$url  = ( $page instanceof \WP_Post && 'publish' === $page->post_status )
+				? (string) get_permalink( $page )
+				: home_url( '/' );
+		}
+
+		return $url;
+	}
+
+	/**
+	 * Primera página publicada que contiene un shortcode.
+	 *
+	 * @param string $shortcode Shortcode sin corchetes.
+	 * @return string URL absoluta, o cadena vacía si no hay ninguna.
+	 */
+	private static function page_url_by_shortcode( string $shortcode ): string {
+		if ( ! function_exists( 'shortcode_exists' ) || ! shortcode_exists( $shortcode ) ) {
+			return '';
+		}
+
+		global $wpdb;
+		$page_id = (int) $wpdb->get_var(
+			$wpdb->prepare(
+				"SELECT ID FROM {$wpdb->posts} WHERE post_type = 'page' AND post_status = 'publish'
+				 AND post_content LIKE %s ORDER BY ID ASC LIMIT 1",
+				'%[' . $wpdb->esc_like( $shortcode ) . ']%'
+			)
+		);
+
+		return $page_id ? (string) get_permalink( $page_id ) : '';
+	}
+
 	/**
 	 * Get signed payment link for a payment ID.
 	 */
@@ -823,7 +903,7 @@ class Cron_Manager {
 			}
 			return \Convoca\Gateway\Payment_Handler::get_payment_link( $pago_id, $token );
 		}
-		return home_url( '/pagar/' );
+		return self::payment_page_url();
 	}
 
 	/**
@@ -834,7 +914,7 @@ class Cron_Manager {
 
 		// Volunteers renew by hours, not by payment: no payment link.
 		if ( $forma_pago === 'voluntariado' ) {
-			return home_url( '/renovar/' );
+			return self::renewal_page_url();
 		}
 
 		$plan_key  = get_post_meta( $post_id, '_convoca_plan', true );
@@ -894,7 +974,7 @@ class Cron_Manager {
 			return $this->get_payment_link( $pago_id );
 		}
 
-		return home_url( '/renovar/' );
+		return self::renewal_page_url();
 	}
 
 	/**

@@ -1137,6 +1137,11 @@ class Admin_Settings {
 				'shortcode' => __( '[convoca_verificar_certificado]', 'convoca-members' ),
 				'fix'       => __( 'Crea una página con el shortcode [convoca_verificar_certificado].', 'convoca-members' ),
 			),
+			'convoca_renovar'               => array(
+				'title'     => __( 'Página: Renovar membresía', 'convoca-members' ),
+				'shortcode' => '[convoca_renovar]',
+				'fix'       => __( 'Crea una página con el shortcode [convoca_renovar]: los avisos de renovación enlazan ahí (sin ella, al panel del socio).', 'convoca-members' ),
+			),
 			'convoca_panel_reservas'        => array(
 				'title'     => __( 'Página: Panel de Reservas', 'convoca-members' ),
 				'shortcode' => __( '[convoca_panel_reservas]', 'convoca-members' ),

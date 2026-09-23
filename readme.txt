@@ -4,7 +4,7 @@ Tags: members, volunteers, membership, certificates, associations
 Requires at least: 6.4
 Tested up to: 7.1
 Requires PHP: 8.1
-Stable tag: 2.8.5
+Stable tag: 2.8.6
 License: GPL-2.0-or-later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -49,6 +49,10 @@ This plugin may contact getconvoca.app to validate PRO licenses, only when a key
 3. Activate the plugin from the Plugins menu
 
 == Changelog ==
+
+= 2.8.6 =
+* Los avisos de renovación y de pago resuelven la página real ([convoca_renovar] / la del Gateway) y, si no existe, enlazan al panel del socio: se acabaron los enlaces a /renovar/ y /pagar/ escritos a mano, que daban 404 si el sitio no tenía esas páginas.
+* El diagnóstico de Salud comprueba la página de renovación.
 
 = 2.8.5 =
 * Ajustes → Salud: la comprobación de la página de alta buscaba el shortcode `[convoca_alta]`, que no existe, y daba error permanente. Ahora busca el real, `[convoca_alta_socio]`.
