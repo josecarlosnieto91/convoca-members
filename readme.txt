@@ -4,7 +4,7 @@ Tags: members, volunteers, membership, certificates, associations
 Requires at least: 6.4
 Tested up to: 7.1
 Requires PHP: 8.1
-Stable tag: 2.8.7
+Stable tag: 2.8.8
 License: GPL-2.0-or-later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -49,6 +49,10 @@ This plugin may contact getconvoca.app to validate PRO licenses, only when a key
 3. Activate the plugin from the Plugins menu
 
 == Changelog ==
+
+= 2.8.8 =
+* El correo de solicitud recibida distingue **alta** de **renovación**: dice «tu solicitud de alta» cuando la ficha es nueva y «tu solicitud de renovación» cuando la persona vuelve (re-alta). Antes decía «tu solicitud» a secas.
+* Nota: las plantillas guardadas en un sitio no se actualizan solas al subir el plugin; hay que migrar el texto de la plantilla (ver `docs/`).
 
 = 2.8.7 =
 * **La cuota del primer año se abona siempre.** El compromiso de voluntariado ya no exime de la cuota en el alta: la ficha queda pendiente de pago y solo pasa a activa cuando se cobra (o cuando la junta la activa a mano).
