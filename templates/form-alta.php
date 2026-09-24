@@ -48,7 +48,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 		<!-- ═══ STEP 1: Plan ═══ -->
 		<div class="conv-form-step active" data-step="1">
 			<h2>Paso 1 — Elige tu forma de colaborar</h2>
-			<p>Todas las cuotas pueden abonarse con horas de voluntariado o con un pago anual.</p>
+			<p>Todas las cuotas se abonan anualmente. Con horas de voluntariado puedes renovar sin pagar a partir del segundo año.</p>
 
 			<?php
 			$all_plans      = \Convoca\Members\CPT_Miembro::get_plans();
@@ -67,7 +67,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 						<div class="conv-plan-label">
 							<h4><?php echo esc_html( $plan['label'] ); ?></h4>
 							<div class="conv-price"><?php echo (int) $plan['price']; ?>€</div>
-							<span class="conv-alt">ó <?php echo (float) $plan['hours']; ?>h voluntariado</span>
+							<span class="conv-alt">· <?php echo (float) $plan['hours']; ?>h para renovar sin pagar</span>
 						</div>
 					</label>
 				<?php endforeach; ?>
@@ -228,29 +228,16 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 		<!-- ═══ STEP 3: Payment + RGPD ═══ -->
 		<div class="conv-form-step" data-step="3">
-			<h2>Paso 3 — ¿Cómo aportas?</h2>
-			<p>Puedes cubrir tu cuota con horas de voluntariado o con un pago económico anual.</p>
+			<h2>Paso 3 — Tu cuota</h2>
+			<p>La cuota del primer año se abona siempre: es lo que te hace socio/a. Si además te comprometes a
+				hacer horas de voluntariado, a partir del año que viene podrás renovar sin pagar.</p>
 
-			<!-- High-level Payment Type Selector -->
-			<div class="conv-payment-type-group convoca-grid-2 convoca-mt-medium">
-				<label class="conv-plan-option conv-card-selector" id="conv-type-economic">
-					<input type="radio" name="payment_mode_ui" value="economic">
-					<div class="conv-plan-label">
-						<h4>💳 Pago económico</h4>
-						<p class="convoca-small">Transferencia, Bizum o Tarjeta</p>
-					</div>
-				</label>
-				<label class="conv-plan-option conv-card-selector" id="conv-type-volunteer">
-					<input type="radio" name="payment_mode_ui" value="volunteer"> <!-- Acts as vol selector -->
-					<div class="conv-plan-label">
-						<h4>🤝 Horas de voluntariado</h4>
-						<p class="convoca-small">Firma tu acuerdo de voluntariado</p>
-					</div>
-				</label>
-			</div>
+			<!-- El modo económico es el único camino del alta, así que los métodos de pago
+			     se muestran siempre (antes quedaban ocultos y el alta no se podía terminar).
+			     El valor viaja igual porque el JS y el handler lo leen. -->
+			<input type="radio" name="payment_mode_ui" value="economic" checked style="display:none">
 
-			<!-- Specific Economic Methods (Hidden by default) -->
-			<div id="conv-economic-options" style="display:none;" class="convoca-mt-medium">
+			<div id="conv-economic-options" class="convoca-mt-medium">
 				<p><strong>Selecciona el método de pago:</strong></p>
 				<div class="convoca-grid-3" role="radiogroup" aria-label="Método de pago">
 					<!-- Tarjeta -->
@@ -288,11 +275,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 				</div>
 			</div>
 
-			<!-- Hidden radio for voluntariado to keep form logic consistent -->
-			<div style="display:none">
-				<input type="radio" name="forma_pago" value="voluntariado" id="conv-radio-voluntariado">
-			</div>
-
 			<!-- Transfer Details (IBAN) -->
 			<div id="conv-transfer-details" class="convoca-box" style="display:none;">
 				<h4 style="margin-top:0">Pago por transferencia bancaria</h4>
@@ -311,19 +293,21 @@ if ( ! defined( 'ABSPATH' ) ) {
 				</div>
 			</div>
 
-			<!-- Volunteer agreement (from static web) -->
-			<div id="conv-volunteer-agreement" style="display:none">
+			<!-- Compromiso de voluntariado: NO sustituye a la cuota del primer año, habilita
+			     la renovación por horas a partir del segundo ciclo. -->
+			<div id="conv-volunteer-agreement" class="convoca-box">
 				<div class="convoca-field">
-					<p class="convoca-small">Al elegir horas de voluntariado, aceptas el
+					<p class="convoca-small"><strong>Voluntariado (opcional).</strong> Si te comprometes a cumplir las
+						horas de tu plan durante el próximo año, podrás renovar sin pagar la cuota. Aceptas el
 						<a href="<?php echo esc_url( apply_filters( 'convoca_members_alta_document_url', '' ) ); ?>" target="_blank"
 							rel="noopener">Código Ético</a> y el <a
-							href="https://drive.google.com/file/d/1Qps5ghQjNOPH4B55JEmlkQARJrpPN9jK/view".
+							href="https://drive.google.com/file/d/1Qps5ghQjNOPH4B55JEmlkQARJrpPN9jK/view"
 							target="_blank" rel="noopener">Programa de Voluntariado</a>.
 					</p>
 					<div class="convoca-check-group">
 						<input type="checkbox" id="conv-acuerdo-vol" name="acuerdo_voluntariado">
-						<label for="conv-acuerdo-vol">Acepto y firmo digitalmente el acuerdo de voluntariado con
-							Convoca, comprometiéndome a cumplir las horas correspondientes a mi plan con ' . esc_html(get_bloginfo('name')) . '.</label>
+						<label for="conv-acuerdo-vol">Me comprometo a hacer las horas de voluntariado de mi plan
+							(renovación del próximo año sin cuota).</label>
 					</div>
 				</div>
 			</div>

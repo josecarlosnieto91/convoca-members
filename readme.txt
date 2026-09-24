@@ -4,7 +4,7 @@ Tags: members, volunteers, membership, certificates, associations
 Requires at least: 6.4
 Tested up to: 7.1
 Requires PHP: 8.1
-Stable tag: 2.8.6
+Stable tag: 2.8.7
 License: GPL-2.0-or-later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -49,6 +49,12 @@ This plugin may contact getconvoca.app to validate PRO licenses, only when a key
 3. Activate the plugin from the Plugins menu
 
 == Changelog ==
+
+= 2.8.7 =
+* **La cuota del primer año se abona siempre.** El compromiso de voluntariado ya no exime de la cuota en el alta: la ficha queda pendiente de pago y solo pasa a activa cuando se cobra (o cuando la junta la activa a mano).
+* **Renovación con dos vías a partir del segundo año:** pagar la cuota o acreditar las horas de voluntariado que exige el plan (25 h / 50 h en los planes por defecto). El mínimo sale del plan, no de un valor fijo.
+* Si no se alcanzan las horas, el socio no pierde su condición de golpe: se le exige la cuota y se aplican los días de gracia de siempre.
+* **Corregido:** en el formulario de alta, los métodos de pago no se mostraban nunca (quedaban ocultos), así que un usuario no podía completar el alta. Ahora se muestran siempre y el detalle del método (IBAN o pasarela) aparece al elegirlo.
 
 = 2.8.6 =
 * Los avisos de renovación y de pago resuelven la página real ([convoca_renovar] / la del Gateway) y, si no existe, enlazan al panel del socio: se acabaron los enlaces a /renovar/ y /pagar/ escritos a mano, que daban 404 si el sitio no tenía esas páginas.

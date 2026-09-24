@@ -537,10 +537,12 @@ class CPT_Miembro {
 			return;
 		}
 
-		$forma_pago = get_post_meta( $post_id, '_convoca_forma_pago', true );
-		if ( $forma_pago === 'voluntariado' ) {
-			// Volunteer annual cycle (hours). Not fee-driven.
-			self::check_volunteer_cycle( $post_id, $status, $renewal_date );
+		// Modelo 2026-09: la cuota del primer año es obligatoria, así que la vía de
+		// horas NO exime de pagar el primer ciclo; a partir del segundo, cualquier
+		// socio puede renovar acreditando las horas del plan o pagando la cuota.
+		// Si cumple horas, renueva aquí y no entra en el ciclo de pago.
+		if ( self::puede_renovar_por_horas( $post_id, $status, $renewal_date )
+			&& self::check_volunteer_cycle( $post_id, $status, $renewal_date ) ) {
 			return;
 		}
 
@@ -587,41 +589,74 @@ class CPT_Miembro {
 	}
 
 	/**
+	 * ¿Puede este miembro renovar por horas en el ciclo que le vence?
+	 *
+	 * Reglas (modelo 2026-09):
+	 *  - Debe estar 'activo' y tener el ciclo vencido.
+	 *  - El PRIMER ciclo no admite horas: la cuota del primer año se abona sí o sí.
+	 *    Se considera primer ciclo el que termina dentro de los 12 meses siguientes
+	 *    al alta (el que se cierra con el primer vencimiento).
+	 *  - Debe ser un plan con objetivo de horas (> 0) y tener el voluntariado
+	 *    disponible para el socio.
+	 *
+	 * @param int    $post_id      Member ID.
+	 * @param string $status       Current member state.
+	 * @param string $renewal_date Renewal date being evaluated (Y-m-d).
+	 * @return bool
+	 */
+	private static function puede_renovar_por_horas( int $post_id, string $status, string $renewal_date ): bool {
+		$today = current_time( 'Y-m-d' );
+
+		if ( $status !== 'activo' || $today <= $renewal_date ) {
+			return false;
+		}
+
+		// Primer ciclo: se paga. La vía de horas solo existe a partir del segundo
+		// vencimiento. Se compara con el alta + 1 año y un margen de 30 días, para
+		// no depender del redondeo de fechas: quien aún está en su primer año no
+		// puede saltarse la cuota.
+		$fecha_alta = get_post_meta( $post_id, '_convoca_fecha_alta', true );
+		if ( $fecha_alta ) {
+			$fin_primer_ciclo = \Convoca\Core\Utils::format_date( $fecha_alta . ' +1 year +30 days', 'Y-m-d' );
+			if ( $renewal_date <= $fin_primer_ciclo ) {
+				return false;
+			}
+		}
+
+		$plan_data = self::get_plan( get_post_meta( $post_id, '_convoca_plan', true ) );
+		if ( ! $plan_data ) {
+			return false;
+		}
+
+		return (float) ( $plan_data['hours'] ?? 0 ) > 0;
+	}
+
+	/**
 	 * Volunteer annual cycle evaluation.
 	 *
-	 * Volunteers earn the "socio" status by completing the plan's annual hours.
-	 * A volunteer in 'activo' whose renewal date has passed is checked here:
-	 *  - If enough approved hours were registered since the cycle start → renew
-	 *    (fecha_renovacion + 1 year, keep 'activo').
-	 *  - Otherwise → back to 'pendiente_documentacion' (volunteer only, no
-	 *    member benefits) until hours are completed again.
+	 * Renovación por horas (vía alternativa al pago, a partir del segundo ciclo).
+	 * Un socio 'activo' con el ciclo vencido:
+	 *  - Con horas aprobadas >= objetivo del plan desde el inicio del periodo →
+	 *    renueva (fecha_renovacion + 1 año, sigue 'activo') y devuelve true.
+	 *  - Sin horas suficientes → devuelve false y NO se le degrada: se le exige la
+	 *    cuota y el ciclo de pago (gracia, suspensión, baja) decide.
 	 *
 	 * @param int    $post_id      Member ID.
 	 * @param string $status       Current member state.
 	 * @param string $renewal_date Current renewal date (Y-m-d).
 	 */
-	private static function check_volunteer_cycle( int $post_id, string $status, string $renewal_date ): void {
+	private static function check_volunteer_cycle( int $post_id, string $status, string $renewal_date ): bool {
 		$today = current_time( 'Y-m-d' );
 
-		// Only active members can "lose" their status at renewal time.
-		if ( $status !== 'activo' ) {
-			return;
+		if ( $status !== 'activo' || $today <= $renewal_date ) {
+			return false;
 		}
 
-		// Not due yet.
-		if ( $today <= $renewal_date ) {
-			return;
-		}
-
-		$plan_key  = get_post_meta( $post_id, '_convoca_plan', true );
-		$plan_data = self::get_plan( $plan_key );
-		if ( ! $plan_data ) {
-			return;
-		}
-		$objetivo = (float) ( $plan_data['hours'] ?? 0 );
-		if ( $objetivo <= 0 ) {
-			// No hour objective → nothing to evaluate.
-			return;
+		$plan_data = self::get_plan( get_post_meta( $post_id, '_convoca_plan', true ) );
+		$objetivo  = (float) ( $plan_data['hours'] ?? 0 );
+		if ( ! $plan_data || $objetivo <= 0 ) {
+			// Sin objetivo de horas en el plan no hay vía de voluntariado.
+			return false;
 		}
 
 		// Cycle start = explicit period start; fallback to one year before the
@@ -637,37 +672,29 @@ class CPT_Miembro {
 
 		$horas = Voluntariado_Manager::get_horas_aprobadas_desde( $post_id, $cycle_start );
 
-		if ( $horas >= $objetivo ) {
-			// Met the annual hours → renew the cycle, keep status. The new period
-			// starts the day this renewal was due.
-			$next = \Convoca\Core\Utils::format_date( $renewal_date . ' +1 year', 'Y-m-d' );
-			update_post_meta( $post_id, '_convoca_fecha_renovacion', $next );
-			update_post_meta( $post_id, '_convoca_fecha_inicio_periodo', $renewal_date );
-			update_post_meta( $post_id, '_convoca_estado_cuota', 'activa' );
+		if ( $horas < $objetivo ) {
+			// No llega al mínimo: NO se degrada al socio. La cuota del ciclo sigue
+			// su curso (gracia, suspensión y baja por impago) y las horas se le
+			// siguen contando desde el inicio del periodo.
 			\Convoca\Core\Logger::info(
-				"Voluntario #$post_id renueva ciclo anual ({$horas}h >= {$objetivo}h). Nueva renovación: {$next}.",
+				"#$post_id: {$horas}h de {$objetivo}h requeridas para renovar por voluntariado (venció {$renewal_date}). Se le exige la cuota.",
 				'Members/Cron',
 				$post_id
 			);
-			return;
+			return false;
 		}
 
-		// Did not meet hours → volunteer only (no member benefits). The next
-		// activation attempt counts hours from today onward.
-		Estados::change(
-			$post_id,
-			'pendiente_documentacion',
-			"No renovó el ciclo anual: {$horas}h de {$objetivo}h requeridas (venció {$renewal_date}). Vuelve a ser solo voluntario."
-		);
-		update_post_meta( $post_id, '_convoca_estado_cuota', '' );
-		update_post_meta( $post_id, '_convoca_objetivo_horas_completado', '' );
-		update_post_meta( $post_id, '_convoca_fecha_objetivo_completado', '' );
-		update_post_meta( $post_id, '_convoca_fecha_inicio_periodo', $today );
-		delete_post_meta( $post_id, '_convoca_fecha_renovacion' );
+		// Cumple las horas del plan → renueva el ciclo sin pago.
+		$next = \Convoca\Core\Utils::format_date( $renewal_date . ' +1 year', 'Y-m-d' );
+		update_post_meta( $post_id, '_convoca_fecha_renovacion', $next );
+		update_post_meta( $post_id, '_convoca_fecha_inicio_periodo', $renewal_date );
+		update_post_meta( $post_id, '_convoca_estado_cuota', 'activa' );
 		\Convoca\Core\Logger::info(
-			"Voluntario #$post_id no cumplió el ciclo anual ({$horas}h < {$objetivo}h). Vuelve a pendiente_documentacion.",
+			"#$post_id renueva por horas ({$horas}h >= {$objetivo}h). Nueva renovación: {$next}.",
 			'Members/Cron',
 			$post_id
 		);
+
+		return true;
 	}
 }

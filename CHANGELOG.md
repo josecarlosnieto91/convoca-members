@@ -1,5 +1,19 @@
 # Changelog — convoca-members
 
+## v2.8.7 (2026-09-24)
+
+### Cambiado
+- El alta ya no admite el voluntariado como forma de no pagar: la cuota del primer año es obligatoria.
+  `_convoca_es_voluntario` pasa a reflejar el compromiso (casilla del formulario), no la forma de pago.
+- La renovación por horas es una vía alternativa al pago a partir del **segundo** ciclo; el mínimo es el `hours` del plan.
+- Si no se alcanzan las horas, no se degrada al socio: se le exige la cuota y siguen los días de gracia.
+
+### Corregido
+- El formulario de alta no mostraba los métodos de pago (contenedor oculto sin lógica que lo mostrara): el alta no se podía completar.
+
+### Pruebas
+- `CuotaPrimerAnoTest`: primer ciclo sin vía de horas, segundo ciclo con vía de horas, plan sin horas, mínimo desde el plan y quién no se evalúa. PHPUnit 115.
+
 ## v2.8.5 (2026-09-23)
 
 ### 🐛 Correcciones

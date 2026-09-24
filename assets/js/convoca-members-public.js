@@ -142,6 +142,19 @@
         subChecked.checked = false;
         conv.$('#conv-transfer-details').style.display = 'none';
       }
+
+      // Detalles del método de pago: IBAN si es transferencia, pasarela si es tarjeta
+      // o Bizum. Antes nada mostraba estos bloques y el alta no se podía terminar.
+      const detallesTransfer = conv.$('#conv-transfer-details');
+      const detallesTpv = conv.$('#conv-payment-upload');
+      const pintaMetodo = () => {
+        const sel = form.querySelector('input[name="forma_pago"]:checked');
+        const v = sel ? sel.value : '';
+        if (detallesTransfer) detallesTransfer.style.display = (v === 'transferencia') ? 'block' : 'none';
+        if (detallesTpv) detallesTpv.style.display = (v === 'tarjeta' || v === 'bizum') ? 'block' : 'none';
+      };
+      form.querySelectorAll('input[name="forma_pago"]').forEach(r => r.addEventListener('change', pintaMetodo));
+      pintaMetodo();
     }
 
     const fechaInput = conv.$('#conv-fechanac');
@@ -198,10 +211,6 @@
         const pago = form.querySelector('input[name="forma_pago"]:checked');
         if (!pago) { conv.showAlert(alert, 'Selecciona una forma de pago.'); return false; }
         
-        if (pago.value === 'voluntariado') {
-          const acuerdo = conv.$('#conv-acuerdo-vol');
-          if (acuerdo && !acuerdo.checked) { conv.showAlert(alert, 'Debes aceptar el acuerdo de voluntariado.'); return false; }
-        }
         if (!conv.$('#conv-rgpd').checked) { conv.showAlert(alert, 'Debes aceptar la Política de Privacidad.'); return false; }
       }
 
@@ -255,7 +264,7 @@
       setText('#conv-sum-plan', planLabel);
       setText('#conv-sum-modalidad', modalidad);
       setText('#conv-sum-pago', paymentMap[v('forma_pago')] || v('forma_pago'));
-      setText('#conv-sum-importe', (v('forma_pago') === 'voluntariado') ? (parseFloat(data?.hours || 0) + 'h') : (parseInt(data?.price || 0) + '€'));
+      setText('#conv-sum-importe', parseInt(data?.price || 0) + '€');
 
       const today = new Date().toLocaleDateString('es-ES');
       setText('#conv-sum-fecha', today);

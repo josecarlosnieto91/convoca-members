@@ -203,10 +203,13 @@ class Process_Member {
 			$menor = $age < 18;
 		}
 
-		// 6. Determine initial state
-		// If they choose 'voluntariado' (hours instead of money), they are 'pendiente_documentacion' (proof of volunteering or similar).
-		// If they choose 'cuota' (money), they are 'pendiente_pago'.
-		$estado = ( $forma_pago === 'voluntariado' ) ? 'pendiente_documentacion' : 'pendiente_pago';
+		// 6. Estado inicial.
+		// Modelo 2026-09: la condición de socio se adquiere ABONANDO la cuota del
+		// primer año. El compromiso de voluntariado no la sustituye; lo que hace es
+		// habilitar la vía de renovación por horas a partir del segundo ciclo. Por
+		// eso el alta queda siempre en 'pendiente_pago' y la cuota en 'pendiente':
+		// solo el cobro (o la activación expresa de la junta) pasa a 'activo'.
+		$estado = 'pendiente_pago';
 
 		// 7. Create Post with transaction
 		global $wpdb;
@@ -275,9 +278,9 @@ class Process_Member {
 				'cuota'             => $plan_key, // legacy alias.
 				'modalidad'         => $plan_data['modalidad'] ?? 'Numerario',
 				'importe_cuota'     => $plan_data['price'] ?? 0,
-				'estado_cuota'      => ( $forma_pago === 'voluntariado' ) ? 'activa' : 'pendiente',
+				'estado_cuota'      => 'pendiente',
 				// Volunteer annual cycle starts at registration.
-				'fecha_inicio_periodo' => ( $forma_pago === 'voluntariado' ) ? current_time( 'Y-m-d' ) : '',
+				'fecha_inicio_periodo' => '',
 				'fecha_alta'        => current_time( 'Y-m-d' ),
 				'dni'               => $dni,
 				'fecha_nacimiento'  => $fecha_nac,
@@ -289,7 +292,7 @@ class Process_Member {
 				'municipio'         => sanitize_text_field( $data['municipio'] ?? '' ),
 				'canal_contacto'    => sanitize_text_field( $data['canal_contacto'] ?? 'whatsapp' ),
 				'menor_edad'        => $menor ? '1' : '0',
-				'es_voluntario'     => ( $forma_pago === 'voluntariado' ) ? '1' : '0',
+				'es_voluntario'     => ! empty( $data['acuerdo_voluntariado'] ) ? '1' : '0',
 				'rgpd_version'      => $settings['rgpd_version'] ?? '1.0',
 				'rgpd_timestamp'    => current_time( 'mysql' ),
 				'comunicaciones_ok' => ! empty( $data['comunicaciones'] ) ? '1' : '0',
@@ -431,7 +434,7 @@ class Process_Member {
 			'cuota'             => $plan_key,
 			'modalidad'         => $plan_data['modalidad'] ?? 'Numerario',
 			'importe_cuota'     => $plan_data['price'] ?? 0,
-			'estado_cuota'      => ( $forma_pago === 'voluntariado' ) ? 'activa' : 'pendiente',
+			'estado_cuota'      => 'pendiente',
 			'dni'               => $dni,
 			'email'             => $email,
 			'telefono'          => sanitize_text_field( $data['telefono'] ?? '' ),
@@ -439,7 +442,7 @@ class Process_Member {
 			'direccion'         => sanitize_text_field( $data['direccion'] ?? '' ),
 			'municipio'         => sanitize_text_field( $data['municipio'] ?? '' ),
 			'canal_contacto'    => sanitize_text_field( $data['canal_contacto'] ?? 'whatsapp' ),
-			'es_voluntario'     => ( $forma_pago === 'voluntariado' ) ? '1' : '0',
+			'es_voluntario'     => ! empty( $data['acuerdo_voluntariado'] ) ? '1' : '0',
 			'comunicaciones_ok' => ! empty( $data['comunicaciones'] ) ? '1' : '0',
 			'pago_recurrente'   => ! empty( $data['pago_recurrente'] ) ? '1' : '0',
 		);
