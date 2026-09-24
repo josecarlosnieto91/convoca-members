@@ -232,9 +232,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 			<p>La cuota del primer año se abona siempre: es lo que te hace socio/a. Si además te comprometes a
 				hacer horas de voluntariado, a partir del año que viene podrás renovar sin pagar.</p>
 
-			<!-- El modo económico es el único camino del alta, así que los métodos de pago
-			     se muestran siempre (antes quedaban ocultos y el alta no se podía terminar).
-			     El valor viaja igual porque el JS y el handler lo leen. -->
+			<!-- El modo económico es el único camino del alta: los métodos de pago van
+			siempre visibles (antes quedaban ocultos y el alta no se podía terminar). El
+			valor viaja igual porque el JS y el handler lo leen. -->
 			<input type="radio" name="payment_mode_ui" value="economic" checked style="display:none">
 
 			<div id="conv-economic-options" class="convoca-mt-medium">
@@ -293,8 +293,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 				</div>
 			</div>
 
-			<!-- Compromiso de voluntariado: NO sustituye a la cuota del primer año, habilita
-			     la renovación por horas a partir del segundo ciclo. -->
+			<!-- Compromiso de voluntariado: NO sustituye a la cuota del primer año;
+			habilita la renovación por horas a partir del segundo ciclo. -->
 			<div id="conv-volunteer-agreement" class="convoca-box">
 				<div class="convoca-field">
 					<p class="convoca-small"><strong>Voluntariado (opcional).</strong> Si te comprometes a cumplir las
