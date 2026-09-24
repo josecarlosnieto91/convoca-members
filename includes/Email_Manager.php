@@ -62,6 +62,7 @@ class Email_Manager {
 		'{nombre}',
 		'{email}',
 		'{tipo_miembro}',
+		'{tipo_solicitud}',
 		'{plan}',
 		'{cuota}',
 		'{importe}',
@@ -142,9 +143,9 @@ class Email_Manager {
 					. '<p>Si tienes cualquier problema, responde a este email o escribe a <a href="mailto:{admin_email}">{admin_email}</a>.</p>',
 			),
 			'solicitud_recibida'               => array(
-				'subject' => __( 'Hemos recibido tu solicitud — ', 'convoca-members' ) . get_bloginfo( 'name' ),
+				'subject' => __( 'Hemos recibido tu solicitud de {tipo_solicitud} — ', 'convoca-members' ) . get_bloginfo( 'name' ),
 				'body'    => __( '<h1>Hola {nombre},</h1>', 'convoca-members' )
-					. '<p>Hemos recibido correctamente tu solicitud como <strong>{tipo_miembro}</strong> en ' . esc_html( get_bloginfo( 'name' ) ) . '.</p>'
+					. '<p>Hemos recibido correctamente tu solicitud de <strong>{tipo_solicitud}</strong> como <strong>{tipo_miembro}</strong> en ' . esc_html( get_bloginfo( 'name' ) ) . '.</p>'
 					. Email_Layout::meta_table(
 						array(
 							array(
@@ -714,6 +715,9 @@ class Email_Manager {
 			'{fecha_alta}'                   => get_the_date( 'd/m/Y', $post_id ),
 			'{fecha_renovacion}'             => $meta( 'fecha_renovacion' ) ?: '—',
 			'{fecha_baja}'                   => $meta( 'fecha_baja' ) ?: '—',
+			// Alta o renovación: lo marca el flujo que crea/reactiva la ficha, para
+			// que el correo no diga «solicitud» a secas cuando alguien vuelve.
+			'{tipo_solicitud}'               => ( '1' === (string) get_post_meta( $post_id, '_convoca_solicitud_renovacion', true ) ) ? __( 'renovación', 'convoca-members' ) : __( 'alta', 'convoca-members' ),
 			'{link_pago}'                    => '', // Default empty, usually injected via extra_vars.
 			// Voluntariado variables.
 			'{horas_actuales}'               => $horas_aprobadas,

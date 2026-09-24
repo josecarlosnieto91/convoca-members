@@ -330,6 +330,7 @@ class Process_Member {
 		}
 
 		// 9. Notifications
+		delete_post_meta( $post_id, '_convoca_solicitud_renovacion' );
 		\Convoca\Core\Utils::do_action( 'convoca_members_email_solicitud', 'convoca_email_solicitud', $post_id );
 		\Convoca\Core\Utils::do_action( 'convoca_members_created', 'convoca_miembro_creado', $post_id );
 
@@ -497,7 +498,10 @@ class Process_Member {
 		}
 
 		// Notifications (solicitud email, created hook).
+		// Re-alta = renovación: el aviso de solicitud lo dice así.
+		update_post_meta( $existing_id, '_convoca_solicitud_renovacion', '1' );
 		\Convoca\Core\Utils::do_action( 'convoca_members_email_solicitud', 'convoca_email_solicitud', $existing_id );
+		delete_post_meta( $existing_id, '_convoca_solicitud_renovacion' );
 		\Convoca\Core\Utils::do_action( 'convoca_members_reactivado', 'convoca_miembro_reactivado', $existing_id );
 
 		// Gateway redirection when a payment applies.
