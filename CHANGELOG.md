@@ -1,5 +1,22 @@
 # Changelog — convoca-members
 
+## v2.8.10 (2026-09-25)
+
+### Cambiado
+- **Regla única de voluntariado**: `Admin_Voluntariado::puede_acreditar_horas()` decide quién puede
+  registrar horas (rol `voluntario_aprobado` o `_convoca_voluntario_aprobado = 1`). El compromiso del
+  alta es una **solicitud**, no un permiso: antes el formulario prometía renovación sin cuota por
+  marcarlo y el motor de horas exigía estar aprobado.
+- La aprobación **sincroniza la solicitud en la ficha** del socio (el permiso sigue viviendo en el
+  usuario, que es donde escribe la aprobación).
+- Texto del formulario de alta: dice lo que el sistema hace — se solicita, la asociación aprueba y
+  con las horas aprobadas se renueva sin cuota.
+
+### Añadido
+- 9 casos de regresión del permiso (socio normal, compromiso sin aprobar, pendiente, aprobado,
+  revocado, sin cuenta, antes/después de aprobar, independencia de la cuota).
+
+
 ## v2.8.9 (2026-09-25)
 
 ### Corregido
