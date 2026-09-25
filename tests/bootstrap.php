@@ -111,6 +111,10 @@ namespace {
     if (!\function_exists('get_userdata')) {
         function get_userdata($id) {
             if ($id <= 0) return false;
+            // Override por test: _test_users[id] permite fijar roles y correo.
+            if (!empty($GLOBALS['_test_users'][(int) $id])) {
+                return $GLOBALS['_test_users'][(int) $id];
+            }
             $u = new \stdClass();
             $u->ID = $id; $u->display_name = "User $id"; $u->first_name = "First$id";
             $u->user_email = "user$id@example.com"; $u->roles = ['voluntario_aprobado'];

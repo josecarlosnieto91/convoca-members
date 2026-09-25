@@ -306,8 +306,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 					</p>
 					<div class="convoca-check-group">
 						<input type="checkbox" id="conv-acuerdo-vol" name="acuerdo_voluntariado">
-						<label for="conv-acuerdo-vol">Me comprometo a hacer las horas de voluntariado de mi plan
-							(renovación del próximo año sin cuota).</label>
+						<label for="conv-acuerdo-vol">Me comprometo a hacer las horas de voluntariado de mi plan.<br>
+							<small>La asociación revisará tu solicitud y te aprobará como voluntario/a; con las horas
+								aprobadas podrás renovar el próximo año sin cuota.</small></label>
 					</div>
 				</div>
 			</div>

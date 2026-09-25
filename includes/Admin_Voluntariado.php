@@ -34,6 +34,72 @@ class Admin_Voluntariado {
 	const META_APROBADO = '_convoca_voluntario_aprobado'; // 0 = pending, 1 = approved, -1 = revoked.
 
 	/**
+	 * Regla única: ¿este usuario puede acreditar horas de voluntariado?
+	 *
+	 * El compromiso del alta es una **solicitud**; las horas —que valen para renovar sin cuota y
+	 * para los certificados— exigen la **aprobación** de la asociación. La fuente de verdad es el
+	 * usuario de WordPress, que es donde escribe la aprobación (rol y meta) y donde ya miran Enroll
+	 * y Shifts.
+	 *
+	 * Sin cuenta de WordPress no hay permiso posible: no hay dónde registrar la aprobación.
+	 *
+	 * @param int $user_id Usuario de WordPress.
+	 */
+	public static function puede_acreditar_horas( int $user_id ): bool {
+		if ( $user_id <= 0 ) {
+			return false;
+		}
+
+		$user = get_userdata( $user_id );
+		if ( ! $user ) {
+			return false;
+		}
+
+		$aprobado = '1' === (string) get_user_meta( $user_id, self::META_APROBADO, true );
+
+		return in_array( 'voluntario_aprobado', (array) $user->roles, true ) || $aprobado;
+	}
+
+	/**
+	 * Ficha de socio vinculada a un usuario (por vínculo directo o por email).
+	 *
+	 * @param int $user_id Usuario de WordPress.
+	 * @return int ID de la ficha, o 0.
+	 */
+	private static function ficha_de_usuario( int $user_id ): int {
+		$user = get_userdata( $user_id );
+		if ( ! $user ) {
+			return 0;
+		}
+
+		$fichas = get_posts(
+			array(
+				'post_type'      => 'miembro',
+				'post_status'    => 'any',
+				'posts_per_page' => 1,
+				'fields'         => 'ids',
+				'meta_key'       => '_convoca_user_id',
+				'meta_value'     => (string) $user_id,
+			)
+		);
+
+		if ( empty( $fichas ) ) {
+			$fichas = get_posts(
+				array(
+					'post_type'      => 'miembro',
+					'post_status'    => 'any',
+					'posts_per_page' => 1,
+					'fields'         => 'ids',
+					'meta_key'       => '_convoca_email',
+					'meta_value'     => $user->user_email,
+				)
+			);
+		}
+
+		return empty( $fichas ) ? 0 : (int) $fichas[0];
+	}
+
+	/**
 	 * Render the volunteer page (standalone: contenedor + título).
 	 */
 	public static function render_page(): void {
@@ -153,6 +219,13 @@ class Admin_Voluntariado {
 
 		$user->set_role( 'voluntario_aprobado' );
 		update_user_meta( $user_id, self::META_APROBADO, '1' );
+
+		// La ficha del socio refleja lo que se le concede: si se aprueba a quien no había marcado
+		// el compromiso, la solicitud queda registrada en su ficha (el permiso vive en el usuario).
+		$ficha = self::ficha_de_usuario( $user_id );
+		if ( $ficha ) {
+			update_post_meta( $ficha, '_convoca_es_voluntario', '1' );
+		}
 
 		// Mirror legacy members activation: activate member, PDF, role guarantee.
 		do_action( 'convoca_voluntario_aprobado', $user_id );
