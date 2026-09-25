@@ -117,6 +117,9 @@ class Admin_Settings {
 		$input = wp_unslash( $input );
 		return array(
 			'admin_email'     => sanitize_email( $input['admin_email'] ?? '' ),
+			// Copia al administrador de todos los correos enviados a los interesados
+			// (la consume Convoca\Core\Email_Copy). Marcado por defecto.
+			'copy_all_emails' => empty( $input['copy_all_emails'] ) ? 0 : 1,
 			'iban'            => sanitize_text_field( $input['iban'] ?? '' ),
 			'rgpd_version'    => sanitize_text_field( $input['rgpd_version'] ?? '1.0' ),
 			'sender_name'     => sanitize_text_field( $input['sender_name'] ?? get_bloginfo( 'name' ) ),
@@ -329,7 +332,16 @@ class Admin_Settings {
 				<label for="admin_email"><?php esc_html_e( 'Email administrador', 'convoca-members' ); ?></label>
 				<input type="email" id="admin_email" name="convoca_members_settings[admin_email]"
 					value="<?php echo esc_attr( $settings['admin_email'] ?? '' ); ?>">
-				<small class="convoca-small"><?php esc_html_e( 'Recibe notificaciones de nuevas altas.', 'convoca-members' ); ?></small>
+				<small class="convoca-small"><?php esc_html_e( 'Recibe la copia de los correos que se envían a los interesados.', 'convoca-members' ); ?></small>
+			</div>
+
+			<div class="convoca-field">
+				<label class="convoca-checkbox">
+					<input type="checkbox" id="copy_all_emails" name="convoca_members_settings[copy_all_emails]" value="1"
+						<?php checked( (int) ( $settings['copy_all_emails'] ?? 1 ), 1 ); ?>>
+					<?php esc_html_e( 'Enviar copia de los correos a la administración', 'convoca-members' ); ?>
+				</label>
+				<small class="convoca-small"><?php esc_html_e( 'Los correos de una actividad se copian a sus monitores; el resto, al email administrador.', 'convoca-members' ); ?></small>
 			</div>
 
 			<div class="convoca-field">

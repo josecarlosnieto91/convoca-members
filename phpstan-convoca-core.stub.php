@@ -21,6 +21,37 @@ namespace Convoca\Core {
 	 * repo), así que la firma se declara aquí.
 	 */
 	function convoca_export_pdf( string $title, array $headers, array $rows, string $filename ): void {}
+
+	/**
+	 * Copia informativa de los correos al administrador o al monitor de la actividad
+	 * (convoca-core/includes/Email_Copy.php). El canal de envío se inyecta por contexto.
+	 */
+	class Email_Copy {
+		public const OPTION = 'convoca_email_copy';
+
+		public static function enabled(): bool {
+			return true;
+		}
+
+		/** @return array<int, string> */
+		public static function activity_monitors( int $actividad_id ): array {
+			return array();
+		}
+
+		/**
+		 * @param array<string, mixed> $context
+		 * @return array<int, string>
+		 */
+		public static function recipients( array $context = array() ): array {
+			return array();
+		}
+
+		/** @param array<string, mixed> $context */
+		public static function maybe_copy( array $context ): bool {
+			return true;
+		}
+	}
+
 	abstract class Upgrade_Manager {
 		public function init(): void {}
 		public function maybe_upgrade(): void {}

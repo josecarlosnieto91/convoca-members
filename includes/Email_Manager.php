@@ -593,18 +593,28 @@ class Email_Manager {
 			);
 		}
 
-		// Also notify admin (only for specific types or always? User didn't specify, but existing code did).
-		// Let's keep it for application/welcome/etc but maybe not general reminders to avoid spam?
-		if ( $template_slug === 'solicitud_recibida' ) {
-			$admin_headers   = $headers;
-			$admin_headers[] = 'From: ' . $sender_name . ' <' . $system_email . '>';
-			wp_mail(
-				$system_email,
-				'[' . esc_html( get_bloginfo( 'name' ) ) . '] ' . $subject,
-				"Notificación automática — Miembro: {$vars['{nombre}']}\n\n" . $body,
-				$admin_headers
-			);
-		}
+		// Copia al administrador (o al monitor de la actividad) de TODO correo de socio.
+		// Sustituye al aviso que existía solo para `solicitud_recibida` y que salía hacia
+		// $system_email — el propio remitente — en vez del correo configurado en
+		// «Email administrador»: por eso no llegaba a la asociación.
+		\Convoca\Core\Email_Copy::maybe_copy(
+			array(
+				'to'              => array( $email ),
+				'subject'         => $subject,
+				'body'            => $body,
+				'plugin'          => 'convoca-members',
+				'template'        => $template_slug,
+				'entity_id'       => $post_id,
+				'has_attachments' => ! empty( $attachments ),
+				'send'            => static function ( array $to, string $copy_subject, string $copy_body, array $copy_headers ): bool {
+					$ok = true;
+					foreach ( $to as $one ) {
+						$ok = \Convoca\Members\Email_Verifier::send( (string) $one, $copy_subject, $copy_body, $copy_headers ) && $ok;
+					}
+					return $ok;
+				},
+			)
+		);
 	}
 
 	/**

@@ -1,5 +1,19 @@
 # Changelog — convoca-members
 
+## v2.8.9 (2026-09-25)
+
+### Corregido
+- El aviso a la administración salía hacia `$system_email` (el propio remitente) y solo en las altas,
+  así que **no llegaba a la asociación**. Sustituido por la copia real.
+
+### Cambiado
+- Todos los correos de socio (alta, bienvenida, credenciales, recordatorios de pago, renovación,
+  certificado, tarjeta, voluntariado) se copian ahora al administrador con `Convoca\Core\Email_Copy`,
+  por el **mismo canal** que el correo original (incluido el proveedor configurado).
+- Ajustes → General: interruptor **«Enviar copia de los correos a la administración»** (marcado por
+  defecto) junto al correo administrador, que ahora describe su uso real.
+
+
 ## v2.8.7 (2026-09-24)
 
 ### Cambiado
