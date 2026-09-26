@@ -915,7 +915,7 @@ class Email_Manager {
 	/* ── Migración de plantillas ya guardadas ─────────── */
 
 	const TEMPLATES_VERSION_OPTION = 'convoca_email_templates_version';
-	const TEMPLATES_VERSION        = '2026-09-26-3';
+	const TEMPLATES_VERSION        = '2026-09-26-4';
 
 	/**
 	 * Corrige las plantillas ya guardadas en sitios existentes: `install_defaults()`

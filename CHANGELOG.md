@@ -1,5 +1,14 @@
 # Changelog — convoca-members
 
+## v2.8.15 (2026-09-26)
+
+### Corregido
+- **La migración de plantillas vuelve a correr** para recuperar los enlaces al panel escritos a mano
+  (`/mi-area/`): la versión de plantillas no había subido, así que `maybe_migrate()` salía por el
+  atajo y el cambio no llegaba a los sitios. Subir esa constante es OBLIGATORIO al añadir una regla
+  de migración; sin ello el arreglo se queda en el repositorio.
+
+
 ## v2.8.14 (2026-09-26)
 
 ### Corregido
