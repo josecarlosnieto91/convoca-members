@@ -166,9 +166,9 @@ class Email_Manager {
 					. sprintf( /* translators: %s: site name */ __( '<p>¡Gracias por unirte a la familia %s!</p>', 'convoca-members' ), esc_html( get_bloginfo( 'name' ) ) ),
 			),
 			'bienvenida'                       => array(
-				'subject' => sprintf( /* translators: %s: site name */ __( '¡Bienvenido/a a %s, {nombre}!', 'convoca-members' ), get_bloginfo( 'name' ) ),
-				'body'    => __( '<h1>¡Bienvenido/a a ', 'convoca-members' ) . esc_html( get_bloginfo( 'name' ) ) . ', {nombre}! 🎉</h1>'
-					. __( '<p>Tu alta como <strong>{tipo_miembro}</strong> ha sido confirmada.</p>', 'convoca-members' )
+				'subject' => sprintf( /* translators: %s: site name */ __( '¡Bienvenido/a, {nombre}! Ya formas parte de %s', 'convoca-members' ), get_bloginfo( 'name' ) ),
+				'body'    => __( '<h1>¡Bienvenido/a, {nombre}! 🎉</h1>', 'convoca-members' )
+					. sprintf( /* translators: %s: site name */ __( '<p>Tu alta como <strong>{tipo_miembro}</strong> en %s ha sido confirmada.</p>', 'convoca-members' ), esc_html( get_bloginfo( 'name' ) ) )
 					. Email_Layout::meta_table(
 						array(
 							array(
@@ -479,7 +479,28 @@ class Email_Manager {
 	}
 
 	public function send_objetivo_voluntariado( int $post_id ): void {
+		// Este correo felicita por completar el objetivo y ofrece el certificado.
+		// Sin horas acreditadas felicitaría por «completar 0h» y enlazaría a un
+		// certificado que no existe, así que no se envía: es un dato incoherente,
+		// no un correo legítimo con huecos.
+		if ( ! self::objetivo_tiene_horas( $post_id ) ) {
+			\Convoca\Core\Logger::warning(
+				"No se envía el correo de objetivo completado al miembro #{$post_id}: no tiene horas acreditadas.",
+				'Members/Emails',
+				$post_id
+			);
+			return;
+		}
+
 		$this->send( 'objetivo_voluntariado_completado', $post_id );
+	}
+
+	/**
+	 * ¿Tiene el miembro horas acreditadas con las que justificar el correo
+	 * de objetivo completado (y su certificado)?
+	 */
+	public static function objetivo_tiene_horas( int $post_id ): bool {
+		return Voluntariado_Manager::get_horas_aprobadas( $post_id ) > 0;
 	}
 
 	/**
@@ -797,7 +818,7 @@ class Email_Manager {
 			'{nombre}'                       => 'María García López',
 			'{email}'                        => 'maria@ejemplo.com',
 			'{tipo_miembro}'                 => __( 'Socia', 'convoca-members' ),
-			'{plan}'                         => '🥈 Lugg',
+			'{plan}'                         => '🥈 Plata',
 			'{cuota}'                        => '50€/año',
 			'{importe}'                      => '50',
 			'{estado}'                       => __( 'Activo', 'convoca-members' ),
@@ -810,8 +831,8 @@ class Email_Manager {
 			'{horas_objetivo}'               => '25',
 			'{porcentaje_cumplimiento}'      => '100',
 			'{horas_totales}'                => '25',
-			'{plan_nombre}'                  => '🥈 Lugg',
-			'{proyectos_participados}'       => 'Limpieza Playa Xago, Plantación de árboles',
+			'{plan_nombre}'                  => '🥈 Plata',
+			'{proyectos_participados}'       => __( 'Limpieza de río, Plantación de árboles', 'convoca-members' ),
 			'{certificado_id}'               => 'CERT-2026-042',
 			'{certificado_url_verificacion}' => 'https://ejemplo.test/certificado/CERT-2026-042',
 			'{usuario}'                      => 'maria.garcia',
@@ -878,7 +899,7 @@ class Email_Manager {
 	/* ── Migración de plantillas ya guardadas ─────────── */
 
 	const TEMPLATES_VERSION_OPTION = 'convoca_email_templates_version';
-	const TEMPLATES_VERSION        = '2026-09-10-2';
+	const TEMPLATES_VERSION        = '2026-09-26-1';
 
 	/**
 	 * Corrige las plantillas ya guardadas en sitios existentes: `install_defaults()`
@@ -936,6 +957,30 @@ class Email_Manager {
 						$templates[ $slug ][ $field ] = $text;
 					}
 				}
+			}
+
+			// El saludo de bienvenida era LA MISMA frase en el asunto y en la
+			// primera línea del cuerpo (el nombre del sitio entraba en las dos),
+			// así que el correo empezaba repitiendo su propio asunto. Se
+			// reescribe solo si la plantilla conserva el saludo de fábrica: si
+			// el sitio lo personalizó, se respeta.
+			$saludo_asunto = '¡Bienvenido/a a ' . $site . ', {nombre}!';
+			$saludo_cuerpo = '<h1>¡Bienvenido/a a ' . $site . ', {nombre}!';
+
+			if ( isset( $templates['bienvenida']['subject'] ) && false !== strpos( (string) $templates['bienvenida']['subject'], $saludo_asunto ) ) {
+				$templates['bienvenida']['subject'] = str_replace(
+					$saludo_asunto,
+					'¡Bienvenido/a, {nombre}! Ya formas parte de ' . $site,
+					(string) $templates['bienvenida']['subject']
+				);
+			}
+
+			if ( isset( $templates['bienvenida']['body'] ) && false !== strpos( (string) $templates['bienvenida']['body'], $saludo_cuerpo ) ) {
+				$templates['bienvenida']['body'] = str_replace(
+					$saludo_cuerpo,
+					'<h1>¡Bienvenido/a, {nombre}!',
+					(string) $templates['bienvenida']['body']
+				);
 			}
 
 			update_option( self::OPTION, $templates );

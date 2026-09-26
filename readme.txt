@@ -4,7 +4,7 @@ Tags: members, volunteers, membership, certificates, associations
 Requires at least: 6.4
 Tested up to: 7.1
 Requires PHP: 8.1
-Stable tag: 2.8.10
+Stable tag: 2.8.11
 License: GPL-2.0-or-later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -49,6 +49,10 @@ This plugin may contact getconvoca.app to validate PRO licenses, only when a key
 3. Activate the plugin from the Plugins menu
 
 == Changelog ==
+
+= 2.8.11 =
+* El correo de bienvenida ya no repite el asunto en su primera línea: el asunto presenta («¡Bienvenido/a, {nombre}! Ya formas parte de…») y el cuerpo saluda sin el nombre del sitio. La migración de plantillas reescribe el saludo guardado solo si conserva el de fábrica.
+* El correo de objetivo de voluntariado completado no se envía si el miembro no tiene horas acreditadas: felicitaba por «completar 0h» y ofrecía un certificado que no existe.
 
 = 2.8.8 =
 * El correo de solicitud recibida distingue **alta** de **renovación**: dice «tu solicitud de alta» cuando la ficha es nueva y «tu solicitud de renovación» cuando la persona vuelve (re-alta). Antes decía «tu solicitud» a secas.

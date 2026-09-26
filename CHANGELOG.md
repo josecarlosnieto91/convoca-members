@@ -1,5 +1,17 @@
 # Changelog — convoca-members
 
+## v2.8.11 (2026-09-26)
+
+### Corregido
+- **Correo de bienvenida**: el asunto y la primera línea del cuerpo eran la misma frase (el nombre
+  del sitio entraba en las dos), así que el correo empezaba repitiendo su propio asunto. El asunto
+  pasa a presentar («¡Bienvenido/a, {nombre}! Ya formas parte de {sitio}») y el cuerpo saluda sin
+  repetirlo. La migración de plantillas reescribe el saludo guardado **solo** si conserva el de
+  fábrica; si el sitio lo personalizó, se respeta.
+- **Objetivo de voluntariado completado**: no se envía si el miembro no tiene horas acreditadas.
+  El correo felicitaba por «completar 0h» y ofrecía un certificado inexistente; queda registrado en
+  el log en lugar de mandarse.
+
 ## v2.8.10 (2026-09-25)
 
 ### Cambiado
