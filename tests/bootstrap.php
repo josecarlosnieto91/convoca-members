@@ -215,6 +215,10 @@ namespace {
     if (!\function_exists('esc_html')) { function esc_html($s) { return \htmlspecialchars((string)$s, ENT_QUOTES, 'UTF-8'); } }
     if (!\function_exists('esc_attr')) { function esc_attr($s) { return \htmlspecialchars((string)$s, ENT_QUOTES, 'UTF-8'); } }
     if (!\function_exists('esc_url')) { function esc_url($s) { return $s; } }
+    // Las variantes que IMPRIMEN: sin ellas no se puede pintar el panel en una prueba (y su
+    // ausencia era la razón de que nadie lo hubiera probado).
+    if (!\function_exists('esc_html_e')) { function esc_html_e($s, $d = 'default') { echo $s; } }
+    if (!\function_exists('esc_attr_e')) { function esc_attr_e($s, $d = 'default') { echo $s; } }
     if (!\function_exists('sanitize_text_field')) { function sanitize_text_field($s) { return \is_string($s) ? \trim($s) : ''; } }
     if (!\function_exists('sanitize_textarea_field')) { function sanitize_textarea_field($s) { return \is_string($s) ? \trim($s) : ''; } }
     if (!\function_exists('absint')) { function absint($v) { return \abs((int)$v); } }
@@ -233,8 +237,26 @@ namespace {
     }
 
     if (!\function_exists('add_action')) { function add_action($h, $c, $p = 10, $a = 1) { return true; } }
-    if (!\function_exists('add_filter')) { function add_filter($h, $c, $p = 10, $a = 1) { return true; } }
-    if (!\function_exists('apply_filters')) { function apply_filters($h, $v, ...$a) { return $v; } }
+    if (!\function_exists('add_shortcode')) { function add_shortcode($t, $c) { return true; } }
+    // Hooks con registro REAL. Con un `apply_filters` que devolvía el valor tal cual y un
+    // `add_filter` que no hacía nada, cualquier contrato basado en filtros pasaba sin
+    // comprobar nada: un check que no puede fallar no es un check.
+    $GLOBALS['_wp_filters_prueba'] = array();
+    if (!\function_exists('add_filter')) {
+        function add_filter($h, $c, $p = 10, $a = 1) { $GLOBALS['_wp_filters_prueba'][$h][$p][] = $c; return true; }
+    }
+    if (!\function_exists('apply_filters')) {
+        function apply_filters($h, $v, ...$a) {
+            foreach ($GLOBALS['_wp_filters_prueba'][$h] ?? array() as $nivel) {
+                \ksort($nivel);
+                foreach ($nivel as $cb) { $v = $cb($v, ...$a); }
+            }
+            return $v;
+        }
+    }
+    if (!\function_exists('remove_all_filters')) {
+        function remove_all_filters($h) { unset($GLOBALS['_wp_filters_prueba'][$h]); }
+    }
     if (!\function_exists('register_post_type')) { function register_post_type($s, $a) { return null; } }
     if (!\function_exists('register_post_meta')) { function register_post_meta($t, $k, $a) { return true; } }
     if (!\function_exists('register_taxonomy')) { function register_taxonomy($s, $t, $a) { return null; } }

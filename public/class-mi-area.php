@@ -289,6 +289,40 @@ class Mi_Area {
 						<li data-tab="search">🔍 <?php esc_html_e( 'Buscar', 'convoca-members' ); ?></li>
 						<li data-tab="notifications" class="conv-notif-tab">🔔 <?php esc_html_e( 'Notificaciones', 'convoca-members' ); ?> <span class="conv-notif-badge" id="conv-notif-count" style="display:none">0</span></li>
 					</ul>
+
+					<?php
+					/**
+					 * Enlaces a páginas del sitio que conviene tener a mano desde el panel
+					 * (turnos, perfil público, renovación…).
+					 *
+					 * El plugin no lleva a mano las páginas de un sitio concreto —no existen en
+					 * otro—, así que las pone quien las tiene: cada sitio añade las suyas con
+					 * este filtro. Cada enlace es array( 'url' => …, 'label' => … ).
+					 *
+					 * @param array $enlaces Enlaces a pintar.
+					 */
+					$conv_enlaces = (array) apply_filters( 'convoca_mi_area_links', array() );
+					$conv_enlaces = array_filter(
+						$conv_enlaces,
+						static function ( $e ) {
+							return is_array( $e ) && ! empty( $e['url'] ) && ! empty( $e['label'] );
+						}
+					);
+
+					if ( $conv_enlaces ) :
+						?>
+						<ul class="conv-panel-links">
+							<?php foreach ( $conv_enlaces as $conv_enlace ) : ?>
+								<li>
+									<a href="<?php echo esc_url( $conv_enlace['url'] ); ?>">
+										<?php echo isset( $conv_enlace['icon'] ) ? esc_html( $conv_enlace['icon'] ) . ' ' : ''; ?><?php echo esc_html( $conv_enlace['label'] ); ?>
+									</a>
+								</li>
+							<?php endforeach; ?>
+						</ul>
+						<?php
+					endif;
+					?>
 				</nav>
 
 				<!-- Content -->

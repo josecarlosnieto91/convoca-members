@@ -1,5 +1,24 @@
 # Changelog — convoca-members
 
+## v2.8.16 (2026-09-26)
+
+### Añadido — el panel de socio admite enlaces del sitio
+- El panel pinta ahora, bajo las pestañas, los enlaces que cada sitio declare con el filtro
+  **`convoca_mi_area_links`** (`array( 'url' => …, 'label' => …, 'icon' => … )`). El plugin no
+  lleva a mano páginas de un sitio concreto —no existen en otro—, así que las aporta quien las
+  tiene: en Lugg, /turnos/ y /mi-perfil/.
+- Una entrada a la que le falte la URL o el texto no se pinta, y no rompe el panel.
+
+### Corregido — el bootstrap de pruebas ya no daba por bueno cualquier filtro
+- `apply_filters` devolvía el valor tal cual y `add_filter` no hacía nada, así que cualquier
+  contrato basado en filtros pasaba sin comprobar nada. Mismo defecto que se corrigió en
+  convoca-core y convoca-enroll. Añadidos además los stubs que faltaban para poder pintar el
+  panel en una prueba (`esc_html_e`, `esc_attr_e`, `add_shortcode`).
+
+### Pruebas
+- `MiAreaLinksTest`: sin filtro no aparece la lista; con filtro aparecen los enlaces; una entrada
+  incompleta se ignora. Members 144/144.
+
 ## v2.8.15 (2026-09-26)
 
 ### Corregido
