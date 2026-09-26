@@ -1,5 +1,20 @@
 # Changelog — convoca-members
 
+## v2.8.12 (2026-09-26)
+
+### Corregido
+- **Dos correos que no salían nunca.** `confirm_email` (confirmar el cambio de email) y
+  `verify_phone` (verificar el teléfono) se envían desde el plugin, pero no estaban en
+  `Email_Manager::TEMPLATES`. Consecuencias encadenadas: el editor de plantillas del admin no las
+  pintaba, su guardado **sobreescribe** la opción con las de la lista, y `send()` descarta en
+  silencio una plantilla que no existe. Resultado: cambiar el email desde el perfil no llegaba a
+  confirmarse nunca, porque el correo con el enlace no se mandaba.
+  Ahora están en la lista y `maybe_migrate()` **repone** las plantillas de fábrica que falten sin
+  tocar las que el sitio tenga (antes solo sustituía cadenas en las que ya estaban).
+- Los botones de esos dos correos usan `Email_Layout::button_html()`, como el resto del ecosistema,
+  en vez de estilos sueltos metidos a mano.
+
+
 ## v2.8.11 (2026-09-26)
 
 ### Corregido

@@ -191,4 +191,59 @@ class EmailBienvenidaObjetivoTest extends TestCase {
 
 		$this->assertTrue( Email_Manager::objetivo_tiene_horas( self::MIEMBRO ) );
 	}
+
+	// ── La lista de plantillas es un contrato ────────────────────────
+
+	/**
+	 * El editor del admin pinta `TEMPLATES` y su guardado **sobreescribe** la
+	 * opción. Una plantilla que el plugin envía pero no está en la lista no se
+	 * puede editar y desaparece en el primer guardado, sin aviso: el correo deja
+	 * de salir y nadie se entera.
+	 */
+	public function test_las_plantillas_que_el_plugin_envia_estan_en_la_lista(): void {
+		$this->assertContains( 'confirm_email', Email_Manager::TEMPLATES );
+		$this->assertContains( 'verify_phone', Email_Manager::TEMPLATES );
+	}
+
+	/** Toda plantilla declarada tiene su versión de fábrica (y al revés). */
+	public function test_los_slugs_declarados_y_los_de_fabrica_coinciden(): void {
+		$declarados = Email_Manager::TEMPLATES;
+		$fabrica    = array_keys( Email_Manager::default_templates() );
+
+		sort( $declarados );
+		sort( $fabrica );
+
+		$this->assertSame( $declarados, $fabrica );
+	}
+
+	public function test_la_migracion_repone_una_plantilla_que_falta_en_el_sitio(): void {
+		// Un sitio cuyo guardado del admin es anterior a la plantilla.
+		$this->guardar_plantilla( 'Saludo propio, {nombre}', '<h1>Propio</h1>' );
+		$templates = get_option( 'convoca_email_templates' );
+		$this->assertArrayNotHasKey( 'confirm_email', $templates );
+
+		update_option( 'convoca_email_templates_version', '2026-09-10-2' );
+		Email_Manager::maybe_migrate();
+
+		$templates = get_option( 'convoca_email_templates' );
+
+		$this->assertArrayHasKey( 'confirm_email', $templates );
+		$this->assertArrayHasKey( 'verify_phone', $templates );
+		$this->assertStringContainsString( '{link_confirmacion}', $templates['confirm_email']['body'] );
+		// Lo que el sitio tenía se respeta.
+		$this->assertSame( 'Saludo propio, {nombre}', $templates['bienvenida']['subject'] );
+		$this->assertSame( '<h1>Propio</h1>', $templates['bienvenida']['body'] );
+	}
+
+	public function test_un_sitio_sin_plantillas_las_recibe_enteras(): void {
+		delete_option( 'convoca_email_templates' );
+		update_option( 'convoca_email_templates_version', '2026-09-10-2' );
+
+		Email_Manager::maybe_migrate();
+
+		$this->assertSame(
+			array_keys( Email_Manager::default_templates() ),
+			array_keys( get_option( 'convoca_email_templates' ) )
+		);
+	}
 }

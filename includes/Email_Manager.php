@@ -55,6 +55,11 @@ class Email_Manager {
 		'renovacion_completada',
 		'voluntariado_recordatorio',
 		'objetivo_voluntariado_completado',
+		// Estas dos las envía el propio plugin (cambio de email y verificación de
+		// teléfono). Si no están en la lista, el editor de plantillas no las pinta
+		// y al guardar las borra de la opción: el correo desaparece en silencio.
+		'confirm_email',
+		'verify_phone',
 	);
 
 	/** Available variables for templates. */
@@ -116,12 +121,13 @@ class Email_Manager {
 
 	/* ── Default templates (installed on activation) ───── */
 
-	public static function install_defaults(): void {
-		if ( false !== get_option( self::OPTION ) ) {
-			return;
-		}
-
-		$defaults = array(
+	/**
+	 * Plantillas de fábrica, una por slug de TEMPLATES.
+	 *
+	 * @return array<string, array{subject: string, body: string}>
+	 */
+	public static function default_templates(): array {
+		return array(
 			'credenciales_acceso'              => array(
 				'subject' => 'Bienvenido/a a ' . get_bloginfo( 'name' ) . ' — Tus credenciales de acceso',
 				'body'    => __( '<h1>¡Bienvenido/a, {nombre}!</h1>', 'convoca-members' )
@@ -320,7 +326,7 @@ class Email_Manager {
 				'body'    => __( '<h1>Hola {nombre},</h1>', 'convoca-members' )
 					. __( '<p>Has solicitado cambiar tu email de contacto a <strong>{nuevo_email}</strong>.</p>', 'convoca-members' )
 					. __( '<p>Para confirmar el cambio, haz clic en el siguiente enlace (válido por 24 horas):</p>', 'convoca-members' )
-					. '<p style="text-align:center;margin:24px 0;"><a href="{link_confirmacion}" style="background:#FF8700;color:#fff;padding:12px 24px;border-radius:6px;text-decoration:none;font-weight:bold;">' . esc_html__( 'Confirmar email', 'convoca-members' ) . '</a></p>'
+					. Email_Layout::button_html( '{link_confirmacion}', __( 'Confirmar email', 'convoca-members' ) )
 					. __( '<p>Si no has solicitado este cambio, ignora este mensaje. Tu email actual seguirá activo.</p>', 'convoca-members' ),
 			),
 			'verify_phone'                     => array(
@@ -328,7 +334,7 @@ class Email_Manager {
 				'body'    => __( '<h1>Hola {nombre},</h1>', 'convoca-members' )
 					. __( '<p>Has solicitado verificar tu número de teléfono <strong>{telefono}</strong>.</p>', 'convoca-members' )
 					. __( '<p>Para confirmar que es tu número, haz clic en el siguiente enlace (válido por 24 horas):</p>', 'convoca-members' )
-					. '<p style="text-align:center;margin:24px 0;"><a href="{link_confirmacion}" style="background:#FF8700;color:#fff;padding:12px 24px;border-radius:6px;text-decoration:none;font-weight:bold;">' . esc_html__( 'Verificar teléfono', 'convoca-members' ) . '</a></p>'
+					. Email_Layout::button_html( '{link_confirmacion}', __( 'Verificar teléfono', 'convoca-members' ) )
 					. __( '<p>Si no has solicitado esta verificación, ignora este mensaje.</p>', 'convoca-members' ),
 			),
 			'voluntariado_recordatorio'        => array(
@@ -380,8 +386,18 @@ class Email_Manager {
 					. '<p>¡Gracias por tu dedicación y apoyo a la naturaleza! 🌍</p>',
 			),
 		);
+	}
 
-		update_option( self::OPTION, $defaults );
+	/**
+	 * Escribe las plantillas de fábrica. Solo al activar: no pisa las de un sitio
+	 * que ya las tenga.
+	 */
+	public static function install_defaults(): void {
+		if ( false !== get_option( self::OPTION ) ) {
+			return;
+		}
+
+		update_option( self::OPTION, self::default_templates() );
 	}
 
 	/* ── Send methods ──────────────────────────────────── */
@@ -899,7 +915,7 @@ class Email_Manager {
 	/* ── Migración de plantillas ya guardadas ─────────── */
 
 	const TEMPLATES_VERSION_OPTION = 'convoca_email_templates_version';
-	const TEMPLATES_VERSION        = '2026-09-26-1';
+	const TEMPLATES_VERSION        = '2026-09-26-2';
 
 	/**
 	 * Corrige las plantillas ya guardadas en sitios existentes: `install_defaults()`
@@ -983,7 +999,33 @@ class Email_Manager {
 				);
 			}
 
+			// Una plantilla que falta no se «corrige»: no existe. El editor del
+			// admin solo escribe las de TEMPLATES y sobreescribe la opción, así
+			// que una plantilla añadida después desaparece en el primer guardado
+			// —y `send()` la descarta sin decir nada—. Se reponen las de fábrica
+			// que falten, sin tocar las que el sitio tenga.
+			$repuestas = array();
+
+			foreach ( self::default_templates() as $slug => $tpl ) {
+				if ( ! isset( $templates[ $slug ] ) ) {
+					$templates[ $slug ] = $tpl;
+					$repuestas[]        = $slug;
+				}
+			}
+
+			if ( $repuestas ) {
+				\Convoca\Core\Logger::warning(
+					'Plantillas de correo repuestas (faltaban en el sitio): ' . implode( ', ', $repuestas ),
+					'Members/Emails'
+				);
+			}
+
 			update_option( self::OPTION, $templates );
+		} else {
+			// Sitio sin plantillas guardadas (opción ausente o vacía): se escriben
+			// las de fábrica, que es lo que `install_defaults()` no hizo porque la
+			// opción ya existía.
+			update_option( self::OPTION, self::default_templates() );
 		}
 
 		update_option( self::TEMPLATES_VERSION_OPTION, self::TEMPLATES_VERSION );
