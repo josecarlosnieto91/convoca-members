@@ -195,7 +195,7 @@ class PDF_Document {
 			// el sello un poco más cerca y los márgenes del documento algo más cortos. Va después del
 			// estilo de la plantilla (se inyecta al final del <head>) para poder apretarlo.
 			$stamp_html    = str_replace( 'margin-top: 50px', 'margin-top: 18px', $stamp_html );
-			$compactar     = '<style>@page { margin: 12mm 14mm; } body { font-size: 13px; line-height: 1.45; } '
+			$compactar     = '<style>' . Estilos_PDF::base() . '@page { margin: 12mm 14mm; } body { font-size: 13px; line-height: 1.45; } '
 				. '.box, .content { margin-bottom: 12px; } h1 { margin-bottom: 12px; padding-bottom: 6px; } '
 				. 'h2 { margin-top: 12px; padding-bottom: 4px; }</style>';
 			$template_html = str_contains( $template_html, '</head>' )

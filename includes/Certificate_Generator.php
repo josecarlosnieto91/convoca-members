@@ -262,7 +262,7 @@ class Certificate_Generator {
 		<head>
 		<meta charset="UTF-8">
 		<title>Certificado de Voluntariado</title>
-		<style>
+		<style>' . Estilos_PDF::base() . '
 		@page { margin: 25px; }
 		body { font-family: "Segoe UI", Roboto, Helvetica, Arial, sans-serif; margin: 0; color: #333; background: #f4f7f6; }
 		.certificado {

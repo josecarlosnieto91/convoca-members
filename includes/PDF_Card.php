@@ -106,7 +106,7 @@ class PDF_Card {
         <head>
             <meta charset="UTF-8">
             <title>' . esc_html__( 'Tarjeta Socio', 'convoca-members' ) . ' #' . esc_html( $num_socio_display ) . '</title>
-            <style>
+            <style>' . Estilos_PDF::base() . '
                 @media print {
                     body { margin: 0; padding: 0; }
                     .no-print { display: none; }

@@ -1,5 +1,32 @@
 # Changelog — convoca-members
 
+## v2.8.19 (2026-09-27)
+
+### Añadido — base de estilos común de los documentos (bloque 8)
+
+Los tres documentos (carnet, acuerdo y certificado) usaban la misma tipografía y los mismos colores
+de marca, cada uno por su cuenta, y todos se dibujan con Dompdf, que no es un navegador.
+
+- `Estilos_PDF` reúne **la tipografía y los colores** en un solo sitio (constantes de PHP, porque
+  Dompdf no soporta variables CSS) y trae los resets neutros que comparten (margen del cuerpo,
+  imágenes al 100%, tablas sin doble borde).
+- Y sobre todo **escribe las trampas de Dompdf** que se fueron midiendo una a una, para que el
+  próximo documento no vuelva a tropezar: no hay flexbox (se coloca con flotantes y `clear`),
+  `overflow: hidden` **recorta** los contenedores con flotantes dentro (altura cero, y el texto sigue
+  en el fichero, así que `pdftotext` no lo delata), `box-sizing: border-box` no se respeta (suma
+  padding y borde), `@media print` no existe, la tipografía no tiene glifos de emoji y no hay
+  variables CSS.
+- La base se **antepone** a la hoja de cada documento: cada uno manda en lo suyo. Comprobado antes y
+  después con los tres documentos generados: **mismo número de páginas, mismo tamaño de folio y el
+  mismo texto**. En el carnet el texto extraído es idéntico byte a byte; en el acuerdo y el
+  certificado solo cambian la fecha de firma y el ID, que son nuevos en cada generación.
+- La base **no fija el color del texto** a propósito: la plantilla del acuerdo la edita el sitio y,
+  por ir después en la hoja, un color puesto en la base se le impondría al suyo.
+
+### Pruebas
+- `EstilosPdfTest` (4 casos): la base trae lo que debe, no se impone al color de cada documento, el
+  carnet la incluye y los tres documentos la llaman — un documento nuevo que la olvide falla aquí.
+
 ## v2.8.18 (2026-09-27)
 
 ### Corregido — los textos del certificado (bloque 9)

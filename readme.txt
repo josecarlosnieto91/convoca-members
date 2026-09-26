@@ -4,7 +4,7 @@ Tags: members, volunteers, membership, certificates, associations
 Requires at least: 6.4
 Tested up to: 7.1
 Requires PHP: 8.1
-Stable tag: 2.8.18
+Stable tag: 2.8.19
 License: GPL-2.0-or-later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -49,6 +49,10 @@ This plugin may contact getconvoca.app to validate PRO licenses, only when a key
 3. Activate the plugin from the Plugins menu
 
 == Changelog ==
+
+= 2.8.19 =
+* Base de estilos común de los documentos (`Estilos_PDF`): la tipografía y los colores de la marca en un solo sitio para el carnet, el acuerdo y el certificado, y escritas las trampas de Dompdf (no hay flexbox; `overflow: hidden` recorta los contenedores con flotantes; `box-sizing: border-box` no se respeta; `@media print` no existe; la tipografía no tiene emojis; no hay variables CSS) para que un documento nuevo no tropiece con ellas.
+* La base se antepone a la hoja de cada documento, así que no cambia lo que ya se veía: comprobado antes y después, los tres documentos salen igual.
 
 = 2.8.18 =
 * El certificado de voluntariado sale con las horas en la convención del castellano: decía «18.5 horas» con punto fijo; ahora dice «18,5 horas» (y «1.234,5» si algún día hay muchas). No se sigue el formato del idioma del sitio porque, medido en la demo (locale es_ES y traducciones cargadas), WordPress devolvía el formato inglés —«1,234.5»—: el documento salía con las letras en castellano y las cifras en inglés. Hay un filtro (`convoca_documento_horas`) para quien quiera otra convención.
