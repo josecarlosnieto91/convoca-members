@@ -91,6 +91,28 @@ class TarjetaPdfTest extends TestCase
 		$this->assertStringContainsString( '.body, .footer { clear: both; }', $html );
 	}
 
+	public function test_el_pdf_no_recorta_las_zonas_con_overflow(): void
+	{
+		// Medido: `overflow: hidden` en un contenedor con flotantes dentro hace que Dompdf lo
+		// calcule con altura CERO y recorte su contenido. Con eso, el carnet salía en el PDF con
+		// solo dos líneas de texto: el logo, las insignias, la fecha y el QR desaparecían de la
+		// página (aunque siguieran en la capa de texto, que es lo que engaña a `pdftotext`).
+		// El `.card` sí conserva su `overflow` de la hoja base: el que no puede volver es el de las
+		// zonas con flotantes.
+		$this->assertStringNotContainsString( '.header, .footer { overflow: hidden; }', $this->pdf() );
+	}
+
+	public function test_las_tres_zonas_del_pdf_se_reparten_en_la_tarjeta(): void
+	{
+		$html = $this->pdf();
+
+		// El `justify-content: space-between` del navegador no existe en Dompdf: sin repartirlas,
+		// el contenido se apelotonaba arriba y quedaba un tercio de la tarjeta vacío.
+		$this->assertMatchesRegularExpression( '/\.header \{ position: absolute; top: 30px;/', $html );
+		$this->assertMatchesRegularExpression( '/\.body \{ position: absolute; top: \d+px;/', $html );
+		$this->assertMatchesRegularExpression( '/\.footer \{ position: absolute; top: \d+px;/', $html );
+	}
+
 	public function test_el_pdf_no_cambia_el_html_del_navegador(): void
 	{
 		$html = $this->navegador();

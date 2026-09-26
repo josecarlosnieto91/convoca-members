@@ -248,7 +248,10 @@ class PDF_Card {
                    por flotantes, que dompdf sí coloca: las insignias a la derecha de la cabecera y
                    el QR a la derecha del pie. */
                 .card, .header, .body, .footer { display: block; }
-                .header, .footer { overflow: hidden; }
+                /* SIN `overflow: hidden` en cabecera y pie: con flotantes dentro, dompdf calcula el
+                   contenedor con altura CERO y recorta su contenido (el logo, las insignias, la fecha
+                   y el QR desaparecían del PDF aunque siguieran en la capa de texto). Para bajar el
+                   cuerpo debajo de la cabecera ya está el `clear` de abajo. */
                 .header-right, .footer .qr-code { float: right; }
                 .footer .info { float: left; }
                 /* Dentro del grupo de insignias dompdf las apilaba una debajo de otra y la segunda
@@ -261,6 +264,13 @@ class PDF_Card {
                 /* Con el logo flotado, el cuerpo se le colaba al lado y el número de socio se iba a
                    la derecha. `clear` lo baja debajo de la cabecera, que es donde va. */
                 .body, .footer { clear: both; }
+                /* Y las tres zonas se reparten como en el navegador: cabecera arriba, datos en medio
+                   y pie abajo. El `justify-content: space-between` del flex no existe en dompdf, así
+                   que sin esto el contenido se apelotonaba arriba y quedaba un tercio de tarjeta
+                   vacío. Las medidas del contenido son 388x218 (450-60-2 x 280-60-2). */
+                .header { position: absolute; top: 30px; left: 30px; width: 388px; }
+                .body { position: absolute; top: 88px; left: 30px; width: 388px; }
+                .footer { position: absolute; top: 173px; left: 30px; width: 388px; }
                 ' : '' ) . '
             </style>
         </head>
