@@ -364,12 +364,15 @@ class CPT_Miembro {
 	}
 
 	/**
-	 * Normaliza una clave o una etiqueta de plan para compararlas: sin acentos, en minúsculas y sin
-	 * espacios de sobra.
+	 * Normaliza una clave o una etiqueta de plan para compararlas. Las etiquetas llevan adorno — la
+	 * de la demo es literalmente «🥉 Bronce» — así que se quita todo lo que no sea letra, número o
+	 * espacio antes de comparar: sin eso, la etiqueta nunca casaba con lo guardado en el socio
+	 * («Bronce») y el carnet seguía sin distinguir la modalidad.
 	 */
 	private static function normalizar_plan( string $texto ): string {
-		$texto = function_exists( 'remove_accents' ) ? remove_accents( $texto ) : $texto;
-		return strtolower( trim( $texto ) );
+		$texto = preg_replace( '/[^\p{L}\p{N}\s]/u', '', $texto );
+		$texto = function_exists( 'remove_accents' ) ? \remove_accents( (string) $texto ) : (string) $texto;
+		return strtolower( trim( preg_replace( '/\s+/', ' ', $texto ) ) );
 	}
 
 	/**

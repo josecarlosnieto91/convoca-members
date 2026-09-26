@@ -1,5 +1,18 @@
 # Changelog — convoca-members
 
+## v2.8.22 (2026-09-27)
+
+### Arreglado — completada la resolución del plan por etiqueta (2.8.21 no bastaba)
+
+La 2.8.21 buscaba el plan por etiqueta, pero comparaba en crudo y **las etiquetas llevan adorno**:
+la de la demo es literalmente «🥉 Bronce» y el socio tiene guardado «Bronce» (castellano, con la
+clave en inglés: `bronze`). No casaba, así que el carnet seguía saliendo «SOCIO/A».
+
+- La comparación quita ahora todo lo que no sea letra, número o espacio —el emoji, los guiones, los
+  adornos— antes de comparar, además de acentos, mayúsculas y espacios de sobra.
+- Caso real fijado en `CPTMiembroTest`: clave `bronze`, etiqueta `🥉 Bronce`, socio `Bronce` → el
+  carnet muestra la modalidad.
+
 ## v2.8.21 (2026-09-27)
 
 ### Arreglado — el carnet no distinguía la modalidad del socio (bloque 8)

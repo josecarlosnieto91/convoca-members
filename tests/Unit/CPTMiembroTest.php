@@ -88,6 +88,23 @@ class CPTMiembroTest extends TestCase
         }
     }
 
+    /**
+     * El caso real de la demo, tal cual está: la clave es la inglesa (`bronze`), la etiqueta lleva
+     * el adorno delante (`🥉 Bronce`) y el socio tiene guardado el castellano (`Bronce`). Sin quitar
+     * el adorno al comparar, la etiqueta no casaba nunca y el carnet seguía saliendo «SOCIO/A».
+     */
+    public function test_get_plan_resuelve_la_etiqueta_con_adorno(): void
+    {
+        update_option('convoca_members_plans', array(
+            'bronze' => array('label' => '🥉 Bronce', 'price' => 50),
+            'deva'   => array('label' => '🥇 Deva', 'price' => 100),
+        ));
+
+        $this->assertSame('🥉 Bronce', \Convoca\Members\CPT_Miembro::get_plan('Bronce')['label']);
+        $this->assertSame('🥇 Deva', \Convoca\Members\CPT_Miembro::get_plan('Deva')['label']);
+        $this->assertSame('🥇 Deva', \Convoca\Members\CPT_Miembro::get_plan('deva')['label']);
+    }
+
     public function test_get_plan_devuelve_nulo_si_no_existe(): void
     {
         update_option('convoca_members_plans', array('bronze' => array('label' => 'Bronce', 'price' => 50)));
