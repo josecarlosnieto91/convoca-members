@@ -186,7 +186,8 @@ namespace {
     }
 
     if (!\function_exists('get_the_title')) {
-        function get_the_title($id) { return "Title #$id"; }
+        // `_test_post_title` permite fijar el título (para probar, por ejemplo, un nombre largo).
+        function get_the_title($id) { return $GLOBALS['_test_post_title'] ?? "Title #$id"; }
     }
 
     if (!\function_exists('get_post')) {

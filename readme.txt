@@ -51,7 +51,9 @@ This plugin may contact getconvoca.app to validate PRO licenses, only when a key
 == Changelog ==
 
 = 2.8.17 =
-* El PDF de la tarjeta ya no lleva dentro el botón «IMPRIMIR / GUARDAR PDF» (Dompdf ignora `@media print`) y su página es la tarjeta (119x74 mm) en lugar de una hoja A4 con la tarjeta flotando en medio.
+* La tarjeta del PDF ya no lleva dentro el botón «IMPRIMIR / GUARDAR PDF» y su página es la tarjeta (119x74 mm) en lugar de un folio A4 con la tarjeta flotando en medio.
+* El carnet se imprimía recortado (solo dos líneas de texto): `overflow: hidden` en la cabecera y el pie hacía que Dompdf los calculase con altura cero y recortase su contenido. El logo, las insignias, la fecha y el QR no se pintaban aunque siguieran en la capa de texto. Las tres zonas se reparten además con posiciones absolutas (el carnet tenía un tercio vacío).
+* Un nombre largo se cruzaba con el pie del carnet: ahora el nombre ajusta su tamaño por longitud (probado con 107 caracteres).
 * La tarjeta salía en dos páginas: Dompdf le sumaba el padding y el borde a las medidas (450x280 se le iban a 510x340), no entiende flexbox (las tres zonas se apilaban y el QR se salía) y contaba los adornos que sobresalen del folio. En PDF se usan las medidas del contenido y las zonas se colocan con flotantes.
 * Un emoji en la etiqueta del plan salía como «?» en el PDF (Helvetica no tiene ese glifo): ahora se quita el emoji y se conserva el texto.
 * El acuerdo cabe en una página: el sello de aceptación se iba a la segunda.

@@ -46,6 +46,18 @@ class PDF_Card {
 		$theme             = in_array( $theme, array( 'light', 'dark' ), true ) ? $theme : \Convoca\Core\Utils::get_document_theme( 'card' );
 		$light             = 'light' === $theme;
 		$nombre            = get_the_title( $post_id );
+
+		// Un nombre largo no cabe en dos líneas del carnet: en vez de dejar que se desborde por
+		// debajo (se cruzaba con el pie y el orden del texto se rompía), se reduce el tamaño. El
+		// caso está probado con un nombre de 107 caracteres.
+		$largo_nombre = mb_strlen( (string) $nombre );
+		if ( $largo_nombre > 40 ) {
+			$clase_nombre = 'member-name member-name--largo';
+		} elseif ( $largo_nombre > 24 ) {
+			$clase_nombre = 'member-name member-name--medio';
+		} else {
+			$clase_nombre = 'member-name';
+		}
 		$num_socio         = get_post_meta( $post_id, '_convoca_numero_socio', true );
 		$num_socio_display = $num_socio ? str_pad( $num_socio, 4, '0', STR_PAD_LEFT ) : esc_html__( 'PENDIENTE', 'convoca-members' );
 
@@ -183,6 +195,10 @@ class PDF_Card {
                     font-weight: bold;
                 }
                 .member-name { font-size: 20px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; }
+                /* Nombres largos: se ajusta el tamaño para que quepan en el carnet (si no, se
+                   desbordaban por debajo y se cruzaban con el pie). También en el navegador. */
+                .member-name--medio { font-size: 16px; letter-spacing: 0.5px; line-height: 1.15; }
+                .member-name--largo { font-size: 13px; letter-spacing: 0.2px; line-height: 1.05; }
                 .footer { display: flex; justify-content: space-between; align-items: flex-end; z-index: 1; }
                 .info { font-size: 11px; opacity: 0.9; line-height: 1.4; }
                 .qr-code { 
@@ -269,7 +285,7 @@ class PDF_Card {
                    que sin esto el contenido se apelotonaba arriba y quedaba un tercio de tarjeta
                    vacío. Las medidas del contenido son 388x218 (450-60-2 x 280-60-2). */
                 .header { position: absolute; top: 30px; left: 30px; width: 388px; }
-                .body { position: absolute; top: 88px; left: 30px; width: 388px; }
+                .body { position: absolute; top: 80px; left: 30px; width: 388px; }
                 .footer { position: absolute; top: 173px; left: 30px; width: 388px; }
                 ' : '' ) . '
             </style>
@@ -286,7 +302,7 @@ class PDF_Card {
                 
                 <div class="body">
                     <div class="member-number">' . esc_html__( 'NO.', 'convoca-members' ) . ' ' . esc_html( $num_socio_display ) . '</div>
-                    <div class="member-name">' . esc_html( $nombre ) . '</div>
+                    <div class="' . esc_attr( $clase_nombre ) . '">' . esc_html( $nombre ) . '</div>
                 </div>
                 
                 <div class="footer">

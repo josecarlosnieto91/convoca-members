@@ -53,6 +53,22 @@ class TarjetaPdfTest extends TestCase
 		return PDF_Card::get_html( self::SOCIO, 'light', true );
 	}
 
+	public function test_un_nombre_largo_se_ajusta_de_tamano(): void
+	{
+		// Probado con 107 caracteres: a tamaño normal el nombre se partía en tres líneas, se salía
+		// por debajo del bloque y se cruzaba con el pie (las líneas del nombre salían intercaladas
+		// con la fecha y el dominio). Se ajusta por longitud, y también en el navegador.
+		$GLOBALS['_test_post_title'] = 'María de los Ángeles Fernández-Cordero Villalpando y Otra Vez Más Apellidos Largos de Ejemplo';
+
+		$this->assertStringContainsString( 'member-name member-name--largo', $this->pdf() );
+		// Las dos medidas están en la hoja base, así que el navegador también las aplica.
+		$this->assertStringContainsString( '.member-name--medio { font-size: 16px;', $this->navegador() );
+		$this->assertStringContainsString( '.member-name--largo { font-size: 13px;', $this->navegador() );
+
+		unset( $GLOBALS['_test_post_title'] );
+		$this->assertStringContainsString( 'class="member-name"', $this->pdf() );
+	}
+
 	public function test_el_navegador_sigue_teniendo_el_boton_de_imprimir(): void
 	{
 		$html = $this->navegador();

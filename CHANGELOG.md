@@ -31,6 +31,16 @@ de imprimir dentro.
      cuenta. En PDF no se pintan.
 - **Un emoji en la etiqueta del plan salía como «?»** (Helvetica no tiene el glifo): «🏅 Bronce» se
   imprimía «? BRONCE». En el PDF se quita el emoji y se conserva el texto.
+- **El carnet se imprimía recortado**: en la página solo salían dos líneas. La causa era
+  `overflow: hidden` en la cabecera y el pie —puesto para contener los flotantes—, porque Dompdf
+  calcula esos contenedores con altura CERO y **recorta** su contenido: desaparecían el logo, las
+  insignias, la fecha y el QR. El texto seguía en la capa del PDF, así que `pdftotext` no lo veía;
+  se descubrió **mirando el PDF**. Y las tres zonas se reparten ahora con posiciones absolutas,
+  porque el `justify-content: space-between` del navegador no existe en Dompdf y el contenido se
+  apelotonaba arriba dejando un tercio del carnet vacío.
+- **Un nombre largo se cruzaba con el pie del carnet**: se partía en tres líneas, se salía del
+  bloque y sus líneas salían intercaladas con la fecha y el dominio. El nombre ajusta ahora su
+  tamaño por longitud (20 / 16 / 13 px), también en el navegador. Probado con 107 caracteres.
 - **La tarjeta ya se puede generar fuera del escritorio.** Usaba `wp_tempnam()`, que vive en
   `wp-admin/includes/file.php` y no está cargado en cron ni en la web. Un correo que adjuntase la
   tarjeta desde cron moría con «Call to undefined function wp_tempnam()». Ahora usa
