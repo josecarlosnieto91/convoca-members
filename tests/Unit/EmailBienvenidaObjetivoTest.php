@@ -235,6 +235,30 @@ class EmailBienvenidaObjetivoTest extends TestCase {
 		$this->assertSame( '<h1>Propio</h1>', $templates['bienvenida']['body'] );
 	}
 
+	public function test_la_migracion_repara_un_enlace_destruido_por_esc_url(): void {
+		// `esc_url('{link_pago}')` devuelve `http://link_pago` y lo deja guardado.
+		$this->guardar_plantilla( 'Asunto', '<p><a href="http://link_pago" class="email-btn">Pagar</a></p>' );
+		update_option( 'convoca_email_templates_version', '2026-09-10-2' );
+
+		Email_Manager::maybe_migrate();
+
+		$tpl = get_option( 'convoca_email_templates' )['bienvenida'];
+
+		$this->assertStringContainsString( 'href="{link_pago}"', $tpl['body'] );
+		$this->assertStringNotContainsString( 'http://link_pago', $tpl['body'] );
+	}
+
+	public function test_la_migracion_no_toca_una_url_de_verdad(): void {
+		// Una URL real que contiene la palabra no puede convertirse en placeholder.
+		$body = '<p><a href="https://example.org/link_pago/informacion/" class="email-btn">Ver</a></p>';
+		$this->guardar_plantilla( 'Asunto', $body );
+		update_option( 'convoca_email_templates_version', '2026-09-10-2' );
+
+		Email_Manager::maybe_migrate();
+
+		$this->assertSame( $body, get_option( 'convoca_email_templates' )['bienvenida']['body'] );
+	}
+
 	public function test_un_sitio_sin_plantillas_las_recibe_enteras(): void {
 		delete_option( 'convoca_email_templates' );
 		update_option( 'convoca_email_templates_version', '2026-09-10-2' );

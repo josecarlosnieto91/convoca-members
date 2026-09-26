@@ -4,7 +4,7 @@ Tags: members, volunteers, membership, certificates, associations
 Requires at least: 6.4
 Tested up to: 7.1
 Requires PHP: 8.1
-Stable tag: 2.8.12
+Stable tag: 2.8.13
 License: GPL-2.0-or-later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -49,6 +49,9 @@ This plugin may contact getconvoca.app to validate PRO licenses, only when a key
 3. Activate the plugin from the Plugins menu
 
 == Changelog ==
+
+= 2.8.13 =
+* La migración de plantillas repara los botones rotos que quedaron guardados: «http://link_pago» vuelve a ser «{link_pago}», así que el enlace se sustituye de verdad.
 
 = 2.8.12 =
 * El correo de confirmación de cambio de email y el de verificación de teléfono **no salían**: sus plantillas no estaban en la lista que edita el admin, y al guardar esa página se borraban de la opción. Ahora están en la lista y la migración repone las de fábrica que falten sin tocar las del sitio.

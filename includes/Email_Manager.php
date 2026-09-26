@@ -915,7 +915,7 @@ class Email_Manager {
 	/* ── Migración de plantillas ya guardadas ─────────── */
 
 	const TEMPLATES_VERSION_OPTION = 'convoca_email_templates_version';
-	const TEMPLATES_VERSION        = '2026-09-26-2';
+	const TEMPLATES_VERSION        = '2026-09-26-3';
 
 	/**
 	 * Corrige las plantillas ya guardadas en sitios existentes: `install_defaults()`
@@ -943,10 +943,9 @@ class Email_Manager {
 				// Residuo del doble escape (el \u se perdió al guardar).
 				'<h1>00a1Bienvenido/a'                => '<h1>¡Bienvenido/a',
 				'! 0001F389</H1>'                     => '! 🎉</h1>',
-				// Placeholders que perdieron las llaves: enlaces roto.
-				'http://login_url'                    => '{login_url}',
-				'http://certificado_url_verificacion' => '{certificado_url_verificacion}',
-				// La marca debe ser el nombre del sitio.
+				// Placeholders que perdieron las llaves: enlaces roto. Se
+				// reconocen por su NOMBRE, no por el caso suelto que aparezca
+				// (antes solo estaban contemplados dos de los cinco).
 				'familia Convoca'                     => 'familia ' . $site,
 				'comunidad Convoca'                   => 'comunidad ' . $site,
 				'apoyando a Convoca'                  => 'apoyando a ' . $site,
@@ -969,6 +968,21 @@ class Email_Manager {
 							'{admin_email}',
 							$text
 						);
+
+						// `esc_url()` destruye un placeholder: `{link_pago}` quedó
+						// guardado como `http://link_pago`, así que la sustitución
+						// posterior no encuentra nada y el botón viaja roto. Se
+						// reconocen SOLO los nombres de variable reales, para no
+						// tocar una URL de verdad que contenga una palabra parecida.
+						$nombres = implode(
+							'|',
+							array_map(
+								static fn( string $v ): string => preg_quote( trim( $v, '{}' ), '/' ),
+								self::VARIABLES
+							)
+						);
+
+						$text = (string) preg_replace( '#https?://(' . $nombres . ')(?=["\'])#i', '{$1}', $text );
 
 						$templates[ $slug ][ $field ] = $text;
 					}

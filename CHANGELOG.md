@@ -1,5 +1,14 @@
 # Changelog — convoca-members
 
+## v2.8.13 (2026-09-26)
+
+### Corregido
+- **Reparación de los botones ya guardados.** La migración de plantillas recupera los enlaces que
+  `esc_url()` dejó destruidos (`http://link_pago` → `{link_pago}`, y lo mismo con `login_url`,
+  `link_confirmacion`, `panel_reservas` y `certificado_url_verificacion`), en vez de taparlos de uno en
+  uno. Antes solo estaban contemplados dos de los cinco casos.
+
+
 ## v2.8.12 (2026-09-26)
 
 ### Corregido
