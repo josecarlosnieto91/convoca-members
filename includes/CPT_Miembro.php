@@ -332,10 +332,44 @@ class CPT_Miembro {
 
 	/**
 	 * Get plan data by key.
+	 *
+	 * Acepta también la ETIQUETA del plan y la clave con otra caja: los socios se han guardado en
+	 * algún sitio con la etiqueta en vez de la clave (así están los sembrados de la demo: «Bronce»
+	 * donde debería ir «bronze»), y entonces el carnet, el acuerdo y el certificado caían al texto
+	 * genérico —«SOCIO/A»— y **no distinguían la modalidad**. Buscar por etiqueta solo se intenta si
+	 * la clave exacta no existe, así que no cambia nada de lo que ya funcionaba.
 	 */
 	public static function get_plan( string $key ): ?array {
 		$plans = self::get_plans();
-		return $plans[ $key ] ?? null;
+
+		if ( isset( $plans[ $key ] ) ) {
+			return $plans[ $key ];
+		}
+
+		$buscada = self::normalizar_plan( $key );
+		if ( '' === $buscada ) {
+			return null;
+		}
+
+		foreach ( $plans as $clave => $plan ) {
+			$etiqueta = self::normalizar_plan( (string) ( $plan['label'] ?? '' ) );
+			$porclave = self::normalizar_plan( (string) $clave );
+
+			if ( $buscada === $etiqueta || $buscada === $porclave ) {
+				return $plan;
+			}
+		}
+
+		return null;
+	}
+
+	/**
+	 * Normaliza una clave o una etiqueta de plan para compararlas: sin acentos, en minúsculas y sin
+	 * espacios de sobra.
+	 */
+	private static function normalizar_plan( string $texto ): string {
+		$texto = function_exists( 'remove_accents' ) ? remove_accents( $texto ) : $texto;
+		return strtolower( trim( $texto ) );
 	}
 
 	/**

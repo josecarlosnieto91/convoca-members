@@ -1,5 +1,22 @@
 # Changelog — convoca-members
 
+## v2.8.21 (2026-09-27)
+
+### Arreglado — el carnet no distinguía la modalidad del socio (bloque 8)
+
+`CPT_Miembro::get_plan()` buscaba el plan **solo por la clave exacta**. Un socio guardado con la
+**etiqueta** en vez de la clave —así están los sembrados de la demo, con «Bronce» donde debería ir
+`bronze`— no resolvía, y los tres documentos caían al texto genérico: el carnet salía con
+**«SOCIO/A»** en lugar de la modalidad, el acuerdo sin el plan y el certificado sin la etiqueta.
+
+- Ahora, si la clave exacta no existe, se busca también por la **etiqueta** del plan y por la clave
+  normalizada (sin acentos, sin distinguir mayúsculas, sin espacios de sobra).
+- Si la clave exacta existe, se devuelve como siempre: no cambia nada de lo que ya funcionaba.
+- Afecta a los tres documentos (carnet, acuerdo y certificado) y a cualquier consumidor del plan.
+
+Guardado con tres casos en `CPTMiembroTest`: por clave, por etiqueta (con caja y espacios distintos)
+y el nulo cuando no existe.
+
 ## v2.8.20 (2026-09-27)
 
 ### Arreglado — la modalidad larga rompía la cabecera del carnet (bloque 8)

@@ -63,6 +63,40 @@ class CPTMiembroTest extends TestCase
     }
 
     /**
+     * El plan guardado en el socio puede traer la ETIQUETA en vez de la clave (los sembrados de la
+     * demo tienen «Bronce» donde debería ir «bronze»), y entonces el carnet, el acuerdo y el
+     * certificado caían al texto genérico «SOCIO/A» y no distinguían la modalidad.
+     */
+    public function test_get_plan_encuentra_por_la_clave(): void
+    {
+        update_option('convoca_members_plans', array('bronze' => array('label' => 'Bronce', 'price' => 50)));
+
+        $plan = \Convoca\Members\CPT_Miembro::get_plan('bronze');
+
+        $this->assertNotNull($plan);
+        $this->assertSame('Bronce', $plan['label']);
+    }
+
+    public function test_get_plan_encuentra_aunque_guarden_la_etiqueta(): void
+    {
+        update_option('convoca_members_plans', array('bronze' => array('label' => 'Bronce', 'price' => 50)));
+
+        foreach (array('Bronce', 'BRONCE', '  bronce  ') as $guardado) {
+            $plan = \Convoca\Members\CPT_Miembro::get_plan($guardado);
+            $this->assertNotNull($plan, 'No resolvió el plan guardado como «' . $guardado . '»');
+            $this->assertSame('Bronce', $plan['label']);
+        }
+    }
+
+    public function test_get_plan_devuelve_nulo_si_no_existe(): void
+    {
+        update_option('convoca_members_plans', array('bronze' => array('label' => 'Bronce', 'price' => 50)));
+
+        $this->assertNull(\Convoca\Members\CPT_Miembro::get_plan('inventado'));
+        $this->assertNull(\Convoca\Members\CPT_Miembro::get_plan(''));
+    }
+
+    /**
      * La política de gracia con reintentos (2026-09) se implementa en
      * check_member_status: consulta pago_recurrente y el contador de intentos.
      */
