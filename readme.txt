@@ -4,7 +4,7 @@ Tags: members, volunteers, membership, certificates, associations
 Requires at least: 6.4
 Tested up to: 7.1
 Requires PHP: 8.1
-Stable tag: 2.8.16
+Stable tag: 2.8.17
 License: GPL-2.0-or-later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -49,6 +49,18 @@ This plugin may contact getconvoca.app to validate PRO licenses, only when a key
 3. Activate the plugin from the Plugins menu
 
 == Changelog ==
+
+= 2.8.17 =
+* El PDF de la tarjeta ya no lleva dentro el botón «IMPRIMIR / GUARDAR PDF» (Dompdf ignora `@media print`) y su página es la tarjeta (119x74 mm) en lugar de una hoja A4 con la tarjeta flotando en medio.
+* La tarjeta salía en dos páginas: Dompdf le sumaba el padding y el borde a las medidas (450x280 se le iban a 510x340), no entiende flexbox (las tres zonas se apilaban y el QR se salía) y contaba los adornos que sobresalen del folio. En PDF se usan las medidas del contenido y las zonas se colocan con flotantes.
+* Un emoji en la etiqueta del plan salía como «?» en el PDF (Helvetica no tiene ese glifo): ahora se quita el emoji y se conserva el texto.
+* El acuerdo cabe en una página: el sello de aceptación se iba a la segunda.
+* El marcador de la firma digital se reconocía solo con el nombre nuevo de la clase (`Signature`); las plantillas guardadas con el nombre antiguo (`BDV_Signature`) no se sustituían y el sello caía al final. Ahora se aceptan los dos.
+* La tarjeta ya se puede generar fuera del escritorio: usaba `wp_tempnam()` (de `wp-admin`) y un correo de cron que la adjuntase moría con «Call to undefined function wp_tempnam()».
+
+= 2.8.16 =
+* El panel de socio pinta los enlaces que cada sitio declare con el filtro `convoca_mi_area_links` (en Lugg, /turnos/ y /mi-perfil/), en lugar de llevar rutas de un sitio concreto.
+* Una entrada al filtro sin URL o sin texto se ignora en vez de romper el panel.
 
 = 2.8.15 =
 * La migración de plantillas vuelve a ejecutarse para recuperar los enlaces al panel escritos a mano.

@@ -1,5 +1,50 @@
 # Changelog — convoca-members
 
+## v2.8.17 (2026-09-27)
+
+### Corregido — los PDFs de tarjeta y acuerdo (bloque 8)
+
+Todo esto salió de **medir los PDF de verdad** (pdfinfo, pdftotext, el contador de páginas de
+Dompdf), no de leer el código. El acuerdo se iba a dos páginas y la tarjeta a dos y con el botón
+de imprimir dentro.
+
+- **El acuerdo cabe en una página.** El sello de aceptación se iba a la segunda página. Ahora el
+  documento se aprieta lo justo (márgenes del folio, espaciados y el sello del core más cerca) y
+  entra en una.
+- **El marcador de la firma se acepta con los dos nombres de clase.** El código buscaba
+  `<!-- … POR LA CLASE Signature -->`, pero las plantillas guardadas —como la de este sitio— dicen
+  `BDV_Signature` (el nombre antiguo). Al no reconocerlo, el sello **siempre** acababa al final del
+  documento en vez de donde el sitio lo había puesto. Ahora se reconoce cualquiera de los dos.
+- **La tarjeta del PDF no lleva el botón «IMPRIMIR / GUARDAR PDF».** Dompdf ignora `@media print`,
+  así que el botón —marcado como `no-print`— se colaba dentro del PDF. En modo PDF no se pinta; en
+  el navegador sigue estando.
+- **La página del PDF es la tarjeta** (450x280 px = 119x74 mm), no una A4 con la tarjeta flotando
+  en medio del folio.
+- **La tarjeta ya no sale en dos páginas.** Fueron tres causas, medidas una a una:
+  1. Dompdf **no respeta `box-sizing: border-box`**: le suma el padding (30x2) y el borde (1x2) a
+     las medidas, así que la tarjeta se le iba a 510x340 y no cabía en un folio de 450x280. En PDF
+     se le dan las medidas del contenido.
+  2. Dompdf **no sabe hacer flexbox**: las tres zonas de la tarjeta (cabecera, datos, pie) se
+     apilaban en vertical y el QR de 75 px se salía de los 280 px de alto. En PDF se colocan con
+     flotantes y `clear`.
+  3. Los **adornos decorativos** del fondo (200 px en `top:-60px`) sobresalen del folio y Dompdf los
+     cuenta. En PDF no se pintan.
+- **Un emoji en la etiqueta del plan salía como «?»** (Helvetica no tiene el glifo): «🏅 Bronce» se
+  imprimía «? BRONCE». En el PDF se quita el emoji y se conserva el texto.
+- **La tarjeta ya se puede generar fuera del escritorio.** Usaba `wp_tempnam()`, que vive en
+  `wp-admin/includes/file.php` y no está cargado en cron ni en la web. Un correo que adjuntase la
+  tarjeta desde cron moría con «Call to undefined function wp_tempnam()». Ahora usa
+  `get_temp_dir()`, del core, que está siempre disponible.
+
+### Pruebas
+- `tests/Unit/TarjetaPdfTest.php` (6 casos) fija lo anterior: el navegador conserva su botón y su
+  flexbox, el PDF no lleva botón, mide la tarjeta, no usa flexbox, quita el emoji del plan.
+- El arnés de pruebas gana lo que faltaba para poder probar la tarjeta: el tema de documentos, la
+  cabecera de marca y la sal persistente en el stub de `Utils`, las traducciones con plural, la
+  fecha del post, `wp_parse_url` y las constantes de tiempo de WordPress.
+- Se quita la deprecación de `ReflectionMethod::setAccessible()` en `CuotaPrimerAnoTest` (no hace
+  nada desde PHP 8.1 y está deprecado desde 8.5).
+
 ## v2.8.16 (2026-09-26)
 
 ### Añadido — el panel de socio admite enlaces del sitio

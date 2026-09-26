@@ -40,6 +40,21 @@ namespace Convoca\Core {
             }
 
             public static function clear_fired(): void { self::$actions_fired = []; }
+
+            /** Tema de documentos (tarjeta y acuerdo): «light» o «dark». */
+            public static function get_document_theme(string $suffix = ''): string {
+                return $GLOBALS['_test_document_theme'] ?? 'light';
+            }
+
+            /** Cabecera de marca: sin logo configurado devuelve el nombre del sitio en un <h1>. */
+            public static function get_branding_html(string $filter_suffix = 'common', string $css_class = '', string $style = ''): string {
+                return $GLOBALS['_test_branding'] ?? '<h1 style="' . $style . '">Mi Asociación</h1>';
+            }
+
+            /** Sal persistente del sitio (firma de los enlaces de verificación). */
+            public static function get_persistent_salt(): string {
+                return 'sal-de-pruebas';
+            }
         }
     }
 
@@ -83,6 +98,14 @@ namespace {
     \define('WP_DEBUG', true);
     \define('ABSPATH', \dirname(__DIR__) . '/');
     \define('OBJECT', 'OBJECT');
+
+    // Constantes de tiempo de WordPress: el código las usa para calcular antigüedad y plazos.
+    \define('MINUTE_IN_SECONDS', 60);
+    \define('HOUR_IN_SECONDS', 3600);
+    \define('DAY_IN_SECONDS', 86400);
+    \define('WEEK_IN_SECONDS', 604800);
+    \define('MONTH_IN_SECONDS', 2592000);
+    \define('YEAR_IN_SECONDS', 31536000);
 
     // ─── Shared stores for WP option/meta stubs ─────────────
 
@@ -211,6 +234,23 @@ namespace {
     if (!\function_exists('__')) { function __($s, $d = 'default') { return $s; } }
     if (!\function_exists('_x')) { function _x($s, $c, $d = 'default') { return $s; } }
     if (!\function_exists('esc_html__')) { function esc_html__($s, $d = 'default') { return $s; } }
+
+    // Traducción con plural: devuelve la forma singular cuando la cuenta es 1, como WordPress.
+    if (!\function_exists('_n')) {
+        function _n($single, $plural, $number, $domain = 'default') {
+            return 1 === (int) $number ? \str_replace('%d', (string) $number, $single) : \str_replace('%d', (string) $number, $plural);
+        }
+    }
+
+    // Fecha de publicación del post: la tarjeta la usa si el socio no tiene fecha de alta.
+    if (!\function_exists('get_the_date')) {
+        function get_the_date($format = 'Y-m-d', $post = null) { return $GLOBALS['_test_post_date'] ?? '2024-01-01'; }
+    }
+
+    // Descomposición de una URL (para pintar el dominio en la tarjeta).
+    if (!\function_exists('wp_parse_url')) {
+        function wp_parse_url($url, $component = -1) { return \parse_url($url, $component); }
+    }
     if (!\function_exists('esc_attr__')) { function esc_attr__($s, $d = 'default') { return $s; } }
     if (!\function_exists('esc_html')) { function esc_html($s) { return \htmlspecialchars((string)$s, ENT_QUOTES, 'UTF-8'); } }
     if (!\function_exists('esc_attr')) { function esc_attr($s) { return \htmlspecialchars((string)$s, ENT_QUOTES, 'UTF-8'); } }

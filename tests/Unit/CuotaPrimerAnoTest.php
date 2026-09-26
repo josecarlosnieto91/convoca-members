@@ -30,8 +30,9 @@ class CuotaPrimerAnoTest extends TestCase {
 
 	/** `puede_renovar_por_horas()` es privada: es la regla, así que se prueba directamente. */
 	private function puede( int $id, string $estado, string $vencimiento ): bool {
+		// Sin setAccessible(): no hace nada desde PHP 8.1 y está deprecado desde 8.5 (avisaba en
+		// cada pasada de la suite). ReflectionMethod ya alcanza los métodos privados.
 		$m = new \ReflectionMethod( CPT_Miembro::class, 'puede_renovar_por_horas' );
-		$m->setAccessible( true );
 		return (bool) $m->invoke( null, $id, $estado, $vencimiento );
 	}
 

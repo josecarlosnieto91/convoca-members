@@ -190,8 +190,26 @@ class PDF_Document {
 			$content_for_hash = $user_id . $dni . $email . $timestamp;
 			$stamp_html       = $signature->get_acceptance_stamp_html( $nombre, $ip, $timestamp, $content_for_hash );
 
-			if ( str_contains( $template_html, '<!-- FIRMA DIGITAL SERÁ AÑADIDA POR LA CLASE Signature -->' ) ) {
-				$template_html = str_replace( '<!-- FIRMA DIGITAL SERÁ AÑADIDA POR LA CLASE Signature -->', $stamp_html, $template_html );
+			// El sello del core reserva 50 px por encima suyo; sumado al aire de la plantilla, empujaba
+			// el sello a una SEGUNDA página, y el acuerdo tiene que caber en una. Se aprieta lo justo:
+			// el sello un poco más cerca y los márgenes del documento algo más cortos. Va después del
+			// estilo de la plantilla (se inyecta al final del <head>) para poder apretarlo.
+			$stamp_html    = str_replace( 'margin-top: 50px', 'margin-top: 18px', $stamp_html );
+			$compactar     = '<style>@page { margin: 12mm 14mm; } body { font-size: 13px; line-height: 1.45; } '
+				. '.box, .content { margin-bottom: 12px; } h1 { margin-bottom: 12px; padding-bottom: 6px; } '
+				. 'h2 { margin-top: 12px; padding-bottom: 4px; }</style>';
+			$template_html = str_contains( $template_html, '</head>' )
+				? str_replace( '</head>', $compactar . '</head>', $template_html )
+				: $compactar . $template_html;
+
+			// El comentario marcador lo escribe la plantilla y puede nombrar la clase antigua
+			// (BDV_Signature) o la actual (Signature). Antes solo se reconocía la actual, así que una
+			// plantilla guardada con el nombre viejo —como la de este sitio— no se sustituía y el
+			// sello caía al final del documento en vez de donde el sitio lo había puesto.
+			$patron_marcador = '/<!--\s*FIRMA DIGITAL SER[ÁA] A[ÑN]ADIDA POR LA CLASE [A-Za-z_\\\\]+\s*-->/u';
+
+			if ( preg_match( $patron_marcador, $template_html, $coincidencia ) ) {
+				$template_html = str_replace( $coincidencia[0], $stamp_html, $template_html );
 			} else {
 				$template_html .= $stamp_html;
 			}

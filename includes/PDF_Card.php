@@ -35,9 +35,14 @@ class PDF_Card {
 	 * Generate HTML for the member card.
 	 *
 	 * @param int    $post_id Member post ID.
-	 * @param string $theme   'light'|'dark'. Default: opción global convoca_document_theme.
+	 * @param string $theme   'light'|'dark'.
+	 * @param bool   $para_pdf true cuando el HTML va a Dompdf y no a un navegador. Dompdf ignora
+	 *                         `@media print`, así que el botón de imprimir se colaba DENTRO del PDF
+	 *                         (una tarjeta con un botón dentro) y la página salía en A4 con la
+	 *                         tarjeta flotando en medio. En modo PDF: sin botón, y la página es la
+	 *                         tarjeta. El botón sigue estando para quien abre la vista en el navegador.
 	 */
-	public static function get_html( int $post_id, string $theme = '' ): string {
+	public static function get_html( int $post_id, string $theme = '', bool $para_pdf = false ): string {
 		$theme             = in_array( $theme, array( 'light', 'dark' ), true ) ? $theme : \Convoca\Core\Utils::get_document_theme( 'card' );
 		$light             = 'light' === $theme;
 		$nombre            = get_the_title( $post_id );
@@ -47,6 +52,12 @@ class PDF_Card {
 		$plan_key  = get_post_meta( $post_id, '_convoca_plan', true );
 		$plan_data = CPT_Miembro::get_plan( $plan_key ?: '' );
 		$plan      = ( $plan_data && isset( $plan_data['label'] ) ) ? $plan_data['label'] : esc_html__( 'Socio/a', 'convoca-members' );
+
+		// Dompdf solo lleva Helvetica: un emoji del plan no tiene glifo y sale un «?» en la tarjeta
+		// (p. ej. «🏅 BRONCE» → «? BRONCE»). En el PDF se quita; en el navegador se queda.
+		if ( $para_pdf ) {
+			$plan = trim( (string) preg_replace( '/[\x{1F000}-\x{1FAFF}\x{2190}-\x{27BF}\x{2B00}-\x{2BFF}\x{FE0F}]/u', '', (string) $plan ) );
+		}
 
 		$fecha     = get_post_meta( $post_id, '_convoca_fecha_alta', true );
 		$fecha_fmt = $fecha ? wp_date( 'd/m/Y', strtotime( $fecha ) ) : wp_date( 'd/m/Y', strtotime( get_the_date( 'Y-m-d', $post_id ) ) );
@@ -216,6 +227,40 @@ class PDF_Card {
                     border: 1px solid rgba(50, 0, 40, 0.28);
                     color: #320028;
                 }
+                ' : '' ) . ( $para_pdf ? '
+                /* Modo PDF: la página ES la tarjeta (450x280 px = 119x74 mm), en vez del A4 que
+                   dompdf pone por defecto y que dejaba la tarjeta flotando en medio del folio. */
+                @page { size: 450px 280px; margin: 0; }
+                body { min-height: auto; padding: 0; }
+                /* dompdf NO respeta `box-sizing: border-box`: le SUMA el padding (30px x2) y el borde
+                   (1px x2) a las medidas, así que la tarjeta se le iba a 510x340 y no cabía en un
+                   folio de 450x280 — de ahí la segunda página. Aquí se le dan las medidas del
+                   CONTENIDO (450-60-2 y 280-60-2), y así el total vuelve a ser la tarjeta de
+                   450x280 con el mismo espacio interior que en el navegador. */
+                .card { box-sizing: content-box; width: 388px; height: 218px; }
+                /* Los adornos del fondo (200 px colocados en top:-60px / right:-60px) se salen del
+                   folio, y dompdf los tiene en cuenta: añadía una SEGUNDA página vacía. En PDF no
+                   se pintan; en el navegador siguen decorando la tarjeta. */
+                .card::before, .card::after { display: none; }
+                /* dompdf NO sabe hacer flexbox: con `display:flex` las tres zonas de la tarjeta
+                   (cabecera, datos y pie) se apilaban en vertical y el QR de 75 px se salía de los
+                   280 px de alto, así que el PDF salía con una segunda página. Aquí se sustituye
+                   por flotantes, que dompdf sí coloca: las insignias a la derecha de la cabecera y
+                   el QR a la derecha del pie. */
+                .card, .header, .body, .footer { display: block; }
+                .header, .footer { overflow: hidden; }
+                .header-right, .footer .qr-code { float: right; }
+                .footer .info { float: left; }
+                /* Dentro del grupo de insignias dompdf las apilaba una debajo de otra y la segunda
+                   acababa cayendo en la línea de los datos. En PDF van lado a lado, como en el
+                   navegador (el `gap` del flex tampoco existe aquí, de ahí el margen). */
+                .header-right > * { display: inline-block; margin-left: 6px; }
+                /* El logo llega como <h1> (en bloque) y el grupo flotante caía DEBAJO de él. Flotando
+                   también el logo, quedan uno al lado del otro, como en el navegador. */
+                .header > h1, .header > img, .header > a { float: left; }
+                /* Con el logo flotado, el cuerpo se le colaba al lado y el número de socio se iba a
+                   la derecha. `clear` lo baja debajo de la cabecera, que es donde va. */
+                .body, .footer { clear: both; }
                 ' : '' ) . '
             </style>
         </head>
@@ -243,8 +288,9 @@ class PDF_Card {
                         ' . $qr_img . '
                     </div>
                 </div>
-            </div>
-            
+            </div>' . ( $para_pdf
+				? '</body></html>'
+				: '
             <button class="btn-print no-print" onclick="window.print()">
                 ' . esc_html__( 'IMPRIMIR / GUARDAR PDF', 'convoca-members' ) . '
             </button>
@@ -252,7 +298,7 @@ class PDF_Card {
                 ' . esc_html__( 'Se abrirá el diálogo de impresión. Elige "Guardar como PDF" como destino.', 'convoca-members' ) . '
             </p>
         </body>
-        </html>
+        </html>' ) . '
         ';
 	}
 
@@ -264,8 +310,15 @@ class PDF_Card {
 	 * @return string PDF binary content.
 	 */
 	public static function generate_pdf( int $post_id, string $theme = '' ): string {
-		$html     = self::get_html( $post_id, $theme );
-		$tmp_path = wp_tempnam( 'member-card-' ) . '.pdf';
+		// En modo PDF: sin el botón de imprimir (dompdf ignora `@media print` y lo pintaba DENTRO de
+		// la tarjeta) y con la página del tamaño de la tarjeta en vez de un A4.
+		$html = self::get_html( $post_id, $theme, true );
+
+		// El temporal se crea con `get_temp_dir()` (del core, siempre disponible) y NO con
+		// `wp_tempnam()`, que vive en wp-admin/includes/file.php. Generar la tarjeta desde un correo
+		// de cron (Email_Manager la adjunta) moría con «Call to undefined function wp_tempnam()»,
+		// porque fuera del escritorio ese fichero no está cargado. Nombre único con uniqid().
+		$tmp_path = get_temp_dir() . 'convoca-tarjeta-' . uniqid() . '.pdf';
 
 		$signature = new \Convoca\Core\Signature();
 		$result    = $signature->generate_pdf(
