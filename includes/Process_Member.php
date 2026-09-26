@@ -136,7 +136,7 @@ class Process_Member {
 			array(
 				'{usuario}'   => $username,
 				'{password}'  => $password,
-				'{login_url}' => home_url( '/mi-area/' ),
+				'{login_url}' => \Convoca\Core\Email_Links::panel(),
 			)
 		);
 

@@ -1,5 +1,16 @@
 # Changelog — convoca-members
 
+## v2.8.14 (2026-09-26)
+
+### Corregido
+- **`{login_url}` y el aviso de horas ya no apuntan a `/mi-area/` a mano.** El CTA «Acceder a Mi Área»
+  de los correos, el enlace del pie y el texto del recordatorio de voluntariado llevaban la ruta
+  escrita; en un sitio cuyo panel se llama `/panel-socio/` eso es un 404. Ahora salen de
+  `Convoca\Core\Email_Links`, que resuelve la página real.
+- El recordatorio de voluntariado guarda `href="{login_url}"` (se resuelve en cada envío) y la
+  migración de plantillas recupera los enlaces al panel ya escritos a mano.
+
+
 ## v2.8.13 (2026-09-26)
 
 ### Corregido

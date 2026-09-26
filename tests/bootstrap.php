@@ -53,6 +53,24 @@ namespace Convoca\Core {
         }
     }
 
+    if (!class_exists('Email_Links')) {
+        // El core resuelve los enlaces de correo contra las páginas reales del
+        // sitio. Aquí el doble devuelve un panel de prueba, para que los tests
+        // puedan comprobar que NO se escribe la ruta a mano.
+        class Email_Links {
+            public static $panel_de_prueba = 'https://example.org/panel-del-sitio/';
+
+            public static function panel(): string {
+                return self::$panel_de_prueba;
+            }
+
+            /** @return array<string, string> */
+            public static function footer(): array {
+                return array( 'Mi Panel de Socio' => self::$panel_de_prueba );
+            }
+        }
+    }
+
     if (!class_exists('Installer')) {
         class Installer {
             public static function db_init(): void {}

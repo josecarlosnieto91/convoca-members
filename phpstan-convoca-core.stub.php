@@ -23,6 +23,21 @@ namespace Convoca\Core {
 	function convoca_export_pdf( string $title, array $headers, array $rows, string $filename ): void {}
 
 	/**
+	 * Enlaces de correo resueltos contra las páginas reales del sitio
+	 * (convoca-core/includes/Email_Links.php).
+	 */
+	class Email_Links {
+		public static function panel(): string {
+			return '';
+		}
+
+		/** @return array<string, string> */
+		public static function footer(): array {
+			return array();
+		}
+	}
+
+	/**
 	 * Copia informativa de los correos al administrador o al monitor de la actividad
 	 * (convoca-core/includes/Email_Copy.php). El canal de envío se inyecta por contexto.
 	 */

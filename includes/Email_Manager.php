@@ -357,7 +357,7 @@ class Email_Manager {
 							),
 						)
 					)
-					. '<p>Si tienes horas pendientes de registrar, puedes hacerlo desde tu <a href="' . home_url( '/mi-area/' ) . '">panel de socio</a>.</p>'
+					. '<p>Si tienes horas pendientes de registrar, puedes hacerlo desde tu <a href="{login_url}">panel de socio</a>.</p>'
 					. '<p>¡Tus manos son fundamentales para la asociación! 🌱</p>',
 			),
 			'objetivo_voluntariado_completado' => array(
@@ -780,7 +780,7 @@ class Email_Manager {
 			// Credentials (usually injected via extra_vars, not from meta).
 			'{usuario}'                      => $extra_vars['{usuario}'] ?? '—',
 			'{password}'                     => $extra_vars['{password}'] ?? '—',
-			'{login_url}'                    => $extra_vars['{login_url}'] ?? home_url( '/mi-area/' ),
+			'{login_url}'                    => $extra_vars['{login_url}'] ?? \Convoca\Core\Email_Links::panel(),
 		);
 	}
 
@@ -949,6 +949,11 @@ class Email_Manager {
 				'familia Convoca'                     => 'familia ' . $site,
 				'comunidad Convoca'                   => 'comunidad ' . $site,
 				'apoyando a Convoca'                  => 'apoyando a ' . $site,
+				// Enlaces al panel escritos a mano en el cuerpo: en un sitio cuyo
+				// panel se llama distinto son un 404, y no se arreglan solos si la
+				// página cambia de nombre. Vuelven a ser el placeholder, que se
+				// resuelve en cada envío contra la página real.
+				home_url( '/mi-area/' )               => '{login_url}',
 			);
 
 			foreach ( $templates as $slug => $tpl ) {

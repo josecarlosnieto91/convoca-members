@@ -259,6 +259,49 @@ class EmailBienvenidaObjetivoTest extends TestCase {
 		$this->assertSame( $body, get_option( 'convoca_email_templates' )['bienvenida']['body'] );
 	}
 
+	// ── Ningún enlace al panel escrito a mano ────────────────────────
+
+	/**
+	 * El cuerpo de una plantilla no puede llevar una ruta de panel escrita a
+	 * mano: en un sitio cuyo panel se llama distinto es un 404, y no se arregla
+	 * solo si la página cambia de nombre. Va como `{login_url}`, que se resuelve
+	 * contra la página real en cada envío.
+	 */
+	public function test_el_enlace_al_panel_va_como_placeholder(): void {
+		$tpl = Email_Manager::default_templates()['voluntariado_recordatorio']['body'];
+
+		$this->assertStringContainsString( 'href="{login_url}"', $tpl );
+		$this->assertStringNotContainsString( '/mi-area/', $tpl, 'Nada de rutas de panel escritas a mano.' );
+	}
+
+	public function test_ninguna_plantilla_de_fabrica_lleva_rutas_de_panel_a_mano(): void {
+		foreach ( Email_Manager::default_templates() as $slug => $tpl ) {
+			foreach ( array( 'subject', 'body' ) as $campo ) {
+				$this->assertStringNotContainsString(
+					'/mi-area/',
+					(string) ( $tpl[ $campo ] ?? '' ),
+					"La plantilla «{$slug}» ({$campo}) lleva una ruta de panel escrita a mano."
+				);
+			}
+		}
+	}
+
+	public function test_la_migracion_recupera_un_enlace_al_panel_escrito_a_mano(): void {
+		$apirado = home_url( '/mi-area/' );
+		$this->guardar_plantilla(
+			'Asunto',
+			'<p>Ve a tu <a href="' . $apirado . '">panel</a>.</p>'
+		);
+		update_option( 'convoca_email_templates_version', '2026-09-10-2' );
+
+		Email_Manager::maybe_migrate();
+
+		$body = get_option( 'convoca_email_templates' )['bienvenida']['body'];
+
+		$this->assertStringContainsString( 'href="{login_url}"', $body );
+		$this->assertStringNotContainsString( $apirado, $body );
+	}
+
 	public function test_un_sitio_sin_plantillas_las_recibe_enteras(): void {
 		delete_option( 'convoca_email_templates' );
 		update_option( 'convoca_email_templates_version', '2026-09-10-2' );

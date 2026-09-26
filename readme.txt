@@ -4,7 +4,7 @@ Tags: members, volunteers, membership, certificates, associations
 Requires at least: 6.4
 Tested up to: 7.1
 Requires PHP: 8.1
-Stable tag: 2.8.13
+Stable tag: 2.8.14
 License: GPL-2.0-or-later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -49,6 +49,9 @@ This plugin may contact getconvoca.app to validate PRO licenses, only when a key
 3. Activate the plugin from the Plugins menu
 
 == Changelog ==
+
+= 2.8.14 =
+* Los enlaces al área privada salen de la página real del sitio (Core los resuelve), no de la ruta `/mi-area/` escrita a mano; la migración recupera los que ya estaban guardados.
 
 = 2.8.13 =
 * La migración de plantillas repara los botones rotos que quedaron guardados: «http://link_pago» vuelve a ser «{link_pago}», así que el enlace se sustituye de verdad.
