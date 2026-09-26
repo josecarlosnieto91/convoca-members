@@ -69,6 +69,48 @@ class TarjetaPdfTest extends TestCase
 		$this->assertStringContainsString( 'class="member-name"', $this->pdf() );
 	}
 
+	public function test_una_modalidad_larga_tiene_su_propia_linea(): void
+	{
+		// Medido: con una etiqueta de modalidad larga («Modalidad Familiar Juvenil de Busgosu», 36
+		// caracteres) no cabe en la línea del logo. Con un flotante, dompdf la metía encima del
+		// nombre de la organización y lo tapaba. Con la etiqueta larga ocupa su línea y el cuerpo y
+		// el pie bajan: legible y sin solapes.
+		update_option(
+			'convoca_members_plans',
+			array( 'bronce' => array( 'label' => 'Modalidad Familiar Juvenil de Busgosu', 'price' => 0 ) )
+		);
+
+		$pdf = $this->pdf();
+		$this->assertStringContainsString( 'card card--plan-largo', $pdf );
+		$this->assertStringContainsString( 'plan-badge plan-badge--largo', $pdf );
+		// Las zonas se recolocan, no se solapan.
+		$this->assertStringContainsString( '.card--plan-largo .body { top:', $pdf );
+		$this->assertStringContainsString( '.card--plan-largo .footer { top:', $pdf );
+
+		// La etiqueta corta (las de verdad: «Lugg», «Deva») se queda como estaba. Se comprueba la
+		// clase de la tarjeta, no el texto: las reglas `.card--plan-largo …` sí están siempre en la
+		// hoja (solo actúan si la clase está puesta), y buscarlas en crudo daba un falso fallo.
+		update_option( 'convoca_members_plans', array( 'bronce' => array( 'label' => 'Lugg', 'price' => 50 ) ) );
+		$corto = $this->pdf();
+		$this->assertStringNotContainsString( 'class="card card--plan-largo"', $corto );
+		$this->assertStringContainsString( 'class="card"', $corto );
+		$this->assertStringContainsString( 'class="plan-badge"', $corto );
+	}
+
+	public function test_el_navegador_no_lleva_las_reglas_de_recolocacion_del_pdf(): void
+	{
+		// Esa clase lleva posiciones absolutas del PDF: en el navegador la cabecera la reparte el
+		// flexbox y funciona con cualquier etiqueta, así que no debe aplicarse allí.
+		update_option(
+			'convoca_members_plans',
+			array( 'bronce' => array( 'label' => 'Modalidad Familiar Juvenil de Busgosu', 'price' => 0 ) )
+		);
+
+		$navegador = $this->navegador();
+		$this->assertStringNotContainsString( 'card card--plan-largo', $navegador );
+		$this->assertStringNotContainsString( '.card--plan-largo .body', $navegador );
+	}
+
 	public function test_el_navegador_sigue_teniendo_el_boton_de_imprimir(): void
 	{
 		$html = $this->navegador();
@@ -103,8 +145,12 @@ class TarjetaPdfTest extends TestCase
 
 		// Flexbox no existe en Dompdf y los adornos de 200px se salían del folio.
 		$this->assertStringContainsString( '.card::before, .card::after { display: none; }', $html );
-		$this->assertStringContainsString( '.header-right, .footer .qr-code { float: right; }', $html );
+		$this->assertStringContainsString( '.header-right { float: right; }', $html );
 		$this->assertStringContainsString( '.body, .footer { clear: both; }', $html );
+		// La cabecera NO se monta con tabla ni con posiciones absolutas dentro: dompdf desplazaba a
+		// las insignias a la línea de los datos en cuanto la modalidad se alargaba.
+		$this->assertStringNotContainsString( '.header { display: table;', $html );
+		$this->assertStringNotContainsString( '.header-right { position: absolute;', $html );
 	}
 
 	public function test_el_pdf_no_recorta_las_zonas_con_overflow(): void

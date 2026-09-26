@@ -58,6 +58,7 @@ class PDF_Card {
 		} else {
 			$clase_nombre = 'member-name';
 		}
+
 		$num_socio         = get_post_meta( $post_id, '_convoca_numero_socio', true );
 		$num_socio_display = $num_socio ? str_pad( $num_socio, 4, '0', STR_PAD_LEFT ) : esc_html__( 'PENDIENTE', 'convoca-members' );
 
@@ -70,6 +71,20 @@ class PDF_Card {
 		if ( $para_pdf ) {
 			$plan = Texto_PDF::sin_emoji( (string) $plan );
 		}
+
+		// Uno mismo: una modalidad con el nombre largo (p. ej. «Modalidad Familiar Juvenil de
+		// Busgosu») se comía la cabecera y tapaba el nombre de la organización. A partir de 15
+		// caracteres el distintivo se aprieta para que quepa al lado del logo junto a la insignia de
+		// antigüedad; medido: con 36 caracteres cabe en una línea.
+		$clase_plan = mb_strlen( (string) $plan ) > 15 ? 'plan-badge plan-badge--largo' : 'plan-badge';
+		// Con una etiqueta larga, la modalidad no cabe en la línea del logo: en el PDF ocupa su
+		// propia línea y el cuerpo y el pie bajan (hay sitio en los 280 px). Lo manda esta clase en
+		// la tarjeta, para no repartir la decisión entre tres reglas.
+		$clase_cabecera = 'header';
+		// Solo en el PDF: la clase lleva reglas de colocación (posiciones absolutas) que en el
+		// navegador no aplican, porque allí la cabecera la reparte el flexbox y funciona con
+		// cualquier etiqueta.
+		$clase_tarjeta = ( $para_pdf && mb_strlen( (string) $plan ) > 15 ) ? 'card card--plan-largo' : 'card';
 
 		$fecha     = get_post_meta( $post_id, '_convoca_fecha_alta', true );
 		$fecha_fmt = $fecha ? wp_date( 'd/m/Y', strtotime( $fecha ) ) : wp_date( 'd/m/Y', strtotime( get_the_date( 'Y-m-d', $post_id ) ) );
@@ -174,6 +189,9 @@ class PDF_Card {
                     box-shadow: 0 4px 10px rgba(255, 135, 0, 0.3);
                     letter-spacing: 0.5px;
                 }
+                /* Una modalidad con el nombre largo se comía la cabecera: el distintivo ocupaba la
+                   línea entera y el logo caía debajo, tapado. Con la etiqueta larga se aprieta. */
+                .plan-badge--largo { font-size: 7.5px; padding: 4px 8px; letter-spacing: 0; }
                 .seniority-badge {
                     background: rgba(255,255,255,0.16);
                     border: 1px solid rgba(255,255,255,0.35);
@@ -268,8 +286,24 @@ class PDF_Card {
                    contenedor con altura CERO y recorta su contenido (el logo, las insignias, la fecha
                    y el QR desaparecían del PDF aunque siguieran en la capa de texto). Para bajar el
                    cuerpo debajo de la cabecera ya está el `clear` de abajo. */
-                .header-right, .footer .qr-code { float: right; }
                 .footer .info { float: left; }
+                /* Cabecera del PDF. El navegador la reparte con flexbox, que dompdf no tiene, así que
+                   aquí hay dos caminos según lo que ocupe la etiqueta de la modalidad:
+                     - corta (lo normal: «Lugg», «Deva»): el logo a la izquierda y las insignias a la
+                       derecha con un flotante. Medido: queda a la derecha sin solaparse.
+                     - larga: los flotantes se metían encima del logo (se comían el nombre de la
+                       organización) y las tablas o los absolutos lo desplazaban a la línea de datos.
+                       Se deja el flujo normal —logo y luego las insignias, todo en línea— que no
+                       depende de nada y nunca se rompe, aunque el reparto quede más simple. */
+                .header-right { float: right; }
+                /* Modalidad larga: no cabe en la línea del logo, así que ocupa la suya y el resto de
+                   la tarjeta baja. Con flotantes dompdf se la comía (tapaba el nombre de la
+                   organización); en flujo normal se iba a la línea de los datos. Cada cosa en su
+                   línea y las tres zonas recolocadas: legible y sin solapes, que es lo que importa en
+                   un documento. */
+                .card--plan-largo .header-right { float: none; display: block; margin-top: 4px; text-align: left; }
+                .card--plan-largo .body { top: 112px; }
+                .card--plan-largo .footer { top: 192px; }
                 /* Dentro del grupo de insignias dompdf las apilaba una debajo de otra y la segunda
                    acababa cayendo en la línea de los datos. En PDF van lado a lado, como en el
                    navegador (el `gap` del flex tampoco existe aquí, de ahí el margen). */
@@ -291,12 +325,12 @@ class PDF_Card {
             </style>
         </head>
         <body>
-            <div class="card">
-                <div class="header">
+            <div class="' . esc_attr( $clase_tarjeta ) . '">
+                <div class="' . esc_attr( $clase_cabecera ) . '">
                     ' . $logo_html . '
                     <div class="header-right">
                         ' . $seniority_badge . '
-                        <div class="plan-badge">' . esc_html( $plan ) . '</div>
+                        <div class="' . esc_attr( $clase_plan ) . '">' . esc_html( $plan ) . '</div>
                     </div>
                 </div>
                 

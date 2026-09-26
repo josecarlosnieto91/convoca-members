@@ -1,5 +1,26 @@
 # Changelog — convoca-members
 
+## v2.8.20 (2026-09-27)
+
+### Arreglado — la modalidad larga rompía la cabecera del carnet (bloque 8)
+
+El distintivo de la modalidad se pintaba en la misma línea que el logo. Con las etiquetas cortas
+(«Lugg», «Deva», las dos activas hoy en Lugg) cabía; con una etiqueta larga —p. ej. «Modalidad
+Familiar Juvenil de Busgosu», 37 caracteres— **no cabía y la descomponía**: con Dompdf el grupo de
+insignias se metía encima del nombre de la organización y lo tapaba, y probando alternativas (tabla,
+posiciones absolutas dentro de la cabecera) las insignias caían en la línea de los datos o el logo
+se partía en dos líneas.
+
+Solución: en el PDF, si la etiqueta de la modalidad pasa de 15 caracteres **ocupa su propia línea**
+y el cuerpo y el pie bajan (hay sitio de sobra en los 280 px del folio). Queda en dos líneas, sin
+solapes y legible; comprobado mirando el PDF generado. Las etiquetas cortas se quedan exactamente
+como estaban.
+
+- La decisión va en una sola clase en la tarjeta (`card--plan-largo`), solo en el PDF: en el
+  navegador la cabecera la reparte el flexbox y funciona con cualquier etiqueta.
+- Medido con las cuatro modalidades: `lugg` y `deva` (una línea, sin cambios), `Modalidad Familiar`
+  y la larga (dos líneas, cuerpo a 112 px y pie a 192 px, sin tocarse).
+
 ## v2.8.19 (2026-09-27)
 
 ### Añadido — base de estilos común de los documentos (bloque 8)
