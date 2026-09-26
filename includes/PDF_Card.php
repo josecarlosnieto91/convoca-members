@@ -68,7 +68,7 @@ class PDF_Card {
 		// Dompdf solo lleva Helvetica: un emoji del plan no tiene glifo y sale un «?» en la tarjeta
 		// (p. ej. «🏅 BRONCE» → «? BRONCE»). En el PDF se quita; en el navegador se queda.
 		if ( $para_pdf ) {
-			$plan = trim( (string) preg_replace( '/[\x{1F000}-\x{1FAFF}\x{2190}-\x{27BF}\x{2B00}-\x{2BFF}\x{FE0F}]/u', '', (string) $plan ) );
+			$plan = Texto_PDF::sin_emoji( (string) $plan );
 		}
 
 		$fecha     = get_post_meta( $post_id, '_convoca_fecha_alta', true );

@@ -1,5 +1,27 @@
 # Changelog — convoca-members
 
+## v2.8.18 (2026-09-27)
+
+### Corregido — los textos del certificado (bloque 9)
+
+Salieron de **mirar el certificado generado** (y de comparar sus horas con el libro de horas):
+
+- **Las horas salían con punto fijo**: «18.5 horas». `number_format()` no mira el idioma del sitio,
+  así que un certificado en castellano salía con punto. Ahora se usa el formato del sitio y dice
+  **«18,5 horas»**.
+- **La etiqueta del plan podía llevar emoji y salía como «?»**: los planes de la demo se llaman
+  «🥉 Bronce» y en el PDF se imprimía «? Bronce» (la tipografía del PDF no tiene ese glifo), igual
+  que pasaba en el carnet. Se quita el emoji y se conserva el texto.
+
+### Añadido
+- `Texto_PDF` reúne las dos ayudas de texto de los PDF (quitar emojis y dar formato a las horas) en
+  un solo sitio, en vez de repetirse en cada documento. El carnet pasa a usarlas también.
+
+### Verificado
+- **Las horas certificadas salen del libro de horas**: un socio con 8 + 6 + 4,5 h aprobadas y un
+  registro **anulado** de 10 h recibe un certificado de **18,50 h** — el anulado no cuenta.
+- El QR es **local** (chillerlan, sin API externa) y el documento sale en **una página** A4.
+
 ## v2.8.17 (2026-09-27)
 
 ### Corregido — los PDFs de tarjeta y acuerdo (bloque 8)

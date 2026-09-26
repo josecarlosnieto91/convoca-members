@@ -256,6 +256,15 @@ namespace {
     if (!\function_exists('esc_html')) { function esc_html($s) { return \htmlspecialchars((string)$s, ENT_QUOTES, 'UTF-8'); } }
     if (!\function_exists('esc_attr')) { function esc_attr($s) { return \htmlspecialchars((string)$s, ENT_QUOTES, 'UTF-8'); } }
     if (!\function_exists('esc_url')) { function esc_url($s) { return $s; } }
+
+    // Horas con el separador decimal del idioma del sitio. El stub respeta el global
+    // `_test_decimal_coma` para poder probar los dos idiomas desde los tests.
+    if (!\function_exists('number_format_i18n')) {
+        function number_format_i18n($numero, $decimales = 0) {
+            $texto = \number_format((float) $numero, (int) $decimales, '.', '');
+            return !empty($GLOBALS['_test_decimal_coma']) ? \str_replace('.', ',', $texto) : $texto;
+        }
+    }
     // Las variantes que IMPRIMEN: sin ellas no se puede pintar el panel en una prueba (y su
     // ausencia era la razón de que nadie lo hubiera probado).
     if (!\function_exists('esc_html_e')) { function esc_html_e($s, $d = 'default') { echo $s; } }

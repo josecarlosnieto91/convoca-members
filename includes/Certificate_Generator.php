@@ -84,6 +84,10 @@ class Certificate_Generator {
 		$plan_data  = CPT_Miembro::get_plan( $plan );
 		$plan_label = ( $plan_data && isset( $plan_data['label'] ) ) ? $plan_data['label'] : $plan;
 
+		// La etiqueta del plan puede llevar emoji (los planes de la demo: «🥉 Bronce») y en el PDF
+		// sale un «?»: el certificado es siempre un PDF, así que aquí se quita siempre.
+		$plan_label = Texto_PDF::sin_emoji( (string) $plan_label );
+
 		$total_horas = Voluntariado_Manager::get_horas_aprobadas( $miembro_id );
 
 		$proyectos = self::get_proyectos_con_horas( $miembro_id );
@@ -242,7 +246,7 @@ class Certificate_Generator {
 		$proyectos_html = '';
 		foreach ( $proyectos as $p ) {
 			$tareas_resumen  = ! empty( $p['tareas'] ) ? implode( '. ', array_map( 'substr', $p['tareas'], array_fill( 0, count( $p['tareas'] ), 0 ), array_fill( 0, count( $p['tareas'] ), 60 ) ) ) : 'Sin descripción';
-			$proyectos_html .= '<div class="proyecto"><strong>' . esc_html( $p['titulo'] ) . '</strong>: ' . number_format( $p['horas'], 1 ) . 'h<br><small>' . esc_html( mb_substr( $tareas_resumen, 0, 100 ) ) . '</small></div>';
+			$proyectos_html .= '<div class="proyecto"><strong>' . esc_html( $p['titulo'] ) . '</strong>: ' . Texto_PDF::horas( (float) $p['horas'] ) . 'h<br><small>' . esc_html( mb_substr( $tareas_resumen, 0, 100 ) ) . '</small></div>';
 		}
 
 		// Texto de validez: duración legible del certificado (D13).
@@ -332,7 +336,7 @@ class Certificate_Generator {
 		<div class="contenido">
 		    <p>Certificamos que</p>
 		    <p><span class="nombre">' . esc_html( $nombre ) . '</span></p>
-		    <p>ha completado un total de <span class="horas">' . number_format( $horas, 1 ) . ' horas</span> de voluntariado</p>
+		    <p>ha completado un total de <span class="horas">' . Texto_PDF::horas( (float) $horas ) . ' horas</span> de voluntariado</p>
 		    <p class="plan-line">como parte del plan <strong>' . ( $plan ? esc_html( $plan ) : 'Voluntariado General' ) . '</strong></p>
 
 		    <h3>Proyectos Participados</h3>

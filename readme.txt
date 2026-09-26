@@ -4,7 +4,7 @@ Tags: members, volunteers, membership, certificates, associations
 Requires at least: 6.4
 Tested up to: 7.1
 Requires PHP: 8.1
-Stable tag: 2.8.17
+Stable tag: 2.8.18
 License: GPL-2.0-or-later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -49,6 +49,11 @@ This plugin may contact getconvoca.app to validate PRO licenses, only when a key
 3. Activate the plugin from the Plugins menu
 
 == Changelog ==
+
+= 2.8.18 =
+* El certificado de voluntariado sale con las horas en el formato del idioma del sitio: decía «18.5 horas» con punto fijo; ahora en un sitio en castellano dice «18,5 horas».
+* La etiqueta del plan del certificado podía llevar emoji y se imprimía como «? Bronce» (la tipografía del PDF no tiene ese glifo): ahora se quita el emoji y se conserva el texto, igual que en el carnet.
+* Las ayudas de texto de los PDF (emojis y formato de horas) viven en un solo sitio (`Texto_PDF`), en vez de repetirse en cada documento.
 
 = 2.8.17 =
 * La tarjeta del PDF ya no lleva dentro el botón «IMPRIMIR / GUARDAR PDF» y su página es la tarjeta (119x74 mm) en lugar de un folio A4 con la tarjeta flotando en medio.
