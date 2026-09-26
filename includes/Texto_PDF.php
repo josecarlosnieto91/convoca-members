@@ -43,16 +43,28 @@ final class Texto_PDF {
 	}
 
 	/**
-	 * Horas con el separador decimal del idioma del sitio.
+	 * Horas con la convención del castellano: coma decimal y punto de millar.
 	 *
-	 * `number_format()` a secas deja siempre el punto, así que un certificado en castellano decía
-	 * «18.5 horas». Esto respeta el idioma del sitio («18,5» en español, «18.5» en inglés).
+	 * NO se usa `number_format_i18n()` a propósito. Medido en la demo (sitio con locale `es_ES` y
+	 * las traducciones cargadas): WordPress devolvía `decimal_point = '.'` y `thousands_sep = ','`,
+	 * es decir el formato inglés — «1,234.5» —, así que el certificado salía con las letras en
+	 * castellano y las cifras en inglés. Los documentos de Convoca están escritos en castellano, de
+	 * modo que sus cifras van en castellano; y si un sitio quiere otra cosa, tiene el filtro.
 	 *
 	 * @param float $horas     Cantidad de horas.
 	 * @param int   $decimales Decimales a mostrar.
 	 * @return string Horas listas para el documento.
 	 */
 	public static function horas( float $horas, int $decimales = 1 ): string {
-		return number_format_i18n( $horas, $decimales );
+		$texto = number_format( $horas, $decimales, ',', '.' );
+
+		/**
+		 * Permite cambiar cómo se escriben las horas en los documentos.
+		 *
+		 * @param string $texto     Horas ya formateadas.
+		 * @param float  $horas     Cantidad original.
+		 * @param int    $decimales Decimales usados.
+		 */
+		return (string) apply_filters( 'convoca_documento_horas', $texto, $horas, $decimales );
 	}
 }

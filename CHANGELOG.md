@@ -6,9 +6,14 @@
 
 Salieron de **mirar el certificado generado** (y de comparar sus horas con el libro de horas):
 
-- **Las horas salían con punto fijo**: «18.5 horas». `number_format()` no mira el idioma del sitio,
-  así que un certificado en castellano salía con punto. Ahora se usa el formato del sitio y dice
-  **«18,5 horas»**.
+- **Las horas salían con punto fijo**: «18.5 horas». `number_format()` no mira nada, así que un
+  documento en castellano salía con punto. Ahora se escriben **«18,5 horas»** (y «1.234,5» si algún
+  día hay muchas horas).
+  Se probó primero con `number_format_i18n()` y **no vale**: medido en la demo —locale `es_ES` y las
+  traducciones cargadas—, WordPress devolvía `decimal_point = '.'` y `thousands_sep = ','`, o sea el
+  formato inglés, así que el certificado salía con las letras en castellano y **las cifras en
+  inglés**. Los documentos de Convoca están escritos en castellano: sus cifras también. Y para quien
+  quiera otra convención hay un filtro, `convoca_documento_horas`.
 - **La etiqueta del plan podía llevar emoji y salía como «?»**: los planes de la demo se llaman
   «🥉 Bronce» y en el PDF se imprimía «? Bronce» (la tipografía del PDF no tiene ese glifo), igual
   que pasaba en el carnet. Se quita el emoji y se conserva el texto.

@@ -51,7 +51,7 @@ This plugin may contact getconvoca.app to validate PRO licenses, only when a key
 == Changelog ==
 
 = 2.8.18 =
-* El certificado de voluntariado sale con las horas en el formato del idioma del sitio: decía «18.5 horas» con punto fijo; ahora en un sitio en castellano dice «18,5 horas».
+* El certificado de voluntariado sale con las horas en la convención del castellano: decía «18.5 horas» con punto fijo; ahora dice «18,5 horas» (y «1.234,5» si algún día hay muchas). No se sigue el formato del idioma del sitio porque, medido en la demo (locale es_ES y traducciones cargadas), WordPress devolvía el formato inglés —«1,234.5»—: el documento salía con las letras en castellano y las cifras en inglés. Hay un filtro (`convoca_documento_horas`) para quien quiera otra convención.
 * La etiqueta del plan del certificado podía llevar emoji y se imprimía como «? Bronce» (la tipografía del PDF no tiene ese glifo): ahora se quita el emoji y se conserva el texto, igual que en el carnet.
 * Las ayudas de texto de los PDF (emojis y formato de horas) viven en un solo sitio (`Texto_PDF`), en vez de repetirse en cada documento.
 

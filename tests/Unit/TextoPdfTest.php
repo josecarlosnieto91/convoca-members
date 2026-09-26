@@ -44,14 +44,24 @@ class TextoPdfTest extends TestCase
 		$this->assertSame( 'Plata', Texto_PDF::sin_emoji( '  🥈  Plata  ' ) );
 	}
 
-	public function test_las_horas_usan_el_separador_del_idioma_del_sitio(): void
+	public function test_las_horas_van_con_coma_decimal(): void
 	{
-		// Inglés: punto.
-		$this->assertSame( '18.5', Texto_PDF::horas( 18.5 ) );
-
-		// Castellano: coma. Es el caso real de Lugg.
-		$GLOBALS['_test_decimal_coma'] = true;
+		// Un documento en castellano escribe «18,5», no «18.5». No se sigue el formato del sitio
+		// porque WordPress puede devolver el inglés aunque el locale sea es_ES (medido en la demo).
 		$this->assertSame( '18,5', Texto_PDF::horas( 18.5 ) );
 		$this->assertSame( '4,0', Texto_PDF::horas( 4.0 ) );
+		// Y el punto de millar, si algún día hay muchas horas.
+		$this->assertSame( '1.234,5', Texto_PDF::horas( 1234.5 ) );
+	}
+
+	public function test_un_sitio_puede_cambiar_el_formato_de_las_horas(): void
+	{
+		// El filtro existe para quien quiera otra convención (p. ej. un sitio en otro idioma).
+		$ingles = static fn( $texto ) => str_replace( ',', '.', $texto );
+		add_filter( 'convoca_documento_horas', $ingles );
+
+		$this->assertSame( '18.5', Texto_PDF::horas( 18.5 ) );
+
+		remove_all_filters( 'convoca_documento_horas' );
 	}
 }
