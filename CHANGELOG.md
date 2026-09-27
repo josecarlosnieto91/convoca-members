@@ -1,5 +1,25 @@
 # Changelog — convoca-members
 
+## v2.8.23 (2026-09-27)
+
+### Arreglado — dos cifras de cara al socio salían con el punto decimal inglés (bloque 9)
+
+El flujo del certificado, revisado de punta a punta (formulario público → `verify()` → resultado),
+dejó a la vista un desliz que no era del PDF sino de la página:
+
+- **La verificación pública del certificado** imprimía las horas con `number_format( $horas, 1 )`, o
+  sea con los separadores de PHP: **«12.5 h»**. Ahora usa `Texto_PDF::horas()` → **«12,5 h»**.
+- **El importe de renovación del panel del socio** (`class-mi-area.php`) igual: `number_format(
+  $importe, 2 )` daba **«50.00 €»** → ahora **«50,00 €»**, como ya hacían otras dos partes del
+  plugin (`Rest_API` y `GDPR_Tools` sí pasaban los separadores explícitos).
+
+Sin decimales no hay problema (`number_format( $x, 0 )` para euros enteros se queda como está).
+
+Guardado con `FormatoCifrasTest`, que vigila **la clase de fallo** y no solo estos dos sitios:
+recorre `includes/`, `public/` y `admin/` y falla si alguna cifra con decimales se formatea sin los
+separadores explícitos. Comprobado que el guardián **caza** el fallo (se metió a propósito y lo
+señaló con fichero y línea) y que los dos arreglos están en su sitio.
+
 ## v2.8.22 (2026-09-27)
 
 ### Arreglado — completada la resolución del plan por etiqueta (2.8.21 no bastaba)

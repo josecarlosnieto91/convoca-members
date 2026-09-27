@@ -63,7 +63,7 @@ class Verificar_Certificado {
 						</div>
 						<div class="detail-row">
 							<span class="detail-label"><?php esc_html_e( 'Horas:', 'convoca-members' ); ?></span>
-							<span class="detail-value"><?php echo number_format( $result['horas'], 1 ); ?>h</span>
+							<span class="detail-value"><?php echo esc_html( Texto_PDF::horas( (float) $result['horas'] ) ); ?> h</span>
 						</div>
 						<div class="detail-row">
 							<span class="detail-label"><?php esc_html_e( 'Emisión:', 'convoca-members' ); ?></span>

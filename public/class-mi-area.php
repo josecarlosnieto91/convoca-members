@@ -138,7 +138,7 @@ class Mi_Area {
 				<p><strong><?php esc_html_e( 'Próxima renovación:', 'convoca-members' ); ?></strong> <?php echo esc_html( $renovacion ); ?></p>
 			<?php endif; ?>
 			<?php if ( $importe > 0 ) : ?>
-				<p><strong><?php esc_html_e( 'Importe de renovación:', 'convoca-members' ); ?></strong> <?php echo esc_html( number_format( $importe, 2 ) ); ?> €</p>
+				<p><strong><?php esc_html_e( 'Importe de renovación:', 'convoca-members' ); ?></strong> <?php echo esc_html( number_format( (float) $importe, 2, ',', '.' ) ); ?> €</p>
 			<?php endif; ?>
 			<button type="button" id="conv-btn-renovar" class="button button-primary">
 				<?php esc_html_e( 'Renovar membresía', 'convoca-members' ); ?>
