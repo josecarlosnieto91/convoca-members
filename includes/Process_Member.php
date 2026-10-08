@@ -274,7 +274,11 @@ class Process_Member {
 				'plan'              => $plan,
 				'plan_label'        => ( $p = CPT_Miembro::get_plan( $plan ) ) ? $p['label'] : $plan,
 				'sub_plan'          => $sub_plan,
-				'forma_pago'        => $forma_pago,
+				// `forma_pago` es cuota/voluntariado en todo el plugin; el método elegido en el alta
+				// (tarjeta/bizum/transferencia) va a su propio meta. Payment_Listener lo normaliza a
+				// 'cuota' al confirmarse el pago; hasta entonces, la cuota está pendiente.
+				'forma_pago'        => 'cuota',
+				'metodo_pago'       => $forma_pago,
 				'cuota'             => $plan_key, // legacy alias.
 				'modalidad'         => $plan_data['modalidad'] ?? 'Numerario',
 				'importe_cuota'     => $plan_data['price'] ?? 0,
@@ -431,7 +435,9 @@ class Process_Member {
 			'plan'              => $plan_key,
 			'plan_label'        => $plan_data['label'] ?? $plan_key,
 			'sub_plan'          => $sub_plan,
-			'forma_pago'        => $forma_pago,
+			// Igual que en el alta: la forma de pago es la cuota; el método va aparte.
+			'forma_pago'        => 'cuota',
+			'metodo_pago'       => $forma_pago,
 			'cuota'             => $plan_key,
 			'modalidad'         => $plan_data['modalidad'] ?? 'Numerario',
 			'importe_cuota'     => $plan_data['price'] ?? 0,

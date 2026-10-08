@@ -278,7 +278,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 			<!-- Transfer Details (IBAN) -->
 			<div id="conv-transfer-details" class="convoca-box" style="display:none;">
 				<h4 style="margin-top:0">Pago por transferencia bancaria</h4>
-				<p>Al confirmar tu alta, te mostraremos los datos bancarios (IBAN) y el concepto que debes indicar.</p>
+				<p>Al confirmar tu alta te llevaremos a la pasarela de pago. Allí eliges el método (tarjeta, Bizum o transferencia); si eliges transferencia, verás el IBAN y el concepto que debes indicar.</p>
 				<p>Podrás adjuntar el justificante directamente en esa página para que validemos tu alta lo antes posible.</p>
 			</div>
 
@@ -354,12 +354,24 @@ if ( ! defined( 'ABSPATH' ) ) {
 					<td id="conv-sum-fechanac">—</td>
 				</tr>
 				<tr>
+					<td>Edad</td>
+					<td id="conv-sum-edad">—</td>
+				</tr>
+				<tr>
+					<td>Menor de edad (autorización)</td>
+					<td id="conv-sum-menor">—</td>
+				</tr>
+				<tr>
 					<td>Email</td>
 					<td id="conv-sum-email">—</td>
 				</tr>
 				<tr>
 					<td>Teléfono</td>
 					<td id="conv-sum-telefono">—</td>
+				</tr>
+				<tr>
+					<td>WhatsApp</td>
+					<td id="conv-sum-whatsapp">—</td>
 				</tr>
 				<tr>
 					<td>Dirección</td>
@@ -370,16 +382,36 @@ if ( ! defined( 'ABSPATH' ) ) {
 					<td id="conv-sum-municipio">—</td>
 				</tr>
 				<tr>
+					<td>Canal de contacto</td>
+					<td id="conv-sum-canal">—</td>
+				</tr>
+				<tr>
 					<td>Plan</td>
 					<td id="conv-sum-plan">—</td>
+				</tr>
+				<tr>
+					<td>Modalidad</td>
+					<td id="conv-sum-modalidad">—</td>
 				</tr>
 				<tr>
 					<td>Forma de pago</td>
 					<td id="conv-sum-pago">—</td>
 				</tr>
 				<tr>
+					<td>Importe</td>
+					<td id="conv-sum-importe">—</td>
+				</tr>
+				<tr>
 					<td>RGPD</td>
 					<td id="conv-sum-rgpd">—</td>
+				</tr>
+				<tr>
+					<td>Fecha de la solicitud</td>
+					<td id="conv-sum-fecha">—</td>
+				</tr>
+				<tr>
+					<td>Comunicaciones</td>
+					<td id="conv-sum-coms">—</td>
 				</tr>
 			</table>
 
