@@ -5,6 +5,30 @@
  * All namespace declarations must come first.
  */
 
+namespace {
+    /*
+     * Los plugins comparten clases de `Convoca\Core`. En el entorno de desarrollo el repo de Core está al
+     * lado; en el CI no está, así que aquí se intenta cargar de verdad y, si no aparece, los stubs de abajo
+     * hacen de sustituto. Antes esto dependía de rutas absolutas a una máquina concreta y el CI no podía
+     * pasar (12 errores «Class Convoca\Core\Email_Layout not found»).
+     */
+    $convoca_core = getenv( 'CONVOCA_CORE_PATH' ) ?: dirname( __DIR__, 2 ) . '/convoca-core';
+    if ( is_dir( $convoca_core . '/includes' ) ) {
+        spl_autoload_register(
+            static function ( $clase ) use ( $convoca_core ) {
+                if ( 0 !== strpos( $clase, 'Convoca\\Core\\' ) ) {
+                    return;
+                }
+                $rel  = str_replace( 'Convoca\\Core\\', '', $clase );
+                $ruta = $convoca_core . '/includes/' . str_replace( '\\', '/', $rel ) . '.php';
+                if ( is_readable( $ruta ) ) {
+                    require_once $ruta;
+                }
+            }
+        );
+    }
+}
+
 namespace Convoca\Core {
 
     if (!class_exists('Utils')) {
@@ -72,6 +96,48 @@ namespace Convoca\Core {
         // El core resuelve los enlaces de correo contra las páginas reales del
         // sitio. Aquí el doble devuelve un panel de prueba, para que los tests
         // puedan comprobar que NO se escribe la ruta a mano.
+        if ( ! class_exists( 'Convoca\\Core\\Email_Layout' ) ) {
+        /**
+         * Stub de `Convoca\Core\Email_Layout`.
+         *
+         * Faltaba: el producto empezó a usar Email_Layout al maquetar los correos y la suite del CI
+         * se quedó sin la clase (12 errores «Class Convoca\Core\Email_Layout not found»). Este stub
+         * reproduce la API que usa Members; no maqueta igual que el de verdad, solo envuelve.
+         */
+        class Email_Layout {
+            public static function render( string $body, string $subject = '', array $opts = array() ): string {
+                if ( '' === trim( $body ) ) {
+                    return '';
+                }
+                return '<!DOCTYPE html><html><head><meta charset="utf-8" /></head><body>' . $body . '</body></html>';
+            }
+
+            public static function meta_table( array $rows ): string {
+                $out = '';
+                foreach ( $rows as $k => $v ) {
+                    $out .= '<tr><th>' . $k . '</th><td>' . $v . '</td></tr>';
+                }
+                return '<table>' . $out . '</table>';
+            }
+
+            public static function is_missing( string $value ): bool {
+                return '' === trim( $value );
+            }
+
+            public static function prune_empty_html( string $html ): string {
+                return $html;
+            }
+
+            public static function button_html( string $url, string $text ): string {
+                return '<a class="convoca-button" href="' . $url . '">' . $text . '</a>';
+            }
+
+            public static function is_placeholder( string $value ): bool {
+                return '' === trim( $value ) || '—' === trim( $value );
+            }
+        }
+        }
+
         class Email_Links {
             public static $panel_de_prueba = 'https://example.org/panel-del-sitio/';
 
