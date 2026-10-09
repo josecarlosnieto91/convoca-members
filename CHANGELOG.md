@@ -1,5 +1,33 @@
 # Changelog — convoca-members
 
+## v2.8.24 (2026-10-09)
+
+### Arreglado — el alta del socio: la revisión, el método de pago y el texto del IBAN (cierra #3, #4 y #5)
+
+- **La revisión del paso 4 no mostraba 8 de los 18 datos** (whatsapp, canal, edad, menor, modalidad,
+  importe, fecha y comunicaciones): la plantilla definía 10 nodos y el JS rellenaba 18, así que los 8
+  que faltaban se escribían sobre nodos inexistentes y **sin dar ningún error**. Añadidas las filas.
+- **El método de pago se guardaba en el meta equivocado.** El alta escribía tarjeta/bizum/transferencia
+  en `_convoca_forma_pago`, un meta que en el resto del plugin significa cuota vs voluntariado: la
+  ficha del socio salía sin selección válida, al guardar se pisaba a «cuota» y el CSV mostraba
+  «transferencia» como forma de pago de la cuota. Ahora el método va a `_convoca_metodo_pago` y
+  `_convoca_forma_pago` queda en «cuota», coherente con lo que normaliza `Payment_Listener`.
+- **El paso 3 prometía el IBAN** y la pasarela volvía a pedir el método: texto corregido para que
+  describa lo que pasa de verdad.
+
+### Añadido
+- **Los dominios de correo del equipo salen del código y pasan a Ajustes** (campo «Dominios de correo
+  del equipo», separados por «|»). El valor por defecto es automático —el dominio del email del propio
+  sitio más el del proveedor—, así que cada instalación reconoce los suyos sin que el código lleve el
+  nombre de ninguna. El valor se sanea y los puntos se escapan antes de entrar en el patrón.
+
+### Cambiado
+- Higiene del producto: retirados el nombre del cliente y el de la asociación de textos y muestras.
+
+### Internamente
+- Las pruebas usan las clases reales del núcleo en vez de dobles que se quedaban cortos, y se corrigió
+  el bootstrap de la suite unitaria, que falseaba el núcleo.
+
 ## v2.8.23 (2026-09-27)
 
 ### Arreglado — dos cifras de cara al socio salían con el punto decimal inglés (bloque 9)
