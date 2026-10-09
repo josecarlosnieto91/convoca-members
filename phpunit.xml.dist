@@ -1,7 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!-- OJO: el bootstrap unitario carga el nucleo REAL. El de integracion
+     (tests/bootstrap.php) sustituye Logger y Utils por dobles, y con ellos las
+     pruebas unitarias median un comportamiento que no existe: daba verde en local
+     por casualidad y rojo en el CI. -->
 <phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:noNamespaceSchemaLocation="vendor/phpunit/phpunit/phpunit.xsd"
-         bootstrap="tests/bootstrap.php"
+         bootstrap="tests/bootstrap-unit.php"
          backupGlobals="false"
          colors="true"
          verbose="true"

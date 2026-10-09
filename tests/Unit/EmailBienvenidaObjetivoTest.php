@@ -217,17 +217,6 @@ class EmailBienvenidaObjetivoTest extends TestCase {
 			)
 		);
 
-		// DIAGNOSTICO TEMPORAL (se retira en el commit siguiente)
-		$consulta = $GLOBALS['wpdb']->prepare( 'SHOW TABLES LIKE %s', $GLOBALS['wpdb']->prefix . 'convoca_logs' );
-		fwrite( STDERR, sprintf(
-			"\n[DIAG] avisos=%d inserciones=%d clase=%s nivel=%s consulta=%s respuesta=%s\n",
-			count( $avisos ),
-			count( $GLOBALS['_wp_stores']['db_inserts'] ?? array() ),
-			get_class( $GLOBALS['wpdb'] ),
-			\Convoca\Core\Logger::get_log_level(),
-			$consulta,
-			var_export( $GLOBALS['wpdb']->get_var( $consulta ), true )
-		) );
 		$this->assertCount( 1, $avisos, 'Debería quedar un aviso en el log y ningún envío.' );
 		$this->assertStringContainsString( 'no tiene horas acreditadas', $avisos[0]['message'] );
 	}
