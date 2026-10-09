@@ -46,6 +46,29 @@ if (!class_exists('\Convoca\Core\Utils')) {
             return true;
         }
 
+        /** Copiado de Convoca\Core\Utils: el doble debe ofrecer lo mismo que el original. */
+        public static function get_logo_url( string $filter_suffix = 'common' ): string {
+            $logo_id  = get_theme_mod( 'custom_logo' );
+            $logo_url = '';
+            if ( $logo_id ) {
+                $src = wp_get_attachment_image_src( $logo_id, 'full' );
+                if ( $src ) { $logo_url = $src[0]; }
+            }
+            return (string) apply_filters( "convoca_{$filter_suffix}_logo_url", $logo_url );
+        }
+
+        /** Copiado de Convoca\Core\Utils::get_branding_html(). */
+        public static function get_branding_html( string $filter_suffix = 'common', string $css_class = '', string $style = 'color:#ffffff;margin:0;font-size:24px;' ): string {
+            $logo_url  = self::get_logo_url( $filter_suffix );
+            $site_name = get_bloginfo( 'name' );
+            if ( ! empty( $logo_url ) ) {
+                $class_attr = $css_class ? ' class="' . esc_attr( $css_class ) . '"' : '';
+                $style_attr = $style ? ' style="' . esc_attr( $style ) . '"' : '';
+                return '<img src="' . esc_url( $logo_url ) . '" alt="' . esc_attr( $site_name ) . '"' . $class_attr . $style_attr . '>';
+            }
+            return '<h1 style="' . esc_attr( $style ) . '">' . esc_html( $site_name ) . '</h1>';
+        }
+
         public static function clear_fired(): void {
             self::$actions_fired = [];
         }

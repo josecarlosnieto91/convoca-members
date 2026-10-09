@@ -64,17 +64,21 @@ class CronRoutesTest extends TestCase
 
     public function test_usa_la_pagina_de_renovacion_cuando_existe()
     {
-        $GLOBALS['convoca_test_pages']['renovar'] = $this->pagina(42);
+        $pagina = $this->pagina(42);
+        $GLOBALS['convoca_test_pages']['renovar'] = $pagina;
 
-        $this->assertSame('https://example.com/pagina/42/', \Convoca\Members\Cron_Manager::renewal_page_url());
+        // Se compara con el permalink que devuelve la propia simulación para esa página: lo que
+        // se prueba es que se usa LA PÁGINA de renovación, no el formato de la dirección.
+        $this->assertSame(get_permalink($pagina), \Convoca\Members\Cron_Manager::renewal_page_url());
     }
 
     public function test_cae_al_panel_del_socio_si_no_hay_pagina_de_renovacion()
     {
-        $GLOBALS['convoca_test_pages']['mi-area'] = $this->pagina(7);
+        $pagina = $this->pagina(7);
+        $GLOBALS['convoca_test_pages']['mi-area'] = $pagina;
 
-        $this->assertSame('https://example.com/pagina/7/', \Convoca\Members\Cron_Manager::renewal_page_url());
-        $this->assertSame('https://example.com/pagina/7/', \Convoca\Members\Cron_Manager::payment_page_url());
+        $this->assertSame(get_permalink($pagina), \Convoca\Members\Cron_Manager::renewal_page_url());
+        $this->assertSame(get_permalink($pagina), \Convoca\Members\Cron_Manager::payment_page_url());
     }
 
     public function test_una_pagina_no_publicada_no_cuenta()

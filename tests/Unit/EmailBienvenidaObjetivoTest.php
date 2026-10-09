@@ -169,15 +169,20 @@ class EmailBienvenidaObjetivoTest extends TestCase {
 		$manager = new Email_Manager();
 		$manager->send_objetivo_voluntariado( self::MIEMBRO );
 
+		// El Logger real no guarda un bufer en memoria: escribe en la tabla de registros.
+		// Se comprueba lo que de verdad quedo escrito, no una comodidad del doble.
 		$avisos = array_values(
 			array_filter(
-				\Convoca\Core\Logger::$logs,
-				static fn( array $l ): bool => 'warning' === $l['level']
+				array_map(
+					static fn( array $r ): array => $r['data'],
+					$GLOBALS['_wp_stores']['db_inserts'] ?? array()
+				),
+				static fn( array $l ): bool => 'warning' === ( $l['level'] ?? '' )
 			)
 		);
 
 		$this->assertCount( 1, $avisos, 'Debería quedar un aviso en el log y ningún envío.' );
-		$this->assertStringContainsString( 'no tiene horas acreditadas', $avisos[0]['msg'] );
+		$this->assertStringContainsString( 'no tiene horas acreditadas', $avisos[0]['message'] );
 	}
 
 	public function test_con_horas_acreditadas_el_correo_se_considera_justificado(): void {

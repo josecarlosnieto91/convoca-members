@@ -19,7 +19,7 @@ use Convoca\Members\Providers\WPMail_Provider;
 use Convoca\Members\Providers\Mailgun_Provider;
 
 /**
- * Email sending registry (provider pluggable).
+ * Email sending registry (provider pejemploable).
  *
  * The configured provider wins; otherwise the first available provider
  * (default: wp_mail). Providers can be extended via the
