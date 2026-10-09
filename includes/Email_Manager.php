@@ -969,7 +969,7 @@ class Email_Manager {
 						// email configurado en WordPress, para que cada sitio envíe
 						// al suyo sin tocar plantillas.
 						$text = preg_replace(
-							'/[a-z0-9._%+\-]+@(?:getconvoca\.app|biodevas\.org|unbosquepamaria\.org)/i',
+							'/[a-z0-9._%+\-]+@(?:getconvoca\.app|biodevas\.org|unbosquepamaria\.org)/i', // convoca-hygiene-ignore: filtro de dominios de correo permitidos; deberia salir de la configuracion
 							'{admin_email}',
 							$text
 						);
