@@ -33,8 +33,9 @@ class EmailBienvenidaObjetivoTest extends TestCase {
 		parent::setUp();
 
 		\Convoca\Core\Logger::clear();
-		$GLOBALS['_wp_stores']['options']   = array();
-		$GLOBALS['_wp_stores']['post_meta'] = array();
+		$GLOBALS['_wp_stores']['options']    = array();
+		$GLOBALS['_wp_stores']['post_meta']  = array();
+		$GLOBALS['_wp_stores']['db_inserts'] = array(); // Lo que se escribe en base de datos.
 		$this->wpdb_original                = $GLOBALS['wpdb'] ?? null;
 
 		foreach (
@@ -73,8 +74,31 @@ class EmailBienvenidaObjetivoTest extends TestCase {
 			}
 
 			public function get_var( $q = null, $x = 0, $y = 0 ) {
+				// Este doble responde lo mismo a cualquier consulta, pero el Logger pregunta
+				// antes si existe su tabla: si recibe un numero, cree que no existe y no
+				// escribe nada. Se responde a esa pregunta como WordPress.
+				if ( is_string( $q ) && preg_match( "/SHOW TABLES LIKE '?([A-Za-z0-9_]+)'?/i", $q, $m ) ) {
+					return $m[1];
+				}
 				return $this->horas;
 			}
+
+			/**
+			 * El doble solo necesita controlar la consulta de horas, pero sustituye al
+			 * $wpdb entero: sin `insert()` el registro del Logger lanzaba un error que su
+			 * propio try/catch se tragaba, y el aviso desaparecia sin dejar rastro.
+			 * Se comporta como la simulacion real, que si lo guarda.
+			 */
+			public function insert( $t, $d, $f = array() ) {
+				$GLOBALS['_wp_stores']['db_inserts'][] = array( 'table' => $t, 'data' => $d );
+				$this->insert_id = 42;
+				return 1;
+			}
+
+			public function query( $q ) { return 1; }
+			public function get_results( $q = null, $o = 'OBJECT' ) { return array(); }
+			public $insert_id = 42;
+			public $options    = 'wp_options';
 		};
 	}
 
