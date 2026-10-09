@@ -336,6 +336,13 @@ class Admin_Settings {
 			</div>
 
 			<div class="convoca-field">
+				<label for="admin_email_domains"><?php esc_html_e( 'Dominios de correo del equipo', 'convoca-members' ); ?></label>
+				<input type="text" id="admin_email_domains" name="convoca_members_settings[admin_email_domains]"
+					value="<?php echo esc_attr( $settings['admin_email_domains'] ?? '' ); ?>">
+				<small class="convoca-small"><?php esc_html_e( 'Separados por «|». Las plantillas que nombran un correo de estos dominios lo sustituyen por el email configurado arriba. Vacío = el dominio de ese email.', 'convoca-members' ); ?></small>
+			</div>
+
+			<div class="convoca-field">
 				<label class="convoca-checkbox">
 					<input type="checkbox" id="copy_all_emails" name="convoca_members_settings[copy_all_emails]" value="1"
 						<?php checked( (int) ( $settings['copy_all_emails'] ?? 1 ), 1 ); ?>>

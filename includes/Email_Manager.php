@@ -802,6 +802,35 @@ class Email_Manager {
 	 *
 	 * @return array<int,string>|array{}
 	 */
+	/**
+	 * Dominios de correo que se consideran del equipo: los que las plantillas nombran a mano
+	 * («escribe a coordinacion@…») y hay que sustituir por el email configurado en WordPress.
+	 *
+	 * Se configuran en Convoca → Miembros → Ajustes. El valor por defecto reproduce el que
+	 * estaba fijo en el código, así que una instalación que no lo toque no cambia de comportamiento.
+	 */
+	private static function dominios_de_correo(): string {
+		$settings = get_option( 'convoca_members_settings', array() );
+		$dominios = trim( (string) ( $settings['admin_email_domains'] ?? '' ) );
+
+		if ( '' === $dominios ) {
+			// Por defecto, el dominio del propio sitio (el del email configurado arriba): así cada
+			// instalación reconoce los suyos y el código no lleva el nombre de ninguna asociación.
+			$propio   = (string) substr( strrchr( (string) ( $settings['admin_email'] ?? get_option( 'admin_email' ) ), '@' ), 1 );
+			$dominios = 'getconvoca.app' . ( '' !== $propio ? '|' . $propio : '' );
+		}
+
+		// Solo lo que puede formar parte del patrón: fuera metacaracteres.
+		$dominios = (string) preg_replace( '/[^a-z0-9._|\-]/i', '', $dominios );
+		$dominios = trim( $dominios, '|' );
+		if ( '' === $dominios ) {
+			$dominios = 'getconvoca.app';
+		}
+
+		// El punto separa dominios: en un patrón tiene que ir escapado.
+		return str_replace( '.', '\.', $dominios );
+	}
+
 	private static function default_cta( string $slug ): array {
 		$ctas = array(
 			'solicitud_recibida'        => array( '{login_url}', __( 'Acceder a Mi Área', 'convoca-members' ) ),
@@ -969,7 +998,7 @@ class Email_Manager {
 						// email configurado en WordPress, para que cada sitio envíe
 						// al suyo sin tocar plantillas.
 						$text = preg_replace(
-							'/[a-z0-9._%+\-]+@(?:getconvoca\.app|biodevas\.org|unbosquepamaria\.org)/i', // convoca-hygiene-ignore: filtro de dominios de correo permitidos; deberia salir de la configuracion
+							'/[a-z0-9._%+\-]+@(?:' . self::dominios_de_correo() . ')/i',
 							'{admin_email}',
 							$text
 						);
