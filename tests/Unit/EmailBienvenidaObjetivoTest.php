@@ -69,8 +69,20 @@ class EmailBienvenidaObjetivoTest extends TestCase {
 				$this->horas = $horas;
 			}
 
+			/**
+			 * Sustituye los marcadores como el original. Devolver la consulta tal cual dejaba
+			 * el `%s` de «¿existe la tabla?» sin resolver, y según lo que hubiera en caché de
+			 * una prueba anterior, el Logger escribía o no: en local pasaba y en el CI no.
+			 */
 			public function prepare( $q, ...$args ) {
-				return $q;
+				$sql = (string) $q;
+				foreach ( $args as $arg ) {
+					$pos = strpos( $sql, '%' );
+					if ( false !== $pos ) {
+						$sql = substr_replace( $sql, (string) $arg, $pos, 2 );
+					}
+				}
+				return $sql;
 			}
 
 			public function get_var( $q = null, $x = 0, $y = 0 ) {
