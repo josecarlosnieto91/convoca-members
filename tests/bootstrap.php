@@ -442,4 +442,16 @@ namespace {
     if (\file_exists($autoload)) {
         require_once $autoload;
     }
+
+	// La clase REAL del nucleo, cuando esta disponible: en CI el flujo de trabajo trae
+	// el repositorio del nucleo al lado (CONVOCA_CORE_PATH permite indicar otra ruta).
+	// No se simula a mano: un doble de Email_Layout que reproduzca su HTML deja la
+	// suite corriendo en falso, que es justo lo que se retiro el 08/10.
+	$convoca_core = getenv( 'CONVOCA_CORE_PATH' ) ?: dirname( __DIR__, 2 ) . '/convoca-core';
+	foreach ( array( 'Email_Layout.php', 'Mailer.php' ) as $convoca_core_fichero ) {
+		$convoca_core_ruta = $convoca_core . '/includes/' . $convoca_core_fichero;
+		if ( file_exists( $convoca_core_ruta ) ) {
+			require_once $convoca_core_ruta;
+		}
+	}
 }

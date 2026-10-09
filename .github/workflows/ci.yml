@@ -73,6 +73,12 @@ jobs:
         with:
           dependency-versions: highest
           composer-options: '--ignore-platform-req=ext-iconv'
+      # Las clases Convoca\Core (Email_Layout, Mailer) viven en el repositorio del nucleo,
+      # que en CI no esta al lado. Se trae para probar contra la clase REAL, no contra un
+      # doble que reproduzca su comportamiento y deje la suite corriendo en falso.
+      - name: Traer el nucleo (dependencia real)
+        run: git clone --depth 1 https://github.com/josecarlosnieto91/convoca-core.git ../convoca-core
+
       - name: Run unit tests
         run: vendor/bin/phpunit --testsuite unit
 
