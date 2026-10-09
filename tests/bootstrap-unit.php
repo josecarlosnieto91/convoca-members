@@ -9,9 +9,8 @@
  */
 define('ABSPATH', dirname(__DIR__) . '/');
 
-// 0. Stub de Convoca\Core\Utils (locks por transients) ANTES del bootstrap de
-//    core: ver tests/stubs-utils.php para el porqué.
-// Sin doble de Utils: el simulador de bloqueos del nucleo hace que la clase real funcione.
+// 0. Sin doble de Convoca\Core\Utils: el bootstrap del nucleo simula los bloqueos, asi
+//    que la clase real funciona y no hay que mantener un doble que se queda atras.
 
 // 1. Mocks de WordPress (stubs) del core — deben cargarse ANTES del autoloader.
 $core_bootstrap = dirname(__DIR__, 2) . '/convoca-core/tests/bootstrap-unit.php';

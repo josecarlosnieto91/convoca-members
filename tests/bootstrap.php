@@ -5,95 +5,18 @@
  * All namespace declarations must come first.
  */
 
-namespace Convoca\Core {
-
-    if (!class_exists('Utils')) {
-        class Utils {
-            public static $actions_fired = [];
-
-            public static function do_action(string $native_hook, string $backcompat_hook, ...$args): void {
-                self::$actions_fired[] = ['hook' => $native_hook, 'callback' => $backcompat_hook, 'args' => $args];
-                if (\function_exists('\\do_action')) {
-                    \do_action($native_hook, ...$args);
-                }
-            }
-
-            public static function format_date(string $modify, string $format = 'Y-m-d'): string {
-                return \gmdate($format, \strtotime($modify));
-            }
-
-            public static function acquire_lock(string $key, int $ttl = 60): bool {
-                if (\function_exists('get_transient') && false !== \get_transient($key)) {
-                    return false;
-                }
-                if (\function_exists('set_transient')) {
-                    \set_transient($key, 1, $ttl);
-                }
-                return true;
-            }
-
-            public static function release_lock(string $key): bool {
-                if (\function_exists('delete_transient')) {
-                    \delete_transient($key);
-                }
-                return true;
-            }
-
-            public static function clear_fired(): void { self::$actions_fired = []; }
-
-            /** Tema de documentos (tarjeta y acuerdo): «light» o «dark». */
-            public static function get_document_theme(string $suffix = ''): string {
-                return $GLOBALS['_test_document_theme'] ?? 'light';
-            }
-
-            /** Cabecera de marca: sin logo configurado devuelve el nombre del sitio en un <h1>. */
-            public static function get_branding_html(string $filter_suffix = 'common', string $css_class = '', string $style = ''): string {
-                return $GLOBALS['_test_branding'] ?? '<h1 style="' . $style . '">Mi Asociación</h1>';
-            }
-
-            /** Sal persistente del sitio (firma de los enlaces de verificación). */
-            public static function get_persistent_salt(): string {
-                return 'sal-de-pruebas';
-            }
-        }
-    }
-
-    if (!class_exists('Logger')) {
-        class Logger {
-            public static $logs = [];
-            public static function info(string $msg, string $context = '', int $oid = 0): void { self::$logs[] = ['level' => 'info', 'msg' => $msg]; }
-            public static function warning(string $msg, string $context = '', int $oid = 0): void { self::$logs[] = ['level' => 'warning', 'msg' => $msg]; }
-            public static function error(string $msg, string $context = '', int $oid = 0): void { self::$logs[] = ['level' => 'error', 'msg' => $msg]; }
-            public static function clear(): void { self::$logs = []; }
-        }
-    }
-
-    if (!class_exists('Email_Links')) {
-        // El core resuelve los enlaces de correo contra las páginas reales del
-        // sitio. Aquí el doble devuelve un panel de prueba, para que los tests
-        // puedan comprobar que NO se escribe la ruta a mano.
-        class Email_Links {
-            public static $panel_de_prueba = 'https://example.org/panel-del-sitio/';
-
-            public static function panel(): string {
-                return self::$panel_de_prueba;
-            }
-
-            /** @return array<string, string> */
-            public static function footer(): array {
-                return array( 'Mi Panel de Socio' => self::$panel_de_prueba );
-            }
-        }
-    }
-
-    if (!class_exists('Installer')) {
-        class Installer {
-            public static function db_init(): void {}
-        }
-    }
-}
 
 namespace {
+
+    // Las clases del nucleo (Utils, Logger, Email_Links, Installer, Email_Layout, Mailer)
+    // se cargan REALES. Aqui habia cuatro dobles que dejaban la suite corriendo en falso,
+    // midiendo un comportamiento que no existe: es el mismo criterio que ya se aplico a
+    // Email_Layout y Mailer mas abajo. El bootstrap del nucleo registra su autoloader, asi
+    // que sus clases se encuentran con o sin vendor/ (en el CI solo se clona el repositorio).
+    $convoca_core_dir = \getenv( 'CONVOCA_CORE_PATH' ) ?: \dirname( __DIR__, 2 ) . '/convoca-core';
+    if ( \file_exists( $convoca_core_dir . '/tests/bootstrap-unit.php' ) ) {
+        require_once $convoca_core_dir . '/tests/bootstrap-unit.php';
+    }
 
     \define('WP_DEBUG', true);
     \define('ABSPATH', \dirname(__DIR__) . '/');
