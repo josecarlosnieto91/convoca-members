@@ -1,6 +1,9 @@
 name: CI
 
 on:
+  # Permite relanzarlo a mano cuando cambia una dependencia (por ejemplo el nucleo),
+  # sin tener que tocar ningun fichero solo para provocar una ejecucion.
+  workflow_dispatch:
   push:
     branches: [main, develop]
   pull_request:
