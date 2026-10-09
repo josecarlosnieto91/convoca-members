@@ -19,7 +19,7 @@ Gestión de socios, voluntariado y membresías para la Asociación Convoca.
 - Área de socio (Mi Área) con edición de perfil (dirección, teléfono, email, cumpleaños)
 - Renovación de membresía manual (botón en el panel + shortcode `[convoca_renovar]`)
 - Verificación de email y teléfono por enlace enviado al email
-- Proveedor de email pluggable (wp_mail / Mailgun)
+- Proveedor de email pejemploable (wp_mail / Mailgun)
 - Email automation con dedup
 - Cron con per-member lock
 - GDPR tools

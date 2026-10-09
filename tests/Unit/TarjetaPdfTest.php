@@ -87,10 +87,10 @@ class TarjetaPdfTest extends TestCase
 		$this->assertStringContainsString( '.card--plan-largo .body { top:', $pdf );
 		$this->assertStringContainsString( '.card--plan-largo .footer { top:', $pdf );
 
-		// La etiqueta corta (las de verdad: «Lugg», «Deva») se queda como estaba. Se comprueba la
+		// La etiqueta corta (las de verdad: «Ejemplo», «Deva») se queda como estaba. Se comprueba la
 		// clase de la tarjeta, no el texto: las reglas `.card--plan-largo …` sí están siempre en la
 		// hoja (solo actúan si la clase está puesta), y buscarlas en crudo daba un falso fallo.
-		update_option( 'convoca_members_plans', array( 'bronce' => array( 'label' => 'Lugg', 'price' => 50 ) ) );
+		update_option( 'convoca_members_plans', array( 'bronce' => array( 'label' => 'Ejemplo', 'price' => 50 ) ) );
 		$corto = $this->pdf();
 		$this->assertStringNotContainsString( 'class="card card--plan-largo"', $corto );
 		$this->assertStringContainsString( 'class="card"', $corto );

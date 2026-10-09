@@ -1,7 +1,7 @@
 # Spec — Quién puede acreditar horas de voluntariado
 
 **Estado:** aprobada · **Componentes:** convoca-members (regla y aprobación), convoca-enroll (motor de horas)
-**Origen:** hallazgo de la E2E de Lugg (2026-09-25): el formulario de alta promete que marcando el
+**Origen:** hallazgo de la E2E de Ejemplo (2026-09-25): el formulario de alta promete que marcando el
 compromiso se podrá renovar sin cuota, pero el motor de horas no lo acepta. Formulario y motor dicen
 cosas distintas.
 
@@ -38,7 +38,7 @@ Por qué B y no A (el compromiso habilita automáticamente):
   para que la administración vea en el socio lo mismo que concede: si se aprueba a alguien que no lo
   había marcado, la ficha lo refleja. No se duplica el estado de aprobación en la ficha.
 - Se retira del motor de horas la clave huérfana `_convoca_es_voluntario` **en el usuario**: no la
-  escribe nadie en el flujo real (verificado en el código y en Lugg: 0 usuarios), y su parecido con el
+  escribe nadie en el flujo real (verificado en el código y en Ejemplo: 0 usuarios), y su parecido con el
   post meta de la ficha inducía a confundir solicitud con permiso.
 
 ## Regla única
@@ -68,4 +68,4 @@ a coincidir.
 7. Baja y re-alta no cambian el permiso de voluntariado por sí solas.
 8. Usuario sin cuenta de WordPress → no se acreditan horas (sin errores).
 9. Usuario con cuenta pero sin aprobación → no se acreditan horas.
-10. `phpunit`, PHPStan, PHPCS y PCP verdes; CI verde; E2E en Lugg.
+10. `phpunit`, PHPStan, PHPCS y PCP verdes; CI verde; E2E en Ejemplo.

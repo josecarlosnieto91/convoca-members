@@ -4,7 +4,7 @@
  *
  * Regresión: los avisos enlazaban a `/renovar/` y `/pagar/` escritas a mano y
  * ninguna de esas páginas la crea un plugin de Convoca. Si el sitio no las tenía
- * (Lugg no las tiene), el socio aterrizaba en un 404. Estas pruebas fijan que la
+ * (Ejemplo no las tiene), el socio aterrizaba en un 404. Estas pruebas fijan que la
  * ruta se resuelve contra páginas reales y que nunca se emite una ruta muerta.
  */
 

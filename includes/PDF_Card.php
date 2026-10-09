@@ -289,7 +289,7 @@ class PDF_Card {
                 .footer .info { float: left; }
                 /* Cabecera del PDF. El navegador la reparte con flexbox, que dompdf no tiene, así que
                    aquí hay dos caminos según lo que ocupe la etiqueta de la modalidad:
-                     - corta (lo normal: «Lugg», «Deva»): el logo a la izquierda y las insignias a la
+                     - corta (lo normal: «Ejemplo», «Deva»): el logo a la izquierda y las insignias a la
                        derecha con un flotante. Medido: queda a la derecha sin solaparse.
                      - larga: los flotantes se metían encima del logo (se comían el nombre de la
                        organización) y las tablas o los absolutos lo desplazaban a la línea de datos.

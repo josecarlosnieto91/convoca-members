@@ -1,7 +1,7 @@
 # Spec — Alta y renovación de socios: la cuota del primer año y las dos vías de renovación
 
 > Estado: **propuesta para implementar** · Autor: Mika · Fecha: 2026-09-24
-> Plugin: `convoca-members` (2.8.6) · Entorno verificado: Lugg (producción)
+> Plugin: `convoca-members` (2.8.6) · Entorno verificado: Ejemplo (producción)
 
 ## 1. El cambio de concepto
 
@@ -19,7 +19,7 @@ El mínimo **no se inventa ni se duplica**: es el campo `hours` del **plan** de 
 
 | Plan | Cuota | Mínimo de horas |
 |---|---|---|
-| Lugg (Colaborador) | 50 € | **25 h** |
+| Ejemplo (Colaborador) | 50 € | **25 h** |
 | Deva | 100 € | **50 h** |
 | Bronze (inactivo) | 30 € | 15 h |
 | Familiar | 0 € | 0 h → sin vía de horas (solo cuota) |
@@ -80,7 +80,7 @@ Unitarias (PHPUnit, sin WordPress):
 5. Plan con `hours=0` → no hay vía de horas.
 6. Mínimo tomado del plan, no de un valor fijo en el código.
 
-Navegador en Lugg (producción, con datos de prueba y limpieza posterior):
+Navegador en Ejemplo (producción, con datos de prueba y limpieza posterior):
 7. Alta por la vía de voluntariado → comprobar que **exige pago** (ficha en `pendiente_pago`, con orden de pago).
 8. La ficha no se convierte en `activo` sin pago confirmado.
 

@@ -23,7 +23,7 @@ Free features:
 * Automatic and manual renewals
 * Member profile editing (address, phone, email, birthday)
 * Email and phone verification via emailed confirmation links
-* Pluggable email provider (wp_mail / Mailgun)
+* Pejemploable email provider (wp_mail / Mailgun)
 * Soft-delete with history preservation
 * Fee management and manual payments
 * Volunteer hours tracking and approval
@@ -70,7 +70,7 @@ This plugin may contact getconvoca.app to validate PRO licenses, only when a key
 * La tarjeta ya se puede generar fuera del escritorio: usaba `wp_tempnam()` (de `wp-admin`) y un correo de cron que la adjuntase moría con «Call to undefined function wp_tempnam()».
 
 = 2.8.16 =
-* El panel de socio pinta los enlaces que cada sitio declare con el filtro `convoca_mi_area_links` (en Lugg, /turnos/ y /mi-perfil/), en lugar de llevar rutas de un sitio concreto.
+* El panel de socio pinta los enlaces que cada sitio declare con el filtro `convoca_mi_area_links` (en Ejemplo, /turnos/ y /mi-perfil/), en lugar de llevar rutas de un sitio concreto.
 * Una entrada al filtro sin URL o sin texto se ignora en vez de romper el panel.
 
 = 2.8.15 =
@@ -132,7 +132,7 @@ This plugin may contact getconvoca.app to validate PRO licenses, only when a key
 * New: Manual membership renewal (button in member panel + `[convoca_renovar]` shortcode)
 * New: Member profile editing (address, phone, email, birthday)
 * New: Email and phone verification via emailed confirmation links
-* New: Pluggable email provider (wp_mail / Mailgun)
+* New: Pejemploable email provider (wp_mail / Mailgun)
 * Fix: Member panel REST namespace (convoca-members/v1)
 * Fix: Member sequence MAX(id) SQL error on paid signups
 

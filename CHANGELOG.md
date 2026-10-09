@@ -55,7 +55,7 @@ y el nulo cuando no existe.
 ### Arreglado — la modalidad larga rompía la cabecera del carnet (bloque 8)
 
 El distintivo de la modalidad se pintaba en la misma línea que el logo. Con las etiquetas cortas
-(«Lugg», «Deva», las dos activas hoy en Lugg) cabía; con una etiqueta larga —p. ej. «Modalidad
+(«Ejemplo», «Deva», las dos activas hoy en Ejemplo) cabía; con una etiqueta larga —p. ej. «Modalidad
 Familiar Juvenil de Busgosu», 37 caracteres— **no cabía y la descomponía**: con Dompdf el grupo de
 insignias se metía encima del nombre de la organización y lo tapaba, y probando alternativas (tabla,
 posiciones absolutas dentro de la cabecera) las insignias caían en la línea de los datos o el logo
@@ -68,7 +68,7 @@ como estaban.
 
 - La decisión va en una sola clase en la tarjeta (`card--plan-largo`), solo en el PDF: en el
   navegador la cabecera la reparte el flexbox y funciona con cualquier etiqueta.
-- Medido con las cuatro modalidades: `lugg` y `deva` (una línea, sin cambios), `Modalidad Familiar`
+- Medido con las cuatro modalidades: `ejemplo` y `deva` (una línea, sin cambios), `Modalidad Familiar`
   y la larga (dos líneas, cuerpo a 112 px y pie a 192 px, sin tocarse).
 
 ## v2.8.19 (2026-09-27)
@@ -186,7 +186,7 @@ de imprimir dentro.
 - El panel pinta ahora, bajo las pestañas, los enlaces que cada sitio declare con el filtro
   **`convoca_mi_area_links`** (`array( 'url' => …, 'label' => …, 'icon' => … )`). El plugin no
   lleva a mano páginas de un sitio concreto —no existen en otro—, así que las aporta quien las
-  tiene: en Lugg, /turnos/ y /mi-perfil/.
+  tiene: en Ejemplo, /turnos/ y /mi-perfil/.
 - Una entrada a la que le falte la URL o el texto no se pinta, y no rompe el panel.
 
 ### Corregido — el bootstrap de pruebas ya no daba por bueno cualquier filtro
@@ -371,7 +371,7 @@ de imprimir dentro.
 - **Renovación manual**: botón "Renovar membresía" en el panel (Pagos y Cuotas) + shortcode `[convoca_renovar]` + página `/renovar/`
 - **Edición de perfil** desde el panel del socio: dirección, teléfono, email y cumpleaños
 - **Verificación de email y teléfono** por enlace enviado al email (doble opt-in para email; enlace de confirmación para teléfono)
-- **Proveedor de email pluggable**: `Email_Verifier` (wp_mail por defecto, Mailgun opcional)
+- **Proveedor de email pejemploable**: `Email_Verifier` (wp_mail por defecto, Mailgun opcional)
 
 ### ⚙️ Changes
 - El envío de emails pasa por `Email_Verifier::send()` (provider configurable)
