@@ -217,6 +217,15 @@ class EmailBienvenidaObjetivoTest extends TestCase {
 			)
 		);
 
+		// DIAGNOSTICO TEMPORAL (se retira en el commit siguiente)
+		fwrite( STDERR, sprintf(
+			"\n[DIAG] avisos=%d inserciones=%d wpdb=%s nivel=%s tabla=%s\n",
+			count( $avisos ),
+			count( $GLOBALS['_wp_stores']['db_inserts'] ?? array() ),
+			get_class( $GLOBALS['wpdb'] ),
+			\Convoca\Core\Logger::get_log_level(),
+			\Convoca\Core\Logger::table_exists() ? 'si' : 'no'
+		) );
 		$this->assertCount( 1, $avisos, 'Debería quedar un aviso en el log y ningún envío.' );
 		$this->assertStringContainsString( 'no tiene horas acreditadas', $avisos[0]['message'] );
 	}
