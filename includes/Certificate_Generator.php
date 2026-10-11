@@ -98,7 +98,7 @@ class Certificate_Generator {
 		$qr_data    = self::generate_qr_data( $verify_url );
 
 		$valido_hasta = self::validity_expiry_mysql();
-		$html = self::build_html( $nombre, $total_horas, $plan_label, $proyectos, $cert_id, $qr_data, $verify_url, $valido_hasta, $theme );
+		$html         = self::build_html( $nombre, $total_horas, $plan_label, $proyectos, $cert_id, $qr_data, $verify_url, $valido_hasta, $theme );
 
 		$pdf_content = self::render_pdf_to_buffer( $html );
 
@@ -116,14 +116,14 @@ class Certificate_Generator {
 		update_post_meta( $miembro_id, '_convoca_certificado_valido_hasta', $expiry_mysql );
 
 		return array(
-			'id'     => $cert_id,
-			'pdf'    => $pdf_content,
-			'nombre' => $nombre,
-			'horas'  => $total_horas,
-			'plan'   => $plan_label,
-			'fecha'  => current_time( 'mysql' ),
+			'id'           => $cert_id,
+			'pdf'          => $pdf_content,
+			'nombre'       => $nombre,
+			'horas'        => $total_horas,
+			'plan'         => $plan_label,
+			'fecha'        => current_time( 'mysql' ),
 			'valido_hasta' => $expiry_mysql,
-			'url'    => $verify_url,
+			'url'          => $verify_url,
 		);
 	}
 
@@ -241,8 +241,8 @@ class Certificate_Generator {
 	}
 
 	private static function build_html( string $nombre, float $horas, string $plan, array $proyectos, string $cert_id, string $qr_data, string $verify_url, string $valido_hasta = '', string $theme = '' ): string {
-		$theme = in_array( $theme, array( 'light', 'dark' ), true ) ? $theme : \Convoca\Core\Utils::get_document_theme( 'certificate' );
-		$light = 'light' === $theme;
+		$theme          = in_array( $theme, array( 'light', 'dark' ), true ) ? $theme : \Convoca\Core\Utils::get_document_theme( 'certificate' );
+		$light          = 'light' === $theme;
 		$proyectos_html = '';
 		foreach ( $proyectos as $p ) {
 			$tareas_resumen  = ! empty( $p['tareas'] ) ? implode( '. ', array_map( 'substr', $p['tareas'], array_fill( 0, count( $p['tareas'] ), 0 ), array_fill( 0, count( $p['tareas'] ), 60 ) ) ) : 'Sin descripción';
@@ -396,7 +396,7 @@ class Certificate_Generator {
 
 		$miembro = get_post( $miembro_id );
 
-		$emitido = get_post_meta( $miembro_id, '_convoca_certificado_emitido', true );
+		$emitido      = get_post_meta( $miembro_id, '_convoca_certificado_emitido', true );
 		$valido_hasta = get_post_meta( $miembro_id, '_convoca_certificado_valido_hasta', true );
 		if ( empty( $valido_hasta ) && $emitido ) {
 			// Certificados anteriores a la política D13: validez desde emisión.

@@ -43,9 +43,9 @@ class PDF_Card {
 	 *                         tarjeta. El botón sigue estando para quien abre la vista en el navegador.
 	 */
 	public static function get_html( int $post_id, string $theme = '', bool $para_pdf = false ): string {
-		$theme             = in_array( $theme, array( 'light', 'dark' ), true ) ? $theme : \Convoca\Core\Utils::get_document_theme( 'card' );
-		$light             = 'light' === $theme;
-		$nombre            = get_the_title( $post_id );
+		$theme  = in_array( $theme, array( 'light', 'dark' ), true ) ? $theme : \Convoca\Core\Utils::get_document_theme( 'card' );
+		$light  = 'light' === $theme;
+		$nombre = get_the_title( $post_id );
 
 		// Un nombre largo no cabe en dos líneas del carnet: en vez de dejar que se desborde por
 		// debajo (se cruzaba con el pie y el orden del texto se rompía), se reduce el tamaño. El

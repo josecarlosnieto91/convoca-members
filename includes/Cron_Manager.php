@@ -403,17 +403,17 @@ class Cron_Manager {
 				continue;
 			}
 
-			$amount_cents  = (int) round( $plan_data['price'] * 100 );
-			$product_desc  = mb_substr( 'RENOVACIÓN ' . strtoupper( get_bloginfo( 'name' ) ) . ' - ' . strtoupper( $plan_data['label'] ), 0, 125 );
+			$amount_cents     = (int) round( $plan_data['price'] * 100 );
+			$product_desc     = mb_substr( 'RENOVACIÓN ' . strtoupper( get_bloginfo( 'name' ) ) . ' - ' . strtoupper( $plan_data['label'] ), 0, 125 );
 			$members_settings = get_option( 'convoca_members_settings', array() );
-			$max_attempts  = max( 1, (int) ( $members_settings['auto_renew_max_attempts'] ?? 3 ) );
+			$max_attempts     = max( 1, (int) ( $members_settings['auto_renew_max_attempts'] ?? 3 ) );
 
 			// ── 1) Cargo automático real con token almacenado (decisión 2026-09).
 			// Si el socio tiene merchant id, intentamos cobrar por REST; si falla,
 			// se reintenta en los siguientes ciclos diarios hasta agotar intentos.
 			if ( ! $needs_tokenization ) {
-				$attempts = (int) get_post_meta( $member_id, '_convoca_autorenew_attempts', true );
-				$last_try = get_post_meta( $member_id, '_convoca_autorenew_last_attempt', true );
+				$attempts   = (int) get_post_meta( $member_id, '_convoca_autorenew_attempts', true );
+				$last_try   = get_post_meta( $member_id, '_convoca_autorenew_last_attempt', true );
 				$retry_days = max( 1, (int) ( $members_settings['auto_renew_retry_days'] ?? 5 ) );
 
 				// Si el último intento fue hace menos de retry_days, esperar al próximo ciclo.
@@ -441,7 +441,7 @@ class Cron_Manager {
 				}
 
 				// Cargo rechazado o error: registrar intento.
-				$attempts++;
+				++$attempts;
 				update_post_meta( $member_id, '_convoca_autorenew_attempts', $attempts );
 				update_post_meta( $member_id, '_convoca_autorenew_last_attempt', current_time( 'mysql' ) );
 

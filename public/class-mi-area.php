@@ -121,12 +121,12 @@ class Mi_Area {
 			return ob_get_clean();
 		}
 
-		$miembro   = get_post( $member_id );
-		$plan_key  = get_post_meta( $member_id, '_convoca_plan', true ) ?: get_post_meta( $member_id, '_convoca_sub_plan', true );
-		$plan_data = CPT_Miembro::get_plan( $plan_key );
-		$estado    = get_post_meta( $member_id, '_convoca_estado_miembro', true );
+		$miembro    = get_post( $member_id );
+		$plan_key   = get_post_meta( $member_id, '_convoca_plan', true ) ?: get_post_meta( $member_id, '_convoca_sub_plan', true );
+		$plan_data  = CPT_Miembro::get_plan( $plan_key );
+		$estado     = get_post_meta( $member_id, '_convoca_estado_miembro', true );
 		$renovacion = get_post_meta( $member_id, '_convoca_fecha_renovacion', true );
-		$importe   = (float) ( get_post_meta( $member_id, '_convoca_importe_cuota', true ) ?: ( $plan_data['price'] ?? 0 ) );
+		$importe    = (float) ( get_post_meta( $member_id, '_convoca_importe_cuota', true ) ?: ( $plan_data['price'] ?? 0 ) );
 
 		?>
 		<div class="convoca-renovar card glass">

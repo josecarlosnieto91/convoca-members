@@ -442,25 +442,25 @@ class Rest_API {
 
 		return new \WP_REST_Response(
 			array(
-				'id'              => $member_id,
-				'nombre'          => $post->post_title,
-				'email'           => get_post_meta( $member_id, '_convoca_email', true ),
-				'email_pendiente' => get_post_meta( $member_id, '_convoca_email_pendiente', true ),
-				'direccion'       => get_post_meta( $member_id, '_convoca_direccion', true ),
-				'telefono'        => get_post_meta( $member_id, '_convoca_telefono', true ),
+				'id'                  => $member_id,
+				'nombre'              => $post->post_title,
+				'email'               => get_post_meta( $member_id, '_convoca_email', true ),
+				'email_pendiente'     => get_post_meta( $member_id, '_convoca_email_pendiente', true ),
+				'direccion'           => get_post_meta( $member_id, '_convoca_direccion', true ),
+				'telefono'            => get_post_meta( $member_id, '_convoca_telefono', true ),
 				'telefono_verificado' => '1' === get_post_meta( $member_id, '_convoca_telefono_verificado', true ),
-				'cumpleanos'      => get_post_meta( $member_id, '_convoca_cumpleanos', true ),
-				'codigo'          => $masked_code,
-				'estado'          => $estado,
-				'plan'            => get_post_meta( $member_id, '_convoca_plan_label', true ) ?: get_post_meta( $member_id, '_convoca_plan', true ),
-				'forma_pago'      => get_post_meta( $member_id, '_convoca_forma_pago', true ),
-				'fecha_renovacion' => $fecha_renov,
-				'fecha_alta'      => get_post_meta( $member_id, '_convoca_fecha_alta', true ),
-				'fecha_baja'      => $fecha_baja,
-				'cuota_vencida'   => $vencida,
-				'puede_renovar'   => $puede_renovar,
-				'renovable'       => $puede_renovar && ( get_post_meta( $member_id, '_convoca_forma_pago', true ) !== 'voluntariado' ),
-				'tipo'            => (array) get_post_meta( $member_id, '_convoca_modalidad', true ) ?: array( 'Socio/a' ),
+				'cumpleanos'          => get_post_meta( $member_id, '_convoca_cumpleanos', true ),
+				'codigo'              => $masked_code,
+				'estado'              => $estado,
+				'plan'                => get_post_meta( $member_id, '_convoca_plan_label', true ) ?: get_post_meta( $member_id, '_convoca_plan', true ),
+				'forma_pago'          => get_post_meta( $member_id, '_convoca_forma_pago', true ),
+				'fecha_renovacion'    => $fecha_renov,
+				'fecha_alta'          => get_post_meta( $member_id, '_convoca_fecha_alta', true ),
+				'fecha_baja'          => $fecha_baja,
+				'cuota_vencida'       => $vencida,
+				'puede_renovar'       => $puede_renovar,
+				'renovable'           => $puede_renovar && ( get_post_meta( $member_id, '_convoca_forma_pago', true ) !== 'voluntariado' ),
+				'tipo'                => (array) get_post_meta( $member_id, '_convoca_modalidad', true ) ?: array( 'Socio/a' ),
 			)
 		);
 	}
@@ -1163,7 +1163,7 @@ class Rest_API {
 		}
 
 		// ── Email (solo tras confirmación) ──
-		$nuevo_email = sanitize_email( $request->get_param( 'email' ) ?? '' );
+		$nuevo_email  = sanitize_email( $request->get_param( 'email' ) ?? '' );
 		$email_actual = get_post_meta( $member_id, '_convoca_email', true );
 		if ( $request->get_param( 'email' ) !== null && ! empty( $nuevo_email ) && $nuevo_email !== $email_actual ) {
 			if ( ! is_email( $nuevo_email ) ) {
@@ -1211,8 +1211,8 @@ class Rest_API {
 
 		return new \WP_REST_Response(
 			array(
-				'success' => true,
-				'changes' => $changes,
+				'success'         => true,
+				'changes'         => $changes,
 				'email_pendiente' => ! empty( get_post_meta( $member_id, '_convoca_email_pendiente', true ) ),
 			)
 		);

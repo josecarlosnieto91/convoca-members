@@ -520,7 +520,7 @@ class CPT_Miembro {
 
 			// Set dates. Keep an existing fecha_alta (historical reactivation
 			// preserves seniority); only first activation sets it to today.
-			$now = current_time( 'Y-m-d' );
+			$now                  = current_time( 'Y-m-d' );
 			$fecha_alta_existente = get_post_meta( $post_id, '_convoca_fecha_alta', true );
 			if ( empty( $fecha_alta_existente ) ) {
 				update_post_meta( $post_id, '_convoca_fecha_alta', $now );
@@ -583,7 +583,7 @@ class CPT_Miembro {
 			return;
 		}
 
-		$settings = get_option( 'convoca_members_settings', array() );
+		$settings  = get_option( 'convoca_members_settings', array() );
 		$baja_days = (int) ( $settings['grace_baja_days'] ?? 30 );
 		$baja_days = max( 1, min( 90, $baja_days ) );
 
@@ -591,9 +591,9 @@ class CPT_Miembro {
 		// pago_recurrente que aún tiene intentos de cargo automático pendientes
 		// CONSERVA beneficios mientras el sistema reintenta el cobro; solo
 		// cuando se agotan los intentos entra en el ciclo de gracia estándar.
-		$is_recurrent   = '1' === (string) get_post_meta( $post_id, '_convoca_pago_recurrente', true );
-		$renew_attempts = (int) get_post_meta( $post_id, '_convoca_autorenew_attempts', true );
-		$max_attempts   = max( 1, (int) ( $settings['auto_renew_max_attempts'] ?? 3 ) );
+		$is_recurrent     = '1' === (string) get_post_meta( $post_id, '_convoca_pago_recurrente', true );
+		$renew_attempts   = (int) get_post_meta( $post_id, '_convoca_autorenew_attempts', true );
+		$max_attempts     = max( 1, (int) ( $settings['auto_renew_max_attempts'] ?? 3 ) );
 		$has_renew_credit = $is_recurrent && $renew_attempts > 0 && $renew_attempts < $max_attempts;
 
 		// 1. Final Baja logic (renewal + grace_baja_days) — check FIRST (most severe).
@@ -612,8 +612,8 @@ class CPT_Miembro {
 		// 2. Grace suspension (renewal + grace_suspend_days): loses benefits,
 		//    keeps access ONLY to renew. Un socio con reintentos de cobro activos
 		//    NO se suspende todavía (se espera al agotamiento de reintentos).
-		$suspend_days = (int) ( $settings['grace_suspend_days'] ?? 1 );
-		$suspend_days = max( 0, min( 30, $suspend_days ) );
+		$suspend_days    = (int) ( $settings['grace_suspend_days'] ?? 1 );
+		$suspend_days    = max( 0, min( 30, $suspend_days ) );
 		$suspension_date = \Convoca\Core\Utils::format_date( $renewal_date . " +{$suspend_days} days", 'Y-m-d' );
 		// '>=' so a member with default grace_suspend_days=1 loses benefits on
 		// the day AFTER the renewal (renewal yesterday → suspend today), not on

@@ -101,7 +101,7 @@ class Mailgun_Provider implements Email_Verifier_Provider {
 		// Attachments: Mailgun expects multipart/form-data with file[] fields.
 		foreach ( $attachments as $file_path ) {
 			if ( is_string( $file_path ) && file_exists( $file_path ) ) {
-				$attachment_key             = 'attachment[' . basename( $file_path ) . ']';
+				$attachment_key                 = 'attachment[' . basename( $file_path ) . ']';
 				$body_params[ $attachment_key ] = new \CURLFile( $file_path );
 			}
 		}

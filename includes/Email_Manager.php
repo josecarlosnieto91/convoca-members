@@ -966,23 +966,23 @@ class Email_Manager {
 			$site = get_bloginfo( 'name' );
 			$map  = array(
 				// Escapes Unicode que se guardaron como texto literal.
-				'\u00a1'                              => '¡',
-				'\u0001F389'                          => '🎉',
-				'\U0001f389'                          => '🎉',
+				'\u00a1'                => '¡',
+				'\u0001F389'            => '🎉',
+				'\U0001f389'            => '🎉',
 				// Residuo del doble escape (el \u se perdió al guardar).
-				'<h1>00a1Bienvenido/a'                => '<h1>¡Bienvenido/a',
-				'! 0001F389</H1>'                     => '! 🎉</h1>',
+				'<h1>00a1Bienvenido/a'  => '<h1>¡Bienvenido/a',
+				'! 0001F389</H1>'       => '! 🎉</h1>',
 				// Placeholders que perdieron las llaves: enlaces roto. Se
 				// reconocen por su NOMBRE, no por el caso suelto que aparezca
 				// (antes solo estaban contemplados dos de los cinco).
-				'familia Convoca'                     => 'familia ' . $site,
-				'comunidad Convoca'                   => 'comunidad ' . $site,
-				'apoyando a Convoca'                  => 'apoyando a ' . $site,
+				'familia Convoca'       => 'familia ' . $site,
+				'comunidad Convoca'     => 'comunidad ' . $site,
+				'apoyando a Convoca'    => 'apoyando a ' . $site,
 				// Enlaces al panel escritos a mano en el cuerpo: en un sitio cuyo
 				// panel se llama distinto son un 404, y no se arreglan solos si la
 				// página cambia de nombre. Vuelven a ser el placeholder, que se
 				// resuelve en cada envío contra la página real.
-				home_url( '/mi-area/' )               => '{login_url}',
+				home_url( '/mi-area/' ) => '{login_url}',
 			);
 
 			foreach ( $templates as $slug => $tpl ) {

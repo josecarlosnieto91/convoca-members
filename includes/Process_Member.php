@@ -270,37 +270,37 @@ class Process_Member {
 
 			// 8. Save Meta
 			$meta = array(
-				'estado_miembro'    => $estado,
-				'plan'              => $plan,
-				'plan_label'        => ( $p = CPT_Miembro::get_plan( $plan ) ) ? $p['label'] : $plan,
-				'sub_plan'          => $sub_plan,
+				'estado_miembro'       => $estado,
+				'plan'                 => $plan,
+				'plan_label'           => ( $p = CPT_Miembro::get_plan( $plan ) ) ? $p['label'] : $plan,
+				'sub_plan'             => $sub_plan,
 				// `forma_pago` es cuota/voluntariado en todo el plugin; el método elegido en el alta
 				// (tarjeta/bizum/transferencia) va a su propio meta. Payment_Listener lo normaliza a
 				// 'cuota' al confirmarse el pago; hasta entonces, la cuota está pendiente.
-				'forma_pago'        => 'cuota',
-				'metodo_pago'       => $forma_pago,
-				'cuota'             => $plan_key, // legacy alias.
-				'modalidad'         => $plan_data['modalidad'] ?? 'Numerario',
-				'importe_cuota'     => $plan_data['price'] ?? 0,
-				'estado_cuota'      => 'pendiente',
+				'forma_pago'           => 'cuota',
+				'metodo_pago'          => $forma_pago,
+				'cuota'                => $plan_key, // legacy alias.
+				'modalidad'            => $plan_data['modalidad'] ?? 'Numerario',
+				'importe_cuota'        => $plan_data['price'] ?? 0,
+				'estado_cuota'         => 'pendiente',
 				// Volunteer annual cycle starts at registration.
 				'fecha_inicio_periodo' => '',
-				'fecha_alta'        => current_time( 'Y-m-d' ),
-				'dni'               => $dni,
-				'fecha_nacimiento'  => $fecha_nac,
-				'email'             => $email,
-				'access_code'       => Utils::generate_access_code(),
-				'telefono'          => sanitize_text_field( $data['telefono'] ?? '' ),
-				'whatsapp'          => sanitize_text_field( $data['whatsapp'] ?? 'si' ),
-				'direccion'         => sanitize_text_field( $data['direccion'] ?? '' ),
-				'municipio'         => sanitize_text_field( $data['municipio'] ?? '' ),
-				'canal_contacto'    => sanitize_text_field( $data['canal_contacto'] ?? 'whatsapp' ),
-				'menor_edad'        => $menor ? '1' : '0',
-				'es_voluntario'     => ! empty( $data['acuerdo_voluntariado'] ) ? '1' : '0',
-				'rgpd_version'      => $settings['rgpd_version'] ?? '1.0',
-				'rgpd_timestamp'    => current_time( 'mysql' ),
-				'comunicaciones_ok' => ! empty( $data['comunicaciones'] ) ? '1' : '0',
-				'pago_recurrente'   => ! empty( $data['pago_recurrente'] ) ? '1' : '0',
+				'fecha_alta'           => current_time( 'Y-m-d' ),
+				'dni'                  => $dni,
+				'fecha_nacimiento'     => $fecha_nac,
+				'email'                => $email,
+				'access_code'          => Utils::generate_access_code(),
+				'telefono'             => sanitize_text_field( $data['telefono'] ?? '' ),
+				'whatsapp'             => sanitize_text_field( $data['whatsapp'] ?? 'si' ),
+				'direccion'            => sanitize_text_field( $data['direccion'] ?? '' ),
+				'municipio'            => sanitize_text_field( $data['municipio'] ?? '' ),
+				'canal_contacto'       => sanitize_text_field( $data['canal_contacto'] ?? 'whatsapp' ),
+				'menor_edad'           => $menor ? '1' : '0',
+				'es_voluntario'        => ! empty( $data['acuerdo_voluntariado'] ) ? '1' : '0',
+				'rgpd_version'         => $settings['rgpd_version'] ?? '1.0',
+				'rgpd_timestamp'       => current_time( 'mysql' ),
+				'comunicaciones_ok'    => ! empty( $data['comunicaciones'] ) ? '1' : '0',
+				'pago_recurrente'      => ! empty( $data['pago_recurrente'] ) ? '1' : '0',
 				// Note: Renewal date is set on payment completion/approval, not here.
 				// But for initial record, we might set a tentative one or leave empty.
 			);

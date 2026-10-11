@@ -48,7 +48,7 @@ class Verificar_Certificado {
 			$result = Certificate_Generator::verify( $search );
 
 			if ( $result ) {
-				$caducado = ( $result['estado'] ?? 'vigente' ) === 'caducado';
+				$caducado     = ( $result['estado'] ?? 'vigente' ) === 'caducado';
 				$valido_hasta = ! empty( $result['valido_hasta'] ) ? wp_date( 'd/m/Y', strtotime( $result['valido_hasta'] ) ) : '';
 				?>
 				<div class="convoca-alert <?php echo $caducado ? 'convoca-alert--warning convoca-card conv-cert-result' : 'convoca-alert--ok convoca-card conv-cert-result'; ?>">

@@ -54,8 +54,8 @@ class Admin_Settings {
 				$settings[ $key ] = sanitize_text_field( $val );
 			}
 			// Clamp grace period fields (also enforced by sanitize_settings).
-			$settings['grace_suspend_days'] = max( 0, min( 30, (int) ( $settings['grace_suspend_days'] ?? 1 ) ) );
-			$settings['grace_baja_days']    = max( 1, min( 90, (int) ( $settings['grace_baja_days'] ?? 30 ) ) );
+			$settings['grace_suspend_days']      = max( 0, min( 30, (int) ( $settings['grace_suspend_days'] ?? 1 ) ) );
+			$settings['grace_baja_days']         = max( 1, min( 90, (int) ( $settings['grace_baja_days'] ?? 30 ) ) );
 			$settings['auto_renew_max_attempts'] = max( 1, min( 10, (int) ( $settings['auto_renew_max_attempts'] ?? 3 ) ) );
 			$settings['auto_renew_retry_days']   = max( 1, min( 30, (int) ( $settings['auto_renew_retry_days'] ?? 5 ) ) );
 			update_option( 'convoca_members_settings', $settings );
@@ -116,22 +116,22 @@ class Admin_Settings {
 		}
 		$input = wp_unslash( $input );
 		return array(
-			'admin_email'     => sanitize_email( $input['admin_email'] ?? '' ),
+			'admin_email'             => sanitize_email( $input['admin_email'] ?? '' ),
 			// Copia al administrador de todos los correos enviados a los interesados
 			// (la consume Convoca\Core\Email_Copy). Marcado por defecto.
-			'copy_all_emails' => empty( $input['copy_all_emails'] ) ? 0 : 1,
-			'iban'            => sanitize_text_field( $input['iban'] ?? '' ),
-			'rgpd_version'    => sanitize_text_field( $input['rgpd_version'] ?? '1.0' ),
-			'sender_name'     => sanitize_text_field( $input['sender_name'] ?? get_bloginfo( 'name' ) ),
-			'min_age'         => (int) ( $input['min_age'] ?? 0 ),
-			'email_provider'  => sanitize_key( $input['email_provider'] ?? 'wpmail' ),
-			'mailgun_api_key' => sanitize_text_field( $input['mailgun_api_key'] ?? '' ),
-			'mailgun_domain'  => sanitize_text_field( $input['mailgun_domain'] ?? '' ),
-			'mailgun_region'  => sanitize_key( $input['mailgun_region'] ?? '' ),
+			'copy_all_emails'         => empty( $input['copy_all_emails'] ) ? 0 : 1,
+			'iban'                    => sanitize_text_field( $input['iban'] ?? '' ),
+			'rgpd_version'            => sanitize_text_field( $input['rgpd_version'] ?? '1.0' ),
+			'sender_name'             => sanitize_text_field( $input['sender_name'] ?? get_bloginfo( 'name' ) ),
+			'min_age'                 => (int) ( $input['min_age'] ?? 0 ),
+			'email_provider'          => sanitize_key( $input['email_provider'] ?? 'wpmail' ),
+			'mailgun_api_key'         => sanitize_text_field( $input['mailgun_api_key'] ?? '' ),
+			'mailgun_domain'          => sanitize_text_field( $input['mailgun_domain'] ?? '' ),
+			'mailgun_region'          => sanitize_key( $input['mailgun_region'] ?? '' ),
 			// Grace period: days after renewal before benefits are lost
 			// (suspendido, default 1) and before automatic baja (default 30).
-			'grace_suspend_days' => max( 0, min( 30, (int) ( $input['grace_suspend_days'] ?? 1 ) ) ),
-			'grace_baja_days'    => max( 1, min( 90, (int) ( $input['grace_baja_days'] ?? 30 ) ) ),
+			'grace_suspend_days'      => max( 0, min( 30, (int) ( $input['grace_suspend_days'] ?? 1 ) ) ),
+			'grace_baja_days'         => max( 1, min( 90, (int) ( $input['grace_baja_days'] ?? 30 ) ) ),
 			// Automatic renewal retries (token charge policy).
 			'auto_renew_max_attempts' => max( 1, min( 10, (int) ( $input['auto_renew_max_attempts'] ?? 3 ) ) ),
 			'auto_renew_retry_days'   => max( 1, min( 30, (int) ( $input['auto_renew_retry_days'] ?? 5 ) ) ),
@@ -743,18 +743,18 @@ class Admin_Settings {
 		 * @var array<string, string> $tpl_labels
 		 */
 		$tpl_labels = array(
-			'solicitud_recibida'              => __( 'Solicitud recibida', 'convoca-members' ),
-			'bienvenida'                      => __( 'Bienvenida (activación)', 'convoca-members' ),
-			'credenciales_acceso'             => __( 'Credenciales de acceso', 'convoca-members' ),
-			'recordatorio_pago'               => __( 'Recordatorio de pago (1/3)', 'convoca-members' ),
-			'pago_pendiente_2'                => __( 'Segundo aviso de pago (2/3)', 'convoca-members' ),
-			'pago_pendiente_ultimo'           => __( 'Último aviso de pago (3/3)', 'convoca-members' ),
-			'renovacion'                      => __( 'Renovación anual (30 días)', 'convoca-members' ),
-			'renovacion_15d'                  => __( 'Renovación (15 días)', 'convoca-members' ),
-			'renovacion_7d'                   => __( 'Renovación (última semana)', 'convoca-members' ),
-			'renovacion_automatica'           => __( 'Aviso renovación automática', 'convoca-members' ),
-			'renovacion_completada'           => __( 'Renovación completada 🎉', 'convoca-members' ),
-			'voluntariado_recordatorio'       => __( 'Recordatorio de horas de voluntariado', 'convoca-members' ),
+			'solicitud_recibida'               => __( 'Solicitud recibida', 'convoca-members' ),
+			'bienvenida'                       => __( 'Bienvenida (activación)', 'convoca-members' ),
+			'credenciales_acceso'              => __( 'Credenciales de acceso', 'convoca-members' ),
+			'recordatorio_pago'                => __( 'Recordatorio de pago (1/3)', 'convoca-members' ),
+			'pago_pendiente_2'                 => __( 'Segundo aviso de pago (2/3)', 'convoca-members' ),
+			'pago_pendiente_ultimo'            => __( 'Último aviso de pago (3/3)', 'convoca-members' ),
+			'renovacion'                       => __( 'Renovación anual (30 días)', 'convoca-members' ),
+			'renovacion_15d'                   => __( 'Renovación (15 días)', 'convoca-members' ),
+			'renovacion_7d'                    => __( 'Renovación (última semana)', 'convoca-members' ),
+			'renovacion_automatica'            => __( 'Aviso renovación automática', 'convoca-members' ),
+			'renovacion_completada'            => __( 'Renovación completada 🎉', 'convoca-members' ),
+			'voluntariado_recordatorio'        => __( 'Recordatorio de horas de voluntariado', 'convoca-members' ),
 			'objetivo_voluntariado_completado' => __( 'Objetivo de voluntariado completado 🏅', 'convoca-members' ),
 		);
 
