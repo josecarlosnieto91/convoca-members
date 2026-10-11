@@ -159,9 +159,10 @@
 .btn-primary {
   width: 100%;
   padding: 1rem;
-  /* Naranja OSCURO, no el brillante: con texto blanco encima el #ff8700 da
-     2.41:1 y no cumple AA (minimo 4.5:1). #b05500 da 5.07:1. */
-  background: var(--wp--preset--color--naranja-oscuro, #b05500);
+  /* Fallbacks encadenados, igual que en convoca-common.css: donde la paleta
+     declare `naranja-oscuro` se usa (texto blanco = 5.07:1); donde no, se
+     conserva el naranja de marca para no romper el ajuste del tema del sitio. */
+  background: var(--wp--preset--color--naranja-oscuro, var(--wp--preset--color--naranja, #ff8700));
   color: #fff;
   border: none;
   border-radius: 0.5rem;
@@ -173,8 +174,7 @@
 }
 
 .btn-primary:hover {
-  /* Antes ACLARABA (#ffa033), o sea empeoraba el contraste. Ahora oscurece. */
-  background: #8f4400;
+  background: var(--wp--preset--color--naranja-oscuro-hover, var(--wp--preset--color--naranja-intenso, #ff500a));
   transform: translateY(-2px);
   box-shadow: 0 6px 15px rgba(143, 68, 0, 0.35);
 }

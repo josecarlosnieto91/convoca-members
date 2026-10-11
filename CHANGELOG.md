@@ -1,5 +1,12 @@
 # Changelog — convoca-members
 
+## v2.8.29 (2026-10-11)
+
+### Arreglado
+- Mismo criterio de **fallbacks encadenados** en el `.btn-primary` del área privada: el sitio que
+  declare `naranja-oscuro` en su paleta lo usa (texto blanco, 5.07:1) y el que no conserva el
+  naranja de marca, para no romper a los temas que ajustan el color del texto por su cuenta.
+
 ## v2.8.28 (2026-10-11)
 
 ### Arreglado
