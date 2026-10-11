@@ -4,7 +4,7 @@ Tags: members, volunteers, membership, certificates, associations
 Requires at least: 6.4
 Tested up to: 7.1
 Requires PHP: 8.1
-Stable tag: 2.8.24
+Stable tag: 2.8.25
 License: GPL-2.0-or-later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -49,6 +49,9 @@ This plugin may contact getconvoca.app to validate PRO licenses, only when a key
 3. Activate the plugin from the Plugins menu
 
 == Changelog ==
+
+= 2.8.25 =
+* El correo de objetivo de voluntariado ya no se envía dos veces: el mismo aviso estaba registrado con el nombre vigente y con uno retirado, y el lanzador disparaba los dos.
 
 = 2.8.19 =
 * Base de estilos común de los documentos (`Estilos_PDF`): la tipografía y los colores de la marca en un solo sitio para el carnet, el acuerdo y el certificado, y escritas las trampas de Dompdf (no hay flexbox; `overflow: hidden` recorta los contenedores con flotantes; `box-sizing: border-box` no se respeta; `@media print` no existe; la tipografía no tiene emojis; no hay variables CSS) para que un documento nuevo no tropiece con ellas.
