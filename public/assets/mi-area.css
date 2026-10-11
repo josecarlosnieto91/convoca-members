@@ -159,7 +159,9 @@
 .btn-primary {
   width: 100%;
   padding: 1rem;
-  background: var(--wp--preset--color--naranja, #ff8700);
+  /* Naranja OSCURO, no el brillante: con texto blanco encima el #ff8700 da
+     2.41:1 y no cumple AA (minimo 4.5:1). #b05500 da 5.07:1. */
+  background: var(--wp--preset--color--naranja-oscuro, #b05500);
   color: #fff;
   border: none;
   border-radius: 0.5rem;
@@ -167,13 +169,14 @@
   font-size: 1rem;
   cursor: pointer;
   transition: all 0.2s;
-  box-shadow: 0 4px 12px rgba(255, 135, 0, 0.25);
+  box-shadow: 0 4px 12px rgba(176, 85, 0, 0.25);
 }
 
 .btn-primary:hover {
-  background: var(--wp--preset--color--naranja-claro, #ffa033);
+  /* Antes ACLARABA (#ffa033), o sea empeoraba el contraste. Ahora oscurece. */
+  background: #8f4400;
   transform: translateY(-2px);
-  box-shadow: 0 6px 15px rgba(255, 135, 0, 0.35);
+  box-shadow: 0 6px 15px rgba(143, 68, 0, 0.35);
 }
 
 .btn-link {
@@ -185,7 +188,7 @@
 }
 
 .btn-link:hover {
-  color: var(--wp--preset--color--naranja, #ff8700);
+  color: var(--wp--preset--color--naranja-oscuro, #b05500);
 }
 
 /* Spinner */

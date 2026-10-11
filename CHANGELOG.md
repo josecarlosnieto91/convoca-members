@@ -1,5 +1,14 @@
 # Changelog — convoca-members
 
+## v2.8.28 (2026-10-11)
+
+### Arreglado
+- **Contraste de los botones del área privada** (`public/assets/mi-area.css`): `.btn-primary`
+  pintaba texto blanco sobre `#ff8700` = **2.41:1** (mínimo 4.5:1) y en `:hover` **aclaraba** a
+  `#ffa033`, o sea empeoraba el contraste. Ahora usa `naranja-oscuro` (**5.07:1**) y el hover
+  oscurece a `#8f4400` (**7.01:1**). `.btn-link:hover` también pasa a naranja-oscuro.
+  Medido con axe: el botón «Entrar» de Mi Área.
+
 ## v2.8.27 (2026-10-11)
 
 ### Arreglado
