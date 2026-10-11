@@ -131,12 +131,14 @@
     font-family: var(--wp--preset--font-family--display, 'Outfit', sans-serif);
     font-size: 1.3rem;
     font-weight: 700;
-    color: var(--wp--preset--color--naranja, #ff8700);
+    /* naranja-oscuro: el naranja de marca da 2.41:1 sobre blanco (exige 3:1) */
+    color: var(--wp--preset--color--naranja-oscuro, #b05500);
 }
 
 .conv-alt {
     font-size: 0.8rem;
-    color: #888;
+    /* #888 daba 3.54:1 sobre blanco siendo texto pequeno (exige 4.5:1) */
+    color: var(--wp--preset--color--gris-texto, #59616a);
     display: block;
     margin-top: 0.15rem;
 }

@@ -1,5 +1,15 @@
 # Changelog — convoca-members
 
+## v2.8.26 (2026-10-11)
+
+### Arreglado
+- **Contraste del formulario de alta de socio (WCAG 2.1 AA)**, medido con axe en la demo:
+  - `.conv-price` (el precio de cada plan) usaba el naranja de marca, **2.41:1** sobre blanco.
+    Pasa a `--wp--preset--color--naranja-oscuro` (**5.07:1**).
+  - `.conv-alt` («· 15h para renovar sin pagar») usaba `#888`, **3.54:1** siendo texto pequeño
+    (exige 4.5:1). Pasa a `--wp--preset--color--gris-texto` (**6.28:1**).
+  - Los bordes y los `accent-color` en naranja se dejan: no son texto y no tienen ese requisito.
+
 ## v2.8.25 (2026-10-11)
 
 ### Corregido

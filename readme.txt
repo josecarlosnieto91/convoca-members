@@ -4,7 +4,7 @@ Tags: members, volunteers, membership, certificates, associations
 Requires at least: 6.4
 Tested up to: 7.1
 Requires PHP: 8.1
-Stable tag: 2.8.25
+Stable tag: 2.8.26
 License: GPL-2.0-or-later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -49,6 +49,9 @@ This plugin may contact getconvoca.app to validate PRO licenses, only when a key
 3. Activate the plugin from the Plugins menu
 
 == Changelog ==
+
+= 2.8.26 =
+* El precio de cada plan y el texto de horas del alta de socio no cumplian AA sobre blanco (2.41:1 y 3.54:1). Pasan a naranja-oscuro (5.07:1) y gris-texto (6.28:1).
 
 = 2.8.25 =
 * El correo de objetivo de voluntariado ya no se envía dos veces: el mismo aviso estaba registrado con el nombre vigente y con uno retirado, y el lanzador disparaba los dos.
