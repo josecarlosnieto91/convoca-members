@@ -106,11 +106,11 @@ class Email_Manager {
 		add_action( 'convoca_members_email_verify_phone', array( $this, 'send_verify_phone' ), 10, 3 );
 		add_action( 'convoca_members_email_objetivo_voluntariado', array( $this, 'send_objetivo_voluntariado' ) );
 
-		// Legacy hooks removed. The do_action() call in Process_Member and.
-		// other dispatchers fires both old and new hooks via Utils::do_action().
-		// Keeping both add_action() and do_action() would trigger deprecation notices.
-		// Use the new hook names (convoca_members_*) going forward.
-		add_action( 'convoca_email_objetivo_voluntariado', array( $this, 'send_objetivo_voluntariado' ) );
+		// Los nombres legacy NO se registran: `Utils::do_action()` dispara el
+		// nombre nuevo y, si queda algún oyente en el viejo, lo dispara también
+		// (con aviso de deprecación). Registrar el mismo callback en los dos
+		// nombres enviaba el correo DOS veces y avisaba por PHP en cada envío.
+		// Los correos usan los nombres nuevos (convoca_members_*).
 
 		// Credentials hook (called by Process_Member::handle_approved).
 		add_action( 'convoca_members_email_credenciales', array( $this, 'send_credenciales' ), 10, 2 );

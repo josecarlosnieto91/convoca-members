@@ -1,5 +1,16 @@
 # Changelog — convoca-members
 
+## v2.8.25 (2026-10-11)
+
+### Corregido
+- **El correo de objetivo de voluntariado se enviaba DOS veces.** `Email_Manager` registraba
+  el mismo callback en el nombre nuevo (`convoca_members_email_objetivo_voluntariado`) y en el
+  retirado (`convoca_email_objetivo_voluntariado`), y `Utils::do_action()` dispara los dos
+  cuando hay oyente en el viejo: el voluntario recibía dos copias del correo y cada envío
+  dejaba una línea `PHP Deprecated` en el log. Se registra solo el nombre nuevo. Un comentario
+  del fichero decía «Legacy hooks removed» mientras la línea seguía ahí; el comentario ahora
+  describe lo que hace el código.
+
 ## v2.8.24 (2026-10-09)
 
 ### Arreglado — el alta del socio: la revisión, el método de pago y el texto del IBAN (cierra #3, #4 y #5)
