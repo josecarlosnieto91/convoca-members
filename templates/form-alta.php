@@ -128,7 +128,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 			<div class="conv-form-nav">
 				<span></span>
-				<button type="button" class="btn btn-primary conv-next" data-next="2">Siguiente →</button>
+				<button type="button" class="convoca-btn convoca-btn-primary conv-next" data-next="2">Siguiente →</button>
 			</div>
 		</div>
 

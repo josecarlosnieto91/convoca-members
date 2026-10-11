@@ -1,5 +1,13 @@
 # Changelog — convoca-members
 
+## v2.8.27 (2026-10-11)
+
+### Arreglado
+- **El botón del paso 1 del alta usaba clases genéricas** (`btn btn-primary`) mientras los pasos
+  2, 3 y 4 usaban las del ecosistema (`convoca-btn convoca-btn-primary`): el botón del primer paso
+  no seguía el sistema de diseño del producto. Ahora los cuatro son iguales.
+  Cubierto por `tests/Unit/BotonPrimarioTest.php`.
+
 ## v2.8.26 (2026-10-11)
 
 ### Arreglado
