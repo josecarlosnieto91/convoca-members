@@ -296,11 +296,11 @@ add_action(
 			// Generate WP user + send credentials.
 			\Convoca\Members\Process_Member::handle_approved( $id );
 			// Redirect back.
-			wp_redirect( admin_url( 'admin.php?page=conv-members&msg=approved' ) );
+			wp_safe_redirect( admin_url( 'admin.php?page=conv-members&msg=approved' ) );
 			exit;
 		}
 
-		wp_redirect( admin_url( 'admin.php?page=conv-members&msg=error' ) );
+		wp_safe_redirect( admin_url( 'admin.php?page=conv-members&msg=error' ) );
 		exit;
 	}
 );
@@ -316,11 +316,11 @@ add_action(
 		check_admin_referer( 'convoca_delete_member_' . $id );
 
 		if ( $id && wp_trash_post( $id ) ) {
-			wp_redirect( admin_url( 'admin.php?page=conv-members&msg=deleted' ) );
+			wp_safe_redirect( admin_url( 'admin.php?page=conv-members&msg=deleted' ) );
 			exit;
 		}
 
-		wp_redirect( admin_url( 'admin.php?page=conv-members&msg=error' ) );
+		wp_safe_redirect( admin_url( 'admin.php?page=conv-members&msg=error' ) );
 		exit;
 	}
 );

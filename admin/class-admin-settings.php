@@ -683,13 +683,13 @@ class Admin_Settings {
 							<?php $methods = $plan['payment_methods'] ?? array(); ?>
 							<label><input type="checkbox"
 									name="convoca_members_plans[<?php echo esc_attr( $key ); ?>][payment_methods][]" value="bizum"
-									<?php checked( in_array( 'bizum', $methods ) ); ?>> Bizum</label>
+									<?php checked( in_array( 'bizum', $methods , true) ); ?>> Bizum</label>
 							<label><input type="checkbox"
 									name="convoca_members_plans[<?php echo esc_attr( $key ); ?>][payment_methods][]" value="tarjeta"
-									<?php checked( in_array( 'tarjeta', $methods ) ); ?>> Tarjeta</label>
+									<?php checked( in_array( 'tarjeta', $methods , true) ); ?>> Tarjeta</label>
 							<label><input type="checkbox"
 									name="convoca_members_plans[<?php echo esc_attr( $key ); ?>][payment_methods][]"
-									value="transferencia" <?php checked( in_array( 'transferencia', $methods ) ); ?>>
+									value="transferencia" <?php checked( in_array( 'transferencia', $methods , true) ); ?>>
 								<?php esc_html_e( 'Transferencia', 'convoca-members' ); ?></label>
 						</div>
 					</div>

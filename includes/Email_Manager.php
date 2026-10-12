@@ -686,7 +686,7 @@ class Email_Manager {
 		}
 
 		// Override if custom amount is set and different (legacy).
-		if ( $importe_custom && $importe_custom != $importe ) {
+		if ( $importe_custom && $importe_custom !== $importe ) {
 			$importe = $importe_custom;
 			$cuota   = $importe . '€/año';
 		}

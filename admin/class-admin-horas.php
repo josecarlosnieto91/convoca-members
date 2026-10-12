@@ -97,12 +97,12 @@ class Admin_Horas extends \WP_List_Table {
 		$screen = get_current_screen();
 		if ( $screen && $screen->id === 'registro_hora' ) {
 			if ( $screen->action === 'add' ) {
-				wp_redirect( admin_url( 'admin.php?page=conv-horas-editor' ) );
+				wp_safe_redirect( admin_url( 'admin.php?page=conv-horas-editor' ) );
 				exit;
 			} else {
 				$post_id = isset( $_GET['post'] ) ? (int) $_GET['post'] : 0;
 				if ( $post_id ) {
-					wp_redirect( admin_url( 'admin.php?page=conv-horas-editor&id=' . $post_id ) );
+					wp_safe_redirect( admin_url( 'admin.php?page=conv-horas-editor&id=' . $post_id ) );
 					exit;
 				}
 			}
@@ -179,7 +179,7 @@ class Admin_Horas extends \WP_List_Table {
 			wp_die( esc_html( $post_id->get_error_message() ) );
 		}
 
-		wp_redirect( admin_url( 'admin.php?page=conv-volunteer-hours&message=saved' ) );
+		wp_safe_redirect( admin_url( 'admin.php?page=conv-volunteer-hours&message=saved' ) );
 		exit;
 	}
 
@@ -755,7 +755,7 @@ class Admin_Horas extends \WP_List_Table {
 					);
 				} else {
 					// Ya estaba en el estado objetivo (otro hilo) → no repetir el hook.
-					wp_redirect( admin_url( 'edit.php?post_type=miembro&page=conv-volunteer-hours' ) );
+					wp_safe_redirect( admin_url( 'edit.php?post_type=miembro&page=conv-volunteer-hours' ) );
 					exit;
 				}
 			}
@@ -773,7 +773,7 @@ class Admin_Horas extends \WP_List_Table {
 			\Convoca\Core\Logger::log( "Registro de horas $record_id marcado como $new_status por admin " . get_current_user_id(), 'Members/Hours', $socio_id );
 		}
 
-		wp_redirect( admin_url( 'edit.php?post_type=miembro&page=conv-volunteer-hours' ) );
+		wp_safe_redirect( admin_url( 'edit.php?post_type=miembro&page=conv-volunteer-hours' ) );
 		exit;
 	}
 }

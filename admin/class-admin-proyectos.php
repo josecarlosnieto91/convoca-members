@@ -64,12 +64,12 @@ class Admin_Proyectos extends \WP_List_Table {
 
 		if ( ( $screen && $screen->id === CPT_Proyecto::POST_TYPE ) || $post_type === CPT_Proyecto::POST_TYPE ) {
 			if ( isset( $screen->action ) && $screen->action === 'add' || strpos( $_SERVER['REQUEST_URI'], 'post-new.php' ) !== false ) {
-				wp_redirect( admin_url( 'admin.php?page=conv-proyecto-editor' ) );
+				wp_safe_redirect( admin_url( 'admin.php?page=conv-proyecto-editor' ) );
 				exit;
 			} else {
 				$post_id = isset( $_GET['post'] ) ? (int) $_GET['post'] : 0;
 				if ( $post_id && strpos( $_SERVER['REQUEST_URI'], 'post.php' ) !== false ) {
-					wp_redirect( admin_url( 'admin.php?page=conv-proyecto-editor&id=' . $post_id ) );
+					wp_safe_redirect( admin_url( 'admin.php?page=conv-proyecto-editor&id=' . $post_id ) );
 					exit;
 				}
 			}
@@ -454,7 +454,7 @@ class Admin_Proyectos extends \WP_List_Table {
 		update_post_meta( $post_id, '_convoca_responsable', (int) $_POST['responsable'] );
 		update_post_meta( $post_id, '_convoca_activo', isset( $_POST['activo'] ) ? '1' : '0' );
 
-		wp_redirect( admin_url( 'admin.php?page=conv-proyectos&message=saved' ) );
+		wp_safe_redirect( admin_url( 'admin.php?page=conv-proyectos&message=saved' ) );
 		exit;
 	}
 }

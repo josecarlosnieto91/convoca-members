@@ -87,7 +87,7 @@ class Admin_Webhooks {
 					)
 				);
 
-				wp_redirect( admin_url( 'admin.php?page=convoca-webhooks&msg=created' ) );
+				wp_safe_redirect( admin_url( 'admin.php?page=convoca-webhooks&msg=created' ) );
 				exit;
 			}
 
@@ -106,7 +106,7 @@ class Admin_Webhooks {
 					)
 				);
 
-				wp_redirect( admin_url( 'admin.php?page=convoca-webhooks&msg=updated' ) );
+				wp_safe_redirect( admin_url( 'admin.php?page=convoca-webhooks&msg=updated' ) );
 				exit;
 			}
 		}
@@ -121,13 +121,13 @@ class Admin_Webhooks {
 
 			if ( $action === 'delete' ) {
 				Webhook_Manager::delete_webhook( $id );
-				wp_redirect( admin_url( 'admin.php?page=convoca-webhooks&msg=deleted' ) );
+				wp_safe_redirect( admin_url( 'admin.php?page=convoca-webhooks&msg=deleted' ) );
 				exit;
 			}
 
 			if ( $action === 'test' ) {
 				Webhook_Manager::test_webhook( $id );
-				wp_redirect( admin_url( 'admin.php?page=convoca-webhooks&msg=tested' ) );
+				wp_safe_redirect( admin_url( 'admin.php?page=convoca-webhooks&msg=tested' ) );
 				exit;
 			}
 
@@ -136,13 +136,13 @@ class Admin_Webhooks {
 				if ( $webhook ) {
 					Webhook_Manager::update_webhook( $id, array( 'active' => ! $webhook['active'] ) );
 				}
-				wp_redirect( admin_url( 'admin.php?page=convoca-webhooks&msg=toggled' ) );
+				wp_safe_redirect( admin_url( 'admin.php?page=convoca-webhooks&msg=toggled' ) );
 				exit;
 			}
 
 			if ( $action === 'clear_logs' ) {
 				Webhook_Manager::clear_delivery_logs( $id );
-				wp_redirect( admin_url( 'admin.php?page=convoca-webhooks&view=logs&webhook_id=' . $id . '&msg=logs_cleared' ) );
+				wp_safe_redirect( admin_url( 'admin.php?page=convoca-webhooks&view=logs&webhook_id=' . $id . '&msg=logs_cleared' ) );
 				exit;
 			}
 		}

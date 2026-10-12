@@ -82,11 +82,11 @@ class Estados {
 	 * Change a member's state with validation.
 	 *
 	 * @param int    $post_id  Miembro post ID.
-	 * @param string $new      Target state.
+	 * @param string $nuevo    Target state.
 	 * @param string $note     Optional note for the audit log.
 	 * @return bool|\WP_Error
 	 */
-	public static function change( int $post_id, string $new, string $note = '' ): bool|\WP_Error {
+	public static function change( int $post_id, string $nuevo, string $note = '' ): bool|\WP_Error {
 		// Prevenir cambios de estado concurrentes con lock atómico en BD (Utils::acquire_lock).
 		$lock_key = "convoca_state_change_{$post_id}";
 		if ( ! \Convoca\Core\Utils::acquire_lock( $lock_key, 10 ) ) {
@@ -102,14 +102,14 @@ class Estados {
 			\Convoca\Core\Utils::release_lock( $lock_key );
 		};
 
-		if ( ! in_array( $new, self::STATES, true ) ) {
+		if ( ! in_array( $nuevo, self::STATES, true ) ) {
 			$release();
 			return new \WP_Error( 'invalid_state', __( 'Estado no válido.', 'convoca-members' ) );
 		}
 
 		$old = get_post_meta( $post_id, '_convoca_estado_miembro', true );
 
-		if ( $old === $new ) {
+		if ( $old === $nuevo ) {
 			$release();
 			return true; // No-op if already in that state and state was set.
 		}
@@ -117,7 +117,7 @@ class Estados {
 		// Validate transition if not first state.
 		if ( ! empty( $old ) ) {
 			$allowed = self::TRANSITIONS[ $old ] ?? array();
-			if ( ! in_array( $new, $allowed, true ) ) {
+			if ( ! in_array( $nuevo, $allowed, true ) ) {
 				$release();
 				return new \WP_Error(
 					'invalid_transition',
@@ -125,7 +125,7 @@ class Estados {
 						/* translators: %1$s: current state, %2$s: target state */
 						__( 'Transición no permitida: %1$s → %2$s', 'convoca-members' ),
 						self::labels()[ $old ] ?? $old,
-						self::labels()[ $new ] ?? $new
+						self::labels()[ $nuevo ] ?? $nuevo
 					)
 				);
 			}
@@ -134,15 +134,15 @@ class Estados {
 		$old_log = ! empty( $old ) ? $old : 'NUEVO';
 
 		// Save new state.
-		update_post_meta( $post_id, '_convoca_estado_miembro', $new );
+		update_post_meta( $post_id, '_convoca_estado_miembro', $nuevo );
 
 		// Record timestamp for pending payment state (for cron reminders).
-		if ( $new === 'pendiente_pago' ) {
+		if ( $nuevo === 'pendiente_pago' ) {
 			update_post_meta( $post_id, '_convoca_fecha_pendiente_pago', current_time( 'mysql' ) );
 		}
 
 		// Audit log.
-		self::log( $post_id, $old, $new, $note );
+		self::log( $post_id, $old, $nuevo, $note );
 
 		// Release lock.
 		$release();
@@ -151,20 +151,20 @@ class Estados {
 		 * Fires after a member's state has changed.
 		 *
 		 * @param int    $post_id  Post ID.
-		 * @param string $new      New state.
+		 * @param string $nuevo      New state.
 		 * @param string $old      Previous state.
 		 */
-		\Convoca\Core\Utils::do_action( 'convoca_members_estado_changed', 'convoca_estado_changed', $post_id, $new, $old );
+		\Convoca\Core\Utils::do_action( 'convoca_members_estado_changed', 'convoca_estado_changed', $post_id, $nuevo, $old );
 
 		return true;
 	}
 
-	private static function log( int $post_id, string $old, string $new, string $note ): void {
+	private static function log( int $post_id, string $old, string $nuevo, string $note ): void {
 		$history   = get_post_meta( $post_id, '_convoca_historial', true );
 		$history   = is_array( $history ) ? $history : array();
 		$history[] = array(
 			'de'      => $old,
-			'a'       => $new,
+			'a'       => $nuevo,
 			'fecha'   => current_time( 'mysql' ),
 			'usuario' => get_current_user_id(),
 			'nota'    => $note,
@@ -176,7 +176,7 @@ class Estados {
 			sprintf(
 				'Estado: %s → %s. %s',
 				self::labels()[ $old ] ?? $old ?: 'NUEVO',
-				self::labels()[ $new ] ?? $new,
+				self::labels()[ $nuevo ] ?? $nuevo,
 				$note ? "Nota: $note" : ''
 			),
 			'Members/Estados',
@@ -187,8 +187,8 @@ class Estados {
 	/**
 	 * Trigger emails on state change.
 	 */
-	public function on_state_change( int $post_id, string $new, string $old ): void {
-		switch ( $new ) {
+	public function on_state_change( int $post_id, string $nuevo, string $old ): void {
+		switch ( $nuevo ) {
 			case 'activo':
 				\Convoca\Core\Utils::do_action( 'convoca_members_email_bienvenida', 'convoca_email_bienvenida', $post_id );
 				break;

@@ -397,7 +397,7 @@ class Admin_Import_CSV {
 			$message .= ' ' . sprintf( /* translators: %d: error count */ __( '%d errores:', 'convoca-members' ), count( $errors ) ) . ' ' . implode( ' | ', array_slice( $errors, 0, 10 ) );
 		}
 
-		wp_safe_redirect( admin_url( 'admin.php?page=conv-import-csv&import_result=' . urlencode( $message ) ) );
+		wp_safe_redirect( admin_url( 'admin.php?page=conv-import-csv&import_result=' . rawurlencode( $message ) ) );
 		exit;
 	}
 

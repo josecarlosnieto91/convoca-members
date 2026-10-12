@@ -37,7 +37,7 @@ class Admin_Logs {
 		$table_name = $wpdb->prefix . 'convoca_logs';
 
 		// Check if table exists.
-		if ( $wpdb->get_var( "SHOW TABLES LIKE '$table_name'" ) != $table_name ) {
+		if ( $wpdb->get_var( "SHOW TABLES LIKE '$table_name'" ) !== $table_name ) {
 			echo '<div class="wrap"><h1>Logs</h1><p>La tabla de logs no ha sido creada. Desactiva y reactiva el plugin <strong>Convoca Common</strong> para crearla.</p></div>';
 			return;
 		}
