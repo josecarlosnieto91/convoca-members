@@ -49,7 +49,7 @@
       para el mismo fichero) y que PHPCS consulta function_exists('iconv_strlen') en
       su tokenizador (vendor/.../Tokenizers/Tokenizer.php:180) para decidir como mide
       la longitud de cada token; en local iconv_strlen NO existe y mb_strlen si, y el
-      CI arrastra --ignore-platform-req=ext-iconv. Sea cual sea la causa ultima, una
+      el CI arrastra el flag ignore-platform-req=ext-iconv. Sea cual sea la causa ultima, una
       regla cosmetica cuyo veredicto cambia con el entorno no puede ser criterio de
       conformidad: el verde deja de significar algo.
     -->
