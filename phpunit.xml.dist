@@ -3,13 +3,7 @@
      (tests/bootstrap.php) sustituye Logger y Utils por dobles, y con ellos las
      pruebas unitarias median un comportamiento que no existe: daba verde en local
      por casualidad y rojo en el CI. -->
-<phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:noNamespaceSchemaLocation="vendor/phpunit/phpunit/phpunit.xsd"
-         bootstrap="tests/bootstrap-unit.php"
-         backupGlobals="false"
-         colors="true"
-         verbose="true"
-         cacheResult="false">
+<phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/10.5/phpunit.xsd" bootstrap="tests/bootstrap-unit.php" backupGlobals="false" colors="true" cacheResult="false" cacheDirectory=".phpunit.cache">
   <testsuites>
     <testsuite name="unit">
       <directory suffix="Test.php">./tests/Unit</directory>
@@ -18,9 +12,9 @@
       <directory suffix="Test.php">./tests/Integration</directory>
     </testsuite>
   </testsuites>
-  <coverage>
+  <source>
     <include>
       <directory suffix="Test.php">./includes</directory>
     </include>
-  </coverage>
+  </source>
 </phpunit>
