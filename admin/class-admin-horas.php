@@ -654,7 +654,7 @@ class Admin_Horas extends \WP_List_Table {
 
 		check_admin_referer( 'process_horas_' . $record_id );
 
-		if ( $record_id && in_array( $new_status, array( 'aprobada', 'rechazada' ) ) ) {
+		if ( $record_id && in_array( $new_status, array( 'aprobada', 'rechazada' ), true ) ) {
 			$miembro_id      = (int) get_post_meta( $record_id, '_convoca_member_id', true );
 			$current_user_id = get_current_user_id();
 

@@ -142,7 +142,7 @@ class PDF_Document {
 			if ( ! class_exists( '\\Convoca\\Core\\Signature' ) ) {
 				$wpdb->query( 'ROLLBACK' );
 				wp_delete_post( $temp_post_id, true );
-				error_log( 'Convoca: Signature class not found.' );
+				\Convoca\Core\Logger::error( 'Convoca: Signature class not found.', 'PDF' );
 				return null;
 			}
 
@@ -265,7 +265,7 @@ class PDF_Document {
 			if ( isset( $temp_post_id ) ) {
 				wp_delete_post( $temp_post_id, true );
 			}
-			error_log( 'Convoca PDF Gen Exception: ' . $e->getMessage() );
+			\Convoca\Core\Logger::error( 'Convoca PDF Gen Exception: ' . $e->getMessage(), 'PDF' );
 			return null;
 		}
 	}

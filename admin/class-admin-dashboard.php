@@ -235,7 +235,7 @@ class Admin_Dashboard {
 				'recent_errors'
 			);
 		} catch ( \Throwable $e ) {
-			error_log( 'Convoca Dashboard Stats Error: ' . $e->getMessage() );
+			\Convoca\Core\Logger::error( 'Convoca Dashboard Stats Error: ' . $e->getMessage(), 'Dashboard' );
 			return $default_stats;
 		}
 	}

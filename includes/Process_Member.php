@@ -269,10 +269,12 @@ class Process_Member {
 			}
 
 			// 8. Save Meta
+			$plan_obj = CPT_Miembro::get_plan( $plan );
+
 			$meta = array(
 				'estado_miembro'       => $estado,
 				'plan'                 => $plan,
-				'plan_label'           => ( $p = CPT_Miembro::get_plan( $plan ) ) ? $p['label'] : $plan,
+				'plan_label'           => $plan_obj ? $plan_obj['label'] : $plan,
 				'sub_plan'             => $sub_plan,
 				// `forma_pago` es cuota/voluntariado en todo el plugin; el método elegido en el alta
 				// (tarjeta/bizum/transferencia) va a su propio meta. Payment_Listener lo normaliza a

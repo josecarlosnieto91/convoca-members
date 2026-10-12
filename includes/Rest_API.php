@@ -709,7 +709,7 @@ class Rest_API {
 	 */
 	public function fulltext_search( \WP_REST_Request $req ): \WP_REST_Response {
 		$q     = sanitize_text_field( $req->get_param( 'q' ) ?? '' );
-		$type  = sanitize_text_field( $req->get_param( 'type' ) ?? '' ); // 'members', 'activities', or '' (both)
+		$type  = sanitize_text_field( $req->get_param( 'type' ) ?? '' ); // Valores admitidos: members, activities, o vacio (ambos).
 		$limit = min( absint( $req->get_param( 'limit' ) ?: 20 ), 50 );
 
 		// Seguridad: la búsqueda de miembros (datos personales) exige sesión de socio/admin.

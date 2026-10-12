@@ -146,7 +146,7 @@ class Certificate_Generator {
 				return new \WP_Error( 'pdf_error', $error );
 			}
 
-			$pdf_content = @file_get_contents( $tmp_file );
+			$pdf_content = is_readable( $tmp_file ) ? file_get_contents( $tmp_file ) : false;
 			if ( $pdf_content === false ) {
 				return new \WP_Error( 'read_error', __( 'No se pudo leer el archivo temporal generado.', 'convoca-members' ) );
 			}

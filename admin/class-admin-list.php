@@ -243,7 +243,7 @@ class Admin_List extends \WP_List_Table {
 		);
 
 		// Cache for 5 minutes if no search/filter active, to reduce DB load on paginated views.
-		$cache_key = 'convoca_list_members_' . md5( serialize( $args ) );
+		$cache_key = 'convoca_list_members_' . md5( wp_json_encode( $args ) );
 		$cached    = ! $search && ! $estado_filter && ! $tipo_filter && ! $plan_filter && ! $cuota_filter ? get_transient( $cache_key ) : false;
 
 		if ( $cached ) {

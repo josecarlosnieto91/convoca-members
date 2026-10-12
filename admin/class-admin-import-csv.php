@@ -381,7 +381,9 @@ class Admin_Import_CSV {
 				++$imported;
 			}
 
-			@set_time_limit( 30 );
+			if ( false === strpos( (string) ini_get( 'disable_functions' ), 'set_time_limit' ) ) {
+				set_time_limit( 30 );
+			}
 		}
 
 		unlink( $filepath ); // phpcs:ignore WordPress.WP.AlternativeFunctions.unlink_unlink -- Temporary import file cleanup.
@@ -448,7 +450,9 @@ class Admin_Import_CSV {
 			} else {
 				++$imported;
 			}
-			@set_time_limit( 30 );
+			if ( false === strpos( (string) ini_get( 'disable_functions' ), 'set_time_limit' ) ) {
+				set_time_limit( 30 );
+			}
 		}
 
 		$state['offset']   = $end;
