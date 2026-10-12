@@ -1,5 +1,13 @@
 # Changelog — convoca-members
 
+## v2.8.34 (2026-10-12)
+
+### Cambiado
+- Higiene de datos: el comentario que documenta el `show_ui` de `tipo_miembro` citaba un
+  sitio concreto por su nombre. Se conserva el motivo entero (por que WordPress devuelve 500
+  y no 403) y se quita el nombre, que no pinta nada en el codigo del producto. Lo caza el
+  propio check de higiene de la bateria.
+
 ## v2.8.33 (2026-10-12)
 
 ### Arreglado
