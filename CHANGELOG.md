@@ -1,3 +1,17 @@
+## [2.8.35] - 2026-10-12
+
+### Arreglado
+- **Seis llamadas AJAX del JavaScript publicaban acciones que no existen**: el JS seguia usando
+  el prefijo viejo `conv_` mientras el plugin registra `convoca_`. Lo encontro el auditor a ciegas
+  de la pasada 6 (una) y la comprobacion de contrato que se ha anadido, las otras cinco:
+  `conv_get_nonce` (el endpoint del nonce «bypass cache»: muerto, asi que en una pagina cacheada
+  el alta respondia «Nonce invalido» sin poder refrescar), `conv_export_csv` y
+  `conv_save_csv_columns` (exportar CSV y guardar columnas), `conv_change_state`,
+  `conv_log_whatsapp` y `conv_voluntariado_submit`.
+- Se anade `tests/Unit/AjaxAccionesTest.php`: cruza las acciones que publica el JS con las que
+  registra el PHP, en las TRES formas de publicarlas (ayudante, objeto de jQuery y `action=` dentro
+  de una URL, que era la que se colaba). Probado en negativo; sin el arreglo falla y las nombra.
+
 # Changelog — convoca-members
 
 ## v2.8.34 (2026-10-12)

@@ -291,7 +291,7 @@
       conv.setLoading(btn, true, '✔ Confirmar alta');
 
       const ajaxUrl = config.ajaxUrl || '/wp-admin/admin-ajax.php';
-      const nonceUrl = ajaxUrl + (ajaxUrl.includes('?') ? '&' : '?') + 'action=conv_get_nonce';
+      const nonceUrl = ajaxUrl + (ajaxUrl.includes('?') ? '&' : '?') + 'action=convoca_get_nonce';
 
       fetch(nonceUrl)
         .then(r => r.json())
@@ -429,7 +429,7 @@
       const fd = new FormData(form);
       const nonce = config.volNonce || '';
 
-      conv.ajaxPost('conv_voluntariado_submit', fd, nonce, 
+      conv.ajaxPost('convoca_voluntariado_submit', fd, nonce, 
           (res) => {
               form.style.display = 'none';
               const success = conv.$('#conv-vol-success');

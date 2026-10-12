@@ -22,7 +22,7 @@
             const fd = new FormData(stateForm);
             const nonce = window.convAdmin?.nonce || '';
 
-            convAdmin.ajaxPost('conv_change_state', fd, nonce,
+            convAdmin.ajaxPost('convoca_change_state', fd, nonce,
                 (res) => { location.reload(); },
                 (res) => {
                     alert(res.data?.message || res.data || 'Error al cambiar el estado.');
@@ -114,7 +114,7 @@
         }
 
         function downloadCsv(columns) {
-            var baseUrl = convAdmin.columnsUrl || (convAdmin.ajaxUrl + '?action=conv_export_csv&nonce=' + convAdmin.csvNonce);
+            var baseUrl = convAdmin.columnsUrl || (convAdmin.ajaxUrl + '?action=convoca_export_csv&nonce=' + convAdmin.csvNonce);
             if (columns && columns.length > 0) {
                 baseUrl += '&columns=' + encodeURIComponent(columns.join(','));
             }
@@ -128,7 +128,7 @@
             fd.append('columns', JSON.stringify(columns));
 
             var xhr = new XMLHttpRequest();
-            xhr.open('POST', convAdmin.ajaxUrl + '?action=conv_save_csv_columns&nonce=' + convAdmin.csvNonce, true);
+            xhr.open('POST', convAdmin.ajaxUrl + '?action=convoca_save_csv_columns&nonce=' + convAdmin.csvNonce, true);
             xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded; charset=UTF-8');
 
             xhr.onload = function () {
@@ -196,7 +196,7 @@
                 if (postId) {
                     // Silent ping to log the contact
                     const fd = new FormData();
-                    fd.append('action', 'conv_log_whatsapp');
+                    fd.append('action', 'convoca_log_whatsapp');
                     fd.append('post_id', postId);
                     fd.append('nonce', convAdmin.nonce);
                     
