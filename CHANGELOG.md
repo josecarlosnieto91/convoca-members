@@ -1,5 +1,19 @@
 # Changelog — convoca-members
 
+## v2.8.33 (2026-10-12)
+
+### Arreglado
+- **La pantalla de terminos de `tipo_miembro` respondia HTTP 500.** La taxonomia se
+  registraba con `public => false` y sin `show_ui`; en una taxonomia `show_ui` hereda de
+  `public`, asi que se quedaba sin interfaz, y WordPress 7 rechaza `edit-tags.php` de una
+  taxonomia sin interfaz con un `wp_die` **sin estado**: al navegador le llega un 500 (y no
+  un 403) con «no tienes permisos», con el administrador delante. Reproducido en la demo y
+  en Lugg.
+- Se declara `show_ui => true` y `show_in_menu => false` (la navegacion de miembros es la
+  suya). `public` sigue en `false`: los tipos no exponen URLs.
+- Regresion blindada: `tests/Unit/TaxonomiaTipoMiembroTest.php` mira la taxonomia
+  registrada de verdad.
+
 ## v2.8.31 (2026-10-12)
 
 ### Arreglado

@@ -261,6 +261,16 @@ class CPT_Miembro {
 				'hierarchical' => true,
 				'show_in_rest' => true,
 				'public'       => false,
+				// `show_ui` explicito: en una taxonomia hereda de `public`, asi que con
+				// `public => false` se quedaba SIN pantalla de terminos. WordPress 7 rechaza
+				// `edit-tags.php` de una taxonomia sin interfaz con un `wp_die` sin estado,
+				// que sale como HTTP 500 (deberia ser un 403) con el administrador delante
+				// y el mensaje «no tienes permisos». Medido en la demo y en Lugg.
+				// Los tipos se usan en el listado, la ficha y la exportacion CSV, asi que
+				// tienen que ser gestionables. Sin menu propio: la navegacion de miembros
+				// es la suya.
+				'show_ui'      => true,
+				'show_in_menu' => false,
 			)
 		);
 
