@@ -40,11 +40,18 @@
       Alineacion de arrays con claves multibyte (tildes: 'Telefono', 'Direccion'):
       el veredicto DEPENDE DEL ENTORNO. Medido el 12/10/2026, mismo fichero y mismo
       commit (admin/class-csv-exporter.php, phpcs 3.13.6 y wpcs 3.4.1 en los dos):
-      en el runner el CI pide "esperado 11 espacios" y en local "esperado 10",
-      porque la longitud se cuenta en bytes o en caracteres segun el soporte
-      multibyte del PHP que ejecuta phpcs. Consecuencia real: alinear el fichero en
-      local puso el CI en ROJO, y el verde no valia para nadie. Una regla cosmetica
-      cuyo veredicto cambia con el entorno no puede ser criterio de conformidad.
+      - con el fichero tal como estaba (11 espacios): CI en VERDE y en local 7 avisos
+        ("esperado 10");
+      - alineado en local con phpcbf (10 espacios): local en verde y el CI en ROJO
+        ("esperado 11");
+      - con la regla excluida: los dos en verde.
+      Mecanismo: NO confirmado. Lo que se ha comprobado es el hecho (dos veredictos
+      para el mismo fichero) y que PHPCS consulta function_exists('iconv_strlen') en
+      su tokenizador (vendor/.../Tokenizers/Tokenizer.php:180) para decidir como mide
+      la longitud de cada token; en local iconv_strlen NO existe y mb_strlen si, y el
+      CI arrastra --ignore-platform-req=ext-iconv. Sea cual sea la causa ultima, una
+      regla cosmetica cuyo veredicto cambia con el entorno no puede ser criterio de
+      conformidad: el verde deja de significar algo.
     -->
     <exclude name="WordPress.Arrays.MultipleStatementAlignment.DoubleArrowNotAligned"/>
     <exclude name="WordPress.Files.FileName"/>
