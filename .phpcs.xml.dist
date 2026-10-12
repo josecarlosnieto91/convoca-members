@@ -36,6 +36,17 @@
       AssignmentInCondition: patron while ( ( $x = f() ) !== false ), explicito.
       error_log: es la salida del propio convoca-core/includes/Logger.php.
     -->
+    <!--
+      Alineacion de arrays con claves multibyte (tildes: 'Telefono', 'Direccion'):
+      el veredicto DEPENDE DEL ENTORNO. Medido el 12/10/2026, mismo fichero y mismo
+      commit (admin/class-csv-exporter.php, phpcs 3.13.6 y wpcs 3.4.1 en los dos):
+      en el runner el CI pide "esperado 11 espacios" y en local "esperado 10",
+      porque la longitud se cuenta en bytes o en caracteres segun el soporte
+      multibyte del PHP que ejecuta phpcs. Consecuencia real: alinear el fichero en
+      local puso el CI en ROJO, y el verde no valia para nadie. Una regla cosmetica
+      cuyo veredicto cambia con el entorno no puede ser criterio de conformidad.
+    -->
+    <exclude name="WordPress.Arrays.MultipleStatementAlignment.DoubleArrowNotAligned"/>
     <exclude name="WordPress.Files.FileName"/>
     <exclude name="WordPress.NamingConventions"/>
     <exclude name="WordPress.WP.I18n.NoHtmlWrappedStrings"/>
