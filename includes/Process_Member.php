@@ -34,6 +34,49 @@ class Process_Member {
 
 
 	/**
+	 * Qué hacer con la cuenta de WordPress de un miembro.
+	 *
+	 * Las entradas van explícitas (y el resultado es un literal) para poder probar la
+	 * decisión sin WordPress de por medio: es lo que faltaba cuando el alta fallaba.
+	 *
+	 * @param string $email          Correo del miembro.
+	 * @param int    $linked_user_id Usuario ya enlazado en el meta del miembro (0 si no hay).
+	 * @param bool   $linked_exists  Si ese usuario existe de verdad.
+	 * @param int    $email_user_id  Usuario que YA usa ese correo (0 si ninguno).
+	 * @return string 'reuse_linked' | 'link_by_email' | 'create'
+	 */
+	public static function plan_user_account( string $email, int $linked_user_id, bool $linked_exists, int $email_user_id ): string {
+		if ( $linked_user_id > 0 && $linked_exists ) {
+			return 'reuse_linked';
+		}
+
+		// El correo ya pertenece a un usuario del sitio: se ENLAZA ese. Antes se intentaba
+		// crear igual, `wp_create_user` devolvía «Sorry, that email address is already used!»,
+		// el reintento usaba el MISMO correo y volvía a fallar: el socio quedaba de alta pero
+		// sin cuenta y el log se llenaba de dos ERROR por intento.
+		if ( $email_user_id > 0 ) {
+			return 'link_by_email';
+		}
+
+		return 'create';
+	}
+
+	/**
+	 * Enlaza un usuario de WordPress con un miembro, en los dos sentidos.
+	 *
+	 * Va en los dos sentidos a propósito: si solo se guardara uno, media aplicación
+	 * encontraría el vínculo y la otra media no.
+	 *
+	 * @param int $user_id   ID del usuario.
+	 * @param int $member_id ID del miembro.
+	 * @return void
+	 */
+	public static function link_user_to_member( int $user_id, int $member_id ): void {
+		update_post_meta( $member_id, '_convoca_user_id', $user_id );
+		update_user_meta( $user_id, '_convoca_member_id', $member_id );
+	}
+
+	/**
 	 * Ensure a WP user exists for a member, generate credentials if new, and return them.
 	 *
 	 * @param int $member_id Member CPT post ID.
@@ -46,7 +89,29 @@ class Process_Member {
 
 		// Check if WP user already exists via meta link.
 		$existing_user_id = (int) get_post_meta( $member_id, '_convoca_user_id', true );
-		if ( $existing_user_id && get_userdata( $existing_user_id ) ) {
+		$email_user       = ( '' !== (string) $email ) ? get_user_by( 'email', $email ) : false;
+		$email_user_id    = $email_user ? (int) $email_user->ID : 0;
+
+		$plan = self::plan_user_account(
+			(string) $email,
+			$existing_user_id,
+			$existing_user_id > 0 && (bool) get_userdata( $existing_user_id ),
+			$email_user_id
+		);
+
+		if ( 'link_by_email' === $plan ) {
+			// El correo ya es de un usuario del sitio: se enlaza ese, no se crea otro.
+			self::link_user_to_member( $email_user_id, $member_id );
+
+			return array(
+				'user_id'  => $email_user_id,
+				'username' => (string) get_userdata( $email_user_id )->user_login,
+				'password' => '',
+				'is_new'   => false,
+			);
+		}
+
+		if ( 'reuse_linked' === $plan ) {
 			// User exists — generate new password and send.
 			$new_password = wp_generate_password( 12, false );
 			wp_set_password( $new_password, $existing_user_id );

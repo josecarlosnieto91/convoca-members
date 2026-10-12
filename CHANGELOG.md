@@ -1,5 +1,18 @@
 # Changelog — convoca-members
 
+## v2.8.31 (2026-10-12)
+
+### Arreglado
+- **El alta de socio dejaba al socio sin cuenta** cuando su correo ya pertenecia a un usuario
+  de WordPress (el administrador que se da de alta como socio, un monitor con su correo de
+  trabajo, o un socio al que se le vuelve a dar de alta). Se intentaba crear otro usuario, el
+  correo ya estaba en uso, y el reintento usaba el MISMO correo: fallaba igual, el socio
+  quedaba de alta pero **sin poder entrar en Mi Area**, y el log acumulaba dos ERROR por
+  intento. Ahora ese caso **enlaza el usuario que ya existe**.
+- La decision se extrae a `plan_user_account()` (publica, con las entradas explicitas) y el
+  enlace va en un unico sitio, `link_user_to_member()`, en los dos sentidos.
+- Prueba `MemberAccountPlanTest`, probada en negativo.
+
 ## v2.8.30 (2026-10-12)
 
 ### Arreglado
