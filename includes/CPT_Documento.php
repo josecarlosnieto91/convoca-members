@@ -102,7 +102,7 @@ class CPT_Documento {
 			'read_private_convoca_documentos',
 		);
 
-		if ( in_array( $cap, $documento_caps , true) ) {
+		if ( in_array( $cap, $documento_caps, true ) ) {
 			$caps = array( 'gestionar_documentos_voluntariado' );
 		}
 

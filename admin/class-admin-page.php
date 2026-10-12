@@ -611,7 +611,7 @@ class Admin_Page {
 						<?php foreach ( $columns as $key => $label ) : ?>
 							<label class="conv-column-checkbox">
 								<input type="checkbox" name="csv_col[]" value="<?php echo esc_attr( $key ); ?>"
-									<?php checked( in_array( $key, $saved ?? array_keys( $columns ) , true) ); ?>>
+									<?php checked( in_array( $key, $saved ?? array_keys( $columns ), true ) ); ?>>
 								<?php echo esc_html( $label ); ?>
 							</label>
 						<?php endforeach; ?>
