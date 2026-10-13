@@ -159,10 +159,12 @@
 .btn-primary {
   width: 100%;
   padding: 1rem;
-  /* Fallbacks encadenados, igual que en convoca-common.css: donde la paleta
-     declare `naranja-oscuro` se usa (texto blanco = 5.07:1); donde no, se
-     conserva el naranja de marca para no romper el ajuste del tema del sitio. */
-  background: var(--wp--preset--color--naranja-oscuro, var(--wp--preset--color--naranja, #ff8700));
+  /* El respaldo NO puede ser el naranja brillante: WordPress solo emite las
+     variables `--wp--preset--color-*` que los BLOQUES de esa página usan, y este
+     botón lo pinta el plugin, así que en /mi-cuenta/ la variable no está y el
+     respaldo dejaba blanco sobre #ff8700 (2.4:1). Medido con axe el 13/10/2026.
+     El tema sigue mandando si declara `naranja-oscuro`; si no, se usa el oscuro. */
+  background: var(--wp--preset--color--naranja-oscuro, #b05500);
   color: #fff;
   border: none;
   border-radius: 0.5rem;
@@ -174,7 +176,7 @@
 }
 
 .btn-primary:hover {
-  background: var(--wp--preset--color--naranja-oscuro-hover, var(--wp--preset--color--naranja-intenso, #ff500a));
+  background: var(--wp--preset--color--naranja-oscuro-hover, #8f4400);
   transform: translateY(-2px);
   box-shadow: 0 6px 15px rgba(143, 68, 0, 0.35);
 }
