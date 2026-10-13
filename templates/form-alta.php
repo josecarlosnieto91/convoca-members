@@ -357,8 +357,7 @@ endif;
 						horas de tu plan durante el próximo año, podrás renovar sin pagar la cuota. Aceptas el
 						<a href="<?php echo esc_url( apply_filters( 'convoca_members_alta_document_url', '' ) ); ?>" target="_blank"
 							rel="noopener">Código Ético</a> y el <a
-							<?php // convoca-hygiene-ignore: documento de la entidad pendiente de pasar a ajuste (issue convoca-members#12). ?>
-							href="https://drive.google.com/file/d/1Qps5ghQjNOPH4B55JEmlkQARJrpPN9jK/view"
+							href="https://drive.google.com/file/d/1Qps5ghQjNOPH4B55JEmlkQARJrpPN9jK/view"<?php // convoca-hygiene-ignore: documento de la entidad, pendiente de pasar a ajuste (issue convoca-members#12) ?>
 							target="_blank" rel="noopener">Programa de Voluntariado</a>.
 					</p>
 					<div class="convoca-check-group">
