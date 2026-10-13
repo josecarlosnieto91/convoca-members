@@ -4,7 +4,7 @@ Tags: members, volunteers, membership, certificates, associations
 Requires at least: 6.4
 Tested up to: 7.1
 Requires PHP: 8.1
-Stable tag: 2.8.39
+Stable tag: 2.8.40
 License: GPL-2.0-or-later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -49,6 +49,11 @@ This plugin may contact getconvoca.app to validate PRO licenses, only when a key
 3. Activate the plugin from the Plugins menu
 
 == Changelog ==
+
+= 2.8.40 =
+* Desinstalación: se limpian todas las tareas programadas del plugin. Antes se
+  quedaban puestas y seguían disparándose tras borrarlo (medido en un WordPress limpio).
+* Prueba nueva: todo gancho que el plugin programa tiene que aparecer en su desinstalación.
 
 = 2.8.26 =
 * El precio de cada plan y el texto de horas del alta de socio no cumplian AA sobre blanco (2.41:1 y 3.54:1). Pasan a naranja-oscuro (5.07:1) y gris-texto (6.28:1).
