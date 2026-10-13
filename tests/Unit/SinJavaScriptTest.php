@@ -92,4 +92,19 @@ class SinJavaScriptTest extends TestCase
 			);
 		}
 	}
+
+	/**
+	 * El acceso al panel de socio vive en una clase (no en un template), así que se comprueba en
+	 * el código: el formulario tiene que declarar POST, el marcador y el aviso previo.
+	 */
+	public function test_el_acceso_al_panel_de_socio_tambien_lo_declara(): void
+	{
+		$codigo = (string) file_get_contents( $this->raiz() . '/public/class-mi-area.php' );
+
+		$this->assertMatchesRegularExpression( '/<form[^>]*method="post"/', $codigo, 'El acceso al panel necesita POST.' );
+		$this->assertStringContainsString( 'name="convoca_sin_js_panel_socio"', $codigo, 'Falta el marcador.' );
+		$this->assertStringContainsString( 'convoca_sin_js_panel_socio', $codigo, 'El marcador tiene que leerse.' );
+		$this->assertStringContainsString( '<noscript>', $codigo, 'Hay que avisar antes de rellenar.' );
+		$this->assertStringContainsString( 'necesita JavaScript', $codigo, 'Y explicar qué pasa cuando llega sin JS.' );
+	}
 }

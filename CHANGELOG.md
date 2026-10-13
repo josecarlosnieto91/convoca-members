@@ -1,3 +1,17 @@
+## [2.8.38] - 2026-10-13
+
+### Arreglado
+- **El acceso al panel de socio, sin JavaScript, también era un callejón sin salida**: su formulario
+  no declaraba `method` ni `action`, así que el envío caía en una búsqueda vacía de WordPress
+  («Página no encontrada») en vez de explicar nada. Ahora envía por POST con marcador
+  (`convoca_sin_js_panel_socio`), avisa con `<noscript>` antes de rellenar y, si la petición llega
+  sin JS, dice qué pasa y ofrece el correo de la asociación (filtro `convoca_panel_socio_sin_js_email`).
+- Con esto los **cinco** formularios públicos del ecosistema (alta, voluntariado, inscripción,
+  panel de reservas y acceso al panel) declaran POST y su degradación: el criterio «móvil y sin
+  JavaScript» ya se puede medir entero.
+- Prueba añadida a `tests/Unit/SinJavaScriptTest.php` (comprobación en el código del formulario del
+  panel), probada **en negativo**.
+
 ## [2.8.37] - 2026-10-13
 
 ### Arreglado

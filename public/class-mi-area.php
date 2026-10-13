@@ -241,10 +241,41 @@ class Mi_Area {
 	 */
 	private function render_login_form(): void {
 		?>
+		<?php
+		/*
+		 * Sin JavaScript: la degradación se DECLARA y se da salida (mismo defecto medido en el
+		 * resto de formularios del ecosistema: sin `method` ni `action` el envío acaba en una
+		 * búsqueda vacía de WordPress, en «Página no encontrada»).
+		 */
+		if ( ! empty( $_POST['convoca_sin_js_panel_socio'] ) ) {
+			$convoca_email = (string) apply_filters( 'convoca_panel_socio_sin_js_email', (string) get_bloginfo( 'admin_email' ) );
+			?>
+			<div class="conv-login-container card-glass">
+				<div class="convoca-alert convoca-alert--warning" role="status">
+					<p><?php esc_html_e( 'No se ha podido iniciar la sesión: este formulario necesita JavaScript en el navegador.', 'convoca-members' ); ?></p>
+					<p><?php esc_html_e( 'Actívalo y vuelve a intentarlo.', 'convoca-members' ); ?>
+					<?php if ( $convoca_email ) : ?>
+						<?php esc_html_e( 'Si no puedes, escríbenos:', 'convoca-members' ); ?>
+						<a href="<?php echo esc_url( 'mailto:' . $convoca_email ); ?>"><?php echo esc_html( $convoca_email ); ?></a>
+					<?php endif; ?>
+					</p>
+				</div>
+			</div>
+			<?php
+			return;
+		}
+		?>
 		<div class="conv-login-container card-glass">
 			<h2 class="text-gradient">Acceso Socios</h2>
 			<p><?php esc_html_e( 'Introduce tu usuario y contraseña para acceder a tu área privada.', 'convoca-members' ); ?></p>
-			<form id="conv-login-form" class="conv-login-form">
+			<noscript>
+				<div class="convoca-alert convoca-alert--warning" role="status">
+					<p><?php esc_html_e( 'Este acceso necesita JavaScript en el navegador. Actívalo y vuelve a intentarlo.', 'convoca-members' ); ?></p>
+				</div>
+			</noscript>
+			<form id="conv-login-form" class="conv-login-form" method="post" action="">
+				<?php // Marcador del envío sin JavaScript: lo lee el aviso de arriba. ?>
+				<input type="hidden" name="convoca_sin_js_panel_socio" value="1" />
 				<div class="form-group">
 					<label for="username"><?php esc_html_e( 'Usuario o Email', 'convoca-members' ); ?></label>
 					<input type="text" id="username" name="username" required placeholder="ejemplo@correo.com">
