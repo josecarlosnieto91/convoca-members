@@ -265,6 +265,7 @@ endif;
 		<div class="convoca-check-group">
 			<input type="checkbox" id="conv-vol-codigo" name="acepto_codigo" required>
 			<label for="conv-vol-codigo">He leído y acepto el <a
+					<?php // convoca-hygiene-ignore: documento de la entidad pendiente de pasar a ajuste (issue convoca-members#12). ?>
 					href="https://drive.google.com/file/d/1MmUSP9hVygjpJi1ACAILLWajzTeqEqlA/view" target="_blank".
 					rel="noopener">Código Ético</a> y el <a
 					href="https://drive.google.com/file/d/1Qps5ghQjNOPH4B55JEmlkQARJrpPN9jK/view" target="_blank".
@@ -272,6 +273,7 @@ endif;
 		</div>
 		<div class="convoca-check-group">
 			<input type="checkbox" id="conv-vol-protocolo" name="acepto_protocolo" required>
+			<?php // convoca-hygiene-ignore: documento de la entidad pendiente de pasar a ajuste (issue convoca-members#12). ?>
 			<label for="conv-vol-protocolo">He leído el <a
 					href="https://drive.google.com/file/d/1g0-466CC7vutS3xkag42tY5vsiSDqHXA/view" target="_blank".
 					rel="noopener">Protocolo para la prevención del acoso</a>. *</label>
