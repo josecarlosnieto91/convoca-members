@@ -31,10 +31,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 /**
  * Sin JavaScript: la degradación se DECLARA y se da salida.
  *
- * Medido el 13/10/2026 en el sitio vivo (demo): el formulario no declaraba `method` ni `action`,
- * así que sin JS el navegador lo enviaba como GET y WordPress lo resolvía como una búsqueda
- * vacía (`https://demo.getconvoca.app/?s=`), dejando al visitante en «Página no encontrada»
- * después de rellenar el alta entera. Ni un dato guardado, ni una explicación.
+ * Medido el 13/10/2026 con Playwright sin JavaScript: el formulario no declaraba `method` ni
+ * `action`, así que el navegador lo enviaba por GET a la misma página con los campos en la URL y
+ * nadie lo procesaba: el alta se perdía en silencio, sin guardar nada y sin explicación.
  *
  * Ahora envía por POST a la propia página y, cuando llega sin JS, aquí se explica qué ocurre y
  * por dónde seguir; el `<noscript>` avisa ANTES de rellenar.

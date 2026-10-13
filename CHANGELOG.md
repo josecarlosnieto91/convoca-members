@@ -2,8 +2,8 @@
 
 ### Arreglado
 - **El acceso al panel de socio, sin JavaScript, también era un callejón sin salida**: su formulario
-  no declaraba `method` ni `action`, así que el envío caía en una búsqueda vacía de WordPress
-  («Página no encontrada») en vez de explicar nada. Ahora envía por POST con marcador
+  no declaraba `method` ni `action`, así que el envío se perdía (GET a la misma página, sin
+  procesarse y sin decir nada). Ahora envía por POST con marcador
   (`convoca_sin_js_panel_socio`), avisa con `<noscript>` antes de rellenar y, si la petición llega
   sin JS, dice qué pasa y ofrece el correo de la asociación (filtro `convoca_panel_socio_sin_js_email`).
 - Con esto los **cinco** formularios públicos del ecosistema (alta, voluntariado, inscripción,
@@ -15,12 +15,13 @@
 ## [2.8.37] - 2026-10-13
 
 ### Arreglado
-- **Sin JavaScript, el alta de socio y el voluntariado eran un callejón sin salida.** Medido en el
-  sitio vivo (Playwright con `javaScriptEnabled: false`, 390x844): los dos formularios no declaraban
-  `method` ni `action`, así que el navegador los enviaba como GET y WordPress lo resolvía como una
-  búsqueda vacía. Después de rellenar el alta entera, el visitante acababa en
-  `https://demo.getconvoca.app/?s=` con el título «Página no encontrada»: ni un dato guardado, ni
-  una frase que explicara qué había pasado.
+- **Sin JavaScript, el alta de socio y el voluntariado eran un callejón sin salida.** Medido con
+  Playwright sin JavaScript (390x844): los dos formularios no declaraban `method` ni `action`, así
+  que el navegador los enviaba por GET a la misma página con los campos en la URL y **nadie los
+  procesaba**: el alta se perdía en silencio, sin guardar nada y sin una frase que lo explicara.
+  (La primera medición atribuyó al alta un «Página no encontrada» que en realidad era el **buscador
+  del tema** — el arnés cogía el primer `form` de la página. El defecto del alta es el de arriba,
+  comprobado en el HTML servido y re-medido en el sitio ya desplegado.)
 - Ahora envían por **POST a su propia página** con un marcador (`convoca_sin_js_alta` /
   `convoca_sin_js_voluntariado`). Cuando la petición llega sin JavaScript, el template explica la
   situación y ofrece el correo de la asociación (con el teléfono si está configurado); el

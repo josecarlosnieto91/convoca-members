@@ -244,8 +244,8 @@ class Mi_Area {
 		<?php
 		/*
 		 * Sin JavaScript: la degradación se DECLARA y se da salida (mismo defecto medido en el
-		 * resto de formularios del ecosistema: sin `method` ni `action` el envío acaba en una
-		 * búsqueda vacía de WordPress, en «Página no encontrada»).
+		 * resto de formularios del ecosistema: sin `method` ni `action` el envío se pierde,
+		 * sin procesarse y sin decir nada).
 		 */
 		if ( ! empty( $_POST['convoca_sin_js_panel_socio'] ) ) {
 			$convoca_email = (string) apply_filters( 'convoca_panel_socio_sin_js_email', (string) get_bloginfo( 'admin_email' ) );

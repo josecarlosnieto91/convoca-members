@@ -32,8 +32,8 @@ $areas = \Convoca\Members\Form_Voluntariado::interest_areas();
 
 /*
  * Sin JavaScript: la degradación se DECLARA y se da salida (mismo defecto medido en el alta:
- * el formulario no declaraba `method` ni `action` y el envío sin JS acababa en una búsqueda
- * vacía de WordPress, en «Página no encontrada»).
+ * el formulario no declaraba `method` ni `action` y el envío sin JS se perdía en silencio,
+ * sin procesarse y sin decir nada al visitante).
  */
 $convoca_sin_js   = ! empty( $_POST['convoca_sin_js_voluntariado'] );
 $convoca_opciones = get_option( 'convoca_members_settings' );
