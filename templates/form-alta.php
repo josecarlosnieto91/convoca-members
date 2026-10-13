@@ -27,6 +27,46 @@
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
+
+/**
+ * Sin JavaScript: la degradación se DECLARA y se da salida.
+ *
+ * Medido el 13/10/2026 en el sitio vivo (demo): el formulario no declaraba `method` ni `action`,
+ * así que sin JS el navegador lo enviaba como GET y WordPress lo resolvía como una búsqueda
+ * vacía (`https://demo.getconvoca.app/?s=`), dejando al visitante en «Página no encontrada»
+ * después de rellenar el alta entera. Ni un dato guardado, ni una explicación.
+ *
+ * Ahora envía por POST a la propia página y, cuando llega sin JS, aquí se explica qué ocurre y
+ * por dónde seguir; el `<noscript>` avisa ANTES de rellenar.
+ */
+$convoca_sin_js   = ! empty( $_POST['convoca_sin_js_alta'] );
+$convoca_opciones = get_option( 'convoca_members_settings' );
+$convoca_email    = is_array( $convoca_opciones ) && ! empty( $convoca_opciones['admin_email'] )
+	? (string) $convoca_opciones['admin_email']
+	: (string) get_option( 'admin_email' );
+$convoca_tel      = is_array( $convoca_opciones ) && ! empty( $convoca_opciones['telefono'] )
+	? (string) $convoca_opciones['telefono']
+	: '';
+$convoca_email    = (string) apply_filters( 'convoca_alta_sin_js_email', $convoca_email );
+$convoca_tel      = (string) apply_filters( 'convoca_alta_sin_js_telefono', $convoca_tel );
+
+if ( $convoca_sin_js ) :
+	?>
+	<div class="convoca-alert convoca-alert--warning" role="status">
+		<p><?php esc_html_e( 'No se ha registrado tu solicitud: este formulario necesita JavaScript en el navegador.', 'convoca-members' ); ?></p>
+		<p><?php esc_html_e( 'Actívalo y vuelve a intentarlo.', 'convoca-members' ); ?>
+		<?php if ( $convoca_email ) : ?>
+			<?php esc_html_e( 'Si no puedes, escríbenos y te damos de alta a mano:', 'convoca-members' ); ?>
+			<a href="<?php echo esc_url( 'mailto:' . $convoca_email ); ?>"><?php echo esc_html( $convoca_email ); ?></a>
+		<?php endif; ?>
+		<?php if ( $convoca_tel ) : ?>
+			(<?php echo esc_html( $convoca_tel ); ?>)
+		<?php endif; ?>
+		</p>
+	</div>
+	<?php
+	return;
+endif;
 ?>
 
 <div id="convoca-form-alta" class="convoca-form" role="region" aria-label="Formulario de alta de socio/a">
@@ -43,7 +83,24 @@ if ( ! defined( 'ABSPATH' ) ) {
 	<!-- Alert container -->
 	<div id="conv-alert" class="convoca-alert" style="display:none" role="alert" aria-live="assertive"></div>
 
-	<form id="conv-alta-form" novalidate>
+	<!-- Sin JavaScript no hay formulario que enviar: se dice antes de rellenarlo. -->
+	<noscript>
+		<div class="convoca-alert convoca-alert--warning" role="status">
+			<p><?php esc_html_e( 'Este formulario de alta necesita JavaScript en el navegador.', 'convoca-members' ); ?>
+			<?php if ( $convoca_email ) : ?>
+				<?php esc_html_e( 'Actívalo y vuelve a intentarlo, o escríbenos y te damos de alta a mano:', 'convoca-members' ); ?>
+				<a href="<?php echo esc_url( 'mailto:' . $convoca_email ); ?>"><?php echo esc_html( $convoca_email ); ?></a>
+			<?php endif; ?>
+			<?php if ( $convoca_tel ) : ?>
+				(<?php echo esc_html( $convoca_tel ); ?>)
+			<?php endif; ?>
+			</p>
+		</div>
+	</noscript>
+
+	<form id="conv-alta-form" method="post" action="" novalidate>
+		<?php // Marcador del envío sin JavaScript: lo lee el aviso de arriba. ?>
+		<input type="hidden" name="convoca_sin_js_alta" value="1" />
 
 		<!-- ═══ STEP 1: Plan ═══ -->
 		<div class="conv-form-step active" data-step="1">

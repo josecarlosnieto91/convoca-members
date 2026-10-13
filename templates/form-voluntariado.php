@@ -29,6 +29,40 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 $areas = \Convoca\Members\Form_Voluntariado::interest_areas();
+
+/*
+ * Sin JavaScript: la degradación se DECLARA y se da salida (mismo defecto medido en el alta:
+ * el formulario no declaraba `method` ni `action` y el envío sin JS acababa en una búsqueda
+ * vacía de WordPress, en «Página no encontrada»).
+ */
+$convoca_sin_js   = ! empty( $_POST['convoca_sin_js_voluntariado'] );
+$convoca_opciones = get_option( 'convoca_members_settings' );
+$convoca_email    = is_array( $convoca_opciones ) && ! empty( $convoca_opciones['admin_email'] )
+	? (string) $convoca_opciones['admin_email']
+	: (string) get_option( 'admin_email' );
+$convoca_tel      = is_array( $convoca_opciones ) && ! empty( $convoca_opciones['telefono'] )
+	? (string) $convoca_opciones['telefono']
+	: '';
+$convoca_email    = (string) apply_filters( 'convoca_voluntariado_sin_js_email', $convoca_email );
+$convoca_tel      = (string) apply_filters( 'convoca_voluntariado_sin_js_telefono', $convoca_tel );
+
+if ( $convoca_sin_js ) :
+	?>
+	<div class="convoca-alert convoca-alert--warning" role="status">
+		<p><?php esc_html_e( 'No se ha registrado tu solicitud: este formulario necesita JavaScript en el navegador.', 'convoca-members' ); ?></p>
+		<p><?php esc_html_e( 'Actívalo y vuelve a intentarlo.', 'convoca-members' ); ?>
+		<?php if ( $convoca_email ) : ?>
+			<?php esc_html_e( 'Si no puedes, escríbenos:', 'convoca-members' ); ?>
+			<a href="<?php echo esc_url( 'mailto:' . $convoca_email ); ?>"><?php echo esc_html( $convoca_email ); ?></a>
+		<?php endif; ?>
+		<?php if ( $convoca_tel ) : ?>
+			(<?php echo esc_html( $convoca_tel ); ?>)
+		<?php endif; ?>
+		</p>
+	</div>
+	<?php
+	return;
+endif;
 ?>
 
 <div id="conv-vol-wrapper" class="convoca-form" role="region" aria-label="Formulario de voluntariado">
@@ -36,7 +70,24 @@ $areas = \Convoca\Members\Form_Voluntariado::interest_areas();
 	<!-- Alert container -->
 	<div id="conv-vol-alert" class="convoca-alert" style="display:none" role="alert" aria-live="assertive"></div>
 
-	<form id="conv-vol-form" novalidate>
+	<!-- Sin JavaScript no hay formulario que enviar: se dice antes de rellenarlo. -->
+	<noscript>
+		<div class="convoca-alert convoca-alert--warning" role="status">
+			<p><?php esc_html_e( 'Este formulario necesita JavaScript en el navegador.', 'convoca-members' ); ?>
+			<?php if ( $convoca_email ) : ?>
+				<?php esc_html_e( 'Actívalo y vuelve a intentarlo, o escríbenos:', 'convoca-members' ); ?>
+				<a href="<?php echo esc_url( 'mailto:' . $convoca_email ); ?>"><?php echo esc_html( $convoca_email ); ?></a>
+			<?php endif; ?>
+			<?php if ( $convoca_tel ) : ?>
+				(<?php echo esc_html( $convoca_tel ); ?>)
+			<?php endif; ?>
+			</p>
+		</div>
+	</noscript>
+
+	<form id="conv-vol-form" method="post" action="" novalidate>
+		<?php // Marcador del envío sin JavaScript: lo lee el aviso de arriba. ?>
+		<input type="hidden" name="convoca_sin_js_voluntariado" value="1" />
 
 		<!-- Personal data -->
 		<h3>📌 Datos personales</h3>

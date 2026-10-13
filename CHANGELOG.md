@@ -1,3 +1,21 @@
+## [2.8.37] - 2026-10-13
+
+### Arreglado
+- **Sin JavaScript, el alta de socio y el voluntariado eran un callejón sin salida.** Medido en el
+  sitio vivo (Playwright con `javaScriptEnabled: false`, 390x844): los dos formularios no declaraban
+  `method` ni `action`, así que el navegador los enviaba como GET y WordPress lo resolvía como una
+  búsqueda vacía. Después de rellenar el alta entera, el visitante acababa en
+  `https://demo.getconvoca.app/?s=` con el título «Página no encontrada»: ni un dato guardado, ni
+  una frase que explicara qué había pasado.
+- Ahora envían por **POST a su propia página** con un marcador (`convoca_sin_js_alta` /
+  `convoca_sin_js_voluntariado`). Cuando la petición llega sin JavaScript, el template explica la
+  situación y ofrece el correo de la asociación (con el teléfono si está configurado); el
+  `<noscript>` lo avisa **antes** de rellenar. Los datos de contacto salen de los ajustes del
+  plugin (`admin_email`, `telefono`) con filtros `convoca_alta_sin_js_*` y
+  `convoca_voluntariado_sin_js_*`: nada escrito a mano en el código.
+- Prueba `tests/Unit/SinJavaScriptTest.php` (una parte ejecuta el template con el marcador y
+  comprueba que no se pinta el formulario), probada **en negativo** con los templates de HEAD.
+
 ## [2.8.36] - 2026-10-13
 
 ### Arreglado
