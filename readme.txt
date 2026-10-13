@@ -4,7 +4,7 @@ Tags: members, volunteers, membership, certificates, associations
 Requires at least: 6.4
 Tested up to: 7.1
 Requires PHP: 8.1
-Stable tag: 2.8.40
+Stable tag: 2.8.41
 License: GPL-2.0-or-later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -49,6 +49,11 @@ This plugin may contact getconvoca.app to validate PRO licenses, only when a key
 3. Activate the plugin from the Plugins menu
 
 == Changelog ==
+
+= 2.8.41 =
+* Accesibilidad: el botón de acceso del área de socio ya no depende de una variable de paleta que
+  WordPress solo emite cuando los bloques de la página la usan. Sin ella, el respaldo dejaba blanco
+  sobre naranja brillante (2.4:1), por debajo del mínimo exigible. Medido con axe.
 
 = 2.8.40 =
 * Desinstalación: se limpian todas las tareas programadas del plugin. Antes se
