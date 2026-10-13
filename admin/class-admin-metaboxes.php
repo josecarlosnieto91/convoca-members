@@ -161,34 +161,57 @@ class Admin_Metaboxes {
 				var msgBox = document.getElementById('conv-ajax-response');
 				var rgpdMsgBox = document.getElementById('conv-rgpd-response');
 
+				/* Escapa el texto antes de inyectarlo: los mensajes vienen del servidor. */
+				var escapar = function (t) {
+					var d = document.createElement('div');
+					d.textContent = String(t || '');
+					return d.innerHTML;
+				};
+				var textoError = function (res) {
+					if (window.convocaAdmin && window.convocaAdmin.normalizarError) {
+						var d = window.convocaAdmin.normalizarError(res).data;
+						return d.errors ? d.errors.join(' · ') : d.message;
+					}
+					return '<?php echo esc_js( __( 'No se ha podido completar la operación. Vuelve a intentarlo; si el problema continúa, avisa a la asociación.', 'convoca-members' ) ); ?>';
+				};
+				var textoConexion = (window.convocaAdmin && window.convocaAdmin.mensajes)
+					? window.convocaAdmin.mensajes.sinConexion
+					: '<?php echo esc_js( __( 'No se ha podido conectar con el servidor. Comprueba tu conexión y vuelve a intentarlo.', 'convoca-members' ) ); ?>';
+
 				function convoca_ajax_action(action, btn) {
+					var etiqueta = action === 'convoca_send_payment_link' ? 'Generar y Enviar Link de Pago' : 'Enviar Recordatorio';
+					var restaurar = function () {
+						btn.disabled = false;
+						btn.textContent = etiqueta;
+					};
 					btn.disabled = true;
 					btn.textContent = 'Procesando...';
 					msgBox.innerHTML = '';
 
-					var fd = new FormData();
-					fd.append('action', action);
-					fd.append('post_id', postId);
-					fd.append('nonce', nonce);
+					/* El texto de error lo resuelve la capa común (convoca-common-admin.js): dice
+						QUÉ HACER y traduce el `0` / `-1` de admin-ajax, que antes llegaban aquí como
+						«Error desconocido». El texto se escapa antes de pintarlo: viene del servidor. */
+					var pintarError = function (texto) {
+						msgBox.innerHTML = '<div class="notice notice-error inline"><p>' + escapar(texto) + '</p></div>';
+					};
 
-					fetch(ajaxurl, {
-						method: 'POST',
-						body: fd
-					}).then(r => r.json()).then(res => {
-						btn.disabled = false;
-						btn.textContent = action === 'convoca_send_payment_link' ? 'Generar y Enviar Link de Pago' : 'Enviar Recordatorio';
-						
-						if (res.success) {
-							msgBox.innerHTML = '<div class="notice notice-success inline"><p>' + res.data.message + '</p></div>';
+					if (!window.convocaAdmin || !window.convocaAdmin.ajaxPost) {
+						restaurar();
+						pintarError('<?php echo esc_js( __( 'No se ha podido completar la operación. Recarga la página y vuelve a intentarlo.', 'convoca-members' ) ); ?>');
+						return;
+					}
+
+					convocaAdmin.ajaxPost(action, { post_id: postId, nonce: nonce }, nonce,
+						function (res) {
+							restaurar();
+							msgBox.innerHTML = '<div class="notice notice-success inline"><p>' + escapar(res.data.message) + '</p></div>';
 							if (res.data.reload) setTimeout(function () { location.reload(); }, 1500);
-						} else {
-							msgBox.innerHTML = '<div class="notice notice-error inline"><p>' + (res.data ? res.data.message : 'Error desconocido') + '</p></div>';
+						},
+						function (res) {
+							restaurar();
+							pintarError(textoError(res));
 						}
-					}).catch(function () {
-						btn.disabled = false;
-						btn.textContent = 'Reintentar';
-						msgBox.innerHTML = '<div class="notice notice-error inline"><p>Error de servidor.</p></div>';
-					});
+					);
 				}
 
 				var btnPaymentLink = document.getElementById('conv-send-payment-link');
@@ -233,10 +256,10 @@ class Admin_Metaboxes {
 								URL.revokeObjectURL(url);
 								rgpdMsgBox.innerHTML = '<div class="notice notice-success inline"><p>Datos exportados correctamente.</p></div>';
 							} else {
-								rgpdMsgBox.innerHTML = '<div class="notice notice-error inline"><p>Error: ' + (res.data ? res.data.message : 'Error desconocido') + '</p></div>';
+								rgpdMsgBox.innerHTML = '<div class="notice notice-error inline"><p>' + escapar(textoError(res)) + '</p></div>';
 							}
 						}).catch(function(err) {
-							rgpdMsgBox.innerHTML = '<div class="notice notice-error inline"><p>Error de conexión.</p></div>';
+							rgpdMsgBox.innerHTML = '<div class="notice notice-error inline"><p>' + escapar(textoConexion) + '</p></div>';
 						});
 					});
 				}
@@ -260,10 +283,10 @@ class Admin_Metaboxes {
 								rgpdMsgBox.innerHTML = '<div class="notice notice-success inline"><p>' + res.data.message + '</p></div>';
 								setTimeout(function () { location.href = '<?php echo esc_url_raw( admin_url( 'edit.php?post_type=miembro' ) ); ?>'; }, 2000);
 							} else {
-								rgpdMsgBox.innerHTML = '<div class="notice notice-error inline"><p>Error: ' + (res.data ? res.data.message : 'Error desconocido') + '</p></div>';
+								rgpdMsgBox.innerHTML = '<div class="notice notice-error inline"><p>' + escapar(textoError(res)) + '</p></div>';
 							}
 						}).catch(function(err) {
-							rgpdMsgBox.innerHTML = '<div class="notice notice-error inline"><p>Error de conexión.</p></div>';
+							rgpdMsgBox.innerHTML = '<div class="notice notice-error inline"><p>' + escapar(textoConexion) + '</p></div>';
 						});
 					});
 				}

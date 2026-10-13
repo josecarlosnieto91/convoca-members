@@ -344,7 +344,7 @@
               setText('#conv-final-date', 'Alta: ' + res.data.fecha);
             }
           } else {
-            const msgs = res.data?.errors?.join('<br>') || 'Error desconocido.';
+            const msgs = res.data?.errors?.join('<br>') || res.data?.message || conv.mensajes.reintentar;
             conv.showAlert(alert, msgs);
             conv.setLoading(btn, false, '✔ Confirmar alta');
           }
@@ -436,7 +436,7 @@
               if (success) success.style.display = 'block';
           },
           (res) => {
-              const msgs = res.data?.errors?.join('<br>') || 'Error desconocido.';
+              const msgs = res.data?.errors?.join('<br>') || res.data?.message || conv.mensajes.reintentar;
               conv.showAlert(alert, msgs);
               conv.setLoading(btn, false, 'Enviar solicitud de voluntariado 🌱');
           }

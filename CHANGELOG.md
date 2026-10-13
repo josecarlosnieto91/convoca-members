@@ -1,3 +1,16 @@
+## [2.8.36] - 2026-10-13
+
+### Arreglado
+- **El alta de socio y el voluntariado respondían «Error desconocido.» cuando la petición fallaba**
+  sin mensaje del servidor. El texto lo resuelve ahora la capa común de `convoca-core`
+  (`conv.mensajes` / `conv.normalizarError`): dice qué hacer en cada caso (sin conexión, sesión
+  caducada, acción no disponible) y traduce el `0` y el `-1` de `admin-ajax`, que antes llegaban
+  como un número y acababan en un respaldo inventado por el llamador.
+- Los dos botones de la ficha del socio (link de pago y recordatorio) y los dos de RGPD (exportar
+  y borrar datos) pasan por `convAdmin.ajaxPost`; el texto del servidor se escapa antes de
+  pintarlo.
+- Prueba `tests/Unit/MensajesDeErrorTest.php`, probada **en negativo** con el JS de HEAD.
+
 ## [2.8.35] - 2026-10-12
 
 ### Arreglado
