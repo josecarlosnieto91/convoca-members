@@ -563,9 +563,16 @@ class Admin_Horas extends \WP_List_Table {
 			return 'Socio eliminado';
 		}
 
+		// El enlace de edición puede no existir (ficha borrada o no editable): `get_edit_post_link()`
+		// devuelve null y pasarlo a `esc_url()` suelta un `PHP Deprecated` en cada carga.
+		$convoca_enlace = get_edit_post_link( $socio_id );
+		if ( ! $convoca_enlace ) {
+			return sprintf( '<strong>%s</strong>', esc_html( $socio->post_title ) );
+		}
+
 		return sprintf(
 			'<a href="%s"><strong>%s</strong></a>',
-			esc_url( get_edit_post_link( $socio_id ) ),
+			esc_url( $convoca_enlace ),
 			esc_html( $socio->post_title )
 		);
 	}
@@ -580,9 +587,15 @@ class Admin_Horas extends \WP_List_Table {
 			return 'Actividad eliminada';
 		}
 
+		// Igual que en `column_socio()`: sin enlace de edición se pinta el texto, no un `<a href="">`.
+		$convoca_enlace = get_edit_post_link( $act_id );
+		if ( ! $convoca_enlace ) {
+			return esc_html( $act->post_title );
+		}
+
 		return sprintf(
 			'<a href="%s">%s</a>',
-			esc_url( get_edit_post_link( $act_id ) ),
+			esc_url( $convoca_enlace ),
 			esc_html( $act->post_title )
 		);
 	}

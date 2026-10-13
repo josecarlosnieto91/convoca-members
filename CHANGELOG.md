@@ -1,3 +1,17 @@
+
+## [2.8.39] - 2026-10-13
+
+### Arreglado
+
+- **`PHP Deprecated` en la tabla de horas**: dos columnas (socio y actividad) pasaban
+  `get_edit_post_link()` directo a `esc_url()`; esa función devuelve `null` cuando la ficha no existe
+  o no es editable y `esc_url( null )` deja `ltrim( null )` en el registro. Ahora, sin enlace, se
+  pinta el nombre sin `<a>`.
+
+### Pruebas
+
+- `EnlacesDeEdicionTest` (probado en negativo: con el defecto repuesto, falla).
+
 ## [2.8.38] - 2026-10-13
 
 ### Arreglado
