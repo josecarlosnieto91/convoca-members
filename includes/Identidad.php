@@ -6,7 +6,7 @@
  *
  *  1. **La marca del proveedor aparecía dentro de la web del cliente.** La tarjeta de socio decía
  *     «🍁 CONVOCA» y el consentimiento «Autorizo a Convoca a enviarme comunicaciones»: en la web de
- *     Los Lugg, quien se hace socia ve el nombre del software en vez del de la asociación.
+ *     un sitio de cliente, quien se hace socia ve el nombre del software en vez del de la asociación.
  *  2. **Dos enlaces con `href=""`**: «Código Ético» en el alta y en el voluntariado se pintaban con
  *     `apply_filters( 'convoca_members_alta_document_url', '' )`, cuyo respaldo es la cadena vacía —
  *     es decir, un enlace que no lleva a ninguna parte, en HTML, y que el usuario pulsa.

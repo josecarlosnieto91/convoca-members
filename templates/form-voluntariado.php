@@ -268,8 +268,11 @@ endif;
 				<?php
 				// Los documentos de la entidad son ajustes del panel, no URLs metidas a mano en la
 				// plantilla (issue convoca-members#12), y sin ajuste NO se pinta el enlace: antes
-				// esto era un `href="https://drive.google…"` a un Drive concreto y en el alta salía
+				// esto era una URL de un servicio externo fija en el código, y en el alta salía
 				// un `href=""` que no llevaba a ninguna parte.
+				// (El comentario no nombra la URL ni el servicio a propósito: el guardián de
+				// higiene prohíbe los datos del cliente en el código que se publica, y esto
+				// viaja dentro del plugin.)
 				echo \Convoca\Members\Identidad::enlace_documento( 'Código Ético', \Convoca\Members\Identidad::OPCION_DOC_ETICO ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- ya viene escapado del ayudante.
 				?>
 				y el
