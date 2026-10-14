@@ -122,6 +122,14 @@ class Admin_Settings {
 			'copy_all_emails'         => empty( $input['copy_all_emails'] ) ? 0 : 1,
 			'iban'                    => sanitize_text_field( $input['iban'] ?? '' ),
 			'rgpd_version'            => sanitize_text_field( $input['rgpd_version'] ?? '1.0' ),
+			// Identidad del sitio y documentos de la entidad (pasada 9 del gauntlet): la marca del
+			// proveedor salía en la web del cliente y las plantillas llevaban tres URLs de Google
+			// Drive hardcodeadas (issue convoca-members#12). Vacío = nombre del sitio de WordPress
+			// y documentos sin enlace (nunca un `href=""`).
+			'entity_name'             => sanitize_text_field( $input['entity_name'] ?? '' ),
+			'doc_codigo_etico'        => esc_url_raw( $input['doc_codigo_etico'] ?? '' ),
+			'doc_voluntariado'        => esc_url_raw( $input['doc_voluntariado'] ?? '' ),
+			'doc_protocolo'           => esc_url_raw( $input['doc_protocolo'] ?? '' ),
 			'sender_name'             => sanitize_text_field( $input['sender_name'] ?? get_bloginfo( 'name' ) ),
 			'min_age'                 => (int) ( $input['min_age'] ?? 0 ),
 			'email_provider'          => sanitize_key( $input['email_provider'] ?? 'wpmail' ),
@@ -403,6 +411,32 @@ class Admin_Settings {
 				<label for="rgpd_version"><?php esc_html_e( 'Versión texto legal RGPD', 'convoca-members' ); ?></label>
 				<input type="text" id="rgpd_version" name="convoca_members_settings[rgpd_version]"
 					value="<?php echo esc_attr( $settings['rgpd_version'] ?? '1.0' ); ?>">
+			</div>
+
+			<div class="convoca-field">
+				<label for="entity_name"><?php esc_html_e( 'Nombre de la entidad', 'convoca-members' ); ?></label>
+				<input type="text" id="entity_name" name="convoca_members_settings[entity_name]"
+					value="<?php echo esc_attr( $settings['entity_name'] ?? '' ); ?>">
+				<small class="convoca-small"><?php esc_html_e( 'Es el nombre que ven los socios (tarjeta, consentimientos). Si se deja vacío se usa el nombre del sitio de WordPress.', 'convoca-members' ); ?></small>
+			</div>
+
+			<div class="convoca-field">
+				<label for="doc_codigo_etico"><?php esc_html_e( 'Código Ético (URL)', 'convoca-members' ); ?></label>
+				<input type="url" id="doc_codigo_etico" name="convoca_members_settings[doc_codigo_etico]"
+					value="<?php echo esc_attr( $settings['doc_codigo_etico'] ?? '' ); ?>">
+			</div>
+
+			<div class="convoca-field">
+				<label for="doc_voluntariado"><?php esc_html_e( 'Programa de Voluntariado (URL)', 'convoca-members' ); ?></label>
+				<input type="url" id="doc_voluntariado" name="convoca_members_settings[doc_voluntariado]"
+					value="<?php echo esc_attr( $settings['doc_voluntariado'] ?? '' ); ?>">
+			</div>
+
+			<div class="convoca-field">
+				<label for="doc_protocolo"><?php esc_html_e( 'Protocolo de prevención del acoso (URL)', 'convoca-members' ); ?></label>
+				<input type="url" id="doc_protocolo" name="convoca_members_settings[doc_protocolo]"
+					value="<?php echo esc_attr( $settings['doc_protocolo'] ?? '' ); ?>">
+				<small class="convoca-small"><?php esc_html_e( 'Si un documento no tiene URL, el formulario muestra su nombre sin enlace en vez de un enlace que no lleva a ninguna parte.', 'convoca-members' ); ?></small>
 			</div>
 
 			<div class="convoca-field">

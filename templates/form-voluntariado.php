@@ -177,7 +177,7 @@ endif;
 				<div class="convoca-check-group">
 					<input type="checkbox" id="conv-vol-tutor-auth" name="tutor_auth">
 					<label for="conv-vol-tutor-auth">El/la tutor/a legal autoriza la participación del menor en actividades
-						de voluntariado de Convoca.</label>
+						de voluntariado de <?php echo esc_html( \Convoca\Members\Identidad::nombre_entidad() ); ?>.</label>
 				</div>
 			</div>
 
@@ -216,7 +216,7 @@ endif;
 		</div>
 
 		<div class="convoca-field">
-			<label for="conv-vol-motivacion">¿Por qué quieres ser voluntario/a en Convoca?</label>
+			<label for="conv-vol-motivacion">¿Por qué quieres ser voluntario/a en <?php echo esc_html( \Convoca\Members\Identidad::nombre_entidad() ); ?>?</label>
 			<textarea id="conv-vol-motivacion" name="motivacion" rows="3"
 				placeholder="Cuéntanos qué te motiva…"></textarea>
 		</div>
@@ -264,17 +264,27 @@ endif;
 		<h3 style="margin-top:2rem">✅ Compromisos y consentimiento</h3>
 		<div class="convoca-check-group">
 			<input type="checkbox" id="conv-vol-codigo" name="acepto_codigo" required>
-			<label for="conv-vol-codigo">He leído y acepto el <a
-					href="https://drive.google.com/file/d/1MmUSP9hVygjpJi1ACAILLWajzTeqEqlA/view" target="_blank".<?php // convoca-hygiene-ignore: documento de la entidad, pendiente de pasar a ajuste (issue convoca-members#12) ?>
-					rel="noopener">Código Ético</a> y el <a
-					href="https://drive.google.com/file/d/1Qps5ghQjNOPH4B55JEmlkQARJrpPN9jK/view" target="_blank".<?php // convoca-hygiene-ignore: documento de la entidad, pendiente de pasar a ajuste (issue convoca-members#12) ?>
-					rel="noopener">Programa de Voluntariado</a>. *</label>
+			<label for="conv-vol-codigo">He leído y acepto el
+				<?php
+				// Los documentos de la entidad son ajustes del panel, no URLs metidas a mano en la
+				// plantilla (issue convoca-members#12), y sin ajuste NO se pinta el enlace: antes
+				// esto era un `href="https://drive.google…"` a un Drive concreto y en el alta salía
+				// un `href=""` que no llevaba a ninguna parte.
+				echo \Convoca\Members\Identidad::enlace_documento( 'Código Ético', \Convoca\Members\Identidad::OPCION_DOC_ETICO ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- ya viene escapado del ayudante.
+				?>
+				y el
+				<?php
+				echo \Convoca\Members\Identidad::enlace_documento( 'Programa de Voluntariado', \Convoca\Members\Identidad::OPCION_DOC_VOLUNTARIADO ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- ya viene escapado del ayudante.
+				?>
+				. *</label>
 		</div>
 		<div class="convoca-check-group">
 			<input type="checkbox" id="conv-vol-protocolo" name="acepto_protocolo" required>
-			<label for="conv-vol-protocolo">He leído el <a
-					href="https://drive.google.com/file/d/1g0-466CC7vutS3xkag42tY5vsiSDqHXA/view" target="_blank".<?php // convoca-hygiene-ignore: documento de la entidad, pendiente de pasar a ajuste (issue convoca-members#12) ?>
-					rel="noopener">Protocolo para la prevención del acoso</a>. *</label>
+			<label for="conv-vol-protocolo">He leído el
+				<?php
+				echo \Convoca\Members\Identidad::enlace_documento( 'Protocolo para la prevención del acoso', \Convoca\Members\Identidad::OPCION_DOC_PROTOCOLO ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- ya viene escapado del ayudante.
+				?>
+				. *</label>
 		</div>
 		<div class="convoca-check-group">
 			<input type="checkbox" id="conv-vol-rgpd" name="rgpd" required>
@@ -285,7 +295,7 @@ endif;
 		</div>
 		<div class="convoca-check-group">
 			<input type="checkbox" id="conv-vol-comunicaciones" name="comunicaciones">
-			<label for="conv-vol-comunicaciones">Autorizo a Convoca a enviarme comunicaciones sobre actividades,
+			<label for="conv-vol-comunicaciones">Autorizo a <?php echo esc_html( \Convoca\Members\Identidad::nombre_entidad() ); ?> a enviarme comunicaciones sobre actividades,
 				proyectos y oportunidades de voluntariado.</label>
 		</div>
 		

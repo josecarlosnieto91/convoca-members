@@ -355,10 +355,17 @@ endif;
 				<div class="convoca-field">
 					<p class="convoca-small"><strong>Voluntariado (opcional).</strong> Si te comprometes a cumplir las
 						horas de tu plan durante el próximo año, podrás renovar sin pagar la cuota. Aceptas el
-						<a href="<?php echo esc_url( apply_filters( 'convoca_members_alta_document_url', '' ) ); ?>" target="_blank"
-							rel="noopener">Código Ético</a> y el <a
-							href="https://drive.google.com/file/d/1Qps5ghQjNOPH4B55JEmlkQARJrpPN9jK/view"<?php // convoca-hygiene-ignore: documento de la entidad, pendiente de pasar a ajuste (issue convoca-members#12) ?>
-							target="_blank" rel="noopener">Programa de Voluntariado</a>.
+						<?php
+						// Sin enlace si el ajuste está vacío (antes salía un `href=""` que no llevaba a
+						// ninguna parte) y sin URLs de documentos hardcodeadas en la plantilla: son
+						// ajustes del panel (issues convoca-members#12 y del recorrido a ciegas).
+						echo \Convoca\Members\Identidad::enlace_documento( 'Código Ético', \Convoca\Members\Identidad::OPCION_DOC_ETICO ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- ya viene escapado del ayudante.
+						?>
+						y el
+						<?php
+						echo \Convoca\Members\Identidad::enlace_documento( 'Programa de Voluntariado', \Convoca\Members\Identidad::OPCION_DOC_VOLUNTARIADO ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- ya viene escapado del ayudante.
+						?>
+						.
 					</p>
 					<div class="convoca-check-group">
 						<input type="checkbox" id="conv-acuerdo-vol" name="acuerdo_voluntariado">
@@ -380,7 +387,7 @@ endif;
 				</div>
 				<div class="convoca-check-group">
 					<input type="checkbox" id="conv-comunicaciones" name="comunicaciones">
-					<label for="conv-comunicaciones">Autorizo a Convoca a enviarme comunicaciones sobre actividades,
+					<label for="conv-comunicaciones">Autorizo a <?php echo esc_html( \Convoca\Members\Identidad::nombre_entidad() ); ?> a enviarme comunicaciones sobre actividades,
 						proyectos y noticias relevantes.</label>
 				</div>
 			</div>
@@ -474,7 +481,7 @@ endif;
 			<!-- Card preview -->
 			<h3 class="conv-text-center" style="margin-top:2rem">Tu tarjeta de socio/a</h3>
 			<div class="conv-card-preview">
-				<h3>🍁 CONVOCA</h3>
+				<h3><?php echo esc_html( \Convoca\Members\Identidad::nombre_entidad() ); ?></h3>
 				<div class="conv-card-name" id="conv-card-name">—</div>
 				<div class="conv-card-id" id="conv-card-id">Socio/a #—</div>
 				<div class="conv-card-type" id="conv-card-type">—</div>
@@ -492,10 +499,10 @@ endif;
 	<!-- Success screen -->
 	<div id="conv-success" class="convoca-success-screen" style="display:none" role="status" aria-live="polite">
 		<div class="convoca-success-icon">🎉</div>
-		<h2>¡Bienvenido/a a Convoca!</h2>
+		<h2>¡Bienvenido/a a <?php echo esc_html( \Convoca\Members\Identidad::nombre_entidad() ); ?>!</h2>
 		<p>Tu alta se ha registrado correctamente. Hemos enviado un email de confirmación a tu correo.</p>
 		<div class="conv-card-preview" id="conv-card-final">
-			<h3>🍁 CONVOCA</h3>
+			<h3><?php echo esc_html( \Convoca\Members\Identidad::nombre_entidad() ); ?></h3>
 			<div class="conv-card-name" id="conv-final-name">—</div>
 			<div class="conv-card-id" id="conv-final-id">Socio/a #—</div>
 			<div class="conv-card-type" id="conv-final-type">—</div>

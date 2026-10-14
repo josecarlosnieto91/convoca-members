@@ -1,4 +1,43 @@
 
+## [2.8.42] - 2026-10-14
+
+### Arreglado
+
+- **La web del cliente ya no muestra la marca del proveedor** (recorrido a ciegas, criterio 16).
+  En el alta de socio, la tarjeta decía «🍁 CONVOCA», el consentimiento «Autorizo a Convoca a
+  enviarme comunicaciones» y la bienvenida «¡Bienvenido/a a Convoca!»: quien se hacía socia en la
+  web de Los Lugg veía el nombre del software en vez del de la asociación. Ahora es un ajuste
+  («Nombre de la entidad») con el nombre del sitio de WordPress como respaldo.
+- **`<a href="">` fuera del producto**: «Código Ético» se pintaba con
+  `apply_filters( 'convoca_members_alta_document_url', '' )`, cuyo respaldo es la cadena vacía — un
+  enlace que no lleva a ninguna parte, en HTML, y que el usuario pulsa. Ahora, si el documento no
+  está configurado, se muestra su nombre **sin enlace**.
+- **Higiene: tres URLs de Google Drive de la entidad hardcodeadas en las plantillas** (issue #12).
+  Dónde apuntan los documentos de una entidad es decisión suya: pasan a ser ajustes del panel.
+- **La casilla del RGPD da señal cuando bloquea el avance.** El aviso ya se pintaba, pero el campo
+  no se marcaba ni recibía el foco: quien navega con teclado o lector de pantalla oía un mensaje sin
+  saber a qué campo se refería (medido con el navegador sobre la demo el 14/10/2026). Ahora el grupo
+  se marca (`has-error`), la casilla lleva `aria-invalid` y se le lleva el foco.
+- **La tarjeta ya no se inventa el número de socio**: decía «Socio/a #TEMP» mientras no había
+  número. El número lo asigna el servidor al confirmar; hasta entonces se dice lo que pasa.
+
+### Añadido
+
+- Cuatro ajustes nuevos en el panel: nombre de la entidad, Código Ético, Programa de Voluntariado y
+  Protocolo de prevención del acoso (los tres últimos, como URL).
+
+### Pruebas
+
+- 7 pruebas nuevas (`IdentidadDelSitioTest`), 204 en total. Tres comprobaciones probadas **en
+  negativo**: con el filtro del respaldo vacío de vuelta, con la marca del proveedor de vuelta y con
+  el número de socio inventado, la prueba falla.
+
+### Nota de instrumento
+
+- Escribir la etiqueta de cierre de PHP dentro de un comentario de línea **cierra el modo PHP**: el
+  fichero entero pasa a leerse como HTML y el error que aparece después («Unclosed '{'») no señala a
+  esa línea. Costó una vuelta de reloj.
+
 ## [2.8.39] - 2026-10-13
 
 ### Arreglado

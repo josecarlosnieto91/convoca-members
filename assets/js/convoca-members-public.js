@@ -211,7 +211,21 @@
         const pago = form.querySelector('input[name="forma_pago"]:checked');
         if (!pago) { conv.showAlert(alert, 'Selecciona una forma de pago.'); return false; }
         
-        if (!conv.$('#conv-rgpd').checked) { conv.showAlert(alert, 'Debes aceptar la Política de Privacidad.'); return false; }
+        const rgpd = conv.$('#conv-rgpd');
+        if (!rgpd.checked) {
+          // El aviso ya se pintaba, pero el campo no daba ninguna señal: ni se marcaba, ni se
+          // resaltaba, ni se le movía el foco. Quien navega con teclado o lector de pantalla
+          // oía un mensaje sin saber a qué campo se refería (defecto medido con el navegador el
+          // 14/10/2026 sobre la demo). Ahora se marca el campo y se le lleva el foco.
+          const grupo = rgpd.closest('.convoca-check-group') || rgpd.closest('.convoca-field');
+          if (grupo) grupo.classList.add('has-error');
+          rgpd.setAttribute('aria-invalid', 'true');
+          conv.showAlert(alert, 'Debes aceptar la Política de Privacidad.');
+          rgpd.focus();
+          return false;
+        }
+        rgpd.removeAttribute('aria-invalid');
+        (rgpd.closest('.convoca-check-group') || rgpd.closest('.convoca-field'))?.classList.remove('has-error');
       }
 
       conv.hideAlert(alert);
@@ -273,7 +287,9 @@
 
       setText('#conv-card-name', nombre);
       setText('#conv-card-type', planLabel);
-      setText('#conv-card-id', 'Socio/a #TEMP');
+      // «Socio/a #TEMP» no es un dato: es un hueco. El número lo asigna el servidor al confirmar
+      // el alta, así que hasta entonces se dice lo que pasa en vez de inventarse un número.
+      setText('#conv-card-id', config.i18n?.numeroPendiente || 'Socio/a — (número al confirmar)');
       setText('#conv-card-date', 'Alta: ' + today);
 
       const cardEl = conv.$('#conv-card-preview');
