@@ -138,6 +138,14 @@
 
 # Changelog — convoca-members
 
+## [2.8.45] - 2026-10-15
+
+### Corregido
+
+- **Mensaje de error del teléfono**: decía «9 dígitos, **mulaiing** con 6-9». Además de la errata, no se
+  entendía; ahora dice «9 dígitos, empezando por 6, 7, 8 o 9». Lo cazó la auditoría independiente de la
+  pasada 11 del gauntlet y lo ve cualquiera que se equivoque al escribir su teléfono.
+
 ## v2.8.34 (2026-10-12)
 
 ### Cambiado

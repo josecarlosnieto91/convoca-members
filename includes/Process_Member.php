@@ -674,7 +674,7 @@ class Process_Member {
 		if ( empty( $telefono ) ) {
 			$errors[] = 'El teléfono es obligatorio.';
 		} elseif ( ! preg_match( '/^[6-9]\d{8}$/', preg_replace( '/\s+/', '', $telefono ) ) ) {
-			$errors[] = 'El teléfono debe ser un número español válido (9 dígitos, mulaiing con 6-9).';
+			$errors[] = 'El teléfono debe ser un número español válido (9 dígitos, empezando por 6, 7, 8 o 9).';
 		}
 
 		if ( empty( $data['direccion'] ) ) {
