@@ -1,26 +1,28 @@
-## [2.8.43] — 2026-10-14
+## [2.8.44] — 2026-10-14
 
-### Seguridad
-- **Los tipos de contenido con datos personales dejan de estar gobernados por las capacidades de
-  WordPress.** `miembro`, `registro_hora` y `proyecto` se registraban sin mapa de capacidades (o con
-  `capability_type => 'post'`), así que los gobernaban `edit_posts`/`delete_posts` — que **el rol
-  `editor` tiene por defecto**. Medido en el sitio: un `editor` abría `edit.php?post_type=miembro`
-  (HTTP 200), veía **el listado completo de socios** y podía mandar fichas a la papelera, sin la
-  capacidad `gestionar_miembros` que sí comprueban las pantallas propias del plugin.
-  Ahora los tres tipos mapean todos sus permisos a `gestionar_miembros` (una sola fuente de verdad en
-  `CPT_Caps`), que el plugin concede al rol de administración: quien hoy gestiona socios sigue
-  pudiendo, y quien no debía, no puede. Ningún sitio tiene usuarios con rol `editor`, así que el
-  defecto estaba latente en producción y era explotable en el banco de pruebas.
-- **Prueba:** `tests/Unit/CapacidadesDeDatosPersonalesTest.php` (4 casos), con dos negativos
-  comprobados: quitando el mapa de un tipo falla nombrando el fichero, y poniendo la capacidad en
-  `edit_posts` falla porque es una capacidad que WordPress reparte.
+### Revertido (con el motivo escrito)
+- **Se revierte el mapeo de capacidades de los tipos con datos personales que entró en 2.8.43.** La
+  2.8.43 hacía que un `editor` no pudiera listar ni borrar fichas de socios, y **rompía el mecanismo de
+  capacidades de WordPress**: al asignar la capacidad propia `gestionar_miembros` al hueco de la
+  capacidad meta `edit_post` del tipo de contenido, WordPress la resuelve contra una entrada concreta
+  y, cuando se comprueba sin entrada —que es como la comprueban las pantallas propias del plugin—
+  devuelve `do_not_allow`. Medido en el sitio:
 
-### Pruebas
-- El fixture de `IdentidadDelSitioTest` usaba el nombre de la entidad de un sitio real y el guardián
-  de higiene lo cazó (justo la clase de dato que esa misma prueba prohíbe): ahora usa un nombre
-  genérico. Y los comentarios que explican los arreglos de la pasada 9 dejaban de nombrar al cliente y
-  su dominio — viajaban dentro del plugin publicado.
+  ```
+  map_meta_cap( 'gestionar_miembros', 2 )  ->  do_not_allow
+  map_meta_cap( 'manage_options', 2 )      ->  manage_options
+  map_meta_cap( 'gestionar_documentos_voluntariado', 2 ) -> gestionar_documentos_voluntariado
+  ```
 
+  Es decir: sólo esa capacidad dejaba de valer, y **para todo el mundo, administrador incluido**, así
+  que el gobierno de socios quedaba inaccesible. Un defecto funcional peor que el que se arreglaba,
+  que además era latente (ningún sitio tiene usuarios con rol `editor`).
+- El defecto original (**un `editor` puede ver el listado de socios y mandar fichas a la papelera**)
+  queda **abierto** en su issue, con esta medición como punto de partida y la advertencia de por dónde
+  NO va el arreglo.
+- Guarda para que no se reintente mal: `tests/Unit/CapacidadesSinColisionTest.php` — ninguna capacidad
+  propia puede ocupar el hueco de las meta del núcleo (`edit_post`, `read_post`, `delete_post`), con
+  negativo probado.
 
 ## [2.8.42] - 2026-10-14
 
