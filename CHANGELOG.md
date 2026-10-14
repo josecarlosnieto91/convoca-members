@@ -1,3 +1,10 @@
+## [Sin publicar]
+
+- **Pruebas:** el fixture de `IdentidadDelSitioTest` usaba el nombre de la entidad de un sitio
+  real, y el guardián de higiene lo cazó (justo la clase de dato que esa misma prueba prohíbe).
+  Ahora usa un nombre genérico. Cambio solo de prueba: no altera el producto, así que no sube
+  versión ni se despliega.
+
 
 ## [2.8.42] - 2026-10-14
 

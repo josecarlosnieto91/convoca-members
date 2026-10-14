@@ -6,8 +6,10 @@
  * Tres defectos vistos con ojos de usuario nuevo (recorrido a ciegas, pasada 9 del gauntlet):
  *
  *  1. La tarjeta de socio decía «🍁 CONVOCA» y el consentimiento «Autorizo a Convoca a enviarme
- *     comunicaciones»: en la web de Los Lugg, quien se hace socia veía el nombre del software en
- *     vez del de la asociación.
+ *     comunicaciones»: en la web de un sitio de cliente, quien se hace socia veía el nombre del
+ *     software en vez del de la asociación.
+ *     (Los nombres de entidad de este fichero son genéricos a propósito: el guardián de higiene
+ *     prohíbe los datos de clientes reales en los repositorios, y esta prueba no necesita ninguno.)
  *  2. En el alta, «Código Ético» se pintaba con `apply_filters( 'convoca_members_alta_document_url',
  *     '' )`, cuyo respaldo es la cadena vacía: `<a href="">`, un enlace que no lleva a ninguna parte.
  *  3. Los documentos de la entidad estaban como tres URLs de Google Drive metidas a mano en las
@@ -106,8 +108,8 @@ class IdentidadDelSitioTest extends TestCase {
 		delete_option( 'convoca_members_settings' );
 		$this->assertSame( get_bloginfo( 'name' ), Identidad::nombre_entidad() );
 
-		update_option( 'convoca_members_settings', array( Identidad::OPCION_ENTIDAD => 'Centro Social Los Lugg' ) );
-		$this->assertSame( 'Centro Social Los Lugg', Identidad::nombre_entidad() );
+		update_option( 'convoca_members_settings', array( Identidad::OPCION_ENTIDAD => 'Asociación de Prueba' ) );
+		$this->assertSame( 'Asociación de Prueba', Identidad::nombre_entidad() );
 		delete_option( 'convoca_members_settings' );
 	}
 
