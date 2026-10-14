@@ -299,6 +299,10 @@ class CPT_Miembro {
 				'has_archive'  => false,
 				'show_in_rest' => false, // Datos personales: solo vía rutas REST propias autenticadas (Rest_API).
 				'map_meta_cap' => true,
+				// Sin esto heredaba las capacidades de `post` y cualquier `editor` podía listar y
+				// borrar fichas de socios desde `edit.php?post_type=miembro` (no lo veían las
+				// pantallas del plugin, que sí comprueban `gestionar_miembros`).
+				'capabilities' => \Convoca\Members\CPT_Caps::personales(),
 			)
 		);
 	}

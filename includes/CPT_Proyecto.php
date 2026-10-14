@@ -90,7 +90,10 @@ class CPT_Proyecto {
 			'has_archive'         => false,
 			'exclude_from_search' => true,
 			'publicly_queryable'  => false,
-			'capability_type'     => 'post',
+			// Datos de voluntariado: no puede gobernarlos `edit_posts`/`delete_posts` (que un
+			// editor tiene). Ver `CPT_Caps`.
+			'capabilities'        => \Convoca\Members\CPT_Caps::personales(),
+			'map_meta_cap'        => true,
 			'show_in_rest'        => false,
 		);
 

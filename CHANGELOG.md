@@ -1,9 +1,25 @@
-## [Sin publicar]
+## [2.8.43] — 2026-10-14
 
-- **Pruebas:** el fixture de `IdentidadDelSitioTest` usaba el nombre de la entidad de un sitio
-  real, y el guardián de higiene lo cazó (justo la clase de dato que esa misma prueba prohíbe).
-  Ahora usa un nombre genérico. Cambio solo de prueba: no altera el producto, así que no sube
-  versión ni se despliega.
+### Seguridad
+- **Los tipos de contenido con datos personales dejan de estar gobernados por las capacidades de
+  WordPress.** `miembro`, `registro_hora` y `proyecto` se registraban sin mapa de capacidades (o con
+  `capability_type => 'post'`), así que los gobernaban `edit_posts`/`delete_posts` — que **el rol
+  `editor` tiene por defecto**. Medido en el sitio: un `editor` abría `edit.php?post_type=miembro`
+  (HTTP 200), veía **el listado completo de socios** y podía mandar fichas a la papelera, sin la
+  capacidad `gestionar_miembros` que sí comprueban las pantallas propias del plugin.
+  Ahora los tres tipos mapean todos sus permisos a `gestionar_miembros` (una sola fuente de verdad en
+  `CPT_Caps`), que el plugin concede al rol de administración: quien hoy gestiona socios sigue
+  pudiendo, y quien no debía, no puede. Ningún sitio tiene usuarios con rol `editor`, así que el
+  defecto estaba latente en producción y era explotable en el banco de pruebas.
+- **Prueba:** `tests/Unit/CapacidadesDeDatosPersonalesTest.php` (4 casos), con dos negativos
+  comprobados: quitando el mapa de un tipo falla nombrando el fichero, y poniendo la capacidad en
+  `edit_posts` falla porque es una capacidad que WordPress reparte.
+
+### Pruebas
+- El fixture de `IdentidadDelSitioTest` usaba el nombre de la entidad de un sitio real y el guardián
+  de higiene lo cazó (justo la clase de dato que esa misma prueba prohíbe): ahora usa un nombre
+  genérico. Y los comentarios que explican los arreglos de la pasada 9 dejaban de nombrar al cliente y
+  su dominio — viajaban dentro del plugin publicado.
 
 
 ## [2.8.42] - 2026-10-14
