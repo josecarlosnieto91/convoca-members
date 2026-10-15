@@ -110,4 +110,29 @@ class RolSocioMonitorTest extends TestCase {
 		Roles_Miembro::crear_roles();
 		$this->assertTrue( true );
 	}
+
+	public function test_una_ficha_antigua_no_pierde_su_rol_de_voluntario(): void {
+		// Fichas aprobadas antes de que existiera la marca: el rol de WordPress es la única prueba.
+		$user = new Rol_Usuario_Falso( self::USER, array( 'subscriber', 'voluntario_aprobado' ) );
+		$GLOBALS['_test_users'][ self::USER ] = $user;
+		\update_post_meta( self::ID, '_convoca_user_id', (string) self::USER );
+
+		// Cualquier sincronización (aquí, conceder la condición de socio) no debe tocarle el voluntariado.
+		Roles_Miembro::anadir( self::ID, Roles_Miembro::SOCIO );
+
+		$this->assertContains( 'voluntario_aprobado', $user->roles, 'A una ficha sin marca NO se le quita el rol del voluntariado' );
+		$this->assertContains( 'socio', $user->roles );
+	}
+
+	public function test_quitar_si_quita_el_rol_aunque_sea_antiguo(): void {
+		// La marca explícita ('0') sí manda: quitar de verdad quita.
+		$user = new Rol_Usuario_Falso( self::USER, array( 'subscriber', 'voluntario_aprobado' ) );
+		$GLOBALS['_test_users'][ self::USER ] = $user;
+		\update_post_meta( self::ID, '_convoca_user_id', (string) self::USER );
+
+		Roles_Miembro::quitar( self::ID, Roles_Miembro::VOLUNTARIO );
+
+		$this->assertNotContains( 'voluntario_aprobado', $user->roles );
+		$this->assertSame( '0', (string) \get_post_meta( self::ID, '_convoca_es_voluntario', true ), 'Quitar deja marca explícita' );
+	}
 }

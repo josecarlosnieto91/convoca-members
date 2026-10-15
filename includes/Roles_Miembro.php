@@ -248,7 +248,9 @@ final class Roles_Miembro {
 			return false;
 		}
 
-		delete_post_meta( $miembro_id, self::meta_de( $rol ) );
+		// Se escribe '0' y no se borra la meta: así se distingue «nunca se le puso» (fichas antiguas, donde
+		// el rol de WordPress es la única prueba) de «se le quitó», que es lo que hay que reflejar.
+		update_post_meta( $miembro_id, self::meta_de( $rol ), '0' );
 		self::sincronizar_roles_wp( $miembro_id );
 		self::sincronizar_taxonomia( $miembro_id );
 
@@ -329,16 +331,23 @@ final class Roles_Miembro {
 			}
 
 			$ecosistema[] = $wp;
-			$quiere       = self::tiene( $miembro_id, $rol );
+			$marca        = (string) get_post_meta( $miembro_id, self::meta_de( $rol ), true );
 			$tiene        = in_array( $wp, (array) $user->roles, true );
 
-			if ( $quiere && ! $tiene ) {
-				// `add_role`, nunca `set_role`: las condiciones se SUMAN. Con `set_role` aprobar el
-				// voluntariado le quitaba al socio su condición, que era el bloque de partida.
-				$user->add_role( $wp );
-			} elseif ( ! $quiere && $tiene ) {
-				$user->remove_role( $wp );
+			if ( '1' === $marca ) {
+				if ( ! $tiene ) {
+					// `add_role`, nunca `set_role`: las condiciones se SUMAN. Con `set_role` aprobar el
+					// voluntariado le quitaba al socio su condición, que era el bloque de partida.
+					$user->add_role( $wp );
+				}
+			} elseif ( '0' === $marca ) {
+				if ( $tiene ) {
+					$user->remove_role( $wp );
+				}
 			}
+			// Sin marca (`''`) no se toca: son las fichas anteriores a este cambio, donde el rol de
+			// WordPress es la única prueba que hay. Quitarlo ahí dejaría sin permisos —Enroll y Shifts
+			// miran ese rol— a voluntariado que sí está aprobado.
 		}
 
 		// Si se queda sin ninguna condición del ecosistema, no se le deja sin rol.

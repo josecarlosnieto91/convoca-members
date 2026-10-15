@@ -1,3 +1,19 @@
+## [2.8.56] — 2026-10-15
+
+### Arreglado
+- **Las fichas antiguas ya no pierden el rol de voluntariado al concederles otra condición.** Lo destapó la
+  verificación en vivo de la aprobación de horas: al conceder la condición de socio, el espejo quitaba el rol
+  `voluntario_aprobado` de quien **no tenía la marca** en la ficha. En una ficha aprobada antes de que
+  existiera esa marca, el rol de WordPress es la única prueba que hay, y **Enroll y Shifts lo miran**: se
+  habría dejado sin permisos a voluntariado que sí está aprobado. Ahora la ausencia de marca no toca nada, y
+  quitar una condición escribe una marca explícita (`0`) en vez de borrar la meta, para poder distinguir
+  «nunca se le puso» de «se le quitó».
+
+### Pruebas
+- Dos casos nuevos: una ficha antigua conserva su rol al concederle otra condición, y quitar de verdad sigue
+  quitando (y deja la marca). **Negativo probado**: volviendo a quitar cuando no hay marca, la prueba cae.
+- Suite 249 en verde, PHPCS 0, PHPStan `[OK]`.
+
 ## [2.8.55] — 2026-10-15
 
 ### Arreglado
