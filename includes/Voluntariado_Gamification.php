@@ -185,6 +185,152 @@ class Voluntariado_Gamification {
 	 */
 	public static function init(): void {
 		add_action( 'rest_api_init', array( __CLASS__, 'register_routes' ) );
+		add_shortcode( 'convoca_top_voluntarios', array( __CLASS__, 'shortcode_top' ) );
+	}
+
+	/**
+	 * Top de voluntarios por horas aprobadas (issue #31).
+	 *
+	 * La web prometía «Tracking de Horas: informes, **top voluntarios** y exportación a CSV/PDF» y el top no
+	 * existía. Las horas que cuenta son las **mismas que las de la renovación**
+	 * (`Voluntariado_Manager::get_horas_aprobadas_desde()`), para que el ranking y la renovación no puedan
+	 * decir cosas distintas del mismo voluntariado: es la fuente única, aunque cueste una consulta por ficha
+	 * (una asociación tiene decenas, no millones).
+	 *
+	 * @param array $args {
+	 *     @type int    $limite Cuántos salen (1-100, por defecto 10).
+	 *     @type string $desde  Y-m-d desde cuándo se cuentan las horas. Vacío = todo el histórico.
+	 * }
+	 * @return array<int, array{miembro: int, nombre: string, horas: float, nivel: string}>
+	 */
+	public static function top( array $args = array() ): array {
+		$args   = wp_parse_args(
+			$args,
+			array(
+				'limite' => 10, 'desde' => ''
+			) 
+		);
+		$limite = max( 1, min( 100, (int) $args['limite'] ) );
+		$desde  = (string) $args['desde'];
+
+		$fichas = get_posts(
+			array(
+				'post_type'      => 'miembro',
+				'post_status'    => 'publish',
+				'posts_per_page' => 500,
+				'fields'         => 'ids',
+			)
+		);
+
+		$filas = array();
+		foreach ( $fichas as $ficha_id ) {
+			$horas = '' === $desde
+				? Voluntariado_Manager::get_horas_aprobadas( (int) $ficha_id )
+				: Voluntariado_Manager::get_horas_aprobadas_desde( (int) $ficha_id, $desde );
+
+			if ( $horas <= 0 ) {
+				continue;
+			}
+
+			$nivel = self::get_level( (float) $horas, self::get_track_for_member( (int) $ficha_id ) );
+
+			$filas[] = array(
+				'miembro' => (int) $ficha_id,
+				'nombre'  => get_the_title( (int) $ficha_id ),
+				'horas'   => (float) $horas,
+				'nivel'   => (string) ( $nivel['name'] ?? $nivel['label'] ?? '' ),
+			);
+		}
+
+		// De más a menos horas; en empate, alfabético (que nadie salga «antes» por casualidad del orden).
+		usort(
+			$filas,
+			static function ( array $a, array $b ): int {
+				return ( $b['horas'] <=> $a['horas'] ) ?: strcoll( $a['nombre'], $b['nombre'] );
+			}
+		);
+
+		return array_slice( $filas, 0, $limite );
+	}
+
+	/**
+	 * Shortcode `[convoca_top_voluntarios]` (issue #31).
+	 *
+	 * Por defecto solo se pinta para quien tiene sesión: un ranking con nombres y horas es información de las
+	 * personas, y lo prudente es que no quede en abierto por descuido. Con `publico="1"` se pinta a todo el
+	 * mundo, que es una decisión de la asociación y no del plugin.
+	 *
+	 * @param array $atts Atributos del shortcode.
+	 * @return string
+	 */
+	public static function shortcode_top( $atts = array() ): string {
+		$atts = shortcode_atts(
+			array(
+				'limite'  => 10,
+				'desde'   => '',
+				'publico' => '0',
+				'titulo'  => __( 'Top voluntarios', 'convoca-members' ),
+			),
+			$atts,
+			'convoca_top_voluntarios'
+		);
+
+		if ( '1' !== (string) $atts['publico'] && ! is_user_logged_in() ) {
+			return '<p class="convoca-top-voluntarios convoca-aviso">'
+				. esc_html__( 'Entra en tu cuenta para ver el ranking de voluntariado.', 'convoca-members' )
+				. '</p>';
+		}
+
+		$filas = self::top(
+			array(
+				'limite' => (int) $atts['limite'], 'desde' => (string) $atts['desde']
+			) 
+		);
+
+		ob_start();
+		?>
+		<div class="convoca-top-voluntarios">
+			<?php if ( '' !== (string) $atts['titulo'] ) : ?>
+				<h3><?php echo esc_html( (string) $atts['titulo'] ); ?></h3>
+			<?php endif; ?>
+
+			<?php if ( empty( $filas ) ) : ?>
+				<p><?php esc_html_e( 'Todavía no hay horas aprobadas que contar.', 'convoca-members' ); ?></p>
+			<?php else : ?>
+				<ol class="convoca-top-voluntarios__lista">
+					<?php foreach ( $filas as $fila ) : ?>
+						<li>
+							<span class="convoca-top-voluntarios__nombre"><?php echo esc_html( $fila['nombre'] ); ?></span>
+							<span class="convoca-top-voluntarios__horas">
+								<?php
+								printf(
+									/* translators: %s: horas aprobadas. */
+									esc_html__( '%s h', 'convoca-members' ),
+									esc_html( number_format_i18n( $fila['horas'], 1 ) )
+								);
+								?>
+							</span>
+							<?php if ( '' !== $fila['nivel'] ) : ?>
+								<span class="convoca-top-voluntarios__nivel"><?php echo esc_html( $fila['nivel'] ); ?></span>
+							<?php endif; ?>
+						</li>
+					<?php endforeach; ?>
+				</ol>
+				<?php if ( '' !== (string) $atts['desde'] ) : ?>
+					<p class="description">
+						<?php
+						printf(
+							/* translators: %s: fecha de inicio del periodo. */
+							esc_html__( 'Horas aprobadas desde el %s.', 'convoca-members' ),
+							esc_html( (string) $atts['desde'] )
+						);
+						?>
+					</p>
+				<?php endif; ?>
+			<?php endif; ?>
+		</div>
+		<?php
+		return (string) ob_get_clean();
 	}
 
 	/**

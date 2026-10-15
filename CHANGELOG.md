@@ -1,3 +1,26 @@
+## [2.8.61] — 2026-10-15
+
+### Añadido
+- **Top de voluntarios (issue #31).** La web prometía «Tracking de Horas: informes, **top voluntarios** y
+  exportación a CSV/PDF» y el top no existía (cero apariciones de `ranking`, `leaderboard` o `top_voluntario`).
+  Ahora hay un ranking por horas aprobadas, con su shortcode `[convoca_top_voluntarios]` (`limite`, `desde`,
+  `publico`, `titulo`).
+  - Cuenta **las mismas horas que la renovación** (`Voluntariado_Manager::get_horas_aprobadas_desde()`), no el
+    agregado heredado: si el ranking y la renovación usaran fuentes distintas, dirían cosas distintas del mismo
+    voluntariado.
+  - Ordena de más a menos horas y, en empate, **alfabético**: nadie sale antes por casualidad del orden en que
+    la consulta devuelva las fichas. El límite tiene techo (100).
+  - **Prudente por defecto**: el ranking solo se pinta para quien tiene sesión, porque son nombres y horas de
+    personas. Con `publico="1"` se enseña a todo el mundo, que es una decisión de la asociación y no del
+    plugin.
+
+### Pruebas
+- `tests/Unit/TopVoluntariosTest.php`: que la fuente de horas sea la de la renovación (y no el agregado), el
+  orden y el desempate, el techo del límite, el shortcode enganchado y su defecto prudente —y, de verdad, que
+  **sin sesión no sale ni un nombre**—. **Negativos probados**: invirtiendo el orden cae una prueba, y dejando
+  el ranking abierto por defecto caen dos.
+- Suite 271 en verde, PHPCS 0, PHPStan `[OK]`.
+
 ## [2.8.60] — 2026-10-15
 
 ### Añadido
