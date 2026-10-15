@@ -88,8 +88,14 @@ jobs:
       - name: Run integration tests
         run: vendor/bin/phpunit --testsuite integration
 
+  # Este trabajo descarga `plugin-check` de wordpress.org EN CADA EJECUCIÓN (lo hace la acción oficial, no
+  # este repositorio). Cuando wp.org tiene un hipo, el trabajo se pone rojo con el mismo código que el commit
+  # anterior en verde — y el veredicto del CI deja de hablar del repositorio. El nombre lo dice para que nadie
+  # tenga que abrir el log: issue #11, con las dos salidas posibles (versión fijada y cacheada, o declararlo
+  # informativo). NO se pone `continue-on-error` para que quede verde: un verde que no valida nada es peor que
+  # un rojo que dice la verdad.
   plugin-check:
-    name: Plugin Check (PCP)
+    name: Plugin Check (PCP · depende de wordpress.org)
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
