@@ -304,6 +304,31 @@ class Mi_Area {
 				<div>
 					<h1>¡Hola, <span><?php echo esc_html( $post->post_title ); ?></span>!</h1>
 					<p class="subtitle"><?php esc_html_e( 'Bienvenido a tu panel de socio de Convoca.', 'convoca-members' ); ?></p>
+					<?php
+					// Qué es esta persona y qué le supone (issue #30). Va en servidor: es lo primero que ve
+					// al entrar y no depende de que el JS del panel cargue.
+					$conv_condiciones = Roles_Miembro::roles( $member_id );
+					if ( $conv_condiciones ) :
+						$conv_etiquetas = array();
+						foreach ( $conv_condiciones as $conv_rol ) {
+							$conv_etiquetas[] = Roles_Miembro::etiqueta( $conv_rol );
+						}
+						?>
+						<p class="conv-condiciones">
+							<?php
+							printf(
+								/* translators: %s: condiciones de la ficha (Socio, Voluntario, Monitor). */
+								esc_html__( 'Tu ficha: %s', 'convoca-members' ),
+								esc_html( implode( ' · ', $conv_etiquetas ) )
+							);
+							if ( in_array( Roles_Miembro::SOCIO, $conv_condiciones, true ) ) {
+								echo ' — ' . esc_html__( 'tus inscripciones van con tarifa de socio.', 'convoca-members' );
+							}
+							?>
+						</p>
+						<?php
+					endif;
+					?>
 				</div>
 				<button id="conv-logout-btn" type="button" class="btn-link"><?php esc_html_e( 'Cerrar sesión', 'convoca-members' ); ?></button>
 			</header>

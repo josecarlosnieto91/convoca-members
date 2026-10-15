@@ -157,6 +157,28 @@ final class Roles_Miembro {
 	}
 
 	/**
+	 * Etiqueta legible de una condición, traducida.
+	 *
+	 * Vive aquí y no en cada pantalla que la pinta: el listado de socios y el panel del socio tienen que
+	 * decir lo mismo de la misma condición.
+	 *
+	 * @param string $rol Condición (`socio`, `voluntario` o `monitor`).
+	 * @return string
+	 */
+	public static function etiqueta( string $rol ): string {
+		switch ( $rol ) {
+			case self::SOCIO:
+				return __( 'Socio', 'convoca-members' );
+			case self::VOLUNTARIO:
+				return __( 'Voluntario', 'convoca-members' );
+			case self::MONITOR:
+				return __( 'Monitor', 'convoca-members' );
+			default:
+				return $rol;
+		}
+	}
+
+	/**
 	 * ¿Es monitor de actividad?
 	 *
 	 * @param int $miembro_id ID de la ficha.

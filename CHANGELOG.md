@@ -1,3 +1,18 @@
+## [2.8.57] — 2026-10-15
+
+### Añadido
+- **El panel del socio dice qué es y qué le supone (fase 3 de #30).** En la cabecera, en servidor —es lo
+  primero que ve al entrar y no depende de que cargue el JavaScript—: sus condiciones («Tu ficha: Socio ·
+  Voluntario») y, si es socio, que **sus inscripciones van con tarifa de socio**. El descuento deja de ser
+  algo que hay que creerse.
+- **Un solo sitio para las etiquetas.** `Roles_Miembro::etiqueta()` es la única que traduce las condiciones, y
+  el listado de socios delega en ella: así el listado y el panel no pueden decir cosas distintas de la misma
+  ficha.
+
+### Pruebas
+- `RolSocioMonitorTest`: las tres etiquetas y que una condición desconocida se devuelve tal cual. Suite 250
+  en verde, PHPCS 0, PHPStan `[OK]`.
+
 ## [2.8.56] — 2026-10-15
 
 ### Arreglado

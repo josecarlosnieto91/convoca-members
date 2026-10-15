@@ -135,4 +135,12 @@ class RolSocioMonitorTest extends TestCase {
 		$this->assertNotContains( 'voluntario_aprobado', $user->roles );
 		$this->assertSame( '0', (string) \get_post_meta( self::ID, '_convoca_es_voluntario', true ), 'Quitar deja marca explícita' );
 	}
+
+	public function test_las_etiquetas_son_las_mismas_en_todas_las_pantallas(): void {
+		// El listado de socios y el panel del socio delegan aquí: una condición, una etiqueta.
+		$this->assertSame( 'Socio', Roles_Miembro::etiqueta( Roles_Miembro::SOCIO ) );
+		$this->assertSame( 'Voluntario', Roles_Miembro::etiqueta( Roles_Miembro::VOLUNTARIO ) );
+		$this->assertSame( 'Monitor', Roles_Miembro::etiqueta( Roles_Miembro::MONITOR ) );
+		$this->assertSame( 'presidente', Roles_Miembro::etiqueta( 'presidente' ) );
+	}
 }

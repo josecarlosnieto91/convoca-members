@@ -524,20 +524,14 @@ class Admin_List extends \WP_List_Table {
 	/**
 	 * Etiqueta legible de una condición de la ficha.
 	 *
+	 * Delega en `Roles_Miembro` para que el listado y el panel del socio no puedan decir cosas distintas
+	 * de la misma condición.
+	 *
 	 * @param string $rol Condición (`socio`, `voluntario` o `monitor`).
 	 * @return string
 	 */
 	public static function etiqueta_rol( $rol ): string {
-		switch ( (string) $rol ) {
-			case Roles_Miembro::SOCIO:
-				return __( 'Socio', 'convoca-members' );
-			case Roles_Miembro::VOLUNTARIO:
-				return __( 'Voluntario', 'convoca-members' );
-			case Roles_Miembro::MONITOR:
-				return __( 'Monitor', 'convoca-members' );
-			default:
-				return (string) $rol;
-		}
+		return Roles_Miembro::etiqueta( (string) $rol );
 	}
 
 	public function column_estado( $item ): string {
