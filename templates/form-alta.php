@@ -68,15 +68,15 @@ if ( $convoca_sin_js ) :
 endif;
 ?>
 
-<div id="convoca-form-alta" class="convoca-form" role="region" aria-label="Formulario de alta de socio/a">
+<div id="convoca-form-alta" class="convoca-form" role="region" aria-label="<?php esc_attr_e( 'Formulario de alta de socio/a', 'convoca-members' ); ?>">
 
 	<!-- Step indicator -->
-	<div class="conv-step-indicator" role="progressbar" aria-label="Progreso del formulario" aria-valuenow="1"
+	<div class="conv-step-indicator" role="progressbar" aria-label="<?php esc_attr_e( 'Progreso del formulario', 'convoca-members' ); ?>" aria-valuenow="1"
 		aria-valuemin="1" aria-valuemax="4">
-		<div class="conv-step-dot active" data-step="1" aria-label="Paso 1: Plan">1</div>
-		<div class="conv-step-dot" data-step="2" aria-label="Paso 2: Datos personales">2</div>
-		<div class="conv-step-dot" data-step="3" aria-label="Paso 3: Forma de pago">3</div>
-		<div class="conv-step-dot" data-step="4" aria-label="Paso 4: Resumen">4</div>
+		<div class="conv-step-dot active" data-step="1" aria-label="<?php esc_attr_e( 'Paso 1: Plan', 'convoca-members' ); ?>">1</div>
+		<div class="conv-step-dot" data-step="2" aria-label="<?php esc_attr_e( 'Paso 2: Datos personales', 'convoca-members' ); ?>">2</div>
+		<div class="conv-step-dot" data-step="3" aria-label="<?php esc_attr_e( 'Paso 3: Forma de pago', 'convoca-members' ); ?>">3</div>
+		<div class="conv-step-dot" data-step="4" aria-label="<?php esc_attr_e( 'Paso 4: Resumen', 'convoca-members' ); ?>">4</div>
 	</div>
 
 	<!-- Alert container -->
@@ -103,8 +103,8 @@ endif;
 
 		<!-- ═══ STEP 1: Plan ═══ -->
 		<div class="conv-form-step active" data-step="1">
-			<h2>Paso 1 — Elige tu forma de colaborar</h2>
-			<p>Todas las cuotas se abonan anualmente. Con horas de voluntariado puedes renovar sin pagar a partir del segundo año.</p>
+			<h2><?php esc_html_e( 'Paso 1 — Elige tu forma de colaborar', 'convoca-members' ); ?></h2>
+			<p><?php esc_html_e( 'Todas las cuotas se abonan anualmente. Con horas de voluntariado puedes renovar sin pagar a partir del segundo año.', 'convoca-members' ); ?></p>
 
 			<?php
 			$all_plans      = \Convoca\Members\CPT_Miembro::get_plans();
@@ -116,14 +116,14 @@ endif;
 			$has_juvenil    = ! empty( $juvenil_plans );
 			?>
 
-			<div class="conv-plan-grid" role="radiogroup" aria-label="Planes de colaboración">
+			<div class="conv-plan-grid" role="radiogroup" aria-label="<?php esc_attr_e( 'Planes de colaboración', 'convoca-members' ); ?>">
 				<?php foreach ( $main_plans as $slug => $plan ) : ?>
 					<label class="conv-plan-option">
 						<input type="radio" name="plan" value="<?php echo esc_attr( $slug ); ?>" required>
 						<div class="conv-plan-label">
-							<h3><?php echo esc_html( $plan['label'] ); ?></h4>
+							<h3><?php echo esc_html( $plan['label'] ); ?></h3>
 							<div class="conv-price"><?php echo (int) $plan['price']; ?>€</div>
-							<span class="conv-alt">· <?php echo (float) $plan['hours']; ?>h para renovar sin pagar</span>
+							<span class="conv-alt"><?php /* translators: %s son las horas de voluntariado del plan. */ echo esc_html( sprintf( __( '· %sh para renovar sin pagar', 'convoca-members' ), (float) $plan['hours'] ) ); ?></span>
 						</div>
 					</label>
 				<?php endforeach; ?>
@@ -132,11 +132,10 @@ endif;
 				<label class="conv-plan-option">
 					<input type="radio" name="plan" value="familiar">
 					<div class="conv-plan-label">
-						<h3>👨‍👩‍👧‍👦 Familiar</h4>
-						<div class="conv-price">Desde <?php echo (int) min( array_column( $familiar_plans, 'price' ) ); ?>€
+						<h3>👨‍👩‍👧‍👦 <?php esc_html_e( 'Familiar', 'convoca-members' ); ?></h3>
+						<div class="conv-price"><?php /* translators: %d es el precio en euros del plan más barato de la modalidad. */ echo esc_html( sprintf( __( 'Desde %d€', 'convoca-members' ), (int) min( array_column( $familiar_plans, 'price' ) ) ) ); ?>
 						</div>
-						<span class="conv-alt">ó desde
-							<?php echo (float) min( array_column( $familiar_plans, 'hours' ) ); ?>h</span>
+						<span class="conv-alt"><?php /* translators: %s son las horas del plan familiar más barato. */ echo esc_html( sprintf( __( 'ó desde %sh', 'convoca-members' ), (float) min( array_column( $familiar_plans, 'hours' ) ) ) ); ?></span>
 					</div>
 				</label>
 				<?php endif; ?>
@@ -144,11 +143,10 @@ endif;
 				<label class="conv-plan-option">
 					<input type="radio" name="plan" value="juvenil">
 					<div class="conv-plan-label">
-						<h3>🚀 Juvenil</h4>
-						<div class="conv-price">Desde <?php echo (int) min( array_column( $juvenil_plans, 'price' ) ); ?>€
+						<h3>🚀 <?php esc_html_e( 'Juvenil', 'convoca-members' ); ?></h3>
+						<div class="conv-price"><?php /* translators: %d es el precio en euros del plan más barato de la modalidad. */ echo esc_html( sprintf( __( 'Desde %d€', 'convoca-members' ), (int) min( array_column( $juvenil_plans, 'price' ) ) ) ); ?>
 						</div>
-						<span class="conv-alt">ó desde <?php echo (float) min( array_column( $juvenil_plans, 'hours' ) ); ?>h
-							(14–30 años)</span>
+						<span class="conv-alt"><?php /* translators: %s son las horas del plan juvenil más barato. */ echo esc_html( sprintf( __( 'ó desde %sh (14–30 años)', 'convoca-members' ), (float) min( array_column( $juvenil_plans, 'hours' ) ) ) ); ?></span>
 					</div>
 				</label>
 				<?php endif; ?>
@@ -156,137 +154,152 @@ endif;
 
 			<!-- Sub-plans: Familiar -->
 			<div id="conv-sub-familiar" class="conv-sub-plan" style="display:none" role="radiogroup"
-				aria-label="Modalidad familiar">
-				<p><strong>Elige la modalidad familiar:</strong></p>
+				aria-label="<?php esc_attr_e( 'Modalidad familiar', 'convoca-members' ); ?>">
+				<p><strong><?php esc_html_e( 'Elige la modalidad familiar:', 'convoca-members' ); ?></strong></p>
 				<?php foreach ( $familiar_plans as $slug => $plan ) : ?>
 					<label><input type="radio" name="sub_plan" value="<?php echo esc_attr( $slug ); ?>">
-						<?php echo esc_html( $plan['label'] ); ?> — <?php echo (int) $plan['price']; ?>€ ó
-						<?php echo (float) $plan['hours']; ?>h</label>
+						<?php
+						printf(
+							/* translators: %1$s es el nombre del plan, %2$d el precio en euros y %3$s las horas. */
+							esc_html__( '%1$s — %2$d€ ó %3$sh', 'convoca-members' ),
+							esc_html( $plan['label'] ),
+							(int) $plan['price'],
+							(float) $plan['hours']
+						);
+						?>
+						</label>
 				<?php endforeach; ?>
 			</div>
 
 			<!-- Sub-plans: Juvenil -->
 			<div id="conv-sub-juvenil" class="conv-sub-plan" style="display:none" role="radiogroup"
-				aria-label="Modalidad juvenil">
-				<p><strong>Elige la modalidad juvenil:</strong></p>
+				aria-label="<?php esc_attr_e( 'Modalidad juvenil', 'convoca-members' ); ?>">
+				<p><strong><?php esc_html_e( 'Elige la modalidad juvenil:', 'convoca-members' ); ?></strong></p>
 				<?php foreach ( $juvenil_plans as $slug => $plan ) : ?>
 					<label><input type="radio" name="sub_plan" value="<?php echo esc_attr( $slug ); ?>">
-						<?php echo esc_html( $plan['label'] ); ?> — <?php echo (int) $plan['price']; ?>€ ó
-						<?php echo (float) $plan['hours']; ?>h</label>
+						<?php
+						printf(
+							/* translators: %1$s es el nombre del plan, %2$d el precio en euros y %3$s las horas. */
+							esc_html__( '%1$s — %2$d€ ó %3$sh', 'convoca-members' ),
+							esc_html( $plan['label'] ),
+							(int) $plan['price'],
+							(float) $plan['hours']
+						);
+						?>
+						</label>
 				<?php endforeach; ?>
 			</div>
 
 			<!-- Advantages box (from static web) -->
 			<div id="conv-advantages" class="conv-advantages" style="display:none">
-				<p>Ventajas de tu plan:</p>
+				<p><?php esc_html_e( 'Ventajas de tu plan:', 'convoca-members' ); ?></p>
 				<ul id="conv-advantages-list"></ul>
 			</div>
 
 			<div class="conv-form-nav">
 				<span></span>
-				<button type="button" class="convoca-btn convoca-btn-primary conv-next" data-next="2">Siguiente →</button>
+				<button type="button" class="convoca-btn convoca-btn-primary conv-next" data-next="2"><?php esc_html_e( 'Siguiente →', 'convoca-members' ); ?></button>
 			</div>
 		</div>
 
 		<!-- ═══ STEP 2: Personal Data ═══ -->
 		<div class="conv-form-step" data-step="2">
-			<h2>Paso 2 — Tus datos personales</h2>
+			<h2><?php esc_html_e( 'Paso 2 — Tus datos personales', 'convoca-members' ); ?></h2>
 
 			<div class="convoca-grid-2">
 				<div class="convoca-field">
-					<label for="conv-nombre">Nombre completo *</label>
-					<input type="text" id="conv-nombre" name="nombre" placeholder="Nombre y apellidos" required
+					<label for="conv-nombre"><?php esc_html_e( 'Nombre completo *', 'convoca-members' ); ?></label>
+					<input type="text" id="conv-nombre" name="nombre" placeholder="<?php esc_attr_e( 'Nombre y apellidos', 'convoca-members' ); ?>" required
 						autocomplete="name">
-					<span class="convoca-error-msg">Este campo es obligatorio.</span>
+					<span class="convoca-error-msg"><?php esc_html_e( 'Este campo es obligatorio.', 'convoca-members' ); ?></span>
 				</div>
 				<div class="convoca-field">
-					<label for="conv-dni">DNI / NIE *</label>
+					<label for="conv-dni"><?php esc_html_e( 'DNI / NIE *', 'convoca-members' ); ?></label>
 					<input type="text" id="conv-dni" name="dni" placeholder="12345678A" required
 						pattern="([0-9]{8}[A-Za-z]|[XYZxyz][0-9]{7}[A-Za-z])">
-					<span class="convoca-error-msg">Introduce un DNI o NIE válido.</span>
+					<span class="convoca-error-msg"><?php esc_html_e( 'Introduce un DNI o NIE válido.', 'convoca-members' ); ?></span>
 				</div>
 			</div>
 
 			<div class="convoca-grid-2">
 				<div class="convoca-field">
-					<label for="conv-fechanac">Fecha de nacimiento *</label>
+					<label for="conv-fechanac"><?php esc_html_e( 'Fecha de nacimiento *', 'convoca-members' ); ?></label>
 					<input type="date" id="conv-fechanac" name="fecha_nacimiento" required>
-					<span class="convoca-error-msg">Introduce tu fecha de nacimiento.</span>
+					<span class="convoca-error-msg"><?php esc_html_e( 'Introduce tu fecha de nacimiento.', 'convoca-members' ); ?></span>
 					<span id="conv-age-badge" class="conv-age-badge" style="display:none"></span>
 				</div>
 				<div class="convoca-field">
-					<label for="conv-email">Correo electrónico *</label>
-					<input type="email" id="conv-email" name="email" placeholder="tu@correo.com" required
+					<label for="conv-email"><?php esc_html_e( 'Correo electrónico *', 'convoca-members' ); ?></label>
+					<input type="email" id="conv-email" name="email" placeholder="<?php esc_attr_e( 'tu@correo.com', 'convoca-members' ); ?>" required
 						autocomplete="email">
-					<span class="convoca-error-msg">Introduce un email válido.</span>
+					<span class="convoca-error-msg"><?php esc_html_e( 'Introduce un email válido.', 'convoca-members' ); ?></span>
 				</div>
 			</div>
 
 			<div class="convoca-grid-2">
 				<div class="convoca-field">
-					<label for="conv-telefono">Teléfono *</label>
+					<label for="conv-telefono"><?php esc_html_e( 'Teléfono *', 'convoca-members' ); ?></label>
 					<input type="tel" id="conv-telefono" name="telefono" placeholder="600 000 000" required
 						autocomplete="tel">
-					<span class="convoca-error-msg">Introduce tu número de teléfono.</span>
+					<span class="convoca-error-msg"><?php esc_html_e( 'Introduce tu número de teléfono.', 'convoca-members' ); ?></span>
 				</div>
 				<div class="convoca-field">
-					<label for="conv-whatsapp">¿Tu teléfono tiene WhatsApp?</label>
+					<label for="conv-whatsapp"><?php esc_html_e( '¿Tu teléfono tiene WhatsApp?', 'convoca-members' ); ?></label>
 					<select id="conv-whatsapp" name="whatsapp">
-						<option value="si">Sí</option>
-						<option value="no">No</option>
+						<option value="si"><?php esc_html_e( 'Sí', 'convoca-members' ); ?></option>
+						<option value="no"><?php esc_html_e( 'No', 'convoca-members' ); ?></option>
 					</select>
 				</div>
 			</div>
 
 			<div class="convoca-field">
-				<label for="conv-direccion">Dirección postal *</label>
-				<input type="text" id="conv-direccion" name="direccion" placeholder="Calle, número, piso" required
+				<label for="conv-direccion"><?php esc_html_e( 'Dirección postal *', 'convoca-members' ); ?></label>
+				<input type="text" id="conv-direccion" name="direccion" placeholder="<?php esc_attr_e( 'Calle, número, piso', 'convoca-members' ); ?>" required
 					autocomplete="street-address">
-				<span class="convoca-error-msg">Introduce tu dirección.</span>
+				<span class="convoca-error-msg"><?php esc_html_e( 'Introduce tu dirección.', 'convoca-members' ); ?></span>
 			</div>
 
 			<div class="convoca-grid-2">
 				<div class="convoca-field">
-					<label for="conv-municipio">Municipio / Localidad *</label>
-					<input type="text" id="conv-municipio" name="municipio" placeholder="Ej: Oviedo" required>
-					<span class="convoca-error-msg">Introduce tu municipio.</span>
+					<label for="conv-municipio"><?php esc_html_e( 'Municipio / Localidad *', 'convoca-members' ); ?></label>
+					<input type="text" id="conv-municipio" name="municipio" placeholder="<?php esc_attr_e( 'Ej: Oviedo', 'convoca-members' ); ?>" required>
+					<span class="convoca-error-msg"><?php esc_html_e( 'Introduce tu municipio.', 'convoca-members' ); ?></span>
 				</div>
 				<div class="convoca-field">
-					<label for="conv-canal">Canal de contacto preferente</label>
+					<label for="conv-canal"><?php esc_html_e( 'Canal de contacto preferente', 'convoca-members' ); ?></label>
 					<select id="conv-canal" name="canal_contacto">
-						<option value="whatsapp">WhatsApp</option>
-						<option value="email">Email</option>
-						<option value="telefono">Teléfono</option>
+						<option value="whatsapp"><?php esc_html_e( 'WhatsApp', 'convoca-members' ); ?></option>
+						<option value="email"><?php esc_html_e( 'Email', 'convoca-members' ); ?></option>
+						<option value="telefono"><?php esc_html_e( 'Teléfono', 'convoca-members' ); ?></option>
 					</select>
 				</div>
 			</div>
 
 			<!-- Minor notice (hidden until age < 18) -->
 			<div id="conv-minor" class="convoca-box-warning" style="display:none">
-				<strong>⚠️ Al ser menor de edad, necesitas autorización de tu tutor/a legal.</strong>
+				<strong><?php esc_html_e( '⚠️ Al ser menor de edad, necesitas autorización de tu tutor/a legal.', 'convoca-members' ); ?></strong>
 				<div class="convoca-grid-2 convoca-mt-small">
 					<div class="convoca-field">
-						<label for="conv-tutor-nombre">Nombre del tutor/a legal *</label>
+						<label for="conv-tutor-nombre"><?php esc_html_e( 'Nombre del tutor/a legal *', 'convoca-members' ); ?></label>
 						<input type="text" id="conv-tutor-nombre" name="tutor_nombre">
 					</div>
 					<div class="convoca-field">
-						<label for="conv-tutor-dni">DNI del tutor/a *</label>
+						<label for="conv-tutor-dni"><?php esc_html_e( 'DNI del tutor/a *', 'convoca-members' ); ?></label>
 						<input type="text" id="conv-tutor-dni" name="tutor_dni">
 					</div>
 				</div>
 			</div>
 
 			<div class="conv-form-nav">
-				<button type="button" class="convoca-btn convoca-btn-outline conv-prev" data-prev="1">← Atrás</button>
-				<button type="button" class="convoca-btn convoca-btn-primary conv-next" data-next="3">Siguiente →</button>
+				<button type="button" class="convoca-btn convoca-btn-outline conv-prev" data-prev="1"><?php esc_html_e( '← Atrás', 'convoca-members' ); ?></button>
+				<button type="button" class="convoca-btn convoca-btn-primary conv-next" data-next="3"><?php esc_html_e( 'Siguiente →', 'convoca-members' ); ?></button>
 			</div>
 		</div>
 
 		<!-- ═══ STEP 3: Payment + RGPD ═══ -->
 		<div class="conv-form-step" data-step="3">
-			<h2>Paso 3 — Tu cuota</h2>
-			<p>La cuota del primer año se abona siempre: es lo que te hace socio/a. Si además te comprometes a
-				hacer horas de voluntariado, a partir del año que viene podrás renovar sin pagar.</p>
+			<h2><?php esc_html_e( 'Paso 3 — Tu cuota', 'convoca-members' ); ?></h2>
+			<p><?php esc_html_e( 'La cuota del primer año se abona siempre: es lo que te hace socio/a. Si además te comprometes a hacer horas de voluntariado, a partir del año que viene podrás renovar sin pagar.', 'convoca-members' ); ?></p>
 
 			<!-- El modo económico es el único camino del alta: los métodos de pago van
 			siempre visibles (antes quedaban ocultos y el alta no se podía terminar). El
@@ -294,27 +307,27 @@ endif;
 			<input type="radio" name="payment_mode_ui" value="economic" checked style="display:none">
 
 			<div id="conv-economic-options" class="convoca-mt-medium">
-				<p><strong>Selecciona el método de pago:</strong></p>
-				<div class="convoca-grid-3" role="radiogroup" aria-label="Método de pago">
+				<p><strong><?php esc_html_e( 'Selecciona el método de pago:', 'convoca-members' ); ?></strong></p>
+				<div class="convoca-grid-3" role="radiogroup" aria-label="<?php esc_attr_e( 'Método de pago', 'convoca-members' ); ?>">
 					<!-- Tarjeta -->
 					<label class="conv-plan-option conv-radio-card" data-method="tarjeta">
 						<input type="radio" name="forma_pago" value="tarjeta">
 						<div class="conv-plan-label">
-							<h3>💳 Tarjeta</h4>
+							<h3><?php esc_html_e( '💳 Tarjeta', 'convoca-members' ); ?></h4>
 						</div>
 					</label>
 					<!-- Bizum -->
 					<label class="conv-plan-option conv-radio-card" data-method="bizum">
 						<input type="radio" name="forma_pago" value="bizum">
 						<div class="conv-plan-label">
-							<h3>📱 Bizum</h4>
+							<h3><?php esc_html_e( '📱 Bizum', 'convoca-members' ); ?></h4>
 						</div>
 					</label>
 					<!-- Transferencia -->
 					<label class="conv-plan-option conv-radio-card" data-method="transferencia">
 						<input type="radio" name="forma_pago" value="transferencia">
 						<div class="conv-plan-label">
-							<h3>🏦 Transf.</h4>
+							<h3><?php esc_html_e( '🏦 Transf.', 'convoca-members' ); ?></h4>
 						</div>
 					</label>
 				</div>
@@ -324,8 +337,8 @@ endif;
 					<label class="convoca-checkbox-box">
 						<input type="checkbox" name="pago_recurrente" value="1">
 						<span>
-							<strong>¿Deseas activar la renovación automática anual?</strong><br>
-							<small class="convoca-small">Te enviaremos el enlace de pago directo cuando tu cuota esté cerca de caducar para que no tengas que preocuparte.</small>
+							<strong><?php esc_html_e( '¿Deseas activar la renovación automática anual?', 'convoca-members' ); ?></strong><br>
+							<small class="convoca-small"><?php esc_html_e( 'Te enviaremos el enlace de pago directo cuando tu cuota esté cerca de caducar para que no tengas que preocuparte.', 'convoca-members' ); ?></small>
 						</span>
 					</label>
 				</div>
@@ -333,19 +346,26 @@ endif;
 
 			<!-- Transfer Details (IBAN) -->
 			<div id="conv-transfer-details" class="convoca-box" style="display:none;">
-				<h3 style="margin-top:0">Pago por transferencia bancaria</h4>
-				<p>Al confirmar tu alta te llevaremos a la pasarela de pago. Allí eliges el método (tarjeta, Bizum o transferencia); si eliges transferencia, verás el IBAN y el concepto que debes indicar.</p>
-				<p>Podrás adjuntar el justificante directamente en esa página para que validemos tu alta lo antes posible.</p>
+				<h3 style="margin-top:0"><?php esc_html_e( 'Pago por transferencia bancaria', 'convoca-members' ); ?></h4>
+				<p><?php esc_html_e( 'Al confirmar tu alta te llevaremos a la pasarela de pago. Allí eliges el método (tarjeta, Bizum o transferencia); si eliges transferencia, verás el IBAN y el concepto que debes indicar.', 'convoca-members' ); ?></p>
+				<p><?php esc_html_e( 'Podrás adjuntar el justificante directamente en esa página para que validemos tu alta lo antes posible.', 'convoca-members' ); ?></p>
 			</div>
 
 			<!-- Payment info (TPV redirect) -->
 			<div id="conv-payment-upload" style="display:none">
 				<div class="convoca-box convoca-text-center">
-					<p style="font-size:1rem;margin-bottom:.5rem">🔒 <strong>Pago seguro por pasarela bancaria</strong>
+					<p style="font-size:1rem;margin-bottom:.5rem">🔒 <strong><?php esc_html_e( 'Pago seguro por pasarela bancaria', 'convoca-members' ); ?></strong>
 					</p>
-					<p style="font-size:.9rem;color:#555;margin:0">Al confirmar tu alta serás redirigido/a a la pasarela
-						de pago seguro (Redsys) donde podrás pagar con <strong>tarjeta</strong> o <strong>Bizum de
-							comercio</strong>.</p>
+					<p style="font-size:.9rem;color:#555;margin:0">
+					<?php
+					printf(
+						/* translators: %1$s y %2$s son los métodos de pago, en negrita. */
+						esc_html__( 'Al confirmar tu alta serás redirigido/a a la pasarela de pago seguro (Redsys) donde podrás pagar con %1$s o %2$s.', 'convoca-members' ),
+						'<strong>' . esc_html__( 'tarjeta', 'convoca-members' ) . '</strong>',
+						'<strong>' . esc_html__( 'Bizum de comercio', 'convoca-members' ) . '</strong>'
+					);
+					?>
+					</p>
 				</div>
 			</div>
 
@@ -353,144 +373,161 @@ endif;
 			habilita la renovación por horas a partir del segundo ciclo. -->
 			<div id="conv-volunteer-agreement" class="convoca-box">
 				<div class="convoca-field">
-					<p class="convoca-small"><strong>Voluntariado (opcional).</strong> Si te comprometes a cumplir las
-						horas de tu plan durante el próximo año, podrás renovar sin pagar la cuota. Aceptas el
-						<?php
-						// Sin enlace si el ajuste está vacío (antes salía un `href=""` que no llevaba a
-						// ninguna parte) y sin URLs de documentos hardcodeadas en la plantilla: son
-						// ajustes del panel (issues convoca-members#12 y del recorrido a ciegas).
-						echo \Convoca\Members\Identidad::enlace_documento( 'Código Ético', \Convoca\Members\Identidad::OPCION_DOC_ETICO ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- ya viene escapado del ayudante.
-						?>
-						y el
-						<?php
-						echo \Convoca\Members\Identidad::enlace_documento( 'Programa de Voluntariado', \Convoca\Members\Identidad::OPCION_DOC_VOLUNTARIADO ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- ya viene escapado del ayudante.
-						?>
-						.
+					<p class="convoca-small">
+					<?php
+					// Sin enlace si el ajuste está vacío (antes salía un `href=""` que no llevaba a
+					// ninguna parte) y sin URLs de documentos hardcodeadas en la plantilla: son ajustes
+					// del panel (issues convoca-members#12 y del recorrido a ciegas). El texto va entero,
+					// con marcadores, para que la traducción no haya que trocearla.
+					printf(
+						/* translators: %1$s y %2$s son los enlaces a los documentos; %3$s y %4$s abren y cierran la negrita. */
+						esc_html__( '%3$sVoluntariado (opcional).%4$s Si te comprometes a cumplir las horas de tu plan durante el próximo año, podrás renovar sin pagar la cuota. Aceptas el %1$s y el %2$s.', 'convoca-members' ),
+						\Convoca\Members\Identidad::enlace_documento( __( 'Código Ético', 'convoca-members' ), \Convoca\Members\Identidad::OPCION_DOC_ETICO ),
+						\Convoca\Members\Identidad::enlace_documento( __( 'Programa de Voluntariado', 'convoca-members' ), \Convoca\Members\Identidad::OPCION_DOC_VOLUNTARIADO ),
+						'<strong>',
+						'</strong>'
+					);
+					?>
 					</p>
 					<div class="convoca-check-group">
 						<input type="checkbox" id="conv-acuerdo-vol" name="acuerdo_voluntariado">
-						<label for="conv-acuerdo-vol">Me comprometo a hacer las horas de voluntariado de mi plan.<br>
-							<small>La asociación revisará tu solicitud y te aprobará como voluntario/a; con las horas
-								aprobadas podrás renovar el próximo año sin cuota.</small></label>
+						<label for="conv-acuerdo-vol"><?php esc_html_e( 'Me comprometo a hacer las horas de voluntariado de mi plan.', 'convoca-members' ); ?><br>
+							<small><?php esc_html_e( 'La asociación revisará tu solicitud y te aprobará como voluntario/a; con las horas aprobadas podrás renovar el próximo año sin cuota.', 'convoca-members' ); ?></small></label>
 					</div>
 				</div>
 			</div>
 
 			<div class="convoca-margin-y">
-				<h3>Protección de datos</h3>
+				<h3><?php esc_html_e( 'Protección de datos', 'convoca-members' ); ?></h3>
 				<div class="convoca-check-group">
 					<input type="checkbox" id="conv-rgpd" name="rgpd" required>
-					<label for="conv-rgpd">He leído y acepto la <a
-							href="<?php echo esc_url( home_url( '/politica-de-privacidad/' ) ); ?>" target="_blank"
-							rel="noopener">Política de Privacidad</a> y el tratamiento de mis datos personales conforme
-						al RGPD. Mis datos serán incluidos en el libro de socios de la Asociación. *</label>
+					<label for="conv-rgpd">
+					<?php
+					printf(
+						/* translators: %s es el enlace a la política de privacidad. */
+						esc_html__( 'He leído y acepto la %s y el tratamiento de mis datos personales conforme al RGPD. Mis datos serán incluidos en el libro de socios de la Asociación. *', 'convoca-members' ),
+						sprintf(
+							'<a href="%s" target="_blank" rel="noopener">%s</a>',
+							esc_url( home_url( '/politica-de-privacidad/' ) ),
+							esc_html__( 'Política de Privacidad', 'convoca-members' )
+						)
+					);
+					?>
+					</label>
 				</div>
 				<div class="convoca-check-group">
 					<input type="checkbox" id="conv-comunicaciones" name="comunicaciones">
-					<label for="conv-comunicaciones">Autorizo a <?php echo esc_html( \Convoca\Members\Identidad::nombre_entidad() ); ?> a enviarme comunicaciones sobre actividades,
-						proyectos y noticias relevantes.</label>
+					<label for="conv-comunicaciones">
+					<?php
+					printf(
+						/* translators: %s es el nombre de la entidad. */
+						esc_html__( 'Autorizo a %s a enviarme comunicaciones sobre actividades, proyectos y noticias relevantes.', 'convoca-members' ),
+						esc_html( \Convoca\Members\Identidad::nombre_entidad() )
+					);
+					?>
+					</label>
 				</div>
 			</div>
 
 			<div class="conv-form-nav">
-				<button type="button" class="convoca-btn convoca-btn-outline conv-prev" data-prev="2">← Atrás</button>
-				<button type="button" class="convoca-btn convoca-btn-primary conv-next" data-next="4">Revisar y confirmar →</button>
+				<button type="button" class="convoca-btn convoca-btn-outline conv-prev" data-prev="2"><?php esc_html_e( '← Atrás', 'convoca-members' ); ?></button>
+				<button type="button" class="convoca-btn convoca-btn-primary conv-next" data-next="4"><?php esc_html_e( 'Revisar y confirmar →', 'convoca-members' ); ?></button>
 			</div>
 		</div>
 
 		<!-- ═══ STEP 4: Summary ═══ -->
 		<div class="conv-form-step" data-step="4">
-			<h2>Paso 4 — Revisa tu alta</h2>
-			<p>Verifica que todo esté bien antes de confirmar.</p>
+			<h2><?php esc_html_e( 'Paso 4 — Revisa tu alta', 'convoca-members' ); ?></h2>
+			<p><?php esc_html_e( 'Verifica que todo esté bien antes de confirmar.', 'convoca-members' ); ?></p>
 
 			<table class="conv-summary-table">
 				<tr>
-					<td>Nombre completo</td>
+					<td><?php esc_html_e( 'Nombre completo', 'convoca-members' ); ?></td>
 					<td id="conv-sum-nombre">—</td>
 				</tr>
 				<tr>
-					<td>DNI / NIE</td>
+					<td><?php esc_html_e( 'DNI / NIE', 'convoca-members' ); ?></td>
 					<td id="conv-sum-dni">—</td>
 				</tr>
 				<tr>
-					<td>Fecha de nacimiento</td>
+					<td><?php esc_html_e( 'Fecha de nacimiento', 'convoca-members' ); ?></td>
 					<td id="conv-sum-fechanac">—</td>
 				</tr>
 				<tr>
-					<td>Edad</td>
+					<td><?php esc_html_e( 'Edad', 'convoca-members' ); ?></td>
 					<td id="conv-sum-edad">—</td>
 				</tr>
 				<tr>
-					<td>Menor de edad (autorización)</td>
+					<td><?php esc_html_e( 'Menor de edad (autorización)', 'convoca-members' ); ?></td>
 					<td id="conv-sum-menor">—</td>
 				</tr>
 				<tr>
-					<td>Email</td>
+					<td><?php esc_html_e( 'Email', 'convoca-members' ); ?></td>
 					<td id="conv-sum-email">—</td>
 				</tr>
 				<tr>
-					<td>Teléfono</td>
+					<td><?php esc_html_e( 'Teléfono', 'convoca-members' ); ?></td>
 					<td id="conv-sum-telefono">—</td>
 				</tr>
 				<tr>
-					<td>WhatsApp</td>
+					<td><?php esc_html_e( 'WhatsApp', 'convoca-members' ); ?></td>
 					<td id="conv-sum-whatsapp">—</td>
 				</tr>
 				<tr>
-					<td>Dirección</td>
+					<td><?php esc_html_e( 'Dirección', 'convoca-members' ); ?></td>
 					<td id="conv-sum-direccion">—</td>
 				</tr>
 				<tr>
-					<td>Municipio</td>
+					<td><?php esc_html_e( 'Municipio', 'convoca-members' ); ?></td>
 					<td id="conv-sum-municipio">—</td>
 				</tr>
 				<tr>
-					<td>Canal de contacto</td>
+					<td><?php esc_html_e( 'Canal de contacto', 'convoca-members' ); ?></td>
 					<td id="conv-sum-canal">—</td>
 				</tr>
 				<tr>
-					<td>Plan</td>
+					<td><?php esc_html_e( 'Plan', 'convoca-members' ); ?></td>
 					<td id="conv-sum-plan">—</td>
 				</tr>
 				<tr>
-					<td>Modalidad</td>
+					<td><?php esc_html_e( 'Modalidad', 'convoca-members' ); ?></td>
 					<td id="conv-sum-modalidad">—</td>
 				</tr>
 				<tr>
-					<td>Forma de pago</td>
+					<td><?php esc_html_e( 'Forma de pago', 'convoca-members' ); ?></td>
 					<td id="conv-sum-pago">—</td>
 				</tr>
 				<tr>
-					<td>Importe</td>
+					<td><?php esc_html_e( 'Importe', 'convoca-members' ); ?></td>
 					<td id="conv-sum-importe">—</td>
 				</tr>
 				<tr>
-					<td>RGPD</td>
+					<td><?php esc_html_e( 'RGPD', 'convoca-members' ); ?></td>
 					<td id="conv-sum-rgpd">—</td>
 				</tr>
 				<tr>
-					<td>Fecha de la solicitud</td>
+					<td><?php esc_html_e( 'Fecha de la solicitud', 'convoca-members' ); ?></td>
 					<td id="conv-sum-fecha">—</td>
 				</tr>
 				<tr>
-					<td>Comunicaciones</td>
+					<td><?php esc_html_e( 'Comunicaciones', 'convoca-members' ); ?></td>
 					<td id="conv-sum-coms">—</td>
 				</tr>
 			</table>
 
 			<!-- Card preview -->
-			<h3 class="conv-text-center" style="margin-top:2rem">Tu tarjeta de socio/a</h3>
+			<h3 class="conv-text-center" style="margin-top:2rem"><?php esc_html_e( 'Tu tarjeta de socio/a', 'convoca-members' ); ?></h3>
 			<div class="conv-card-preview">
 				<h3><?php echo esc_html( \Convoca\Members\Identidad::nombre_entidad() ); ?></h3>
 				<div class="conv-card-name" id="conv-card-name">—</div>
-				<div class="conv-card-id" id="conv-card-id">Socio/a #—</div>
+				<div class="conv-card-id" id="conv-card-id"><?php esc_html_e( 'Socio/a #—', 'convoca-members' ); ?></div>
 				<div class="conv-card-type" id="conv-card-type">—</div>
-				<div class="conv-card-date" id="conv-card-date">Alta: —</div>
+				<div class="conv-card-date" id="conv-card-date"><?php esc_html_e( 'Alta: —', 'convoca-members' ); ?></div>
 			</div>
 
 			<div class="conv-form-nav">
-				<button type="button" class="convoca-btn convoca-btn-outline conv-prev" data-prev="3">← Atrás</button>
-				<button type="submit" class="convoca-btn convoca-btn-primary">✔ Confirmar alta</button>
+				<button type="button" class="convoca-btn convoca-btn-outline conv-prev" data-prev="3"><?php esc_html_e( '← Atrás', 'convoca-members' ); ?></button>
+				<button type="submit" class="convoca-btn convoca-btn-primary"><?php esc_html_e( '✔ Confirmar alta', 'convoca-members' ); ?></button>
 			</div>
 		</div>
 
@@ -499,16 +536,16 @@ endif;
 	<!-- Success screen -->
 	<div id="conv-success" class="convoca-success-screen" style="display:none" role="status" aria-live="polite">
 		<div class="convoca-success-icon">🎉</div>
-		<h2>¡Bienvenido/a a <?php echo esc_html( \Convoca\Members\Identidad::nombre_entidad() ); ?>!</h2>
-		<p>Tu alta se ha registrado correctamente. Hemos enviado un email de confirmación a tu correo.</p>
+		<h2><?php /* translators: %s es el nombre de la entidad. */ echo esc_html( sprintf( __( '¡Bienvenido/a a %s!', 'convoca-members' ), \Convoca\Members\Identidad::nombre_entidad() ) ); ?></h2>
+		<p><?php esc_html_e( 'Tu alta se ha registrado correctamente. Hemos enviado un email de confirmación a tu correo.', 'convoca-members' ); ?></p>
 		<div class="conv-card-preview" id="conv-card-final">
 			<h3><?php echo esc_html( \Convoca\Members\Identidad::nombre_entidad() ); ?></h3>
 			<div class="conv-card-name" id="conv-final-name">—</div>
-			<div class="conv-card-id" id="conv-final-id">Socio/a #—</div>
+			<div class="conv-card-id" id="conv-final-id"><?php esc_html_e( 'Socio/a #—', 'convoca-members' ); ?></div>
 			<div class="conv-card-type" id="conv-final-type">—</div>
-			<div class="conv-card-date" id="conv-final-date">Alta: —</div>
+			<div class="conv-card-date" id="conv-final-date"><?php esc_html_e( 'Alta: —', 'convoca-members' ); ?></div>
 		</div>
-		<p><a href="<?php echo esc_url( home_url( '/' ) ); ?>" class="convoca-btn convoca-btn-outline">← Volver al inicio</a></p>
+		<p><a href="<?php echo esc_url( home_url( '/' ) ); ?>" class="convoca-btn convoca-btn-outline"><?php esc_html_e( '← Volver al inicio', 'convoca-members' ); ?></a></p>
 	</div>
 
 </div>

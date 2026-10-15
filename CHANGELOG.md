@@ -1,3 +1,27 @@
+## [2.8.73] — 2026-10-15
+
+### Cambiado
+- **El formulario de alta, entero en gettext (issue #10, fase 2).** `templates/form-alta.php` tenía 90 textos
+  en castellano fijo: sus 76 nodos de texto y 14 atributos (`aria-label`, `placeholder`) pasan ya por el
+  catálogo. Los párrafos de varias líneas, los cuatro fragmentos con datos (precios, horas, nombre de la
+  entidad) y los dos sub-planes van con `sprintf` y la frase entera con marcadores, en vez de trocearla al
+  traducir.
+- **Los 21 mensajes de error dejan de estar fijos en castellano.** Eran los últimos textos de cara al socio que
+  no pasaban por el catálogo: los de validación del formulario de voluntariado (campos obligatorios, DNI,
+  fecha, privacidad) y los de correo o DNI duplicado, intentos repetidos y nonce inválido del alta.
+
+### Arreglado
+- **El `.po` inglés no se podía compilar.** Dos entradas plural tenían el `msgstr` sin el índice `[0]`/`[1]`,
+  que es error de sintaxis: `msgfmt` fallaba con dos errores fatales y el `.mo` no se podía reconstruir con la
+  herramienta estándar. Corregido, con la forma plural inglesa de verdad.
+- **`"%d año"` tenía dos comentarios de traductor distintos** (uno en inglés, en un código comentado en
+  castellano): unificados. Era el único aviso que le quedaba a `wp i18n make-pot`.
+- **Tres etiquetas `</h4>` cerraban un `<h3>`** en el formulario de alta: HTML inválido.
+
+### Traducciones
+- Catálogo inglés **959 de 959** (antes 853). Las 106 nuevas (87 del formulario de alta y 19 de los mensajes de
+  error) van traducidas a mano; `.pot` regenerado con WP-CLI 2.12.0 y sin avisos.
+
 ## [2.8.72] — 2026-10-15
 
 ### Cambiado

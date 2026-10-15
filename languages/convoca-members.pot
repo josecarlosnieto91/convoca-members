@@ -2,14 +2,14 @@
 # This file is distributed under the GPL-2.0-or-later.
 msgid ""
 msgstr ""
-"Project-Id-Version: Convoca Members 2.8.72\n"
+"Project-Id-Version: Convoca Members 2.8.73\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/convoca-members\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-10-15T12:58:58+00:00\n"
+"POT-Creation-Date: 2026-10-15T15:10:03+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.12.0\n"
 "X-Domain: convoca-members\n"
@@ -489,6 +489,8 @@ msgstr ""
 #: includes/Admin_Voluntariado.php:145
 #: includes/Admin_Voluntariado.php:173
 #: includes/GDPR_Tools.php:122
+#: templates/form-alta.php:272
+#: templates/form-alta.php:465
 msgid "Email"
 msgstr ""
 
@@ -500,12 +502,16 @@ msgstr ""
 #: includes/Admin_Voluntariado.php:145
 #: includes/Admin_Voluntariado.php:173
 #: includes/GDPR_Tools.php:123
+#: templates/form-alta.php:273
+#: templates/form-alta.php:469
 msgid "Teléfono"
 msgstr ""
 
 #: admin/class-admin-list.php:65
 #: admin/class-admin-page.php:354
 #: admin/class-csv-exporter.php:47
+#: templates/form-alta.php:271
+#: templates/form-alta.php:473
 msgid "WhatsApp"
 msgstr ""
 
@@ -526,6 +532,7 @@ msgstr ""
 #: includes/Email_Manager.php:293
 #: includes/Email_Manager.php:374
 #: public/class-mi-area.php:444
+#: templates/form-alta.php:489
 msgid "Plan"
 msgstr ""
 
@@ -636,6 +643,7 @@ msgstr ""
 #: admin/class-admin-list.php:476
 #: admin/class-admin-list.php:574
 #: admin/class-admin-proyectos.php:206
+#: templates/form-alta.php:250
 msgid "No"
 msgstr ""
 
@@ -648,6 +656,7 @@ msgstr ""
 #: admin/class-admin-list.php:572
 #: admin/class-admin-proyectos.php:206
 #: admin/class-admin-proyectos.php:318
+#: templates/form-alta.php:249
 msgid "Sí"
 msgstr ""
 
@@ -686,6 +695,7 @@ msgid "Añadir nuevo miembro"
 msgstr ""
 
 #: admin/class-admin-member-editor.php:109
+#: templates/form-alta.php:211
 msgid "Nombre completo *"
 msgstr ""
 
@@ -727,6 +737,7 @@ msgstr ""
 
 #: admin/class-admin-member-editor.php:181
 #: admin/class-admin-page.php:384
+#: templates/form-alta.php:497
 msgid "Forma de pago"
 msgstr ""
 
@@ -750,11 +761,13 @@ msgid "Datos Personales"
 msgstr ""
 
 #: admin/class-admin-member-editor.php:203
+#: templates/form-alta.php:449
 msgid "DNI / NIE"
 msgstr ""
 
 #: admin/class-admin-member-editor.php:213
 #: includes/GDPR_Tools.php:126
+#: templates/form-alta.php:453
 msgid "Fecha de nacimiento"
 msgstr ""
 
@@ -763,11 +776,13 @@ msgstr ""
 #: admin/class-admin-page.php:360
 #: admin/class-csv-exporter.php:48
 #: includes/GDPR_Tools.php:125
+#: templates/form-alta.php:477
 msgid "Dirección"
 msgstr ""
 
 #: admin/class-admin-member-editor.php:225
 #: admin/class-csv-exporter.php:49
+#: templates/form-alta.php:481
 msgid "Municipio"
 msgstr ""
 
@@ -839,6 +854,7 @@ msgid "Acceso denegado."
 msgstr ""
 
 #: admin/class-admin-member-editor.php:354
+#: public/class-form-voluntariado.php:143
 msgid "El nombre es obligatorio."
 msgstr ""
 
@@ -888,6 +904,7 @@ msgstr ""
 
 #: admin/class-admin-metaboxes.php:174
 #: admin/class-admin-page.php:402
+#: templates/form-alta.php:505
 msgid "RGPD"
 msgstr ""
 
@@ -2032,6 +2049,7 @@ msgid "RGPD fecha"
 msgstr ""
 
 #: admin/class-csv-exporter.php:60
+#: templates/form-alta.php:513
 msgid "Comunicaciones"
 msgstr ""
 
@@ -2267,8 +2285,7 @@ msgstr ""
 msgid "No se pudo leer el archivo temporal generado."
 msgstr ""
 
-#. translators: %d: número de años de validez del certificado
-#. translators: %d: number of years as a member
+#. translators: %d: número de años.
 #: includes/Certificate_Generator.php:261
 #: includes/PDF_Card.php:101
 #, php-format
@@ -2733,6 +2750,7 @@ msgstr ""
 #: includes/Email_Manager.php:240
 #: includes/Email_Manager.php:297
 #: includes/GDPR_Tools.php:194
+#: templates/form-alta.php:501
 msgid "Importe"
 msgstr ""
 
@@ -3496,6 +3514,15 @@ msgstr ""
 msgid "No autorizado."
 msgstr ""
 
+#: public/class-form-handler.php:117
+msgid "Petición no autorizada (Nonce inválido)"
+msgstr ""
+
+#: public/class-form-handler.php:128
+#: public/class-form-handler.php:166
+msgid "Demasiados intentos de registro. Inténtalo de nuevo en una hora."
+msgstr ""
+
 #: public/class-form-handler.php:187
 msgid "Demasiadas peticiones. Inténtalo de nuevo más tarde."
 msgstr ""
@@ -3546,6 +3573,76 @@ msgstr ""
 
 #: public/class-form-voluntariado.php:55
 msgid "🚗 Logística y Coordinación"
+msgstr ""
+
+#: public/class-form-voluntariado.php:112
+msgid "Demasiados intentos. Inténtalo de nuevo en una hora."
+msgstr ""
+
+#: public/class-form-voluntariado.php:146
+msgid "El DNI/NIE es obligatorio."
+msgstr ""
+
+#: public/class-form-voluntariado.php:149
+msgid "La fecha de nacimiento es obligatoria."
+msgstr ""
+
+#: public/class-form-voluntariado.php:152
+msgid "El email no es válido."
+msgstr ""
+
+#: public/class-form-voluntariado.php:155
+msgid "El teléfono es obligatorio."
+msgstr ""
+
+#: public/class-form-voluntariado.php:158
+msgid "La dirección es obligatoria."
+msgstr ""
+
+#: public/class-form-voluntariado.php:161
+msgid "El municipio es obligatorio."
+msgstr ""
+
+#: public/class-form-voluntariado.php:164
+msgid "Debes aceptar la política de privacidad."
+msgstr ""
+
+#: public/class-form-voluntariado.php:167
+msgid "Debes aceptar la Declaración Responsable."
+msgstr ""
+
+#: public/class-form-voluntariado.php:180
+msgid "La fecha de nacimiento no es válida (Formato esperado: AAAA-MM-DD)."
+msgstr ""
+
+#: public/class-form-voluntariado.php:185
+msgid "El DNI/NIE no es válido."
+msgstr ""
+
+#: public/class-form-voluntariado.php:192
+msgid "El DNI del tutor es obligatorio para menores de edad."
+msgstr ""
+
+#: public/class-form-voluntariado.php:194
+msgid "El DNI del tutor no es válido."
+msgstr ""
+
+#. translators: %s es el nombre del campo del formulario.
+#: public/class-form-voluntariado.php:207
+#, php-format
+msgid "El campo \"%s\" es obligatorio."
+msgstr ""
+
+#: public/class-form-voluntariado.php:220
+msgid "Ese correo ya está registrado en el sistema."
+msgstr ""
+
+#: public/class-form-voluntariado.php:242
+msgid "Ese DNI ya está registrado en el sistema."
+msgstr ""
+
+#: public/class-form-voluntariado.php:251
+msgid "Error al crear el registro: "
 msgstr ""
 
 #: public/class-mi-area.php:118
@@ -3768,12 +3865,388 @@ msgstr ""
 msgid "Si no puedes, escríbenos y te damos de alta a mano:"
 msgstr ""
 
+#: templates/form-alta.php:71
+msgid "Formulario de alta de socio/a"
+msgstr ""
+
+#: templates/form-alta.php:74
+msgid "Progreso del formulario"
+msgstr ""
+
+#: templates/form-alta.php:76
+msgid "Paso 1: Plan"
+msgstr ""
+
+#: templates/form-alta.php:77
+msgid "Paso 2: Datos personales"
+msgstr ""
+
+#: templates/form-alta.php:78
+msgid "Paso 3: Forma de pago"
+msgstr ""
+
+#: templates/form-alta.php:79
+msgid "Paso 4: Resumen"
+msgstr ""
+
 #: templates/form-alta.php:88
 msgid "Este formulario de alta necesita JavaScript en el navegador."
 msgstr ""
 
 #: templates/form-alta.php:90
 msgid "Actívalo y vuelve a intentarlo, o escríbenos y te damos de alta a mano:"
+msgstr ""
+
+#: templates/form-alta.php:106
+msgid "Paso 1 — Elige tu forma de colaborar"
+msgstr ""
+
+#: templates/form-alta.php:107
+msgid "Todas las cuotas se abonan anualmente. Con horas de voluntariado puedes renovar sin pagar a partir del segundo año."
+msgstr ""
+
+#: templates/form-alta.php:119
+msgid "Planes de colaboración"
+msgstr ""
+
+#. translators: %s son las horas de voluntariado del plan.
+#: templates/form-alta.php:126
+#, php-format
+msgid "· %sh para renovar sin pagar"
+msgstr ""
+
+#: templates/form-alta.php:135
+msgid "Familiar"
+msgstr ""
+
+#. translators: %d es el precio en euros del plan más barato de la modalidad.
+#: templates/form-alta.php:136
+#: templates/form-alta.php:147
+#, php-format
+msgid "Desde %d€"
+msgstr ""
+
+#. translators: %s son las horas del plan familiar más barato.
+#: templates/form-alta.php:138
+#, php-format
+msgid "ó desde %sh"
+msgstr ""
+
+#: templates/form-alta.php:146
+msgid "Juvenil"
+msgstr ""
+
+#. translators: %s son las horas del plan juvenil más barato.
+#: templates/form-alta.php:149
+#, php-format
+msgid "ó desde %sh (14–30 años)"
+msgstr ""
+
+#: templates/form-alta.php:157
+msgid "Modalidad familiar"
+msgstr ""
+
+#: templates/form-alta.php:158
+msgid "Elige la modalidad familiar:"
+msgstr ""
+
+#. translators: %1$s es el nombre del plan, %2$d el precio en euros y %3$s las horas.
+#: templates/form-alta.php:164
+#: templates/form-alta.php:183
+#, php-format
+msgid "%1$s — %2$d€ ó %3$sh"
+msgstr ""
+
+#: templates/form-alta.php:176
+msgid "Modalidad juvenil"
+msgstr ""
+
+#: templates/form-alta.php:177
+msgid "Elige la modalidad juvenil:"
+msgstr ""
+
+#: templates/form-alta.php:195
+msgid "Ventajas de tu plan:"
+msgstr ""
+
+#: templates/form-alta.php:201
+#: templates/form-alta.php:295
+msgid "Siguiente →"
+msgstr ""
+
+#: templates/form-alta.php:207
+msgid "Paso 2 — Tus datos personales"
+msgstr ""
+
+#: templates/form-alta.php:212
+msgid "Nombre y apellidos"
+msgstr ""
+
+#: templates/form-alta.php:214
+msgid "Este campo es obligatorio."
+msgstr ""
+
+#: templates/form-alta.php:217
+msgid "DNI / NIE *"
+msgstr ""
+
+#: templates/form-alta.php:220
+msgid "Introduce un DNI o NIE válido."
+msgstr ""
+
+#: templates/form-alta.php:226
+msgid "Fecha de nacimiento *"
+msgstr ""
+
+#: templates/form-alta.php:228
+msgid "Introduce tu fecha de nacimiento."
+msgstr ""
+
+#: templates/form-alta.php:232
+msgid "Correo electrónico *"
+msgstr ""
+
+#: templates/form-alta.php:233
+msgid "tu@correo.com"
+msgstr ""
+
+#: templates/form-alta.php:235
+msgid "Introduce un email válido."
+msgstr ""
+
+#: templates/form-alta.php:241
+msgid "Teléfono *"
+msgstr ""
+
+#: templates/form-alta.php:244
+msgid "Introduce tu número de teléfono."
+msgstr ""
+
+#: templates/form-alta.php:247
+msgid "¿Tu teléfono tiene WhatsApp?"
+msgstr ""
+
+#: templates/form-alta.php:256
+msgid "Dirección postal *"
+msgstr ""
+
+#: templates/form-alta.php:257
+msgid "Calle, número, piso"
+msgstr ""
+
+#: templates/form-alta.php:259
+msgid "Introduce tu dirección."
+msgstr ""
+
+#: templates/form-alta.php:264
+msgid "Municipio / Localidad *"
+msgstr ""
+
+#: templates/form-alta.php:265
+msgid "Ej: Oviedo"
+msgstr ""
+
+#: templates/form-alta.php:266
+msgid "Introduce tu municipio."
+msgstr ""
+
+#: templates/form-alta.php:269
+msgid "Canal de contacto preferente"
+msgstr ""
+
+#: templates/form-alta.php:280
+msgid "⚠️ Al ser menor de edad, necesitas autorización de tu tutor/a legal."
+msgstr ""
+
+#: templates/form-alta.php:283
+msgid "Nombre del tutor/a legal *"
+msgstr ""
+
+#: templates/form-alta.php:287
+msgid "DNI del tutor/a *"
+msgstr ""
+
+#: templates/form-alta.php:294
+#: templates/form-alta.php:433
+#: templates/form-alta.php:529
+msgid "← Atrás"
+msgstr ""
+
+#: templates/form-alta.php:301
+msgid "Paso 3 — Tu cuota"
+msgstr ""
+
+#: templates/form-alta.php:302
+msgid "La cuota del primer año se abona siempre: es lo que te hace socio/a. Si además te comprometes a hacer horas de voluntariado, a partir del año que viene podrás renovar sin pagar."
+msgstr ""
+
+#: templates/form-alta.php:310
+msgid "Selecciona el método de pago:"
+msgstr ""
+
+#: templates/form-alta.php:311
+msgid "Método de pago"
+msgstr ""
+
+#: templates/form-alta.php:316
+msgid "💳 Tarjeta"
+msgstr ""
+
+#: templates/form-alta.php:323
+msgid "📱 Bizum"
+msgstr ""
+
+#: templates/form-alta.php:330
+msgid "🏦 Transf."
+msgstr ""
+
+#: templates/form-alta.php:340
+msgid "¿Deseas activar la renovación automática anual?"
+msgstr ""
+
+#: templates/form-alta.php:341
+msgid "Te enviaremos el enlace de pago directo cuando tu cuota esté cerca de caducar para que no tengas que preocuparte."
+msgstr ""
+
+#: templates/form-alta.php:349
+msgid "Pago por transferencia bancaria"
+msgstr ""
+
+#: templates/form-alta.php:350
+msgid "Al confirmar tu alta te llevaremos a la pasarela de pago. Allí eliges el método (tarjeta, Bizum o transferencia); si eliges transferencia, verás el IBAN y el concepto que debes indicar."
+msgstr ""
+
+#: templates/form-alta.php:351
+msgid "Podrás adjuntar el justificante directamente en esa página para que validemos tu alta lo antes posible."
+msgstr ""
+
+#: templates/form-alta.php:357
+msgid "Pago seguro por pasarela bancaria"
+msgstr ""
+
+#. translators: %1$s y %2$s son los métodos de pago, en negrita.
+#: templates/form-alta.php:363
+#, php-format
+msgid "Al confirmar tu alta serás redirigido/a a la pasarela de pago seguro (Redsys) donde podrás pagar con %1$s o %2$s."
+msgstr ""
+
+#: templates/form-alta.php:364
+msgid "tarjeta"
+msgstr ""
+
+#: templates/form-alta.php:365
+msgid "Bizum de comercio"
+msgstr ""
+
+#. translators: %1$s y %2$s son los enlaces a los documentos; %3$s y %4$s abren y cierran la negrita.
+#: templates/form-alta.php:384
+#, php-format
+msgid "%3$sVoluntariado (opcional).%4$s Si te comprometes a cumplir las horas de tu plan durante el próximo año, podrás renovar sin pagar la cuota. Aceptas el %1$s y el %2$s."
+msgstr ""
+
+#: templates/form-alta.php:385
+msgid "Código Ético"
+msgstr ""
+
+#: templates/form-alta.php:386
+msgid "Programa de Voluntariado"
+msgstr ""
+
+#: templates/form-alta.php:394
+msgid "Me comprometo a hacer las horas de voluntariado de mi plan."
+msgstr ""
+
+#: templates/form-alta.php:395
+msgid "La asociación revisará tu solicitud y te aprobará como voluntario/a; con las horas aprobadas podrás renovar el próximo año sin cuota."
+msgstr ""
+
+#: templates/form-alta.php:401
+msgid "Protección de datos"
+msgstr ""
+
+#. translators: %s es el enlace a la política de privacidad.
+#: templates/form-alta.php:408
+#, php-format
+msgid "He leído y acepto la %s y el tratamiento de mis datos personales conforme al RGPD. Mis datos serán incluidos en el libro de socios de la Asociación. *"
+msgstr ""
+
+#: templates/form-alta.php:412
+msgid "Política de Privacidad"
+msgstr ""
+
+#. translators: %s es el nombre de la entidad.
+#: templates/form-alta.php:424
+#, php-format
+msgid "Autorizo a %s a enviarme comunicaciones sobre actividades, proyectos y noticias relevantes."
+msgstr ""
+
+#: templates/form-alta.php:434
+msgid "Revisar y confirmar →"
+msgstr ""
+
+#: templates/form-alta.php:440
+msgid "Paso 4 — Revisa tu alta"
+msgstr ""
+
+#: templates/form-alta.php:441
+msgid "Verifica que todo esté bien antes de confirmar."
+msgstr ""
+
+#: templates/form-alta.php:445
+msgid "Nombre completo"
+msgstr ""
+
+#: templates/form-alta.php:457
+msgid "Edad"
+msgstr ""
+
+#: templates/form-alta.php:461
+msgid "Menor de edad (autorización)"
+msgstr ""
+
+#: templates/form-alta.php:485
+msgid "Canal de contacto"
+msgstr ""
+
+#: templates/form-alta.php:493
+msgid "Modalidad"
+msgstr ""
+
+#: templates/form-alta.php:509
+msgid "Fecha de la solicitud"
+msgstr ""
+
+#: templates/form-alta.php:519
+msgid "Tu tarjeta de socio/a"
+msgstr ""
+
+#: templates/form-alta.php:523
+#: templates/form-alta.php:544
+msgid "Socio/a #—"
+msgstr ""
+
+#: templates/form-alta.php:525
+#: templates/form-alta.php:546
+msgid "Alta: —"
+msgstr ""
+
+#: templates/form-alta.php:530
+msgid "✔ Confirmar alta"
+msgstr ""
+
+#. translators: %s es el nombre de la entidad.
+#: templates/form-alta.php:539
+#, php-format
+msgid "¡Bienvenido/a a %s!"
+msgstr ""
+
+#. translators: %s es el nombre de la entidad.
+#: templates/form-alta.php:540
+msgid "Tu alta se ha registrado correctamente. Hemos enviado un email de confirmación a tu correo."
+msgstr ""
+
+#: templates/form-alta.php:548
+msgid "← Volver al inicio"
 msgstr ""
 
 #: templates/form-voluntariado.php:76

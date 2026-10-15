@@ -257,7 +257,7 @@ class Certificate_Generator {
 
 		// Texto de validez: duración legible del certificado (D13).
 		$validez_anios = self::validity_years();
-		/* translators: %d: número de años de validez del certificado */
+		/* translators: %d: número de años. */
 		$validez_label = sprintf( _n( '%d año', '%d años', $validez_anios, 'convoca-members' ), $validez_anios );
 		$validez_html  = $valido_hasta
 			? '<div>Válido hasta: <strong>' . esc_html( wp_date( 'd/m/Y', strtotime( $valido_hasta ) ) ) . '</strong> <span style="color:#999">(' . esc_html( $validez_label ) . ')</span></div>'

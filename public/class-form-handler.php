@@ -114,7 +114,7 @@ class Form_Handler {
 			return new \WP_REST_Response(
 				array(
 					'success' => false,
-					'data'    => array( 'errors' => array( 'Petición no autorizada (Nonce inválido)' ) ),
+					'data'    => array( 'errors' => array( __( 'Petición no autorizada (Nonce inválido)', 'convoca-members' ) ) ),
 				),
 				403
 			);
@@ -125,7 +125,7 @@ class Form_Handler {
 			return new \WP_REST_Response(
 				array(
 					'success' => false,
-					'data'    => array( 'errors' => array( 'Demasiados intentos de registro. Inténtalo de nuevo en una hora.' ) ),
+					'data'    => array( 'errors' => array( __( 'Demasiados intentos de registro. Inténtalo de nuevo en una hora.', 'convoca-members' ) ) ),
 				),
 				429
 			);
@@ -163,7 +163,7 @@ class Form_Handler {
 		check_ajax_referer( 'convoca_alta_nonce', 'nonce' );
 
 		if ( ! \Convoca\Core\Utils::check_rate_limit( 'alta_socio', 3, 3600 ) ) {
-			wp_send_json_error( array( 'errors' => array( 'Demasiados intentos de registro. Inténtalo de nuevo en una hora.' ) ), 429 );
+			wp_send_json_error( array( 'errors' => array( __( 'Demasiados intentos de registro. Inténtalo de nuevo en una hora.', 'convoca-members' ) ) ), 429 );
 		}
 
 		$result = Process_Member::register( wp_unslash( $_POST ), $_FILES );

@@ -109,7 +109,7 @@ class Form_Voluntariado {
 
 		// Rate limit: max 3 volunteer registrations per hour per IP.
 		if ( ! \Convoca\Core\Utils::check_rate_limit( 'convoca_voluntariado_submit', 3, 3600 ) ) {
-			wp_send_json_error( array( 'errors' => array( 'Demasiados intentos. Inténtalo de nuevo en una hora.' ) ), 429 );
+			wp_send_json_error( array( 'errors' => array( __( 'Demasiados intentos. Inténtalo de nuevo en una hora.', 'convoca-members' ) ) ), 429 );
 		}
 
 		// Unslash POST data to handle magic_quotes.
@@ -140,31 +140,31 @@ class Form_Voluntariado {
 		// Validation.
 		$errors = array();
 		if ( empty( $nombre ) ) {
-			$errors[] = 'El nombre es obligatorio.';
+			$errors[] = __( 'El nombre es obligatorio.', 'convoca-members' );
 		}
 		if ( empty( $dni ) ) {
-			$errors[] = 'El DNI/NIE es obligatorio.';
+			$errors[] = __( 'El DNI/NIE es obligatorio.', 'convoca-members' );
 		}
 		if ( empty( $fecha_nac ) ) {
-			$errors[] = 'La fecha de nacimiento es obligatoria.';
+			$errors[] = __( 'La fecha de nacimiento es obligatoria.', 'convoca-members' );
 		}
 		if ( ! is_email( $email ) ) {
-			$errors[] = 'El email no es válido.';
+			$errors[] = __( 'El email no es válido.', 'convoca-members' );
 		}
 		if ( empty( $telefono ) ) {
-			$errors[] = 'El teléfono es obligatorio.';
+			$errors[] = __( 'El teléfono es obligatorio.', 'convoca-members' );
 		}
 		if ( empty( $direccion ) ) {
-			$errors[] = 'La dirección es obligatoria.';
+			$errors[] = __( 'La dirección es obligatoria.', 'convoca-members' );
 		}
 		if ( empty( $municipio ) ) {
-			$errors[] = 'El municipio es obligatorio.';
+			$errors[] = __( 'El municipio es obligatorio.', 'convoca-members' );
 		}
 		if ( ! $rgpd ) {
-			$errors[] = 'Debes aceptar la política de privacidad.';
+			$errors[] = __( 'Debes aceptar la política de privacidad.', 'convoca-members' );
 		}
 		if ( empty( $post_data['declaracion_responsable'] ) ) {
-			$errors[] = 'Debes aceptar la Declaración Responsable.';
+			$errors[] = __( 'Debes aceptar la Declaración Responsable.', 'convoca-members' );
 		}
 
 		// Minor detection.
@@ -177,21 +177,21 @@ class Form_Voluntariado {
 			$age   = $today->diff( $dob )->y;
 			$menor = $age < 18;
 		} catch ( \Exception $e ) {
-			$errors[] = 'La fecha de nacimiento no es válida (Formato esperado: AAAA-MM-DD).';
+			$errors[] = __( 'La fecha de nacimiento no es válida (Formato esperado: AAAA-MM-DD).', 'convoca-members' );
 			$menor    = false;
 		}
 
 		if ( $dni && ! self::validar_dni( $dni ) ) {
-			$errors[] = 'El DNI/NIE no es válido.';
+			$errors[] = __( 'El DNI/NIE no es válido.', 'convoca-members' );
 		}
 
 		if ( $menor ) {
 			$tutor_dni = strtoupper( trim( $post_data['tutor_dni'] ?? '' ) );
 			$tutor_dni = str_replace( array( ' ', '-' ), '', $tutor_dni );
 			if ( empty( $tutor_dni ) ) {
-				$errors[] = 'El DNI del tutor es obligatorio para menores de edad.';
+				$errors[] = __( 'El DNI del tutor es obligatorio para menores de edad.', 'convoca-members' );
 			} elseif ( ! self::validar_dni( $tutor_dni ) ) {
-				$errors[] = 'El DNI del tutor no es válido.';
+				$errors[] = __( 'El DNI del tutor no es válido.', 'convoca-members' );
 			}
 		}
 
@@ -202,7 +202,11 @@ class Form_Voluntariado {
 			$name = 'dyn_' . $field['name'];
 			$val  = isset( $post_data[ $name ] ) ? ( is_array( $post_data[ $name ] ) ? implode( ', ', array_map( 'sanitize_text_field', $post_data[ $name ] ) ) : sanitize_textarea_field( $post_data[ $name ] ) ) : '';
 			if ( ! empty( $field['required'] ) && empty( $val ) ) {
-				$errors[] = sprintf( 'El campo "%s" es obligatorio.', $field['label'] );
+				$errors[] = sprintf(
+						/* translators: %s es el nombre del campo del formulario. */
+					__( 'El campo "%s" es obligatorio.', 'convoca-members' ),
+					$field['label']
+				);
 			}
 			$dynamic_data[ '_convoca_voluntario_' . $field['name'] ] = $val;
 		}
@@ -213,7 +217,7 @@ class Form_Voluntariado {
 
 		// Check for duplicate Email. DNI is handled in meta.
 		if ( email_exists( $email ) ) {
-			wp_send_json_error( array( 'errors' => array( 'Ese correo ya está registrado en el sistema.' ) ) );
+			wp_send_json_error( array( 'errors' => array( __( 'Ese correo ya está registrado en el sistema.', 'convoca-members' ) ) ) );
 		}
 
 		// Check for duplicate DNI in user meta (new canonical key; legacy _convoca_shifts_dni covered by migration).
@@ -235,7 +239,7 @@ class Form_Voluntariado {
 			);
 		}
 		if ( ! empty( $existing_dni ) ) {
-			wp_send_json_error( array( 'errors' => array( 'Ese DNI ya está registrado en el sistema.' ) ) );
+			wp_send_json_error( array( 'errors' => array( __( 'Ese DNI ya está registrado en el sistema.', 'convoca-members' ) ) ) );
 		}
 
 		// Create WP User.
@@ -244,7 +248,7 @@ class Form_Voluntariado {
 		$user_id  = wp_create_user( $username, $password, $email );
 
 		if ( is_wp_error( $user_id ) ) {
-			wp_send_json_error( array( 'errors' => array( 'Error al crear el registro: ' . $user_id->get_error_message() ) ) );
+			wp_send_json_error( array( 'errors' => array( __( 'Error al crear el registro: ', 'convoca-members' ) . $user_id->get_error_message() ) ) );
 		}
 
 		// Update basic user info.

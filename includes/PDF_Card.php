@@ -97,7 +97,7 @@ class PDF_Card {
 		$seniority_badge = $anios >= 1
 			? '<div class="seniority-badge">' . esc_html(
 				sprintf(
-					/* translators: %d: number of years as a member */
+					/* translators: %d: número de años. */
 					_n( '%d año', '%d años', $anios, 'convoca-members' ),
 					$anios
 				)
