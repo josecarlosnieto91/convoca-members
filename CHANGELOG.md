@@ -1,3 +1,16 @@
+## [2.8.71] — 2026-10-15
+
+### Añadido
+- **El catálogo inglés queda completo, 854 de 854 (issue #10, la parte del idioma).** Estaba en 786: faltaban
+  **66 cadenas**, y son justo las que salían en castellano dentro del área de socio en inglés. Medido en vivo en
+  `/en/mi-cuenta-2/`, donde el aviso del JavaScript y los mensajes del formulario salían en español mientras el
+  resto de la página estaba traducido.
+  - El `.po` inglés era del 23/09 y el código había cambiado desde entonces: `wp i18n update-po` con el `.pot`
+    actual destapa el hueco (las cadenas nuevas no existen para nadie hasta que se traducen).
+  - Traducidas a mano, una por una, siguiendo la terminología que ya usaba el catálogo (*member*, *dues*,
+    *signup*, *volunteer hours*). No hay clave de DeepL configurada en el taller, así que no se usó.
+  - `.mo` recompilado: 854 cadenas.
+
 ## [2.8.70] — 2026-10-15
 
 ### Arreglado
