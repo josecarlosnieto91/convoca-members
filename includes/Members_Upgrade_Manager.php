@@ -58,7 +58,24 @@ class Members_Upgrade_Manager extends Upgrade_Manager {
 		return array(
 			'1.0.2' => array( $this, 'upgrade_to_1_0_2' ),
 			'1.0.3' => array( $this, 'upgrade_to_1_0_3' ),
+			'2.8.47' => array( $this, 'upgrade_to_2_8_47' ),
 		);
+	}
+
+	/**
+	 * Paso 2.8.47: limpiar las filas huérfanas que dejó la secuencia de números de socio.
+	 *
+	 * La tabla solo crecía porque nadie borraba la fila al eliminar la ficha (issue #16). Desde esta
+	 * versión se borra al vuelo; este paso limpia lo acumulado en las instalaciones que ya existen.
+	 */
+	protected function upgrade_to_2_8_47(): bool {
+		$borradas = \Convoca\Members\CPT_Miembro::limpiar_secuencia_huerfana();
+
+		if ( $borradas > 0 ) {
+			\Convoca\Core\Logger::info( "Limpieza de la secuencia de socios: $borradas filas huérfanas borradas.", 'Members/Upgrade' );
+		}
+
+		return true;
 	}
 
 	/**

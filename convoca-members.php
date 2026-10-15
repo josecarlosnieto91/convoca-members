@@ -3,7 +3,7 @@
  * Plugin Name:       Convoca Members
  * Plugin URI:        https://getconvoca.app
  * Description:       Members, volunteers and communications management.
- * Version:           2.8.46
+ * Version:           2.8.47
  * Requires at least: 6.4
  * Requires PHP:      8.1
  * Tested up to:      7.1
@@ -276,6 +276,10 @@ add_action(
 );
 
 add_action( 'init', array( \Convoca\Members\CPT_Miembro::class, 'register' ) );
+
+// Al borrar una ficha definitivamente se borra también su fila de la secuencia de números de socio:
+// sin esto la tabla solo crecía (124 de 124 huérfanas en la demo, 4 de 4 en Lugg). Issue #16.
+add_action( 'before_delete_post', array( \Convoca\Members\CPT_Miembro::class, 'borrar_fila_secuencia' ) );
 add_action( 'init', array( \Convoca\Members\CPT_Registro_Hora::class, 'register' ) );
 add_action( 'init', array( \Convoca\Members\CPT_Proyecto::class, 'register' ) );
 add_action( 'add_meta_boxes_proyecto', array( \Convoca\Members\CPT_Proyecto::class, 'render_metabox' ) );

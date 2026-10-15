@@ -508,6 +508,62 @@ class CPT_Miembro {
 	/**
 	 * Approve member: Assign number, set dates, activate.
 	 */
+	/**
+	 * Borra la fila de la secuencia al eliminar definitivamente una ficha de socio.
+	 *
+	 * La tabla `convoca_member_sequence` solo crecía: nadie borraba la fila al eliminar el socio, así que
+	 * acabó con 124 de 124 filas huérfanas en la demo y 4 de 4 en Lugg (issue #16). Borrar la fila no
+	 * cambia la numeración: el número de socio sale del AUTO_INCREMENT de esa tabla, que no reutiliza
+	 * valores aunque se borren filas.
+	 *
+	 * No se toca al enviar a la papelera: un socio en la papelera se puede restaurar y tiene que conservar
+	 * su número.
+	 *
+	 * @param int $post_id Ficha que se va a borrar.
+	 */
+	public static function borrar_fila_secuencia( int $post_id ): void {
+		if ( self::SLUG !== get_post_type( $post_id ) ) {
+			return;
+		}
+
+		global $wpdb;
+		$tabla = $wpdb->prefix . 'convoca_member_sequence';
+
+		if ( $wpdb->get_var( $wpdb->prepare( 'SHOW TABLES LIKE %s', $tabla ) ) !== $tabla ) {
+			return;
+		}
+
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
+		$wpdb->delete( $tabla, array( 'member_id' => $post_id ), array( '%d' ) );
+	}
+
+	/**
+	 * Borra las filas de la secuencia que ya no corresponden a ninguna ficha.
+	 *
+	 * Limpieza de lo que se acumuló antes de que existiera el borrado. Se puede ejecutar sin miedo: la
+	 * numeración no depende de las filas viejas.
+	 *
+	 * @return int Filas borradas.
+	 */
+	public static function limpiar_secuencia_huerfana(): int {
+		global $wpdb;
+		$tabla = $wpdb->prefix . 'convoca_member_sequence';
+
+		if ( $wpdb->get_var( $wpdb->prepare( 'SHOW TABLES LIKE %s', $tabla ) ) !== $tabla ) {
+			return 0;
+		}
+
+		// phpcs:disable WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+		$borradas = $wpdb->query(
+			"DELETE s FROM $tabla s
+			 LEFT JOIN {$wpdb->posts} p ON p.ID = s.member_id
+			 WHERE p.ID IS NULL"
+		);
+		// phpcs:enable
+
+		return (int) $borradas;
+	}
+
 	public static function approve_member( int $post_id ): bool {
 		global $wpdb;
 

@@ -296,19 +296,34 @@ class Process_Member {
 			// Check for duplicates ATOMICALLY inside transaction to prevent race conditions.
 			// Nota: COUNT(*) ... FOR UPDATE no bloquea filas (MySQL ignora FOR UPDATE en agregados);
 			// usamos SELECT ... LIMIT 1 FOR UPDATE para serializar sobre la(s) fila(s) existente(s).
-			$exists = $wpdb->get_var(
-				$wpdb->prepare(
-					"SELECT pm.post_id FROM {$wpdb->postmeta} pm
+			//
+			// Y solo se compara contra datos que EXISTEN: una ficha con el `_convoca_dni` vacío casaba con
+			// cualquier alta que llegara con el DNI vacío y la rechazaba («Ya existe un miembro registrado
+			// con este DNI o email.»), que es lo que dejaba envenenado el deduplicador tras un alta en
+			// blanco. Issue #23.
+			$condiciones = array();
+			$valores     = array();
+
+			if ( '' !== $dni ) {
+				$condiciones[] = "(pm.meta_key = '_convoca_dni' AND pm.meta_value = %s)";
+				$valores[]     = $dni;
+			}
+			if ( '' !== $email ) {
+				$condiciones[] = "(pm.meta_key = '_convoca_email' AND pm.meta_value = %s)";
+				$valores[]     = $email;
+			}
+
+			$exists = false;
+			if ( ! empty( $condiciones ) ) {
+				$sql = "SELECT pm.post_id FROM {$wpdb->postmeta} pm
                  JOIN {$wpdb->posts} p ON p.ID = pm.post_id
                  WHERE p.post_type = 'miembro' 
                    AND p.post_status = 'publish'
-                   AND ((pm.meta_key = '_convoca_dni' AND pm.meta_value = %s)
-                        OR (pm.meta_key = '_convoca_email' AND pm.meta_value = %s))
-                 LIMIT 1 FOR UPDATE",
-					$dni,
-					$email
-				)
-			);
+                   AND (" . implode( ' OR ', $condiciones ) . ')
+                 LIMIT 1 FOR UPDATE';
+
+				$exists = $wpdb->get_var( $wpdb->prepare( $sql, $valores ) );
+			}
 
 			if ( ! empty( $exists ) ) {
 				$existing_id     = (int) $exists;
@@ -639,6 +654,18 @@ class Process_Member {
 	 * Validate registration data.
 	 */
 	public static function validate( array $data, array $files = array() ): bool|\WP_Error {
+		// Vaciar de espacios ANTES de comprobar nada.
+		// `empty( '   ' )` es FALSE —una cadena de espacios no está vacía—, así que un alta con el nombre
+		// y el DNI en blanco pasaba la validación, se saneaba después y creaba una ficha con el título
+		// vacío y el `_convoca_dni` vacío. Esa ficha casaba además con el deduplicador de CUALQUIER alta
+		// posterior con el DNI en blanco, que quedaba rechazada con «Ya existe un miembro registrado con
+		// este DNI o email.» sin poder hacer nada al respecto. Issue #23.
+		foreach ( $data as $clave => $valor ) {
+			if ( is_string( $valor ) ) {
+				$data[ $clave ] = trim( $valor );
+			}
+		}
+
 		$errors = array();
 
 		if ( empty( $data['nombre'] ) ) {

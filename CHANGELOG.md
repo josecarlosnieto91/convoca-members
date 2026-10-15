@@ -138,6 +138,26 @@
 
 # Changelog — convoca-members
 
+## [2.8.47] - 2026-10-15
+
+### Corregido
+
+- **Un alta con el nombre y el DNI en blanco se aceptaba** y dejaba el deduplicador envenenado (#23): la
+  validación usaba `empty()`, y `empty( '     ' )` es **FALSE** —una cadena de espacios no está vacía—, así
+  que el alta pasaba y se saneaba después: quedaba una ficha con el título vacío y el `_convoca_dni`
+  vacío. A partir de ahí, cualquier otra persona que dejara el DNI en blanco recibía «Ya existe un miembro
+  registrado con este DNI o email.» porque el deduplicador casaba con el DNI vacío de la ficha fantasma.
+  Ahora se sanea antes de validar y el deduplicador solo compara contra datos que existen.
+- **Importar CSV contaba como importadas las filas que fallaban** (#26): el resumen decía «1 socios
+  importados correctamente. 1 errores» de la MISMA fila. Además, la llamada pasaba el contador en el
+  parámetro del número de fila, así que el mensaje salía como «Fila 0» en vez de la fila de verdad. Ahora
+  solo cuenta lo creado y el número de fila es el de la fila.
+- **`convoca_member_sequence` acumulaba filas huérfanas** (#16): nadie borraba la fila al eliminar un
+  socio, así que la tabla acabó con 124 de 124 filas huérfanas en la demo y 4 de 4 en Lugg. La fila se
+  borra ahora al eliminar la ficha definitivamente (no al enviarla a la papelera: ahí se puede restaurar y
+  tiene que conservar su número) y el paso de actualización 2.8.47 limpia lo acumulado. Borrar filas no
+  reutiliza números: el número de socio sale del AUTO_INCREMENT.
+
 ## [2.8.46] - 2026-10-15
 
 ### Corregido

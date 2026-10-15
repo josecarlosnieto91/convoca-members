@@ -370,15 +370,18 @@ class Admin_Import_CSV {
 		// Small import: process all at once.
 		$imported = 0;
 		$errors   = array();
-		foreach ( $rows as $row ) {
-			$result = $this->import_single_row( $row, $errors, $imported, $send_welcome, $update_existing );
-			if ( $result === false ) {
+		foreach ( $rows as $indice => $row ) {
+			$result = $this->import_single_row( $row, $errors, (int) $indice + 1, $send_welcome, $update_existing );
+
+			// Solo cuenta lo que se ha creado de verdad. `false` es «descartada» —su motivo ya está en
+			// $errors— y `WP_Error` es «falló». Antes se contaba en las tres ramas, así que el resumen
+			// decía «1 socios importados correctamente. 1 errores» de la MISMA fila, y el número de fila
+			// que salía en el mensaje era el del contador, no el de la fila (de ahí el «Fila 0»): el
+			// contador viajaba en el parámetro del número de línea. Issue #26.
+			if ( is_int( $result ) ) {
 				++$imported;
 			} elseif ( is_wp_error( $result ) ) {
 				$errors[] = $result->get_error_message();
-				++$imported;
-			} else {
-				++$imported;
 			}
 
 			if ( false === strpos( (string) ini_get( 'disable_functions' ), 'set_time_limit' ) ) {
@@ -445,10 +448,12 @@ class Admin_Import_CSV {
 			$row    = $rows[ $i ];
 			$line   = $i + 1;
 			$result = $this->import_single_row( $row, $errors, $line, $state['send_welcome'], $state['update_existing'] );
-			if ( $result === false || is_wp_error( $result ) ) {
+
+			// Igual que en la importación corta: solo cuenta lo creado. Ver issue #26.
+			if ( is_int( $result ) ) {
 				++$imported;
-			} else {
-				++$imported;
+			} elseif ( is_wp_error( $result ) ) {
+				$errors[] = $result->get_error_message();
 			}
 			if ( false === strpos( (string) ini_get( 'disable_functions' ), 'set_time_limit' ) ) {
 				set_time_limit( 30 );
