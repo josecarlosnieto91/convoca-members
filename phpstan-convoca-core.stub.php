@@ -105,6 +105,7 @@ namespace Convoca\Core {
 		public static function validar_dni( string $dni ): bool { return true; }
 		public static function format_date( string $date, string $format = 'd/m/Y' ): string { return ''; }
 		public static function escape_csv_field( $field ): string { return ''; }
+		public static function stream_csv( string $filename, array $headers, iterable $rows, string $separator = ';' ): int { return 0; }
 		public static function generate_access_code( int $length = 8 ): string { return ''; }
 		public static function do_action( string $new_hook, string $old_hook = '', ...$args ): void {}
 		public static function check_rate_limit( string $action, int $max = 10, int $window = 300 ): bool { return true; }
@@ -203,4 +204,31 @@ namespace {
 		 */
 		function convoca_export_pdf( string $title, array $headers, array $rows, string $filename ): void {}
 	}
+}
+
+namespace Convoca\Core\Admin {
+
+    /**
+     * Andamiaje de las pantallas de administración del núcleo (convoca-core#16).
+     *
+     * Las pantallas de este plugin heredan de aquí (o usan el trait): en el CI aislado el núcleo no está
+     * a mano, así que sus símbolos se declaran en el stub para que el análisis resuelva la jerarquía.
+     */
+    trait Andamiaje_Admin
+    {
+        abstract protected function ganchos(): array;
+        protected function editor_propio(): ?array { return null; }
+        protected function nodo_barra(): ?array { return null; }
+        public function __construct() {}
+        protected function registrar_subpagina( ?string $padre, string $titulo, string $menu, string $capacidad, string $slug, callable $callback ): string { return ''; }
+        protected function encolar_estilo_comun(): void {}
+        protected function exigir_guardado( string $nonce, string $capacidad, string $mensaje ): void {}
+        public function redirigir_editor_propio(): void {}
+        public function apuntar_nodo_barra( \WP_Admin_Bar $wp_admin_bar ): void {}
+    }
+
+    abstract class Pantalla_Admin
+    {
+        use Andamiaje_Admin;
+    }
 }

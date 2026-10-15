@@ -27,18 +27,29 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-class Admin_Page {
+class Admin_Page extends \Convoca\Core\Admin\Pantalla_Admin {
 
 
-	public function __construct() {
-		add_action( 'admin_menu', array( $this, 'register_menu' ) );
-		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_assets' ) );
-		add_action( 'wp_dashboard_setup', array( $this, 'dashboard_widget' ) );
-
-		// Quick state-change AJAX.
-		add_action( 'wp_ajax_convoca_change_state', array( $this, 'ajax_change_state' ) );
-		add_action( 'wp_ajax_convoca_log_whatsapp', array( $this, 'ajax_log_whatsapp' ) );
-		add_action( 'admin_post_convoca_export_members_pdf', array( $this, 'handle_export_members_pdf' ) );
+	/**
+	 * Ganchos de la pantalla, en una lista en vez del constructor copiado.
+	 *
+	 * Los ganchos, el orden y las prioridades son los de antes; lo que cambia es dónde está escrito el
+	 * constructor, que era el mismo (copiado) en las seis pantallas del ecosistema. Esta clase hereda de
+	 * `\WP_List_Table`, así que usa el trait: PHP no tiene herencia múltiple y el andamiaje compartido
+	 * vive en un solo sitio (`Convoca\Core\Admin\Andamiaje_Admin`).
+	 *
+	 * @return array<string, string> Gancho => método de esta clase.
+	 */
+	protected function ganchos(): array {
+		return array(
+			'admin_menu'                                  => 'register_menu',
+			'admin_enqueue_scripts'                       => 'enqueue_assets',
+			'wp_dashboard_setup'                          => 'dashboard_widget',
+			// Quick state-change AJAX.
+			'wp_ajax_convoca_change_state'                => 'ajax_change_state',
+			'wp_ajax_convoca_log_whatsapp'                => 'ajax_log_whatsapp',
+			'admin_post_convoca_export_members_pdf'       => 'handle_export_members_pdf',
+		);
 	}
 
 	/* ── Menu ──────────────────────────────────── */
@@ -54,7 +65,7 @@ class Admin_Page {
 			26
 		);
 
-		add_submenu_page(
+		$this->registrar_subpagina(
 			'conv-members',
 			__( 'Todos los Miembros', 'convoca-members' ),
 			__( 'Todos los Miembros', 'convoca-members' ),
@@ -63,7 +74,7 @@ class Admin_Page {
 			array( $this, 'render_list_page' )
 		);
 
-		add_submenu_page(
+		$this->registrar_subpagina(
 			'conv-members',
 			__( 'Añadir nuevo Miembro', 'convoca-members' ),
 			__( 'Añadir nuevo', 'convoca-members' ),
@@ -75,7 +86,7 @@ class Admin_Page {
 		// Página única de voluntariado: solicitudes (aprobar/revocar) + voluntarios
 		// activos. Antes había dos entradas de menú («Voluntarios» y «Gestionar
 		// Voluntarios») apuntando a lo mismo desde ángulos distintos.
-		add_submenu_page(
+		$this->registrar_subpagina(
 			'conv-members',
 			__( 'Voluntarios', 'convoca-members' ),
 			__( 'Voluntarios', 'convoca-members' ),
@@ -84,7 +95,7 @@ class Admin_Page {
 			array( $this, 'render_list_page' )
 		);
 
-		add_submenu_page(
+		$this->registrar_subpagina(
 			'conv-members',
 			__( 'Añadir nuevo Voluntario', 'convoca-members' ),
 			__( 'Añadir voluntario', 'convoca-members' ),
@@ -93,7 +104,7 @@ class Admin_Page {
 			array( new Admin_Member_Editor(), 'render' )
 		);
 
-		add_submenu_page(
+		$this->registrar_subpagina(
 			'conv-members',
 			__( 'Ajustes', 'convoca-members' ),
 			__( 'Ajustes', 'convoca-members' ),
@@ -102,7 +113,7 @@ class Admin_Page {
 			array( $this, 'render_settings_page' )
 		);
 
-		add_submenu_page(
+		$this->registrar_subpagina(
 			'conv-members',
 			__( 'Registros', 'convoca-members' ),
 			__( 'Registros', 'convoca-members' ),
@@ -111,7 +122,7 @@ class Admin_Page {
 			array( $this, 'render_logs_page' )
 		);
 
-		add_submenu_page(
+		$this->registrar_subpagina(
 			'conv-members',
 			__( 'Estado del Sistema', 'convoca-members' ),
 			__( 'Estado', 'convoca-members' ),

@@ -1,5 +1,30 @@
 ## [2.8.75] — 2026-10-15
 
+## [2.8.76] — 2026-10-15
+
+### Cambiado
+- **Los cuatro exportadores de CSV usan la ceremonia del núcleo (issue convoca-core#16).** El de socios, el de horas,
+  el de proyectos y la plantilla de importación vuelcan ya por `\Convoca\Core\Utils::stream_csv()`. **La plantilla
+  sigue saliendo con comas** a propósito: su lector es el importador de este mismo plugin (`fgetcsv( …, ',', … )`) y con
+  otro separador dejaría de importarse.
+- **Las tres pantallas de administración usan el andamiaje del núcleo.** `Admin_Page`, `Admin_Horas` y
+  `Admin_Proyectos` sueltan su constructor con los `add_action`, el alta de las páginas del menú, el encolado del CSS
+  común y —las dos últimas— el redirect del editor y el nodo de la barra de administración, que estaban copiados
+  carácter a carácter. `Admin_Horas` y `Admin_Proyectos` heredan de `\WP_List_Table`, así que usan el trait
+  `Andamiaje_Admin`; `Admin_Page`, la clase base. Ningún gancho, capacidad ni prioridad cambia.
+- **Contratos nuevos:** `UnaSolaCeremoniaCsvTest` (con la comprobación propia de que la plantilla pide el separador de
+  su lector) y `AndamiajeAdminTest`. Los dos probados en negativo.
+- El ignore de PHPStan del nodo de la barra de administración se retira: esa llamada vive ya en el andamiaje del núcleo.
+
+### Corregido
+- **Tres exportadores salían con el separador por omisión de PHP (`,`)**, que Excel en español no reconoce (horas,
+  proyectos y plantilla): el CSV abría con todos los campos en una columna.
+- **Celdas sin proteger en los cuatro:** el exportador de socios solo escapaba unas columnas y dejaba fuera el ID, el
+  estado, las fechas y los «Sí/No»; el de horas dejaba fuera la fecha, las horas y el estado. Ahora el escapado lo
+  pone el ayudante en todas.
+- **Un cero legítimo deja de desaparecer:** «Horas voluntariado» de un socio con 0 horas salía en blanco (el ayudante
+  del núcleo daba el cero por celda vacía).
+
 ### Cambiado
 - **Las pantallas de administración entran en el catálogo (issue #10, fase 2, decisión de JC).** 54 textos
   fijos —etiquetas de los metadatos del socio, botones de pago y exportación, cabeceras de la tabla de

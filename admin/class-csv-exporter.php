@@ -177,29 +177,23 @@ class CSV_Exporter {
 
 		$filename = 'convoca-miembros-' . wp_date( 'Y-m-d' ) . '.csv';
 
-		header( 'Content-Type: text/csv; charset=utf-8' );
-		header( 'Content-Disposition: attachment; filename="' . $filename . '"' );
-		header( 'Pragma: no-cache' );
-		header( 'Expires: 0' );
-
-		$out = fopen( 'php://output', 'w' ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_fopen -- CSV streaming to php://output.
-
-		// Write BOM for Excel.
-		fprintf( $out, chr( 0xEF ) . chr( 0xBB ) . chr( 0xBF ) );
-
-		// Write header row.
+		// La ceremonia del CSV vive en el núcleo (cabeceras, BOM, separador y escapado por celda en
+		// un solo flujo). Aquí se copiaba a mano y las filas se escribían sin pasar por el ayudante.
 		$header_labels = array();
 		foreach ( $columns as $key ) {
 			$header_labels[] = $all_columns[ $key ];
 		}
-		fputcsv( $out, $header_labels, ';' );
 
-		foreach ( $query->posts as $post ) {
-			$row = $this->build_row( $post, $columns );
-			fputcsv( $out, $row, ';' );
-		}
+		\Convoca\Core\Utils::stream_csv(
+			$filename,
+			$header_labels,
+			( function () use ( $query, $columns ) {
+				foreach ( $query->posts as $post ) {
+					yield $this->build_row( $post, $columns );
+				}
+			} )()
+		);
 
-		fclose( $out ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_fclose -- CSV streaming to php://output.
 		exit;
 	}
 

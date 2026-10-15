@@ -33,14 +33,53 @@ if ( ! class_exists( 'WP_List_Table' ) ) {
 
 class Admin_Proyectos extends \WP_List_Table {
 
-	public function __construct() {
-		add_action( 'admin_menu', array( $this, 'add_menu' ) );
-		add_action( 'admin_post_convoca_save_proyecto_admin', array( $this, 'handle_save_admin' ) );
-		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_assets' ) );
-		add_action( 'load-post-new.php', array( $this, 'redirect_to_custom_editor' ) );
-		add_action( 'load-post.php', array( $this, 'redirect_to_custom_editor' ) );
-		add_action( 'admin_bar_menu', array( $this, 'customize_admin_bar' ), 80 );
-		add_action( 'admin_post_convoca_export_proyectos_csv', array( $this, 'handle_export_csv' ) );
+	use \Convoca\Core\Admin\Andamiaje_Admin;
+
+	/**
+	 * Ganchos de la pantalla, en una lista en vez del constructor copiado.
+	 *
+	 * Los ganchos, el orden y las prioridades son los de antes; lo que cambia es dónde está escrito el
+	 * constructor, que era el mismo (copiado) en las seis pantallas del ecosistema. Esta clase hereda de
+	 * `\WP_List_Table`, así que usa el trait: PHP no tiene herencia múltiple y el andamiaje compartido
+	 * vive en un solo sitio (`Convoca\Core\Admin\Andamiaje_Admin`).
+	 *
+	 * @return array<string, string|array<int, int|string>> Gancho => método de esta clase (o [método, prioridad]).
+	 */
+	protected function ganchos(): array {
+		return array(
+			'admin_menu'                                => 'add_menu',
+			'admin_post_convoca_save_proyecto_admin'    => 'handle_save_admin',
+			'admin_enqueue_scripts'                     => 'enqueue_assets',
+			// El editor propio al que se llevan post.php y post-new.php.
+			'load-post-new.php'                         => 'redirigir_editor_propio',
+			'load-post.php'                             => 'redirigir_editor_propio',
+			'admin_bar_menu'                            => array( 'apuntar_nodo_barra', 80 ),
+			'admin_post_convoca_export_proyectos_csv'   => 'handle_export_csv',
+		);
+	}
+
+	/**
+	 * Editor propio de los proyectos: al que se lleva el editor estándar de WordPress.
+	 *
+	 * @return array{tipo: string, slug: string}
+	 */
+	protected function editor_propio(): ?array {
+		return array(
+			'tipo' => CPT_Proyecto::POST_TYPE,
+			'slug' => 'conv-proyecto-editor',
+		);
+	}
+
+	/**
+	 * Nodo «Añadir nuevo» de la barra de administración.
+	 *
+	 * @return array{nodo: string, slug: string}
+	 */
+	protected function nodo_barra(): ?array {
+		return array(
+			'nodo' => 'new-proyecto',
+			'slug' => 'conv-proyecto-editor',
+		);
 	}
 
 	/**
@@ -48,40 +87,7 @@ class Admin_Proyectos extends \WP_List_Table {
 	 */
 	public function enqueue_assets( $hook ) {
 		if ( strpos( $hook, 'conv-proyecto-editor' ) !== false ) {
-			wp_enqueue_style( 'convoca-core', CONVOCA_COMMON_URL . 'assets/css/convoca-common.css', array(), CONVOCA_COMMON_VERSION );
-		}
-	}
-
-	/**
-	 * Redirect standard post editor to custom editor.
-	 */
-	public function redirect_to_custom_editor() {
-		$screen    = get_current_screen();
-		$post_type = $_GET['post_type'] ?? '';
-		if ( ! $post_type && isset( $_GET['post'] ) ) {
-			$post_type = get_post_type( $_GET['post'] );
-		}
-
-		if ( ( $screen && $screen->id === CPT_Proyecto::POST_TYPE ) || $post_type === CPT_Proyecto::POST_TYPE ) {
-			if ( isset( $screen->action ) && $screen->action === 'add' || strpos( $_SERVER['REQUEST_URI'], 'post-new.php' ) !== false ) {
-				wp_safe_redirect( admin_url( 'admin.php?page=conv-proyecto-editor' ) );
-				exit;
-			} else {
-				$post_id = isset( $_GET['post'] ) ? (int) $_GET['post'] : 0;
-				if ( $post_id && strpos( $_SERVER['REQUEST_URI'], 'post.php' ) !== false ) {
-					wp_safe_redirect( admin_url( 'admin.php?page=conv-proyecto-editor&id=' . $post_id ) );
-					exit;
-				}
-			}
-		}
-	}
-
-	public function customize_admin_bar( \WP_Admin_Bar $wp_admin_bar ): void {
-		$node_id = 'new-proyecto';
-		$node    = $wp_admin_bar->get_node( $node_id );
-		if ( $node ) {
-			$node->href = admin_url( 'admin.php?page=conv-proyecto-editor' );
-			$wp_admin_bar->add_node( $node );
+			$this->encolar_estilo_comun();
 		}
 	}
 
@@ -99,7 +105,7 @@ class Admin_Proyectos extends \WP_List_Table {
 	}
 
 	public function add_menu() {
-		add_submenu_page(
+		$this->registrar_subpagina(
 			'conv-members',
 			__( 'Proyectos', 'convoca-members' ),
 			__( 'Proyectos', 'convoca-members' ),
@@ -108,7 +114,7 @@ class Admin_Proyectos extends \WP_List_Table {
 			array( $this, 'render_page' )
 		);
 
-		add_submenu_page(
+		$this->registrar_subpagina(
 			'conv-members',
 			__( 'Añadir proyecto', 'convoca-members' ),
 			__( 'Añadir proyecto', 'convoca-members' ),
@@ -173,16 +179,10 @@ class Admin_Proyectos extends \WP_List_Table {
 		$query    = new \WP_Query( $args );
 		$filename = 'convoca-proyectos-' . wp_date( 'Y-m-d' ) . '.csv';
 
-		header( 'Content-Type: text/csv; charset=utf-8' );
-		header( 'Content-Disposition: attachment; filename="' . $filename . '"' );
-		header( 'Pragma: no-cache' );
-		header( 'Expires: 0' );
-
-		$out = fopen( 'php://output', 'w' ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_fopen -- CSV streaming to php://output.
-		fprintf( $out, chr( 0xEF ) . chr( 0xBB ) . chr( 0xBF ) );
-
-		fputcsv(
-			$out,
+		// La ceremonia del CSV vive en el núcleo: cabeceras, BOM, separador y escapado por celda en
+		// un solo flujo. Aquí salía con el separador por omisión de PHP y con celdas sin proteger.
+		\Convoca\Core\Utils::stream_csv(
+			$filename,
 			array(
 				__( 'Título', 'convoca-members' ),
 				__( 'Inicio', 'convoca-members' ),
@@ -190,26 +190,24 @@ class Admin_Proyectos extends \WP_List_Table {
 				__( 'Responsable', 'convoca-members' ),
 				__( 'Activo', 'convoca-members' ),
 				__( 'Descripción', 'convoca-members' ),
-			)
+			),
+			( static function () use ( $query ) {
+				foreach ( $query->posts as $post ) {
+					$responsable_id = (int) get_post_meta( $post->ID, '_convoca_responsable', true );
+					$responsable    = $responsable_id ? ( get_userdata( $responsable_id )?->display_name ?? '' ) : '';
+
+					yield array(
+						$post->post_title,
+						get_post_meta( $post->ID, '_convoca_fecha_inicio', true ),
+						get_post_meta( $post->ID, '_convoca_fecha_fin', true ),
+						$responsable,
+						get_post_meta( $post->ID, '_convoca_activo', true ) === '1' ? __( 'Sí', 'convoca-members' ) : __( 'No', 'convoca-members' ),
+						wp_trim_words( $post->post_content, 30 ),
+					);
+				}
+			} )()
 		);
 
-		foreach ( $query->posts as $post ) {
-			$responsable_id = (int) get_post_meta( $post->ID, '_convoca_responsable', true );
-			$responsable    = $responsable_id ? ( get_userdata( $responsable_id )?->display_name ?? '' ) : '';
-			fputcsv(
-				$out,
-				array(
-					\Convoca\Core\Utils::escape_csv_field( $post->post_title ),
-					get_post_meta( $post->ID, '_convoca_fecha_inicio', true ),
-					get_post_meta( $post->ID, '_convoca_fecha_fin', true ),
-					$responsable,
-					get_post_meta( $post->ID, '_convoca_activo', true ) === '1' ? __( 'Sí', 'convoca-members' ) : __( 'No', 'convoca-members' ),
-					\Convoca\Core\Utils::escape_csv_field( wp_trim_words( $post->post_content, 30 ) ),
-				)
-			);
-		}
-
-		fclose( $out ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_fclose -- CSV streaming to php://output.
 		exit;
 	}
 

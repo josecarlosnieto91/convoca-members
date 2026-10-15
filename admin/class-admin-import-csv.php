@@ -280,17 +280,11 @@ class Admin_Import_CSV {
 		$headers = array( 'nombre', 'email', 'dni', 'plan', 'telefono', 'direccion', 'municipio' );
 		$example = array( 'Juan García López', 'juan@example.com', '12345678Z', 'socio-adulto', '612345678', 'Calle Ejemplo 1 123', 'Madrid' );
 
-		header( 'Content-Type: text/csv; charset=utf-8' );
-		header( 'Content-Disposition: attachment; filename="' . $filename . '"' );
-		header( 'Pragma: no-cache' );
-		header( 'Expires: 0' );
+		// La ceremonia vive en el núcleo, con el separador que exige SU LECTOR: esta plantilla se
+		// vuelve a subir y el importador de socios la lee con `fgetcsv( …, ',', … )`, así que el
+		// fichero tiene que seguir saliendo con comas. Ahí está el porqué del parámetro.
+		\Convoca\Core\Utils::stream_csv( $filename, $headers, array( $example ), ',' );
 
-		$out = fopen( 'php://output', 'w' ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_fopen -- CSV streaming to php://output.
-		// BOM for Excel.
-		fprintf( $out, chr( 0xEF ) . chr( 0xBB ) . chr( 0xBF ) );
-		fputcsv( $out, $headers );
-		fputcsv( $out, $example );
-		fclose( $out ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_fclose
 		exit;
 	}
 

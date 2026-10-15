@@ -33,14 +33,28 @@ if ( ! class_exists( 'WP_List_Table' ) ) {
 
 class Admin_Horas extends \WP_List_Table {
 
-	public function __construct() {
-		add_action( 'admin_menu', array( $this, 'add_menu' ) );
-		add_action( 'admin_post_convoca_process_horas', array( $this, 'process_action' ) );
-		add_action( 'admin_post_convoca_save_hours_admin', array( $this, 'handle_save_admin' ) );
-		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_assets' ) );
-		add_action( 'load-post-new.php', array( $this, 'redirect_to_custom_editor' ) );
-		add_action( 'load-post.php', array( $this, 'redirect_to_custom_editor' ) );
-		add_action( 'admin_post_convoca_export_horas_csv', array( $this, 'handle_export_csv' ) );
+	use \Convoca\Core\Admin\Andamiaje_Admin;
+
+	/**
+	 * Ganchos de la pantalla, en una lista en vez del constructor copiado.
+	 *
+	 * Los ganchos, el orden y las prioridades son los de antes; lo que cambia es dónde está escrito el
+	 * constructor, que era el mismo (copiado) en las seis pantallas del ecosistema. Esta clase hereda de
+	 * `\WP_List_Table`, así que usa el trait: PHP no tiene herencia múltiple y el andamiaje compartido
+	 * vive en un solo sitio (`Convoca\Core\Admin\Andamiaje_Admin`).
+	 *
+	 * @return array<string, string> Gancho => método de esta clase.
+	 */
+	protected function ganchos(): array {
+		return array(
+			'admin_menu'                          => 'add_menu',
+			'admin_post_convoca_process_horas'    => 'process_action',
+			'admin_post_convoca_save_hours_admin' => 'handle_save_admin',
+			'admin_enqueue_scripts'               => 'enqueue_assets',
+			'load-post-new.php'                   => 'redirect_to_custom_editor',
+			'load-post.php'                       => 'redirect_to_custom_editor',
+			'admin_post_convoca_export_horas_csv' => 'handle_export_csv',
+		);
 	}
 
 	/**
@@ -49,7 +63,7 @@ class Admin_Horas extends \WP_List_Table {
 	 * load-post-(new).php redirects registro_hora to page=conv-horas-editor.
 	 */
 	public function add_menu(): void {
-		add_submenu_page(
+		$this->registrar_subpagina(
 			'conv-members',
 			__( 'Horas de Voluntariado', 'convoca-members' ),
 			__( 'Horas', 'convoca-members' ),
@@ -58,7 +72,7 @@ class Admin_Horas extends \WP_List_Table {
 			array( $this, 'render_page' )
 		);
 
-		add_submenu_page(
+		$this->registrar_subpagina(
 			'conv-members',
 			__( 'Añadir horas de voluntariado', 'convoca-members' ),
 			__( 'Añadir horas', 'convoca-members' ),
@@ -86,7 +100,7 @@ class Admin_Horas extends \WP_List_Table {
 	 */
 	public function enqueue_assets( $hook ) {
 		if ( strpos( $hook, 'conv-horas-editor' ) !== false ) {
-			wp_enqueue_style( 'convoca-core', CONVOCA_COMMON_URL . 'assets/css/convoca-common.css', array(), CONVOCA_COMMON_VERSION );
+			$this->encolar_estilo_comun();
 		}
 	}
 
@@ -421,16 +435,11 @@ class Admin_Horas extends \WP_List_Table {
 		$query    = new \WP_Query( $args );
 		$filename = 'convoca-horas-' . wp_date( 'Y-m-d' ) . '.csv';
 
-		header( 'Content-Type: text/csv; charset=utf-8' );
-		header( 'Content-Disposition: attachment; filename="' . $filename . '"' );
-		header( 'Pragma: no-cache' );
-		header( 'Expires: 0' );
-
-		$out = fopen( 'php://output', 'w' ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_fopen -- CSV streaming to php://output.
-		fprintf( $out, chr( 0xEF ) . chr( 0xBB ) . chr( 0xBF ) );
-
-		fputcsv(
-			$out,
+		// La ceremonia del CSV vive en el núcleo (cabeceras, BOM, separador y escapado por celda en
+		// un solo flujo). Aquí salía con el separador por omisión de PHP, que Excel en español no
+		// reconoce, y con las celdas que no pasaban por el ayudante sin protección.
+		\Convoca\Core\Utils::stream_csv(
+			$filename,
 			array(
 				__( 'Fecha', 'convoca-members' ),
 				__( 'Socio', 'convoca-members' ),
@@ -440,35 +449,32 @@ class Admin_Horas extends \WP_List_Table {
 				__( 'Horas', 'convoca-members' ),
 				__( 'Descripción', 'convoca-members' ),
 				__( 'Estado', 'convoca-members' ),
-			)
+			),
+			( static function () use ( $query ) {
+				foreach ( $query->posts as $post ) {
+					$socio_id = get_post_meta( $post->ID, '_convoca_member_id', true );
+					$socio    = $socio_id ? ( get_post( $socio_id )?->post_title ?? '' ) : '';
+
+					$proyecto_id = get_post_meta( $post->ID, '_convoca_proyecto_id', true );
+					$proyecto    = $proyecto_id ? ( get_post( $proyecto_id )?->post_title ?? '' ) : '';
+
+					$act_id    = get_post_meta( $post->ID, '_convoca_actividad_id', true );
+					$actividad = $act_id ? ( get_post( $act_id )?->post_title ?? '' ) : '';
+
+					yield array(
+						get_post_meta( $post->ID, '_convoca_fecha', true ) ?: get_the_date( 'Y-m-d', $post->ID ),
+						$socio,
+						$proyecto,
+						get_post_meta( $post->ID, '_convoca_tareas', true ),
+						$actividad,
+						get_post_meta( $post->ID, '_convoca_horas', true ),
+						$post->post_content,
+						get_post_meta( $post->ID, '_convoca_estado', true ) ?: 'pendiente',
+					);
+				}
+			} )()
 		);
 
-		foreach ( $query->posts as $post ) {
-			$socio_id = get_post_meta( $post->ID, '_convoca_member_id', true );
-			$socio    = $socio_id ? ( get_post( $socio_id )?->post_title ?? '' ) : '';
-
-			$proyecto_id = get_post_meta( $post->ID, '_convoca_proyecto_id', true );
-			$proyecto    = $proyecto_id ? ( get_post( $proyecto_id )?->post_title ?? '' ) : '';
-
-			$act_id    = get_post_meta( $post->ID, '_convoca_actividad_id', true );
-			$actividad = $act_id ? ( get_post( $act_id )?->post_title ?? '' ) : '';
-
-			fputcsv(
-				$out,
-				array(
-					get_post_meta( $post->ID, '_convoca_fecha', true ) ?: get_the_date( 'Y-m-d', $post->ID ),
-					\Convoca\Core\Utils::escape_csv_field( $socio ),
-					\Convoca\Core\Utils::escape_csv_field( $proyecto ),
-					\Convoca\Core\Utils::escape_csv_field( get_post_meta( $post->ID, '_convoca_tareas', true ) ),
-					\Convoca\Core\Utils::escape_csv_field( $actividad ),
-					get_post_meta( $post->ID, '_convoca_horas', true ),
-					\Convoca\Core\Utils::escape_csv_field( $post->post_content ),
-					get_post_meta( $post->ID, '_convoca_estado', true ) ?: 'pendiente',
-				)
-			);
-		}
-
-		fclose( $out ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_fclose -- CSV streaming to php://output.
 		exit;
 	}
 

@@ -35,12 +35,10 @@ parameters:
 		-
 			message: '#Path in include\(\) "/tmp/convoca-members/#'
 			identifier: include.fileNotFound
-		# WP_Admin_Bar::add_node() acepta un objeto WP_Admin_Bar_Node en runtime
-		# (get_node() devuelve objeto); el stub solo declara array.
-		-
-			message: '#Parameter \#1 \$args of method WP_Admin_Bar::add_node#'
-			identifier: argument.type
-			path: admin/class-admin-proyectos.php
+			# (Aquí había un ignore de WP_Admin_Bar::add_node para class-admin-proyectos.php: el nodo
+		# de la barra de administración lo añade ahora el andamiaje del núcleo
+		# (Convoca\Core\Admin\Andamiaje_Admin), que castea el nodo a array, y un ignore que no casa
+		# es un error de PHPStan: se retira en vez de dejar una excepción muda.)
 		# get_userdata() puede devolver false en runtime; el ?-> ?? '' es
 		# defensivo correcto, pero el stub declara WP_User no-null.
 		-
