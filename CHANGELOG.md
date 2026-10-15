@@ -1,3 +1,20 @@
+## [2.8.58] — 2026-10-15
+
+### Añadido
+- **Conceder la condición de monitor desde la ficha (fase 4 de #30).** El monitor es la única condición que no
+  sale de ningún plan ni de una inscripción —las otras dos se ganan con el plan y con la aprobación del
+  voluntariado—, así que ahora tiene su vía en la interfaz: una casilla en el editor de la ficha que **suma**
+  la condición (no reemplaza las demás) y espeja el rol de WordPress por `Roles_Miembro`. Solo puede
+  concederla un administrador: un monitor no reparte su propio rol.
+- La casilla viaja con una **marca de presencia**: un formulario que no la traiga (el editor rápido, una
+  importación) **no** quita la condición sin querer. El texto de ayuda deja claro qué supone: aprobar horas,
+  impartir actividades y sumar horas sin estar inscrito.
+
+### Pruebas
+- `tests/Unit/MonitorDesdeEditorTest.php`: la casilla y su marca, que el guardado pase por `Roles_Miembro`,
+  que exija `manage_options` y que sin la marca no se toque nada. **Negativo probado**: quitando la marca, la
+  prueba cae. Suite 254 en verde, PHPCS 0, PHPStan `[OK]`.
+
 ## [2.8.57] — 2026-10-15
 
 ### Añadido

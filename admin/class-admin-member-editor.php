@@ -136,6 +136,25 @@ class Admin_Member_Editor {
 						<input type="text" id="convoca_sub_plan" name="convoca_sub_plan" value="<?php echo esc_attr( $m( 'sub_plan' ) ); ?>" placeholder="e.g. familiar">
 					</div>
 
+					<?php
+					// Condiciones de la ficha que no salen de ningún plan (issue #30, fase 4): el voluntariado
+					// se marca más abajo y el monitor se concede aquí. Solo un administrador —un monitor no
+					// reparte su propio rol—, y con marca de presencia (`_control`) para que un formulario que
+					// no traiga la casilla no quite la condición sin querer.
+					if ( current_user_can( 'manage_options' ) ) :
+						?>
+						<div class="convoca-field" style="grid-column:1/-1;">
+							<input type="hidden" name="convoca_monitor_control" value="1">
+							<label style="display:flex;align-items:center;gap:.5rem;font-weight:600;">
+								<input type="checkbox" id="convoca_es_monitor" name="convoca_es_monitor" value="1" <?php checked( $is_edit && Roles_Miembro::es_monitor( $post->ID ) ); ?>>
+								<?php esc_html_e( 'Monitor de actividad', 'convoca-members' ); ?>
+							</label>
+							<p class="description">
+								<?php esc_html_e( 'Puede aprobar horas, impartir actividades y sumar horas sin estar inscrito. Se suma a las demás condiciones.', 'convoca-members' ); ?>
+							</p>
+						</div>
+					<?php endif; ?>
+
 					<div class="convoca-field">
 						<label for="convoca_forma_pago"><?php esc_html_e( 'Forma de pago', 'convoca-members' ); ?></label>
 						<select id="convoca_forma_pago" name="convoca_forma_pago">
@@ -340,6 +359,18 @@ class Admin_Member_Editor {
 		foreach ( $bool_fields as $key ) {
 			$val = isset( $data[ 'convoca_' . $key ] ) ? '1' : '0';
 			update_post_meta( $post_id, '_convoca_' . $key, $val );
+		}
+
+		// Condición de monitor (issue #30, fase 4): no sale de ningún plan, se concede a mano desde aquí.
+		// Se pasa por `Roles_Miembro` y no por el meta a pelo porque es quien mantiene el espejo del rol de
+		// WordPress —con `add_role`/`remove_role`, que suman—. La marca de presencia evita que un formulario
+		// que no traiga la casilla quite la condición, y solo puede concederla un administrador.
+		if ( current_user_can( 'manage_options' ) && ! empty( $data['convoca_monitor_control'] ) ) {
+			if ( ! empty( $data['convoca_es_monitor'] ) ) {
+				Roles_Miembro::anadir( $post_id, Roles_Miembro::MONITOR );
+			} else {
+				Roles_Miembro::quitar( $post_id, Roles_Miembro::MONITOR );
+			}
 		}
 
 		// Handle state change via state machine.
