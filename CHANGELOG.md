@@ -1,3 +1,13 @@
+## [2.8.50] — 2026-10-15
+
+### Arreglado
+- **El carnet digital vuelve al plan gratuito (#core17).** La web lo anuncia entre los ganchos del plan
+  gratis y el código lo servía detrás de `has_pro( 'pdf_memories' )`, que es la clave de las **memorias
+  PDF**: quien instalaba la versión gratuita no veía el carnet, justo lo que se le promete. Ahora se sirve
+  sin licencia. Las memorias PDF —esas sí PRO— siguen con su puerta, y la exportación de informes también.
+- Prueba nueva `tests/Unit/CarnetSinLicenciaTest.php`, que fija las dos caras: el carnet sin licencia y las
+  memorias con ella.
+
 ## [2.8.49] — 2026-10-15
 
 ### Arreglado

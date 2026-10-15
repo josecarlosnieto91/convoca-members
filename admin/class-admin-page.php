@@ -316,13 +316,13 @@ class Admin_Page {
 				<?php echo esc_html( $post->post_title ); ?>
 				<?php echo wp_kses_post( Estados::badge_html( $estado ) ); ?>
 				&nbsp;
-				<?php if ( \Convoca\Core\License_Manager::has_pro( 'pdf_memories' ) ) : ?>
+				<?php
+				// El carnet digital va en el plan gratuito —es uno de sus ganchos y así lo anuncia la web— así
+				// que se sirve sin licencia. Estaba detrás de `pdf_memories`, que es la clave de las memorias
+				// PDF: la puerta equivocada (issue core#17).
+				?>
 				<a href="<?php echo esc_url( wp_nonce_url( admin_url( 'admin-post.php?action=convoca_pdf_card&member_id=' . $post_id ), 'convoca_pdf_card_' . $post_id ) ); ?>" 
 					class="convoca-btn convoca-btn-outline" target="_blank">🪪 <?php esc_html_e( 'Ver Tarjeta', 'convoca-members' ); ?></a>
-				<?php else : ?>
-				<a href="<?php echo esc_url( admin_url( 'admin.php?page=convoca-license' ) ); ?>" 
-					class="convoca-btn convoca-btn-outline" target="_blank" style="opacity:0.6;" title="<?php esc_attr_e( 'Disponible en PRO', 'convoca-members' ); ?>">🔒 <?php esc_html_e( 'Ver Tarjeta (PRO)', 'convoca-members' ); ?></a>
-				<?php endif; ?>
 				<a href="<?php echo esc_url( admin_url( 'admin.php?page=' . Admin_Member_Editor::SLUG . '&id=' . $post_id ) ); ?>" 
 					class="convoca-btn convoca-btn-primary"><?php esc_html_e( '✏️ Editar', 'convoca-members' ); ?></a>
 			</h1>
