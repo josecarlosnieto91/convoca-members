@@ -2,14 +2,14 @@
 # This file is distributed under the GPL-2.0-or-later.
 msgid ""
 msgstr ""
-"Project-Id-Version: Convoca Members 2.8.73\n"
+"Project-Id-Version: Convoca Members 2.8.74\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/convoca-members\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-10-15T15:10:03+00:00\n"
+"POT-Creation-Date: 2026-10-15T15:15:54+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.12.0\n"
 "X-Domain: convoca-members\n"
@@ -491,6 +491,7 @@ msgstr ""
 #: includes/GDPR_Tools.php:122
 #: templates/form-alta.php:272
 #: templates/form-alta.php:465
+#: templates/form-voluntariado.php:158
 msgid "Email"
 msgstr ""
 
@@ -504,6 +505,7 @@ msgstr ""
 #: includes/GDPR_Tools.php:123
 #: templates/form-alta.php:273
 #: templates/form-alta.php:469
+#: templates/form-voluntariado.php:159
 msgid "Teléfono"
 msgstr ""
 
@@ -512,6 +514,7 @@ msgstr ""
 #: admin/class-csv-exporter.php:47
 #: templates/form-alta.php:271
 #: templates/form-alta.php:473
+#: templates/form-voluntariado.php:157
 msgid "WhatsApp"
 msgstr ""
 
@@ -644,6 +647,7 @@ msgstr ""
 #: admin/class-admin-list.php:574
 #: admin/class-admin-proyectos.php:206
 #: templates/form-alta.php:250
+#: templates/form-voluntariado.php:136
 msgid "No"
 msgstr ""
 
@@ -657,6 +661,8 @@ msgstr ""
 #: admin/class-admin-proyectos.php:206
 #: admin/class-admin-proyectos.php:318
 #: templates/form-alta.php:249
+#: templates/form-voluntariado.php:135
+#: templates/form-voluntariado.php:252
 msgid "Sí"
 msgstr ""
 
@@ -696,6 +702,7 @@ msgstr ""
 
 #: admin/class-admin-member-editor.php:109
 #: templates/form-alta.php:211
+#: templates/form-voluntariado.php:97
 msgid "Nombre completo *"
 msgstr ""
 
@@ -3295,6 +3302,7 @@ msgstr ""
 
 #: includes/Rest_API.php:1022
 #: includes/Rest_API.php:1046
+#: public/class-mi-area.php:168
 msgid "Error"
 msgstr ""
 
@@ -3685,6 +3693,10 @@ msgstr ""
 msgid "Generando pago…"
 msgstr ""
 
+#: public/class-mi-area.php:177
+msgid "Error de red."
+msgstr ""
+
 #: public/class-mi-area.php:209
 msgid "Has iniciado sesión correctamente."
 msgstr ""
@@ -3716,6 +3728,10 @@ msgstr ""
 msgid "Si no puedes, escríbenos:"
 msgstr ""
 
+#: public/class-mi-area.php:269
+msgid "Acceso Socios"
+msgstr ""
+
 #: public/class-mi-area.php:270
 msgid "Introduce tu usuario y contraseña para acceder a tu área privada."
 msgstr ""
@@ -3726,6 +3742,10 @@ msgstr ""
 
 #: public/class-mi-area.php:280
 msgid "Usuario o Email"
+msgstr ""
+
+#: public/class-mi-area.php:281
+msgid "ejemplo@correo.com"
 msgstr ""
 
 #: public/class-mi-area.php:286
@@ -3740,6 +3760,13 @@ msgstr ""
 msgid "Entrar"
 msgstr ""
 
+#. translators: %s es el nombre de la persona socia.
+#: public/class-mi-area.php:305
+#, php-format
+msgid "¡Hola, %s!"
+msgstr ""
+
+#. translators: %s es el nombre de la persona socia.
 #: public/class-mi-area.php:306
 msgid "Bienvenido a tu panel de socio de Convoca."
 msgstr ""
@@ -3850,6 +3877,10 @@ msgstr ""
 
 #: public/class-verificar-certificado.php:105
 msgid "ID del Certificado"
+msgstr ""
+
+#: public/class-verificar-certificado.php:107
+msgid "Ej: VOL-2025-XXXXX"
 msgstr ""
 
 #: public/class-verificar-certificado.php:112
@@ -3979,90 +4010,112 @@ msgid "Paso 2 — Tus datos personales"
 msgstr ""
 
 #: templates/form-alta.php:212
+#: templates/form-voluntariado.php:99
 msgid "Nombre y apellidos"
 msgstr ""
 
 #: templates/form-alta.php:214
+#: templates/form-voluntariado.php:100
 msgid "Este campo es obligatorio."
 msgstr ""
 
 #: templates/form-alta.php:217
+#: templates/form-voluntariado.php:103
 msgid "DNI / NIE *"
 msgstr ""
 
 #: templates/form-alta.php:220
+#: templates/form-voluntariado.php:106
 msgid "Introduce un DNI o NIE válido."
 msgstr ""
 
 #: templates/form-alta.php:226
+#: templates/form-voluntariado.php:112
 msgid "Fecha de nacimiento *"
 msgstr ""
 
 #: templates/form-alta.php:228
+#: templates/form-voluntariado.php:114
 msgid "Introduce tu fecha de nacimiento."
 msgstr ""
 
 #: templates/form-alta.php:232
+#: templates/form-voluntariado.php:118
 msgid "Correo electrónico *"
 msgstr ""
 
 #: templates/form-alta.php:233
+#: templates/form-voluntariado.php:120
 msgid "tu@correo.com"
 msgstr ""
 
 #: templates/form-alta.php:235
+#: templates/form-voluntariado.php:121
 msgid "Introduce un email válido."
 msgstr ""
 
 #: templates/form-alta.php:241
+#: templates/form-voluntariado.php:127
 msgid "Teléfono *"
 msgstr ""
 
 #: templates/form-alta.php:244
+#: templates/form-voluntariado.php:130
 msgid "Introduce tu número de teléfono."
 msgstr ""
 
 #: templates/form-alta.php:247
+#: templates/form-voluntariado.php:133
 msgid "¿Tu teléfono tiene WhatsApp?"
 msgstr ""
 
 #: templates/form-alta.php:256
+#: templates/form-voluntariado.php:142
 msgid "Dirección postal *"
 msgstr ""
 
 #: templates/form-alta.php:257
+#: templates/form-voluntariado.php:144
 msgid "Calle, número, piso"
 msgstr ""
 
 #: templates/form-alta.php:259
+#: templates/form-voluntariado.php:145
 msgid "Introduce tu dirección."
 msgstr ""
 
 #: templates/form-alta.php:264
+#: templates/form-voluntariado.php:150
 msgid "Municipio / Localidad *"
 msgstr ""
 
 #: templates/form-alta.php:265
+#: templates/form-voluntariado.php:151
 msgid "Ej: Oviedo"
 msgstr ""
 
 #: templates/form-alta.php:266
+#: templates/form-voluntariado.php:152
 msgid "Introduce tu municipio."
 msgstr ""
 
 #: templates/form-alta.php:269
+#: templates/form-voluntariado.php:155
 msgid "Canal de contacto preferente"
 msgstr ""
 
 #: templates/form-alta.php:280
+#: templates/form-voluntariado.php:166
 msgid "⚠️ Al ser menor de edad, necesitas autorización de tu tutor/a legal."
 msgstr ""
 
 #: templates/form-alta.php:283
+#: templates/form-voluntariado.php:169
 msgid "Nombre del tutor/a legal *"
 msgstr ""
 
 #: templates/form-alta.php:287
+#: templates/form-voluntariado.php:173
 msgid "DNI del tutor/a *"
 msgstr ""
 
@@ -4171,6 +4224,7 @@ msgid "He leído y acepto la %s y el tratamiento de mis datos personales conform
 msgstr ""
 
 #: templates/form-alta.php:412
+#: templates/form-voluntariado.php:302
 msgid "Política de Privacidad"
 msgstr ""
 
@@ -4246,7 +4300,12 @@ msgid "Tu alta se ha registrado correctamente. Hemos enviado un email de confirm
 msgstr ""
 
 #: templates/form-alta.php:548
+#: templates/form-voluntariado.php:338
 msgid "← Volver al inicio"
+msgstr ""
+
+#: templates/form-voluntariado.php:68
+msgid "Formulario de voluntariado"
 msgstr ""
 
 #: templates/form-voluntariado.php:76
@@ -4257,6 +4316,100 @@ msgstr ""
 msgid "Actívalo y vuelve a intentarlo, o escríbenos:"
 msgstr ""
 
+#: templates/form-voluntariado.php:93
+msgid "📌 Datos personales"
+msgstr ""
+
+#: templates/form-voluntariado.php:185
+msgid "🌍 ¿En qué te interesa colaborar?"
+msgstr ""
+
+#: templates/form-voluntariado.php:186
+msgid "Selecciona todas las áreas que te interesen."
+msgstr ""
+
+#: templates/form-voluntariado.php:187
+msgid "Áreas de interés"
+msgstr ""
+
+#: templates/form-voluntariado.php:197
+msgid "📅 Tu disponibilidad"
+msgstr ""
+
+#: templates/form-voluntariado.php:200
+msgid "¿Cuándo puedes participar?"
+msgstr ""
+
+#: templates/form-voluntariado.php:202
+msgid "Fines de semana"
+msgstr ""
+
+#: templates/form-voluntariado.php:203
+msgid "Entre semana"
+msgstr ""
+
+#: templates/form-voluntariado.php:204
+msgid "Ambos"
+msgstr ""
+
+#: templates/form-voluntariado.php:205
+msgid "Solo eventos puntuales"
+msgstr ""
+
+#: templates/form-voluntariado.php:209
+msgid "¿Experiencia previa en voluntariado?"
+msgstr ""
+
+#: templates/form-voluntariado.php:211
+msgid "No, es mi primera vez"
+msgstr ""
+
+#: templates/form-voluntariado.php:212
+msgid "Sí, algo de experiencia"
+msgstr ""
+
+#: templates/form-voluntariado.php:213
+msgid "Sí, amplia experiencia"
+msgstr ""
+
+#: templates/form-voluntariado.php:221
+msgid "Cuéntanos qué te motiva…"
+msgstr ""
+
 #: templates/form-voluntariado.php:228
 msgid "📋 Información adicional"
+msgstr ""
+
+#: templates/form-voluntariado.php:244
+msgid "Selecciona una opción"
+msgstr ""
+
+#: templates/form-voluntariado.php:264
+msgid "✅ Compromisos y consentimiento"
+msgstr ""
+
+#. translators: %s es el enlace a la política de privacidad.
+#: templates/form-voluntariado.php:298
+#, php-format
+msgid "He leído y acepto la %s y el tratamiento de mis datos personales conforme al RGPD. *"
+msgstr ""
+
+#: templates/form-voluntariado.php:324
+msgid "He leído y acepto la Declaración Responsable. *"
+msgstr ""
+
+#: templates/form-voluntariado.php:327
+msgid "Enviar solicitud de voluntariado 🌱"
+msgstr ""
+
+#: templates/form-voluntariado.php:334
+msgid "¡Gracias por querer ser voluntario/a!"
+msgstr ""
+
+#: templates/form-voluntariado.php:335
+msgid "Tu solicitud se ha registrado correctamente. Hemos enviado un email de confirmación a tu correo."
+msgstr ""
+
+#: templates/form-voluntariado.php:336
+msgid "¿Tienes dudas? Escríbenos a"
 msgstr ""

@@ -165,7 +165,7 @@ class Mi_Area {
 					} else {
 						btn.disabled = false;
 						// Escape error message to prevent XSS (it may come from the API).
-						var err = d.error || 'Error';
+						var err = d.error || '<?php echo esc_js( __( 'Error', 'convoca-members' ) ); ?>';
 						var div = document.createElement('div');
 						div.className = 'convoca-alert convoca-alert--danger';
 						div.textContent = err;
@@ -174,7 +174,7 @@ class Mi_Area {
 					}
 				}).catch(function() {
 					btn.disabled = false;
-					msg.innerHTML = '<div class="convoca-alert convoca-alert--danger">Error de red.</div>';
+					msg.innerHTML = '<div class="convoca-alert convoca-alert--danger"><?php echo esc_js( __( 'Error de red.', 'convoca-members' ) ); ?></div>';
 				});
 			}
 		});
@@ -266,7 +266,7 @@ class Mi_Area {
 		}
 		?>
 		<div class="conv-login-container card-glass">
-			<h2 class="text-gradient">Acceso Socios</h2>
+			<h2 class="text-gradient"><?php esc_html_e( 'Acceso Socios', 'convoca-members' ); ?></h2>
 			<p><?php esc_html_e( 'Introduce tu usuario y contraseña para acceder a tu área privada.', 'convoca-members' ); ?></p>
 			<noscript>
 				<div class="convoca-alert convoca-alert--warning" role="status">
@@ -278,7 +278,7 @@ class Mi_Area {
 				<input type="hidden" name="convoca_sin_js_panel_socio" value="1" />
 				<div class="form-group">
 					<label for="username"><?php esc_html_e( 'Usuario o Email', 'convoca-members' ); ?></label>
-					<input type="text" id="username" name="username" required placeholder="ejemplo@correo.com">
+					<input type="text" id="username" name="username" required placeholder="<?php esc_attr_e( 'ejemplo@correo.com', 'convoca-members' ); ?>">
 				</div>
 				<div class="form-group">
 					<label for="password"><?php esc_html_e( 'Contraseña', 'convoca-members' ); ?></label>
@@ -302,7 +302,7 @@ class Mi_Area {
 		<div class="conv-dashboard-container">
 			<header class="conv-panel-header">
 				<div>
-					<h1>¡Hola, <span><?php echo esc_html( $post->post_title ); ?></span>!</h1>
+					<h1><?php /* translators: %s es el nombre de la persona socia. */ printf( esc_html__( '¡Hola, %s!', 'convoca-members' ), '<span>' . esc_html( $post->post_title ) . '</span>' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- el nombre va escapado y el span es literal. ?></h1>
 					<p class="subtitle"><?php esc_html_e( 'Bienvenido a tu panel de socio de Convoca.', 'convoca-members' ); ?></p>
 					<?php
 					// Qué es esta persona y qué le supone (issue #30). Va en servidor: es lo primero que ve

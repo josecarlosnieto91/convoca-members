@@ -65,7 +65,7 @@ if ( $convoca_sin_js ) :
 endif;
 ?>
 
-<div id="conv-vol-wrapper" class="convoca-form" role="region" aria-label="Formulario de voluntariado">
+<div id="conv-vol-wrapper" class="convoca-form" role="region" aria-label="<?php esc_attr_e( 'Formulario de voluntariado', 'convoca-members' ); ?>">
 
 	<!-- Alert container -->
 	<div id="conv-vol-alert" class="convoca-alert" style="display:none" role="alert" aria-live="assertive"></div>
@@ -90,87 +90,87 @@ endif;
 		<input type="hidden" name="convoca_sin_js_voluntariado" value="1" />
 
 		<!-- Personal data -->
-		<h2>📌 Datos personales</h2>
+		<h2><?php esc_html_e( '📌 Datos personales', 'convoca-members' ); ?></h2>
 
 			<div class="convoca-grid-2">
 				<div class="convoca-field">
-					<label for="conv-vol-nombre">Nombre completo *</label>
+					<label for="conv-vol-nombre"><?php esc_html_e( 'Nombre completo *', 'convoca-members' ); ?></label>
 					<input type="text" id="conv-vol-nombre" name="nombre" required autocomplete="name"
-						placeholder="Nombre y apellidos">
-					<span class="convoca-error-msg">Este campo es obligatorio.</span>
+						placeholder="<?php esc_attr_e( 'Nombre y apellidos', 'convoca-members' ); ?>">
+					<span class="convoca-error-msg"><?php esc_html_e( 'Este campo es obligatorio.', 'convoca-members' ); ?></span>
 				</div>
 				<div class="convoca-field">
-					<label for="conv-vol-dni">DNI / NIE *</label>
+					<label for="conv-vol-dni"><?php esc_html_e( 'DNI / NIE *', 'convoca-members' ); ?></label>
 					<input type="text" id="conv-vol-dni" name="dni" placeholder="12345678A" required
 						pattern="([0-9]{8}[A-Za-z]|[XYZxyz][0-9]{7}[A-Za-z])">
-					<span class="convoca-error-msg">Introduce un DNI o NIE válido.</span>
+					<span class="convoca-error-msg"><?php esc_html_e( 'Introduce un DNI o NIE válido.', 'convoca-members' ); ?></span>
 				</div>
 			</div>
 
 			<div class="convoca-grid-2">
 				<div class="convoca-field">
-					<label for="conv-vol-fechanac">Fecha de nacimiento *</label>
+					<label for="conv-vol-fechanac"><?php esc_html_e( 'Fecha de nacimiento *', 'convoca-members' ); ?></label>
 					<input type="date" id="conv-vol-fechanac" name="fecha_nacimiento" required>
-					<span class="convoca-error-msg">Introduce tu fecha de nacimiento.</span>
+					<span class="convoca-error-msg"><?php esc_html_e( 'Introduce tu fecha de nacimiento.', 'convoca-members' ); ?></span>
 					<span id="conv-vol-age-badge" class="conv-age-badge" style="display:none"></span>
 				</div>
 				<div class="convoca-field">
-					<label for="conv-vol-email">Correo electrónico *</label>
+					<label for="conv-vol-email"><?php esc_html_e( 'Correo electrónico *', 'convoca-members' ); ?></label>
 					<input type="email" id="conv-vol-email" name="email" required autocomplete="email"
-						placeholder="tu@correo.com">
-					<span class="convoca-error-msg">Introduce un email válido.</span>
+						placeholder="<?php esc_attr_e( 'tu@correo.com', 'convoca-members' ); ?>">
+					<span class="convoca-error-msg"><?php esc_html_e( 'Introduce un email válido.', 'convoca-members' ); ?></span>
 				</div>
 			</div>
 
 			<div class="convoca-grid-2">
 				<div class="convoca-field">
-					<label for="conv-vol-telefono">Teléfono *</label>
+					<label for="conv-vol-telefono"><?php esc_html_e( 'Teléfono *', 'convoca-members' ); ?></label>
 					<input type="tel" id="conv-vol-telefono" name="telefono" required autocomplete="tel"
 						placeholder="600 000 000">
-					<span class="convoca-error-msg">Introduce tu número de teléfono.</span>
+					<span class="convoca-error-msg"><?php esc_html_e( 'Introduce tu número de teléfono.', 'convoca-members' ); ?></span>
 				</div>
 				<div class="convoca-field">
-					<label for="conv-vol-whatsapp">¿Tu teléfono tiene WhatsApp?</label>
+					<label for="conv-vol-whatsapp"><?php esc_html_e( '¿Tu teléfono tiene WhatsApp?', 'convoca-members' ); ?></label>
 					<select id="conv-vol-whatsapp" name="whatsapp">
-						<option value="si">Sí</option>
-						<option value="no">No</option>
+						<option value="si"><?php esc_html_e( 'Sí', 'convoca-members' ); ?></option>
+						<option value="no"><?php esc_html_e( 'No', 'convoca-members' ); ?></option>
 					</select>
 				</div>
 			</div>
 
 			<div class="convoca-field">
-				<label for="conv-vol-direccion">Dirección postal *</label>
+				<label for="conv-vol-direccion"><?php esc_html_e( 'Dirección postal *', 'convoca-members' ); ?></label>
 				<input type="text" id="conv-vol-direccion" name="direccion" required autocomplete="street-address"
-					placeholder="Calle, número, piso">
-				<span class="convoca-error-msg">Introduce tu dirección.</span>
+					placeholder="<?php esc_attr_e( 'Calle, número, piso', 'convoca-members' ); ?>">
+				<span class="convoca-error-msg"><?php esc_html_e( 'Introduce tu dirección.', 'convoca-members' ); ?></span>
 			</div>
 
 			<div class="convoca-grid-2">
 				<div class="convoca-field">
-					<label for="conv-vol-municipio">Municipio / Localidad *</label>
-					<input type="text" id="conv-vol-municipio" name="municipio" required placeholder="Ej: Oviedo">
-					<span class="convoca-error-msg">Introduce tu municipio.</span>
+					<label for="conv-vol-municipio"><?php esc_html_e( 'Municipio / Localidad *', 'convoca-members' ); ?></label>
+					<input type="text" id="conv-vol-municipio" name="municipio" required placeholder="<?php esc_attr_e( 'Ej: Oviedo', 'convoca-members' ); ?>">
+					<span class="convoca-error-msg"><?php esc_html_e( 'Introduce tu municipio.', 'convoca-members' ); ?></span>
 				</div>
 				<div class="convoca-field">
-					<label for="conv-vol-canal">Canal de contacto preferente</label>
+					<label for="conv-vol-canal"><?php esc_html_e( 'Canal de contacto preferente', 'convoca-members' ); ?></label>
 					<select id="conv-vol-canal" name="canal_contacto">
-						<option value="whatsapp">WhatsApp</option>
-						<option value="email">Email</option>
-						<option value="telefono">Teléfono</option>
+						<option value="whatsapp"><?php esc_html_e( 'WhatsApp', 'convoca-members' ); ?></option>
+						<option value="email"><?php esc_html_e( 'Email', 'convoca-members' ); ?></option>
+						<option value="telefono"><?php esc_html_e( 'Teléfono', 'convoca-members' ); ?></option>
 					</select>
 				</div>
 			</div>
 
 			<!-- Minor notice -->
 			<div id="conv-vol-minor" class="convoca-box-warning" style="display:none">
-				<strong>⚠️ Al ser menor de edad, necesitas autorización de tu tutor/a legal.</strong>
+				<strong><?php esc_html_e( '⚠️ Al ser menor de edad, necesitas autorización de tu tutor/a legal.', 'convoca-members' ); ?></strong>
 				<div class="convoca-grid-2 convoca-mt-small">
 					<div class="convoca-field">
-						<label for="conv-vol-tutor-nombre">Nombre del tutor/a legal *</label>
+						<label for="conv-vol-tutor-nombre"><?php esc_html_e( 'Nombre del tutor/a legal *', 'convoca-members' ); ?></label>
 						<input type="text" id="conv-vol-tutor-nombre" name="tutor_nombre">
 					</div>
 					<div class="convoca-field">
-						<label for="conv-vol-tutor-dni">DNI del tutor/a *</label>
+						<label for="conv-vol-tutor-dni"><?php esc_html_e( 'DNI del tutor/a *', 'convoca-members' ); ?></label>
 						<input type="text" id="conv-vol-tutor-dni" name="tutor_dni">
 					</div>
 				</div>
@@ -182,9 +182,9 @@ endif;
 			</div>
 
 		<!-- Interest areas -->
-		<h2 style="margin-top:2rem">🌍 ¿En qué te interesa colaborar?</h2>
-		<p class="conv-small">Selecciona todas las áreas que te interesen.</p>
-		<div class="conv-interest-grid" role="group" aria-label="Áreas de interés">
+		<h2 style="margin-top:2rem"><?php esc_html_e( '🌍 ¿En qué te interesa colaborar?', 'convoca-members' ); ?></h2>
+		<p class="conv-small"><?php esc_html_e( 'Selecciona todas las áreas que te interesen.', 'convoca-members' ); ?></p>
+		<div class="conv-interest-grid" role="group" aria-label="<?php esc_attr_e( 'Áreas de interés', 'convoca-members' ); ?>">
 			<?php foreach ( $areas as $value => $label ) : ?>
 				<label>
 					<input type="checkbox" name="intereses[]" value="<?php echo esc_attr( $value ); ?>">
@@ -194,23 +194,23 @@ endif;
 		</div>
 
 		<!-- Availability -->
-		<h2 style="margin-top:2rem">📅 Tu disponibilidad</h2>
+		<h2 style="margin-top:2rem"><?php esc_html_e( '📅 Tu disponibilidad', 'convoca-members' ); ?></h2>
 		<div class="convoca-grid-2">
 			<div class="convoca-field">
-				<label for="conv-vol-disponibilidad">¿Cuándo puedes participar?</label>
+				<label for="conv-vol-disponibilidad"><?php esc_html_e( '¿Cuándo puedes participar?', 'convoca-members' ); ?></label>
 				<select id="conv-vol-disponibilidad" name="disponibilidad">
-					<option value="fines-semana">Fines de semana</option>
-					<option value="entre-semana">Entre semana</option>
-					<option value="ambos">Ambos</option>
-					<option value="puntual">Solo eventos puntuales</option>
+					<option value="fines-semana"><?php esc_html_e( 'Fines de semana', 'convoca-members' ); ?></option>
+					<option value="entre-semana"><?php esc_html_e( 'Entre semana', 'convoca-members' ); ?></option>
+					<option value="ambos"><?php esc_html_e( 'Ambos', 'convoca-members' ); ?></option>
+					<option value="puntual"><?php esc_html_e( 'Solo eventos puntuales', 'convoca-members' ); ?></option>
 				</select>
 			</div>
 			<div class="convoca-field">
-				<label for="conv-vol-experiencia">¿Experiencia previa en voluntariado?</label>
+				<label for="conv-vol-experiencia"><?php esc_html_e( '¿Experiencia previa en voluntariado?', 'convoca-members' ); ?></label>
 				<select id="conv-vol-experiencia" name="experiencia">
-					<option value="no">No, es mi primera vez</option>
-					<option value="algo">Sí, algo de experiencia</option>
-					<option value="mucha">Sí, amplia experiencia</option>
+					<option value="no"><?php esc_html_e( 'No, es mi primera vez', 'convoca-members' ); ?></option>
+					<option value="algo"><?php esc_html_e( 'Sí, algo de experiencia', 'convoca-members' ); ?></option>
+					<option value="mucha"><?php esc_html_e( 'Sí, amplia experiencia', 'convoca-members' ); ?></option>
 				</select>
 			</div>
 		</div>
@@ -218,7 +218,7 @@ endif;
 		<div class="convoca-field">
 			<label for="conv-vol-motivacion">¿Por qué quieres ser voluntario/a en <?php echo esc_html( \Convoca\Members\Identidad::nombre_entidad() ); ?>?</label>
 			<textarea id="conv-vol-motivacion" name="motivacion" rows="3"
-				placeholder="Cuéntanos qué te motiva…"></textarea>
+				placeholder="<?php esc_attr_e( 'Cuéntanos qué te motiva…', 'convoca-members' ); ?>"></textarea>
 		</div>
 
 		<!-- Dynamic Fields -->
@@ -241,7 +241,7 @@ endif;
 						$options = array_filter( array_map( 'trim', explode( "\n", $field['options'] ?? '' ) ) );
 						?>
 						<select id="<?php echo esc_attr( $field_id ); ?>" name="<?php echo esc_attr( $name ); ?>" <?php echo esc_attr( $required ); ?>>
-							<option value="">Selecciona una opción</option>
+							<option value=""><?php esc_html_e( 'Selecciona una opción', 'convoca-members' ); ?></option>
 							<?php foreach ( $options as $opt ) : ?>
 								<option value="<?php echo esc_attr( $opt ); ?>"><?php echo esc_html( $opt ); ?></option>
 							<?php endforeach; ?>
@@ -249,7 +249,7 @@ endif;
 					<?php elseif ( $field['type'] === 'checkbox' ) : ?>
 						<div class="convoca-check-group">
 							<input type="checkbox" id="<?php echo esc_attr( $field_id ); ?>" name="<?php echo esc_attr( $name ); ?>" <?php echo esc_attr( $required ); ?>>
-							<label for="<?php echo esc_attr( $field_id ); ?>">Sí</label>
+							<label for="<?php echo esc_attr( $field_id ); ?>"><?php esc_html_e( 'Sí', 'convoca-members' ); ?></label>
 						</div>
 					<?php else : ?>
 						<input type="<?php echo esc_attr( $field['type'] ); ?>" id="<?php echo esc_attr( $field_id ); ?>" name="<?php echo esc_attr( $name ); ?>" <?php echo esc_attr( $required ); ?>>
@@ -261,7 +261,7 @@ endif;
 		?>
 
 		<!-- Consent -->
-		<h2 style="margin-top:2rem">✅ Compromisos y consentimiento</h2>
+		<h2 style="margin-top:2rem"><?php esc_html_e( '✅ Compromisos y consentimiento', 'convoca-members' ); ?></h2>
 		<div class="convoca-check-group">
 			<input type="checkbox" id="conv-vol-codigo" name="acepto_codigo" required>
 			<label for="conv-vol-codigo">He leído y acepto el
@@ -291,10 +291,19 @@ endif;
 		</div>
 		<div class="convoca-check-group">
 			<input type="checkbox" id="conv-vol-rgpd" name="rgpd" required>
-			<label for="conv-vol-rgpd">He leído y acepto la <a
-					href="<?php echo esc_url( home_url( '/politica-de-privacidad/' ) ); ?>" target="_blank"
-					rel="noopener">Política de Privacidad</a> y el tratamiento de mis datos personales conforme al RGPD.
-				*</label>
+			<label for="conv-vol-rgpd">
+			<?php
+			printf(
+				/* translators: %s es el enlace a la política de privacidad. */
+				esc_html__( 'He leído y acepto la %s y el tratamiento de mis datos personales conforme al RGPD. *', 'convoca-members' ),
+				sprintf(
+					'<a href="%s" target="_blank" rel="noopener">%s</a>',
+					esc_url( home_url( '/politica-de-privacidad/' ) ),
+					esc_html__( 'Política de Privacidad', 'convoca-members' )
+				)
+			);
+			?>
+			</label>
 		</div>
 		<div class="convoca-check-group">
 			<input type="checkbox" id="conv-vol-comunicaciones" name="comunicaciones">
@@ -312,22 +321,21 @@ endif;
 		<?php endif; ?>
 		<div class="convoca-check-group">
 			<input type="checkbox" id="conv-vol-declaracion" name="declaracion_responsable" required>
-			<label for="conv-vol-declaracion" style="font-weight: bold;">He leído y acepto la Declaración Responsable. *</label>
+			<label for="conv-vol-declaracion" style="font-weight: bold;"><?php esc_html_e( 'He leído y acepto la Declaración Responsable. *', 'convoca-members' ); ?></label>
 		</div>
 
-		<button type="submit" class="convoca-btn convoca-btn-primary" style="width:100%;margin-top:1.5rem">Enviar solicitud de
-			voluntariado 🌱</button>
+		<button type="submit" class="convoca-btn convoca-btn-primary" style="width:100%;margin-top:1.5rem"><?php esc_html_e( 'Enviar solicitud de voluntariado 🌱', 'convoca-members' ); ?></button>
 
 	</form>
 
 	<!-- Success screen -->
 	<div id="conv-vol-success" class="convoca-success-screen" style="display:none" role="status" aria-live="polite">
 		<div class="convoca-success-icon">🌱</div>
-		<h2>¡Gracias por querer ser voluntario/a!</h2>
-		<p>Tu solicitud se ha registrado correctamente. Hemos enviado un email de confirmación a tu correo.</p>
-		<p class="convoca-small">¿Tienes dudas? Escríbenos a <a
+		<h2><?php esc_html_e( '¡Gracias por querer ser voluntario/a!', 'convoca-members' ); ?></h2>
+		<p><?php esc_html_e( 'Tu solicitud se ha registrado correctamente. Hemos enviado un email de confirmación a tu correo.', 'convoca-members' ); ?></p>
+		<p class="convoca-small"><?php esc_html_e( '¿Tienes dudas? Escríbenos a', 'convoca-members' ); ?> <a
 				href="mailto:<?php echo esc_attr( get_bloginfo( 'admin_email' ) ); ?>"><?php echo esc_html( get_bloginfo( 'admin_email' ) ); ?></a></p>
-		<p><a href="<?php echo esc_url( home_url( '/' ) ); ?>" class="convoca-btn convoca-btn-outline">← Volver al inicio</a></p>
+		<p><a href="<?php echo esc_url( home_url( '/' ) ); ?>" class="convoca-btn convoca-btn-outline"><?php esc_html_e( '← Volver al inicio', 'convoca-members' ); ?></a></p>
 	</div>
 
 </div>

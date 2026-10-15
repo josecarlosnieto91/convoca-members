@@ -1,3 +1,16 @@
+## [2.8.74] — 2026-10-15
+
+### Cambiado
+- **El formulario de voluntariado y el área privada del socio, también en el catálogo (issue #10, fase 2).** El
+  formulario tenía 52 textos fijos (45 nodos y 7 atributos: etiquetas, opciones de disponibilidad, experiencia
+  previa y el botón de envío) y el área de socio otros cinco: `Acceso Socios`, el aviso de error de red del
+  pago, el ejemplo del usuario, el del ID de certificado y el saludo con el nombre. El saludo va entero con
+  `sprintf` («¡Hola, %s!») en vez de en dos trozos, y el texto que se pinta por JavaScript (`Error de red.`)
+  pasa por `esc_js`.
+
+### Traducciones
+- Catálogo inglés **988 de 988** (antes 959). `.pot` regenerado con WP-CLI 2.12.0 y sin avisos.
+
 ## [2.8.73] — 2026-10-15
 
 ### Cambiado

@@ -104,7 +104,7 @@ class Verificar_Certificado {
 				<div class="form-group">
 					<label for="certificado_id"><?php esc_html_e( 'ID del Certificado', 'convoca-members' ); ?></label>
 					<input type="text" id="certificado_id" name="certificado_id" 
-							placeholder="Ej: VOL-2025-XXXXX" 
+							placeholder="<?php esc_attr_e( 'Ej: VOL-2025-XXXXX', 'convoca-members' ); ?>" 
 							value="<?php echo esc_attr( $search ); ?>" required>
 				</div>
 				<div class="form-actions">
