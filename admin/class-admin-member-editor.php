@@ -93,6 +93,10 @@ class Admin_Member_Editor {
 				<?php delete_transient( 'convoca_member_saved_' . get_current_user_id() ); ?>
 			<?php endif; ?>
 
+			<?php
+			// El selector de foto usa la biblioteca de medios de WordPress: sin esto, `wp.media` no está.
+			wp_enqueue_media();
+			?>
 			<form method="post" action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>" class="convoca-box" style="background:#fff;border-radius:12px;box-shadow:0 10px 25px rgba(0,0,0,0.05);padding:40px;margin-top:20px;">
 				<input type="hidden" name="action" value="convoca_save_member">
 				<input type="hidden" name="post_id" value="<?php echo $is_edit ? esc_attr( (string) $post_id ) : 0; ?>">
@@ -104,6 +108,24 @@ class Admin_Member_Editor {
 					<div class="convoca-field" style="grid-column:1/-1;">
 						<label for="convoca_nombre"><?php esc_html_e( 'Nombre completo *', 'convoca-members' ); ?></label>
 						<input type="text" id="convoca_nombre" name="convoca_nombre" value="<?php echo $is_edit ? esc_attr( $post->post_title ) : ''; ?>" required>
+					</div>
+
+					<?php
+					// Foto del carnet (issue #31): la web prometía «carnets con foto» y no había ni campo. El
+					// adjunto se guarda por id y el carnet lo inserta como data URI.
+					$conv_foto_id  = $is_edit ? (int) $m( 'foto_id' ) : 0;
+					$conv_foto_url = $conv_foto_id ? (string) wp_get_attachment_image_url( $conv_foto_id, 'thumbnail' ) : '';
+					?>
+					<div class="convoca-field" style="grid-column:1/-1;">
+						<label for="convoca_foto_id"><?php esc_html_e( 'Foto para el carnet', 'convoca-members' ); ?></label>
+						<input type="hidden" id="convoca_foto_id" name="convoca_foto_id" value="<?php echo esc_attr( (string) $conv_foto_id ); ?>">
+						<div style="display:flex;align-items:center;gap:12px;">
+							<img id="convoca-foto-preview" src="<?php echo esc_url( $conv_foto_url ); ?>" alt=""
+								style="width:72px;height:72px;object-fit:cover;border-radius:6px;background:#f0f0f1;<?php echo $conv_foto_url ? '' : 'display:none;'; ?>">
+							<button type="button" class="button" id="convoca-elegir-foto"><?php esc_html_e( 'Elegir foto', 'convoca-members' ); ?></button>
+							<button type="button" class="button" id="convoca-quitar-foto" <?php echo $conv_foto_url ? '' : 'style="display:none;"'; ?>><?php esc_html_e( 'Quitar', 'convoca-members' ); ?></button>
+						</div>
+						<p class="description"><?php esc_html_e( 'Se imprime en el carnet digital. Cuadrada queda mejor (por ejemplo 600×600).', 'convoca-members' ); ?></p>
 					</div>
 
 					<h3 style="grid-column:1/-1;margin-top:1rem;padding-bottom:.5rem;border-bottom:1px solid var(--convoca-border,#ccc);"><?php esc_html_e( 'Estado y Plan', 'convoca-members' ); ?></h3>
@@ -261,6 +283,38 @@ class Admin_Member_Editor {
 					</button>
 				</div>
 			</form>
+
+			<script>
+			// Selector de la foto del carnet (issue #31): botón «Elegir foto» y previsualización.
+			jQuery( function( $ ) {
+				var marco;
+				$( '#convoca-elegir-foto' ).on( 'click', function( e ) {
+					e.preventDefault();
+					if ( ! marco ) {
+						marco = wp.media( {
+							title: <?php echo wp_json_encode( __( 'Foto del socio', 'convoca-members' ) ); ?>,
+							library: { type: 'image' },
+							multiple: false,
+							button: { text: <?php echo wp_json_encode( __( 'Usar esta foto', 'convoca-members' ) ); ?> }
+						} );
+						marco.on( 'select', function() {
+							var adjunto = marco.state().get( 'selection' ).first().toJSON();
+							var url = ( adjunto.sizes && adjunto.sizes.thumbnail ) ? adjunto.sizes.thumbnail.url : adjunto.url;
+							$( '#convoca_foto_id' ).val( adjunto.id );
+							$( '#convoca-foto-preview' ).attr( 'src', url ).show();
+							$( '#convoca-quitar-foto' ).show();
+						} );
+					}
+					marco.open();
+				} );
+				$( '#convoca-quitar-foto' ).on( 'click', function( e ) {
+					e.preventDefault();
+					$( '#convoca_foto_id' ).val( '' );
+					$( '#convoca-foto-preview' ).hide();
+					$( this ).hide();
+				} );
+			} );
+			</script>
 		</div>
 		<?php
 	}
@@ -333,6 +387,7 @@ class Admin_Member_Editor {
 			'email'             => fn( $v ) => sanitize_email( $v ),
 			'dni'               => 'sanitize_text_field',
 			'telefono'          => 'sanitize_text_field',
+			'foto_id'           => 'absint',
 			'fecha_nacimiento'  => 'sanitize_text_field',
 			'direccion'         => 'sanitize_text_field',
 			'municipio'         => 'sanitize_text_field',

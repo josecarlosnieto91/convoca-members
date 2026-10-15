@@ -1,3 +1,23 @@
+## [2.8.59] — 2026-10-15
+
+### Añadido
+- **La foto del carnet (issue #31).** La web vendía «carnets digitales **con foto**» y no había foto por ninguna
+  parte: ni campo en la ficha ni nada que pintara un adjunto. Ahora la ficha tiene **«Foto para el carnet»** con
+  el selector de la biblioteca de medios de WordPress (y su botón para quitarla), y el carnet la imprime.
+  - Se inserta **en línea, como data URI**, igual que el QR: el PDF no puede ir a buscar una URL (Dompdf no
+    tiene acceso remoto) y así el carnet sale entero de la base, sin depender de nada de fuera.
+  - Se manda **reducida** a 300 px por lado para no llevar dentro la foto original de varios megas; si el editor
+    de imágenes no está disponible, se manda la original, que es mejor que quedarse sin foto.
+  - Solo imágenes (`jpeg`, `png`, `gif`, `webp`): un adjunto que no sea imagen no se imprime.
+  - Los estilos van en línea a propósito: los bloques de CSS del carnet son distintos para el navegador y para
+    el PDF, y un `float` en línea sale igual en los dos. Sin foto, no se pinta **nada** (ni un hueco).
+
+### Pruebas
+- `tests/Unit/CarnetConFotoTest.php`: que el carnet inserte la foto en el cuerpo, que se embeba y solo si es
+  imagen, que la ficha tenga el campo con su selector y que se guarde; y que **sin foto no salga nada**.
+  **Negativo probado**: quitando la inserción, la prueba cae.
+- Suite 258 en verde, PHPCS 0, PHPStan `[OK]`.
+
 ## [2.8.58] — 2026-10-15
 
 ### Añadido

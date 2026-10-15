@@ -335,6 +335,7 @@ class PDF_Card {
                 </div>
                 
                 <div class="body">
+                    ' . self::foto( $post_id ) . '
                     <div class="member-number">' . esc_html__( 'NO.', 'convoca-members' ) . ' ' . esc_html( $num_socio_display ) . '</div>
                     <div class="' . esc_attr( $clase_nombre ) . '">' . esc_html( $nombre ) . '</div>
                 </div>
@@ -360,6 +361,85 @@ class PDF_Card {
         </body>
         </html>' ) . '
         ';
+	}
+
+	/**
+	 * Foto del socio para el carnet (issue #31).
+	 *
+	 * La web prometía «carnets con foto» y no había foto por ninguna parte. La foto se guarda en la ficha como
+	 * adjunto (`_convoca_foto_id`) y aquí se inserta **en línea, como data URI**, igual que el QR: el PDF no
+	 * puede ir a buscar una URL (Dompdf no tiene acceso remoto) y así el carnet sale entero de la base.
+	 *
+	 * Se manda reducida (300 px de lado) para que el PDF no cargue con la foto original de 4 MB dentro; si el
+	 * editor de imágenes no está disponible, se manda la original, que es mejor que quedarse sin foto.
+	 *
+	 * @param int $post_id Ficha.
+	 * @return string `<img>` o cadena vacía si no hay foto utilizable.
+	 */
+	public static function foto( int $post_id ): string {
+		$adjunto = (int) get_post_meta( $post_id, '_convoca_foto_id', true );
+		if ( $adjunto <= 0 ) {
+			return '';
+		}
+
+		$ruta = get_attached_file( $adjunto );
+		if ( ! $ruta || ! file_exists( $ruta ) ) {
+			return '';
+		}
+
+		$tipo    = (string) get_post_mime_type( $adjunto );
+		$validos = array( 'image/jpeg', 'image/png', 'image/gif', 'image/webp' );
+		if ( ! in_array( $tipo, $validos, true ) ) {
+			return '';
+		}
+
+		$bytes = (string) file_get_contents( $ruta ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_get_contents_file_get_contents -- fichero local del adjunto.
+		if ( '' === $bytes ) {
+			return '';
+		}
+
+		$reducida = self::foto_reducida( $ruta, $adjunto );
+		if ( '' !== $reducida ) {
+			$bytes = $reducida;
+		}
+
+		// Estilos en línea a propósito: los bloques de CSS del carnet son distintos para el navegador y para
+		// el PDF, y un `float` en línea sale igual en los dos. Con `float`, el número y el nombre se ponen al
+		// lado solos, sin tocar la maquetación de la capa de texto.
+		return '<img src="data:' . esc_attr( $tipo ) . ';base64,' . base64_encode( $bytes ) . '" alt="'
+			. esc_attr__( 'Foto del socio', 'convoca-members' )
+			. '" style="width:90px;height:90px;border-radius:6px;float:left;margin-right:14px;object-fit:cover;">';
+	}
+
+	/**
+	 * Bytes de la foto reducida, o '' si no se ha podido reducir.
+	 *
+	 * @param string $ruta    Ruta del adjunto original.
+	 * @param int    $adjunto Id del adjunto.
+	 * @return string
+	 */
+	private static function foto_reducida( string $ruta, int $adjunto ): string {
+		if ( ! function_exists( 'wp_get_image_editor' ) ) {
+			return '';
+		}
+
+		$editor = wp_get_image_editor( $ruta );
+		if ( is_wp_error( $editor ) ) {
+			return '';
+		}
+
+		$editor->resize( 300, 300, false );
+		$temporal = $editor->save();
+		if ( is_wp_error( $temporal ) || empty( $temporal['path'] ) || ! file_exists( $temporal['path'] ) ) {
+			return '';
+		}
+
+		$bytes = (string) file_get_contents( $temporal['path'] ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_get_contents_file_get_contents -- fichero local.
+
+		// El fichero redimensionado es temporal: se retira en cuanto se ha leído.
+		wp_delete_file( $temporal['path'] );
+
+		return $bytes;
 	}
 
 	/**
