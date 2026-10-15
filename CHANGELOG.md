@@ -1,3 +1,22 @@
+## [2.8.49] — 2026-10-15
+
+### Arreglado
+- **Dar de baja a un socio ya no lo borra para siempre (#27).** Había dos maneras de quitarlo y las dos
+  estaban mal: el enlace «Eliminar» del listado llamaba a `wp_trash_post()` sobre un tipo que **no admite
+  papelera**, así que respondía 200, volvía al listado y **no hacía nada** sin decir por qué (un botón muerto
+  que además despistaba sobre cómo dar de baja); y el borrado de verdad (`wp_delete_post( $id, true )`) se
+  llevaba ficha, cuotas, horas e inscripciones de un clic, sin vuelta atrás y dejando el histórico apuntando a
+  un socio que ya no existe. Ahora:
+  - **Dar de baja** es un cambio de estado `baja`: la ficha se conserva, deja de contar como socio activo, el
+    número de socio no se reutiliza y se puede reactivar. Está en la fila y en el desplegable de lote.
+  - **Eliminar definitivamente** existe aparte, con un aviso que dice qué se pierde en vez de un «¿seguro?».
+    No se ofrece en lote a propósito.
+  - **La papelera desaparece de este tipo** (acción de fila y de lote, también en la pantalla cruda de
+    WordPress), que era un botón muerto.
+- Prueba nueva `tests/Unit/BajaLogicaTest.php`: cruza los enlaces del listado con los manejadores del editor,
+  vigila que la baja no borre, que el borrado definitivo sí borre y que nadie vuelva a mandar fichas a una
+  papelera que el tipo no admite. Cada aserción con su negativo probado.
+
 ## [2.8.44] — 2026-10-14
 
 ### Revertido (con el motivo escrito)

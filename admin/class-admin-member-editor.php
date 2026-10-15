@@ -37,6 +37,7 @@ class Admin_Member_Editor {
 	public function __construct() {
 		add_action( 'admin_post_convoca_save_member', array( $this, 'handle_save' ) );
 		add_action( 'admin_post_convoca_delete_member', array( $this, 'handle_delete' ) );
+		add_action( 'admin_post_convoca_baja_member', array( $this, 'handle_baja' ) );
 		// Redirect from WP default editor.
 		add_action( 'load-post-new.php', array( $this, 'redirect_from_default' ) );
 		add_action( 'load-post.php', array( $this, 'redirect_from_default' ) );
@@ -387,21 +388,53 @@ class Admin_Member_Editor {
 	}
 
 	/**
-	 * Handle member deletion from the editor.
+	 * Da de baja a un socio: la ficha se conserva y deja de contar como activo (issue #27).
+	 *
+	 * El modelo de datos ya tenía el estado `baja`, así que la baja manual se hace cambiando el estado y no
+	 * borrando: el número de socio, las cuotas, las horas y las inscripciones siguen teniendo a quién apuntar.
+	 * Se puede reactivar.
+	 */
+	public function handle_baja(): void {
+		$data    = wp_unslash( $_GET );
+		$post_id = (int) ( $data['member_id'] ?? 0 );
+
+		if ( ! $post_id || ! wp_verify_nonce( $data['_wpnonce'] ?? '', 'convoca_baja_member_' . $post_id ) ) {
+			wp_die( esc_html__( 'Acceso denegado.', 'convoca-members' ) );
+		}
+		if ( ! current_user_can( 'edit_post', $post_id ) ) {
+			wp_die( esc_html__( 'No tienes permisos.', 'convoca-members' ) );
+		}
+
+		$resultado = Estados::change( $post_id, 'baja', __( 'Baja manual desde el listado', 'convoca-members' ) );
+
+		wp_safe_redirect(
+			admin_url( 'admin.php?page=conv-members&msg=' . ( is_wp_error( $resultado ) ? 'error' : 'baja' ) )
+		);
+		exit;
+	}
+
+	/**
+	 * Borra la ficha definitivamente. Es la excepción, no la baja (issue #27).
+	 *
+	 * Antes esto llamaba a `wp_trash_post()` sobre un tipo que **no admite papelera**, así que el enlace
+	 * «Eliminar» del listado no hacía nada y tampoco lo decía. Ahora hace lo que anuncia, y el aviso de la
+	 * pantalla dice qué se lleva por delante. El registro de auditoría lo deja anotado solo (Audit_Logger
+	 * engancha `before_delete_post`).
 	 */
 	public function handle_delete(): void {
-		$data    = wp_unslash( $_POST );
-		$post_id = (int) ( $data['post_id'] ?? 0 );
+		$data    = wp_unslash( $_GET );
+		$post_id = (int) ( $data['member_id'] ?? 0 );
 
-		if ( ! $post_id || ! wp_verify_nonce( $data['_convoca_nonce'] ?? '', 'convoca_delete_member_' . $post_id ) ) {
+		if ( ! $post_id || ! wp_verify_nonce( $data['_wpnonce'] ?? '', 'convoca_delete_member_' . $post_id ) ) {
 			wp_die( esc_html__( 'Acceso denegado.', 'convoca-members' ) );
 		}
 		if ( ! current_user_can( 'delete_post', $post_id ) ) {
 			wp_die( esc_html__( 'No tienes permisos.', 'convoca-members' ) );
 		}
 
-		wp_trash_post( $post_id );
-		wp_safe_redirect( admin_url( 'admin.php?page=conv-members' ) );
+		wp_delete_post( $post_id, true );
+
+		wp_safe_redirect( admin_url( 'admin.php?page=conv-members&msg=deleted_forever' ) );
 		exit;
 	}
 }

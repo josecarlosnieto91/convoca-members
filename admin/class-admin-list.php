@@ -49,6 +49,10 @@ class Admin_List extends \WP_List_Table {
 				'screen'   => 'conv-members',
 			)
 		);
+		// El tipo no admite papelera, así que WordPress pinta «Papelera» y no hace nada: se quita de la
+		// pantalla cruda para que no haya botones muertos (issue #27).
+		add_filter( 'post_row_actions', array( $this, 'sin_papelera' ), 10, 2 );
+		add_filter( 'bulk_actions-edit-miembro', array( $this, 'sin_papelera_bulk' ) );
 	}
 
 	public function get_columns(): array {
@@ -77,12 +81,12 @@ class Admin_List extends \WP_List_Table {
 
 	public function get_bulk_actions(): array {
 		return array(
-			'bulk-delete' => __( 'Mover a la papelera', 'convoca-members' ),
+			'bulk-baja' => __( 'Dar de baja (la ficha se conserva)', 'convoca-members' ),
 		);
 	}
 
 	public function process_bulk_action(): void {
-		if ( 'bulk-delete' === $this->current_action() ) {
+		if ( 'bulk-baja' === $this->current_action() ) {
 			check_admin_referer( 'bulk-members' );
 
 			$ids = isset( $_REQUEST['miembros'] ) ? array_map( 'intval', $_REQUEST['miembros'] ) : array();
@@ -90,11 +94,13 @@ class Admin_List extends \WP_List_Table {
 				return;
 			}
 
-			$count = 0;
+			// La baja en lote es lógica: se cambia el estado y la ficha se conserva (issue #27). No se
+			// ofrece el borrado definitivo en lote a propósito: es una excepción y va de una en una.
 			foreach ( $ids as $id ) {
-				if ( wp_trash_post( $id ) ) {
-					++$count;
+				if ( ! current_user_can( 'edit_post', $id ) ) {
+					continue;
 				}
+				Estados::change( $id, 'baja', __( 'Baja en lote desde el listado', 'convoca-members' ) );
 			}
 		}
 	}
@@ -419,18 +425,31 @@ class Admin_List extends \WP_List_Table {
 			) 
 		) . '">🪪 ' . __( 'Tarjeta', 'convoca-members' ) . '</a>';
 
-		// Delete action.
+		// Dar de baja: la ficha se conserva, deja de contar como activo y se puede reactivar (issue #27).
+		$baja_url        = wp_nonce_url(
+			admin_url( 'admin-post.php?action=convoca_baja_member&member_id=' . $item->ID ),
+			'convoca_baja_member_' . $item->ID
+		);
+		$actions['baja'] = '<a href="' . esc_url( $baja_url ) . '" onclick="return confirm(\'¿Dar de baja a este socio? La ficha se conserva y deja de contar como socio activo.\')" aria-label="' . esc_attr(
+			sprintf(
+				/* translators: %s: member name */
+				__( 'Dar de baja a %s', 'convoca-members' ),
+				$item->post_title
+			)
+		) . '">' . __( 'Dar de baja', 'convoca-members' ) . '</a>';
+
+		// Eliminar definitivamente: la excepción. El aviso dice qué se pierde, no «¿seguro?».
 		$delete_url        = wp_nonce_url(
 			admin_url( 'admin-post.php?action=convoca_delete_member&member_id=' . $item->ID ),
 			'convoca_delete_member_' . $item->ID
 		);
-		$actions['delete'] = '<a href="' . esc_url( $delete_url ) . '" style="color:#a00" onclick="return confirm(\'¿Estás seguro de que quieres enviar este miembro a la papelera?\')" aria-label="' . esc_attr(
-			sprintf( 
+		$actions['delete'] = '<a href="' . esc_url( $delete_url ) . '" style="color:#a00" onclick="return confirm(\'Se borran la ficha, sus cuotas, sus horas y sus inscripciones. No se puede deshacer. ¿Seguir?\')" aria-label="' . esc_attr(
+			sprintf(
 				/* translators: %s: member name */
-				__( 'Eliminar a %s', 'convoca-members' ),
-				$item->post_title 
-			) 
-		) . '">' . __( 'Eliminar', 'convoca-members' ) . '</a>';
+				__( 'Eliminar definitivamente a %s', 'convoca-members' ),
+				$item->post_title
+			)
+		) . '">' . __( 'Eliminar definitivamente', 'convoca-members' ) . '</a>';
 
 		return $name_link . $this->row_actions( $actions );
 	}
@@ -468,10 +487,30 @@ class Admin_List extends \WP_List_Table {
 
 	public function column_tipo( $item ): string {
 		$terms = wp_get_object_terms( $item->ID, 'tipo_miembro', array( 'fields' => 'names' ) );
-		if ( is_wp_error( $terms ) ) {
+		if ( ! is_wp_error( $terms ) && ! empty( $terms ) ) {
+			return esc_html( implode( ', ', $terms ) );
+		}
+
+		// La taxonomía estaba registrada pero vacía, así que la columna salía en blanco siempre.
+		// Si no hay términos, mandan las condiciones de la ficha.
+		$roles = Roles_Miembro::roles( (int) $item->ID );
+		if ( empty( $roles ) ) {
 			return '—';
 		}
-		return esc_html( implode( ', ', $terms ) );
+
+		return esc_html( implode( ', ', array_map( array( __CLASS__, 'etiqueta_rol' ), $roles ) ) );
+	}
+
+	/**
+	 * Etiqueta legible de una condición de la ficha.
+	 *
+	 * @param string $rol Rol del ecosistema (`socio` o `voluntario`).
+	 * @return string
+	 */
+	public static function etiqueta_rol( string $rol ): string {
+		return Roles_Miembro::SOCIO === $rol
+			? __( 'Socio', 'convoca-members' )
+			: __( 'Voluntario', 'convoca-members' );
 	}
 
 	public function column_estado( $item ): string {
@@ -516,5 +555,30 @@ class Admin_List extends \WP_List_Table {
 
 	public function column_fecha( $item ): string {
 		return get_the_date( 'd/m/Y', $item );
+	}
+
+	/**
+	 * Quita la acción «Papelera» del listado crudo del tipo `miembro` (issue #27).
+	 *
+	 * @param array   $acciones Acciones de la fila.
+	 * @param \WP_Post $post     Entrada de la fila.
+	 * @return array
+	 */
+	public function sin_papelera( $acciones, $post ) {
+		if ( 'miembro' === $post->post_type ) {
+			unset( $acciones['trash'] );
+		}
+		return $acciones;
+	}
+
+	/**
+	 * Quita «Mover a la papelera» del desplegable de lote del listado crudo (issue #27).
+	 *
+	 * @param array $acciones Acciones de lote.
+	 * @return array
+	 */
+	public function sin_papelera_bulk( $acciones ) {
+		unset( $acciones['trash'] );
+		return $acciones;
 	}
 }

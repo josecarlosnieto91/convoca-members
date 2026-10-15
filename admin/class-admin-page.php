@@ -173,8 +173,10 @@ class Admin_Page {
 		$msg = sanitize_text_field( wp_unslash( $_GET['msg'] ?? '' ) );
 		if ( $msg === 'approved' ) {
 			echo '<div class="notice notice-success is-dismissible"><p>' . esc_html__( 'Miembro aprobado correctamente.', 'convoca-members' ) . '</p></div>';
-		} elseif ( $msg === 'deleted' ) {
-			echo '<div class="notice notice-warning is-dismissible"><p>' . esc_html__( 'Miembro enviado a la papelera.', 'convoca-members' ) . '</p></div>';
+		} elseif ( $msg === 'baja' ) {
+			echo '<div class="notice notice-success is-dismissible"><p>' . esc_html__( 'Socio dado de baja: la ficha se conserva y ya no cuenta como socio activo. Se puede reactivar.', 'convoca-members' ) . '</p></div>';
+		} elseif ( $msg === 'deleted_forever' ) {
+			echo '<div class="notice notice-warning is-dismissible"><p>' . esc_html__( 'Ficha eliminada definitivamente, con sus cuotas, sus horas y sus inscripciones.', 'convoca-members' ) . '</p></div>';
 		} elseif ( $msg === 'error' ) {
 			echo '<div class="notice notice-error is-dismissible"><p>' . esc_html__( 'Error al procesar la acción. Inténtalo de nuevo.', 'convoca-members' ) . '</p></div>';
 		}
