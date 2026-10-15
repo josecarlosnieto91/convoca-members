@@ -368,6 +368,18 @@ class Admin_Horas extends \WP_List_Table {
 			</a>
 			<hr class="wp-header-end">
 
+			<?php
+			// Aviso de guardado: la pantalla se recarga tras guardar y sin esto no dice nada (members#35).
+			$convoca_aviso = isset( $_GET['message'] ) ? sanitize_key( wp_unslash( $_GET['message'] ) ) : '';
+			if ( 'saved' === $convoca_aviso ) :
+				?>
+				<div class="notice notice-success is-dismissible">
+					<p><?php esc_html_e( 'Registro guardado.', 'convoca-members' ); ?></p>
+				</div>
+				<?php
+			endif;
+			?>
+
 			<form method="get">
 				<input type="hidden" name="post_type" value="miembro">
 				<input type="hidden" name="page" value="conv-horas">
