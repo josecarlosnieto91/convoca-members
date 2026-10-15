@@ -1,3 +1,18 @@
+## [2.8.67] — 2026-10-15
+
+### Arreglado
+- **Los formularios saltaban de nivel de encabezado (issue #13, axe moderada).** En el alta de socio, los planes
+  y las formas de pago iban en `<h4>` dentro de un `<h2>`, así que se saltaba el `<h3>`; en el formulario de
+  voluntariado se empezaba en `<h3>` sin `<h2>` antes. No rompe el uso, pero desorienta a quien navega con lector
+  de pantalla — que es justo el motivo de que existan los niveles. Los subniveles pasan a `<h3>` (7 en el alta) y
+  las secciones del voluntariado a `<h2>` (5), de forma que los niveles suben **de uno en uno**.
+
+### Pruebas
+- `tests/Unit/EncabezadosSinSaltosTest.php`: recorre los encabezados de las plantillas **en orden** y comprueba
+  que las subidas son de uno en uno (bajar no es un salto) y que no queda ningún `h4` o más profundo donde la
+  jerarquía tiene dos niveles. **Negativo probado**: devolviendo un solo `<h4>`, caen dos pruebas.
+- Suite 281 en verde, PHPCS 0, PHPStan `[OK]`.
+
 ## [2.8.66] — 2026-10-15
 
 ### Arreglado

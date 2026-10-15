@@ -121,7 +121,7 @@ endif;
 					<label class="conv-plan-option">
 						<input type="radio" name="plan" value="<?php echo esc_attr( $slug ); ?>" required>
 						<div class="conv-plan-label">
-							<h4><?php echo esc_html( $plan['label'] ); ?></h4>
+							<h3><?php echo esc_html( $plan['label'] ); ?></h4>
 							<div class="conv-price"><?php echo (int) $plan['price']; ?>€</div>
 							<span class="conv-alt">· <?php echo (float) $plan['hours']; ?>h para renovar sin pagar</span>
 						</div>
@@ -132,7 +132,7 @@ endif;
 				<label class="conv-plan-option">
 					<input type="radio" name="plan" value="familiar">
 					<div class="conv-plan-label">
-						<h4>👨‍👩‍👧‍👦 Familiar</h4>
+						<h3>👨‍👩‍👧‍👦 Familiar</h4>
 						<div class="conv-price">Desde <?php echo (int) min( array_column( $familiar_plans, 'price' ) ); ?>€
 						</div>
 						<span class="conv-alt">ó desde
@@ -144,7 +144,7 @@ endif;
 				<label class="conv-plan-option">
 					<input type="radio" name="plan" value="juvenil">
 					<div class="conv-plan-label">
-						<h4>🚀 Juvenil</h4>
+						<h3>🚀 Juvenil</h4>
 						<div class="conv-price">Desde <?php echo (int) min( array_column( $juvenil_plans, 'price' ) ); ?>€
 						</div>
 						<span class="conv-alt">ó desde <?php echo (float) min( array_column( $juvenil_plans, 'hours' ) ); ?>h
@@ -300,21 +300,21 @@ endif;
 					<label class="conv-plan-option conv-radio-card" data-method="tarjeta">
 						<input type="radio" name="forma_pago" value="tarjeta">
 						<div class="conv-plan-label">
-							<h4>💳 Tarjeta</h4>
+							<h3>💳 Tarjeta</h4>
 						</div>
 					</label>
 					<!-- Bizum -->
 					<label class="conv-plan-option conv-radio-card" data-method="bizum">
 						<input type="radio" name="forma_pago" value="bizum">
 						<div class="conv-plan-label">
-							<h4>📱 Bizum</h4>
+							<h3>📱 Bizum</h4>
 						</div>
 					</label>
 					<!-- Transferencia -->
 					<label class="conv-plan-option conv-radio-card" data-method="transferencia">
 						<input type="radio" name="forma_pago" value="transferencia">
 						<div class="conv-plan-label">
-							<h4>🏦 Transf.</h4>
+							<h3>🏦 Transf.</h4>
 						</div>
 					</label>
 				</div>
@@ -333,7 +333,7 @@ endif;
 
 			<!-- Transfer Details (IBAN) -->
 			<div id="conv-transfer-details" class="convoca-box" style="display:none;">
-				<h4 style="margin-top:0">Pago por transferencia bancaria</h4>
+				<h3 style="margin-top:0">Pago por transferencia bancaria</h4>
 				<p>Al confirmar tu alta te llevaremos a la pasarela de pago. Allí eliges el método (tarjeta, Bizum o transferencia); si eliges transferencia, verás el IBAN y el concepto que debes indicar.</p>
 				<p>Podrás adjuntar el justificante directamente en esa página para que validemos tu alta lo antes posible.</p>
 			</div>

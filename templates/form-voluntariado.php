@@ -90,7 +90,7 @@ endif;
 		<input type="hidden" name="convoca_sin_js_voluntariado" value="1" />
 
 		<!-- Personal data -->
-		<h3>📌 Datos personales</h3>
+		<h2>📌 Datos personales</h2>
 
 			<div class="convoca-grid-2">
 				<div class="convoca-field">
@@ -182,7 +182,7 @@ endif;
 			</div>
 
 		<!-- Interest areas -->
-		<h3 style="margin-top:2rem">🌍 ¿En qué te interesa colaborar?</h3>
+		<h2 style="margin-top:2rem">🌍 ¿En qué te interesa colaborar?</h2>
 		<p class="conv-small">Selecciona todas las áreas que te interesen.</p>
 		<div class="conv-interest-grid" role="group" aria-label="Áreas de interés">
 			<?php foreach ( $areas as $value => $label ) : ?>
@@ -194,7 +194,7 @@ endif;
 		</div>
 
 		<!-- Availability -->
-		<h3 style="margin-top:2rem">📅 Tu disponibilidad</h3>
+		<h2 style="margin-top:2rem">📅 Tu disponibilidad</h2>
 		<div class="convoca-grid-2">
 			<div class="convoca-field">
 				<label for="conv-vol-disponibilidad">¿Cuándo puedes participar?</label>
@@ -225,7 +225,7 @@ endif;
 		<?php
 		$dynamic_fields = get_option( 'convoca_volunteer_fields', array() );
 		if ( ! empty( $dynamic_fields ) ) :
-			echo '<h3 style="margin-top:2rem">' . esc_html__( '📋 Información adicional', 'convoca-members' ) . '</h3>';
+			echo '<h2 style="margin-top:2rem">' . esc_html__( '📋 Información adicional', 'convoca-members' ) . '</h3>';
 			foreach ( $dynamic_fields as $field ) :
 				$field_id = 'conv-vol-' . esc_attr( $field['name'] );
 				$name     = 'dyn_' . esc_attr( $field['name'] );
@@ -261,7 +261,7 @@ endif;
 		?>
 
 		<!-- Consent -->
-		<h3 style="margin-top:2rem">✅ Compromisos y consentimiento</h3>
+		<h2 style="margin-top:2rem">✅ Compromisos y consentimiento</h2>
 		<div class="convoca-check-group">
 			<input type="checkbox" id="conv-vol-codigo" name="acepto_codigo" required>
 			<label for="conv-vol-codigo">He leído y acepto el
