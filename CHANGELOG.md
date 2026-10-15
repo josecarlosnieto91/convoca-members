@@ -138,6 +138,17 @@
 
 # Changelog — convoca-members
 
+## [2.8.48] - 2026-10-15
+
+### Corregido
+
+- **Importar CSV podía duplicar a un socio que ya existía** (medido al verificar #26): el control de
+  duplicados miraba ANTES al usuario de WordPress y, si el correo era de un usuario, devolvía «no hay
+  duplicado». Como a casi todos los socios el alta les crea un usuario con su correo, el control no veía a
+  ninguno de ellos: subir un CSV con un socio ya existente creaba una ficha repetida y el resumen decía
+  «1 importados, 0 errores». Ahora manda la ficha (por correo y por DNI) y el usuario solo se mira cuando
+  no hay ninguna.
+
 ## [2.8.47] - 2026-10-15
 
 ### Corregido

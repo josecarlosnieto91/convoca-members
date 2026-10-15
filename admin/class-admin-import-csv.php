@@ -593,17 +593,18 @@ class Admin_Import_CSV {
 	 * @return int|null Post ID if found, null otherwise.
 	 */
 	private function find_existing_member( string $email, string $dni ): ?int {
-		// Check by email first.
-		$user = get_user_by( 'email', $email );
-		if ( $user ) {
-			return null; // This is a WP user, not a member post; don't treat as duplicate.
-		}
-
-		// Check by email meta.
+		// La FICHA es el criterio que manda, y se mira primero.
+		//
+		// Antes se miraba antes el usuario de WordPress y, si el correo era de un usuario, se devolvía
+		// null («no es una ficha duplicada»). Pero casi todos los socios tienen usuario con su correo —lo
+		// crea el alta—, así que el control de duplicados no veía a NINGUNO de ellos: importar un socio
+		// existente creaba una ficha duplicada. Medido: una importación de una fila ya existente sumó dos
+		// fichas a la demo y el resumen dijo «1 importados, 0 errores». Issue #26.
 		$by_email = get_posts(
 			array(
 				'post_type'      => 'miembro',
 				'posts_per_page' => 1,
+				'post_status'    => 'publish',
 				'meta_key'       => '_convoca_email',
 				'meta_value'     => $email,
 				'fields'         => 'ids',
@@ -619,6 +620,7 @@ class Admin_Import_CSV {
 				array(
 					'post_type'      => 'miembro',
 					'posts_per_page' => 1,
+					'post_status'    => 'publish',
 					'meta_key'       => '_convoca_dni',
 					'meta_value'     => $dni,
 					'fields'         => 'ids',
@@ -627,6 +629,13 @@ class Admin_Import_CSV {
 			if ( ! empty( $by_dni ) ) {
 				return (int) $by_dni[0];
 			}
+		}
+
+		// Sin ficha, un usuario de WordPress con ese correo no es una ficha duplicada (el comentario
+		// original): se deja crear la ficha.
+		$user = get_user_by( 'email', $email );
+		if ( $user ) {
+			return null;
 		}
 
 		return null;
