@@ -1,0 +1,9 @@
+msgid ""
+msgstr ""
+"Content-Type: text/plain; charset=UTF-8\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+msgid "Caducado el %1$s (hace %2$d día)"
+msgid_plural "Caducado el %1$s (hace %2$d días)"
+msgstr "Expired on %1$s (%2$d day ago)"
+msgstr "Expired on %1$s (%2$d days ago)"
