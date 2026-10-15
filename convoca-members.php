@@ -3,7 +3,7 @@
  * Plugin Name:       Convoca Members
  * Plugin URI:        https://getconvoca.app
  * Description:       Members, volunteers and communications management.
- * Version:           2.8.50
+ * Version:           2.8.51
  * Requires at least: 6.4
  * Requires PHP:      8.1
  * Tested up to:      7.1
@@ -197,6 +197,10 @@ register_activation_hook(
 			}
 		}
 
+		// Rol de socio: no existía (los socios eran `subscriber` y su condición vivía en una meta), así que
+		// no había forma de conceder nada a «los socios» sin mirar la ficha una a una (issue #30).
+		\Convoca\Members\Roles_Miembro::crear_roles();
+
 		// Save initial DB version.
 		add_option( 'convoca_members_db_version', CONVOCA_MEMBERS_DB_VERSION, '', false );
 	}
@@ -353,9 +357,15 @@ add_action(
 			// Generate WP user + send credentials (for volunteers who registered without being linked yet).
 			\Convoca\Members\Process_Member::handle_approved( $member_id );
 			// Ensure the WP user has the volunteer role.
-			$user = get_userdata( $user_id );
-			if ( $user && ! in_array( 'voluntario_aprobado', (array) $user->roles, true ) ) {
-				$user->set_role( 'voluntario_aprobado' );
+			$ficha_voluntario = \Convoca\Members\Roles_Miembro::ficha_de_usuario( $user_id );
+			if ( $ficha_voluntario ) {
+				\Convoca\Members\Roles_Miembro::anadir( $ficha_voluntario, \Convoca\Members\Roles_Miembro::VOLUNTARIO );
+			} else {
+				$user = get_userdata( $user_id );
+				// add_role, no set_role: el voluntariado se suma a lo que ya tuviera.
+				if ( $user && ! in_array( 'voluntario_aprobado', (array) $user->roles, true ) ) {
+					$user->add_role( 'voluntario_aprobado' );
+				}
 			}
 		}
 	}

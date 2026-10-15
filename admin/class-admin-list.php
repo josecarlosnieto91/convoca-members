@@ -485,12 +485,59 @@ class Admin_List extends \WP_List_Table {
 		return $has_wa === 'si' ? '✅' : '—';
 	}
 
+	/**
+	 * La columna «Tipo», con tres fuentes por orden de fiabilidad (issue #28).
+	 *
+	 * Salía en blanco en todas las filas porque leía la taxonomía `tipo_miembro`, que está registrada y
+	 * vacía: no había ningún término que enseñar. Ahora se mira primero la taxonomía (que ahora sí se
+	 * escribe al conceder una condición), después las condiciones de la ficha y, si aún no hay nada, el
+	 * plan, que es el dato que existe desde siempre. Así la columna dice algo con los datos de hoy y
+	 * dirá lo correcto cuando la ficha tenga las condiciones.
+	 *
+	 * @param \WP_Post $item Ficha de la fila.
+	 * @return string
+	 */
 	public function column_tipo( $item ): string {
 		$terms = wp_get_object_terms( $item->ID, 'tipo_miembro', array( 'fields' => 'names' ) );
-		if ( is_wp_error( $terms ) ) {
-			return '—';
+		if ( ! is_wp_error( $terms ) && ! empty( $terms ) ) {
+			return esc_html( implode( ', ', $terms ) );
 		}
-		return esc_html( implode( ', ', $terms ) );
+
+		if ( class_exists( 'Convoca\\Members\\Roles_Miembro' ) ) {
+			$condiciones = Roles_Miembro::roles( (int) $item->ID );
+			if ( ! empty( $condiciones ) ) {
+				return esc_html( implode( ', ', array_map( array( __CLASS__, 'etiqueta_rol' ), $condiciones ) ) );
+			}
+		}
+
+		$plan = (string) get_post_meta( $item->ID, '_convoca_plan', true );
+		if ( 'voluntariado' === $plan ) {
+			return esc_html__( 'Voluntario', 'convoca-members' );
+		}
+		if ( '' !== $plan ) {
+			return esc_html__( 'Socio', 'convoca-members' );
+		}
+
+		return '—';
+	}
+
+	/**
+	 * Etiqueta legible de una condición de la ficha.
+	 *
+	 * @param string $rol Condición (`socio`, `voluntario` o `monitor`).
+	 * @return string
+	 */
+	public static function etiqueta_rol( $rol ): string {
+		switch ( (string) $rol ) {
+			case Roles_Miembro::SOCIO:
+				return __( 'Socio', 'convoca-members' );
+			case Roles_Miembro::VOLUNTARIO:
+				return __( 'Voluntario', 'convoca-members' );
+			case Roles_Miembro::MONITOR:
+				return __( 'Monitor', 'convoca-members' );
+			default:
+				return (string) $rol;
+		}
 	}
 
 	public function column_estado( $item ): string {

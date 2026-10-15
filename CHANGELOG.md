@@ -1,3 +1,28 @@
+## [2.8.51] — 2026-10-15
+
+### Añadido
+- **El rol de socio, de verdad (`socio`).** No existía: los socios eran `subscriber` y su condición vivía en
+  una meta, así que no había forma de conceder nada a «los socios» sin mirar la ficha una a una. Se crea el
+  rol al cargar el plugin, idempotente, y se refleja en la ficha (`_convoca_es_socio`) y en la taxonomía
+  `tipo_miembro`.
+- **Tres condiciones acumulables: socio, voluntario y monitor.** `Roles_Miembro` decide las tres con la misma
+  regla: `anadir()` nunca quita las otras y `quitar()` solo quita la suya. El espejo al usuario de WordPress
+  va con `add_role()`/`remove_role()` y **jamás** con `set_role()`, que es lo que hacía imposible el doble rol
+  (aprobaba el voluntariado y borraba la condición de socio).
+
+### Arreglado
+- **La columna «Tipo» del listado ya no sale vacía (#28).** Leía la taxonomía `tipo_miembro`, que estaba
+  registrada y sin un solo término. Ahora mira, por este orden: la taxonomía, las condiciones de la ficha y,
+  si aún no hay nada, el plan —que es el dato que existe desde siempre—. Dice algo con los datos de hoy y
+  dirá lo correcto cuando las fichas tengan sus condiciones.
+- **Aprobar o revocar el voluntariado de un socio ya no le quita su condición de socio.** Los tres sitios que
+  usaban `set_role()` pasan por `Roles_Miembro`.
+
+### Pruebas
+- `tests/Unit/RolesMiembroTest.php` (13 casos) y `tests/Unit/RolSocioMonitorTest.php` (6 casos, nuevos). Con
+  los negativos probados: si el espejo vuelve a `set_role()`, caen tres; si el rol de socio deja de llamarse
+  `socio`, caen dos.
+
 ## [2.8.50] — 2026-10-15
 
 ### Arreglado

@@ -217,15 +217,19 @@ class Admin_Voluntariado {
 			return;
 		}
 
-		$user->set_role( 'voluntario_aprobado' );
-		update_user_meta( $user_id, self::META_APROBADO, '1' );
-
-		// La ficha del socio refleja lo que se le concede: si se aprueba a quien no había marcado
-		// el compromiso, la solicitud queda registrada en su ficha (el permiso vive en el usuario).
+		// La condición de voluntario se SUMA a las que ya tenga: quien además es socio sigue
+		// siéndolo. Antes se usaba set_role(), que sustituye todos los roles del usuario.
 		$ficha = self::ficha_de_usuario( $user_id );
 		if ( $ficha ) {
-			update_post_meta( $ficha, '_convoca_es_voluntario', '1' );
+			\Convoca\Members\Roles_Miembro::anadir( $ficha, \Convoca\Members\Roles_Miembro::VOLUNTARIO );
 		}
+
+		// El rol de WordPress lo consumen Enroll y Shifts: se garantiza sin tocar los demás.
+		if ( ! in_array( 'voluntario_aprobado', (array) $user->roles, true ) ) {
+			$user->add_role( 'voluntario_aprobado' );
+		}
+
+		update_user_meta( $user_id, self::META_APROBADO, '1' );
 
 		// Mirror legacy members activation: activate member, PDF, role guarantee.
 		do_action( 'convoca_voluntario_aprobado', $user_id );
@@ -261,7 +265,18 @@ class Admin_Voluntariado {
 			return;
 		}
 
-		$user->set_role( 'subscriber' );
+		// Se quita solo el permiso de voluntariado: si la persona además es socia, sigue
+		// siéndolo. Antes, set_role( 'subscriber' ) borraba cualquier otro rol.
+		$ficha = self::ficha_de_usuario( $user_id );
+		if ( $ficha ) {
+			\Convoca\Members\Roles_Miembro::quitar( $ficha, \Convoca\Members\Roles_Miembro::VOLUNTARIO );
+		}
+
+		$user->remove_role( 'voluntario_aprobado' );
+		if ( empty( array_diff( (array) $user->roles, array( 'voluntario_aprobado' ) ) ) ) {
+			$user->add_role( 'subscriber' );
+		}
+
 		update_user_meta( $user_id, self::META_APROBADO, '-1' );
 
 		// Let Shifts (and any other consumer) release future shifts for this volunteer.
