@@ -496,6 +496,12 @@ class Admin_Horas extends \WP_List_Table {
 	}
 
 	public function prepare_items() {
+		// Las cabeceras de columna son obligatorias para `WP_List_Table`: sin esto, `get_column_info()`
+		// devuelve el array vacío del constructor y la tabla sale con las filas VACÍAS —sin una sola
+		// celda, ni siquiera en la cabecera— aunque la consulta encuentre registros (issue #32). Es el
+		// sitio donde vive el botón «Aprobar» de las horas, así que sin celdas no se puede aprobar nada.
+		$this->_column_headers = array( $this->get_columns(), array(), $this->get_sortable_columns() );
+
 		$per_page        = 20;
 		$current_page    = $this->get_pagenum();
 		$search          = isset( $_REQUEST['s'] ) ? sanitize_text_field( wp_unslash( $_REQUEST['s'] ) ) : '';

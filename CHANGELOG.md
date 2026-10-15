@@ -1,3 +1,18 @@
+## [2.8.55] — 2026-10-15
+
+### Arreglado
+- **El listado de horas sale con las filas vacías (#32).** `prepare_items()` fijaba los registros y la
+  paginación, pero **no** `_column_headers`, así que `WP_List_Table` recorría **cero columnas**: la pantalla
+  de «Horas de Voluntariado» decía «9 elementos» y no pintaba ni una celda —ni en la cabecera—. Medido en la
+  demo: `0` etiquetas `<td>` en toda la página y nueve `<tr></tr>` vacías. Ahí vive el botón **Aprobar** de
+  las horas que el personal registra desde su panel, así que sin celdas la aprobación era **inalcanzable**
+  desde la interfaz aunque el resto de la cadena funcionara.
+
+### Pruebas
+- `tests/Unit/ListadoHorasColumnasTest.php`: obliga a fijar `_column_headers` y comprueba que cada columna
+  declarada tiene su `column_*` (una columna sin render es una celda en blanco). **Negativo probado**:
+  quitando la línea, la prueba cae.
+
 ## [2.8.54] — 2026-10-15
 
 ### Añadido
