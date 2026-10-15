@@ -3,7 +3,7 @@
  * Plugin Name:       Convoca Members
  * Plugin URI:        https://getconvoca.app
  * Description:       Members, volunteers and communications management.
- * Version:           2.8.63
+ * Version:           2.8.64
  * Requires at least: 6.4
  * Requires PHP:      8.1
  * Tested up to:      7.1
@@ -278,40 +278,6 @@ add_action(
 // El rol de socio se asegura en cada carga, no solo al activar: si no, una instalación que se actualiza
 // (como la demo) se queda sin él hasta que alguien desactive y vuelva a activar el plugin (issue #30).
 add_action( 'init', array( \Convoca\Members\Roles_Miembro::class, 'crear_roles' ) );
-
-/**
- * Capacidades derivadas de los tipos de contenido propios (issue #15).
- *
- * WordPress compone trece capacidades a partir del par singular/plural de `capability_type`. Se derivan aqui
- * en vez de escribirlas a mano para que no falte ninguna: una sola que se quede fuera es una puerta abierta.
- *
- * @return array<int, string> Capacidades derivadas de socios, horas y proyectos.
- */
-function convoca_members_capacidades_de_los_tipos(): array {
-	$capacidades = array();
-	foreach ( array( array( 'convoca_miembro', 'convoca_miembros' ), array( 'convoca_hora', 'convoca_horas' ), array( 'convoca_proyecto', 'convoca_proyectos' ) ) as $par ) {
-		list( $singular, $plural ) = $par;
-		$capacidades               = array_merge(
-			$capacidades,
-			array(
-				"edit_$singular",
-				"read_$singular",
-				"delete_$singular",
-				"edit_$plural",
-				"edit_others_$plural",
-				"delete_$plural",
-				"publish_$plural",
-				"read_private_$plural",
-				"delete_private_$plural",
-				"delete_published_$plural",
-				"delete_others_$plural",
-				"edit_private_$plural",
-				"edit_published_$plural",
-			)
-		);
-	}
-	return $capacidades;
-}
 
 add_action( 'init', array( \Convoca\Members\CPT_Miembro::class, 'register' ) );
 

@@ -87,19 +87,20 @@ class CapacidadesSociosTest extends TestCase {
 
 	public function test_se_conceden_las_trece_de_cada_familia(): void {
 		$bootstrap = (string) file_get_contents( $this->raiz() . '/convoca-members.php' );
-		$this->assertStringContainsString( 'function convoca_members_capacidades_de_los_tipos', $bootstrap );
-		// Y en la función que corre en `init`, no en el gancho de activación: una instalación que se
-		// actualiza no pasa por la activación, y ahí el administrador se quedaba fuera (403, medido).
-		$roles = (string) file_get_contents( $this->raiz() . '/includes/Roles_Miembro.php' );
-		$this->assertStringContainsString( 'foreach ( \\convoca_members_capacidades_de_los_tipos() as $cap_propia )', $roles, 'Las derivadas tienen que concederse, no solo declararse' );
-		$this->assertStringContainsString( "add_action( 'init', array( \\Convoca\\Members\\Roles_Miembro::class, 'crear_roles' ) )", $bootstrap, 'Y en `init`: si va en la activación, la actualización no la ve' );
-		$this->assertStringNotContainsString( 'as $cap_propia', $bootstrap, 'Y no en el gancho de activación, que una actualización no recorre' );
+		$roles     = (string) file_get_contents( $this->raiz() . '/includes/Roles_Miembro.php' );
 
-		// Se concede a administración y a nadie más: es la decisión de producto (solo admins).
-		$bloque = substr( $bootstrap, (int) strpos( $bootstrap, 'convoca_members_capacidades_de_los_tipos() as $cap_propia' ), 200 );
+		// El método que las compone y la concesión, en la clase...
+		$this->assertStringContainsString( 'public static function capacidades_de_los_tipos()', $roles );
+		$this->assertStringContainsString( 'foreach ( self::capacidades_de_los_tipos() as $cap_propia )', $roles, 'Las derivadas tienen que concederse, no solo declararse' );
+		// ...y esa clase enganchada a `init`: si la concesión vive en la activación, una instalación que se
+		// actualiza no la recorre (medido: el administrador se quedaba fuera con un 403).
+		$this->assertStringContainsString( "add_action( 'init', array( \\Convoca\\Members\\Roles_Miembro::class, 'crear_roles' ) )", $bootstrap, 'En `init`, no en la activación' );
+		$this->assertStringNotContainsString( 'as $cap_propia', $bootstrap, 'La concesión no vive repartida por el arranque' );
+
+		// Y el bloque que concede no menciona a `editor`: las capacidades son solo de administración.
+		$bloque = substr( $roles, (int) strpos( $roles, 'as $cap_propia' ), 140 );
 		$this->assertStringNotContainsString( 'editor', $bloque );
 
-		// Que el helper componga las trece, una por una: si falta una línea, hay una puerta abierta.
 		$plantillas = array(
 			'edit_$singular',
 			'read_$singular',
@@ -116,12 +117,12 @@ class CapacidadesSociosTest extends TestCase {
 			'edit_published_$plural',
 		);
 		foreach ( $plantillas as $plantilla ) {
-			$this->assertStringContainsString( '"' . $plantilla . '"', $bootstrap, "El helper no compone $plantilla" );
+			$this->assertStringContainsString( '"' . $plantilla . '"', $roles, "El método no compone $plantilla" );
 		}
 
 		foreach ( $this->familias() as $par ) {
 			// Y que derive del mismo par que declara el tipo, no de otro parecido.
-			$this->assertStringContainsString( "'{$par[0]}', '{$par[1]}'", $bootstrap, 'El helper tiene que derivar del mismo par que el tipo' );
+			$this->assertStringContainsString( "'{$par[0]}', '{$par[1]}'", $roles, 'Tiene que derivar del mismo par que declara el tipo' );
 		}
 	}
 }

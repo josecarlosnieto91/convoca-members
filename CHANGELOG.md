@@ -1,3 +1,13 @@
+## [2.8.64] — 2026-10-15
+
+### Arreglado
+- **La concesión de capacidades no llegaba a ejecutarse (issue #15).** Medido en la demo: el administrador seguía
+  sin las capacidades derivadas. El método estaba, la llamada estaba, y no se ejecutaba: el bootstrap declara
+  **espacio de nombres**, así que una función suelta declarada allí no existe para quien la llame por su nombre
+  sin cualificar — y `function_exists()` devuelve `false` **sin avisar**, que es la misma trampa silenciosa del
+  `class_exists()` con barras mal escritas. La composición pasa a ser un **método de la clase** que la usa
+  (`Roles_Miembro::capacidades_de_los_tipos()`), sin `function_exists` de por medio.
+
 ## [2.8.63] — 2026-10-15
 
 ### Arreglado

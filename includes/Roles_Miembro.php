@@ -215,6 +215,47 @@ final class Roles_Miembro {
 	 *
 	 * @return void
 	 */
+	/**
+	 * Capacidades derivadas de los tipos de contenido propios (issue #15).
+	 *
+	 * WordPress compone trece capacidades a partir del par singular/plural de `capability_type`. Se derivan aquí
+	 * en vez de escribirlas a mano para que no falte ninguna: una sola que se quede fuera es una puerta abierta.
+	 *
+	 * Vive en la clase y no como función suelta por un motivo aprendido a golpes: este fichero declara espacio de
+	 * nombres, así que una función declarada en el bootstrap no existe para nadie que la llame por su nombre sin
+	 * cualificar — y el fallo es silencioso, porque `function_exists()` devuelve `false` sin avisar.
+	 *
+	 * @return array<int, string> Capacidades derivadas de socios, horas y proyectos.
+	 */
+	public static function capacidades_de_los_tipos(): array {
+		$capacidades = array();
+		foreach ( array( array( 'convoca_miembro', 'convoca_miembros' ), array( 'convoca_hora', 'convoca_horas' ), array( 'convoca_proyecto', 'convoca_proyectos' ) ) as $par ) {
+			list( $singular, $plural ) = $par;
+			$capacidades               = array_merge(
+				$capacidades,
+				array(
+					"edit_$singular",
+					"read_$singular",
+					"delete_$singular",
+					"edit_$plural",
+					"edit_others_$plural",
+					"delete_$plural",
+					"publish_$plural",
+					"read_private_$plural",
+					"delete_private_$plural",
+					"delete_published_$plural",
+					"delete_others_$plural",
+					"edit_private_$plural",
+					"edit_published_$plural",
+				)
+			);
+		}
+		return $capacidades;
+	}
+
+	/**
+	 * Crea (o asegura) los roles del plugin.
+	 */
 	public static function crear_roles(): void {
 		if ( ! function_exists( 'add_role' ) || ! function_exists( 'get_role' ) ) {
 			return;
@@ -236,8 +277,8 @@ final class Roles_Miembro {
 		// administrador se quedaba fuera de `edit.php?post_type=miembro` (403), porque esas pantallas miraban
 		// las capacidades derivadas y nadie se las habia concedido. Se comprueba antes de escribir.
 		$administrador = get_role( 'administrator' );
-		if ( $administrador && \function_exists( 'convoca_members_capacidades_de_los_tipos' ) ) {
-			foreach ( \convoca_members_capacidades_de_los_tipos() as $cap_propia ) {
+		if ( $administrador ) {
+			foreach ( self::capacidades_de_los_tipos() as $cap_propia ) {
 				if ( ! $administrador->has_cap( $cap_propia ) ) {
 					$administrador->add_cap( $cap_propia );
 				}
