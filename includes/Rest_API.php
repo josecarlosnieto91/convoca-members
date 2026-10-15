@@ -37,9 +37,6 @@ class Rest_API {
 	/**
 	 * Rate limit: max attempts per IP in window.
 	 */
-	private const RATE_LIMIT_MAX    = 10;
-	private const RATE_LIMIT_WINDOW = 300; // 5 minutes
-
 	public function __construct() {
 		add_action( 'rest_api_init', array( $this, 'register_routes' ) );
 	}
@@ -378,17 +375,8 @@ class Rest_API {
 	 * Login handler — WordPress credentials (username or email + password).
 	 */
 	public function login( \WP_REST_Request $request ): \WP_REST_Response {
-		// Check rate limit before processing.
-		if ( ! $this->check_rate_limit( 'login' ) ) {
-			return new \WP_REST_Response(
-				array(
-					'success' => false,
-					'message' => __( 'Demasiados intentos. Intenta de nuevo en 5 minutos.', 'convoca-members' ),
-				),
-				429
-			);
-		}
-
+		// El límite de intentos del acceso lo lleva Member_Auth (issue #14): aquí había OTRO, con otra
+		// clave y otro umbral, y cada intento contaba dos veces. Una sola fuente de verdad por medida.
 		$username = sanitize_text_field( $request->get_param( 'username' ) ?? $request->get_param( 'email' ) ?? '' );
 		$password = $request->get_param( 'password' ) ?? '';
 
@@ -420,14 +408,6 @@ class Rest_API {
 				'token'   => $token,
 			)
 		);
-	}
-
-	/**
-	 * Check rate limit for an action.
-	 * Uses transients to track attempts per IP.
-	 */
-	private function check_rate_limit( string $action ): bool {
-		return \Convoca\Core\Utils::check_rate_limit( $action, self::RATE_LIMIT_MAX, self::RATE_LIMIT_WINDOW );
 	}
 
 	/**

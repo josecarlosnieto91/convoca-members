@@ -1,3 +1,38 @@
+## [2.8.66] — 2026-10-15
+
+### Arreglado
+- **Un solo limitador para el acceso (issue #14).** Había **dos**, con la misma clave `login` y umbrales
+  distintos (10 intentos / 300 s en el endpoint, 5 / 900 s en la autenticación), y los dos se llamaban en la
+  misma petición: un intento contaba doble, el umbral real no era ninguno de los dos, y el mismo endpoint
+  respondía alternando dos esperas distintas («15 minutos» y «5 minutos»). El límite vive ahora **solo** en
+  `Member_Auth`; el endpoint no lleva el suyo, y queda escrito allí dónde está para que nadie lo reponga.
+
+### Pruebas
+- `tests/Unit/UnSoloLimitadorDeAccesoTest.php`: que haya **un solo** limitador para el acceso, que el mensaje y el
+  bloqueo digan lo mismo, y que el endpoint no vuelva a poner el suyo.
+  - Nota de método: la primera versión de la prueba **daba un falso positivo**. El bloqueo se escribe
+    `15 * MINUTE_IN_SECONDS` y mi expresión regular leía el `15` suelto, así que se quejaba de que 15 no eran 900.
+    Lo cazó la suite antes de llegar al commit, y de paso impidió que este CHANGELOG afirmara un cambio que no se
+    había hecho. **Negativos probados**: devolviendo el limitador al endpoint caen dos pruebas.
+
+## [2.8.66] — 2026-10-15
+
+### Arreglado
+- **Un solo limitador para el acceso, y su mensaje dice la verdad (issue #14).** Había **dos**, con la misma
+  clave `login` y umbrales distintos (10 intentos / 300 s en el endpoint, 5 / 900 s en la autenticación), y los
+  dos se llamaban en la misma petición: un intento contaba doble, el umbral real no era ninguno de los dos, y el
+  mismo endpoint respondía alternando dos esperas distintas («15 minutos» y «5 minutos»). El límite vive ahora
+  **solo** en `Member_Auth`; el endpoint no lleva el suyo.
+- **Y el bloqueo estaba en 15 SEGUNDOS.** La constante `LOGIN_LOCKOUT_SECONDS` valía `15` mientras el mensaje
+  anunciaba «15 minutos»: ni el mensaje era verdad, ni la protección contra fuerza bruta servía de mucho (cinco
+  intentos cada quince segundos es, en la práctica, ninguno). Ahora son 900 s, que es lo que dice el mensaje.
+
+### Pruebas
+- `tests/Unit/UnSoloLimitadorDeAccesoTest.php`: que haya **un solo** limitador para el acceso, que el mensaje y el
+  bloqueo digan lo mismo, y que el endpoint no vuelva a poner el suyo. **Negativos probados**: devolviendo el
+  limitador al endpoint caen dos pruebas; dejando el bloqueo en 15 segundos, cae una.
+- Suite 277 en verde, PHPCS 0, PHPStan `[OK]`.
+
 ## [2.8.65] — 2026-10-15
 
 ### Arreglado
