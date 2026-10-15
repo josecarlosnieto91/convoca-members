@@ -1,3 +1,12 @@
+## [2.8.72] — 2026-10-15
+
+### Cambiado
+- **Los tres nombres de pago dejan de confundirse (issue convoca-core#16).** Tres cosas distintas se llamaban
+  `get_payment_link()`: en core **crea** el pago, en la pasarela **construye la URL** de uno que ya existe, y la
+  privada de `Cron_Manager` **asegura el token persistente** y delega. Ya no: la de `Cron_Manager` se llama
+  `signed_payment_url()` —el token firmado del pago concreto, distinguida de `payment_page_url()`, que es la
+  página de pago a secas— y las llamadas a la pasarela usan `build_payment_url()`. Sin cambios de comportamiento.
+
 ## [2.8.71] — 2026-10-15
 
 ### Añadido

@@ -179,7 +179,7 @@ class Cron_Manager {
 					$pago_id = (int) get_post_meta( $post_id, '_convoca_pago_id', true );
 					$link    = '';
 					if ( $pago_id ) {
-						$link = $this->get_payment_link( $pago_id );
+						$link = $this->signed_payment_url( $pago_id );
 					}
 
 					$method = 'send_' . ( $template === 'recordatorio_pago' ? 'recordatorio_pago' : $template );
@@ -891,9 +891,14 @@ class Cron_Manager {
 	}
 
 	/**
-	 * Get signed payment link for a payment ID.
+	 * URL firmada de pago de un pago existente, con su token persistente (issue convoca-core#16).
+	 *
+	 * Se llamaba `get_payment_link()`, el mismo nombre que `Core\Utils::get_payment_link()` (hoy
+	 * `create_payment()`), que no construye ninguna URL: crea el pago. Y en esta clase ya hay
+	 * `payment_page_url()` para la página de pago a secas, así que el nombre nuevo distingue las dos cosas:
+	 * esta lleva el token firmado del pago concreto.
 	 */
-	private function get_payment_link( int $pago_id ): string {
+	private function signed_payment_url( int $pago_id ): string {
 		if ( \Convoca\Core\Features::is_gateway_active() ) {
 			// Get or create persistent token for long-lived links.
 			$token = get_post_meta( $pago_id, '_convoca_link_key', true );
@@ -901,7 +906,7 @@ class Cron_Manager {
 				$token = wp_generate_password( 32, false, false );
 				update_post_meta( $pago_id, '_convoca_link_key', $token );
 			}
-			return \Convoca\Gateway\Payment_Handler::get_payment_link( $pago_id, $token );
+			return \Convoca\Gateway\Payment_Handler::build_payment_url( $pago_id, $token );
 		}
 		return self::payment_page_url();
 	}
@@ -943,7 +948,7 @@ class Cron_Manager {
 			);
 
 			if ( $pending ) {
-				return $this->get_payment_link( $pending );
+				return $this->signed_payment_url( $pending );
 			}
 
 			$payment = \Convoca\Gateway\convoca_gateway_create_payment(
@@ -964,14 +969,14 @@ class Cron_Manager {
 					'Members/Renewal',
 					$post_id
 				);
-				return $this->get_payment_link( (int) $payment['pago_id'] );
+				return $this->signed_payment_url( (int) $payment['pago_id'] );
 			}
 		}
 
 		// Fallback: try existing payment link.
 		$pago_id = (int) get_post_meta( $post_id, '_convoca_pago_id', true );
 		if ( $pago_id ) {
-			return $this->get_payment_link( $pago_id );
+			return $this->signed_payment_url( $pago_id );
 		}
 
 		return self::renewal_page_url();

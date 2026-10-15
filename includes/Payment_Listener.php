@@ -192,7 +192,7 @@ class Payment_Listener {
 		if ( ! \Convoca\Core\Features::is_gateway_active() ) {
 			return;
 		}
-		$link = \Convoca\Gateway\Payment_Handler::get_payment_link( $pago_id );
+		$link = \Convoca\Gateway\Payment_Handler::build_payment_url( $pago_id );
 
 		$email_manager = new Email_Manager();
 		$email_manager->send_recordatorio_pago( $miembro_id, array( '{link_pago}' => $link ) );

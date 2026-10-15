@@ -143,7 +143,7 @@ class Admin_Metaboxes {
 		$pago_id   = get_post_meta( $post->ID, '_convoca_pago_id', true );
 		$pago_link = '';
 		if ( $pago_id ) {
-			$pago_link = Payment_Handler::get_payment_link( (int) $pago_id );
+			$pago_link = Payment_Handler::build_payment_url( (int) $pago_id );
 		}
 
 		$estado_cuota = get_post_meta( $post->ID, '_convoca_estado_cuota', true );
@@ -529,7 +529,7 @@ class Admin_Metaboxes {
 			wp_send_json_error( array( 'message' => __( 'No hay un pago activo. Genera uno primero.', 'convoca-members' ) ) );
 		}
 
-		$payment_url = Payment_Handler::get_payment_link( (int) $pago_id );
+		$payment_url = Payment_Handler::build_payment_url( (int) $pago_id );
 
 		// Send Email using existing functionality.
 		$email_manager = new Email_Manager();

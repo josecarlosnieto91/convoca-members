@@ -176,6 +176,8 @@ namespace Convoca\Gateway {
 	final class Payment_Handler {
 	public static function get_member_token( int $member_id ): string { return ''; }
 	public static function create_payment( array $data ): array|\WP_Error { return array(); }
+	public static function build_payment_url( int $pago_id, string $token = '', ?int $expires_ts = null ): string { return ''; }
+	/** @deprecated Alias de compatibilidad de build_payment_url() (convoca-core#16). */
 	public static function get_payment_link( int $pago_id, string $token = '', ?int $expires_ts = null ): string { return ''; }
 	/**
 	 * @return array{pago_id:int, payment_url:string, status:string, response:string}|\WP_Error
