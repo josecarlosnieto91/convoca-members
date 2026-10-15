@@ -22,6 +22,23 @@ class DocumentoVigenciaTest extends TestCase {
 	const DOC = 4242;
 
 	/**
+	 * Una fecha desplazada N días desde HOY, usando el mismo reloj que el código.
+	 *
+	 * El arnés no tenía esto y las pruebas construían las fechas con `gmdate()` —UTC— mientras el
+	 * código compara con `current_time()` —hora local—. Entre las 00:00 y las 02:00 locales los dos
+	 * días no coinciden y la suite se ponía roja **sola** (medido el 16/10 a la 01:00: `-4` donde
+	 * esperaba `-3`, y «caducado» donde esperaba «caduca_pronto»). Se ancla la aritmética en UTC
+	 * sobre la fecha que da el propio código, así el resultado no depende de la zona del que ejecuta.
+	 *
+	 * @param string $desplazamiento Por ejemplo '-3 days' o '+10 days'.
+	 * @return string Fecha Y-m-d.
+	 */
+	private function desplaza( string $desplazamiento ): string {
+		$base = new \DateTimeImmutable( current_time( 'Y-m-d' ), new \DateTimeZone( 'UTC' ) );
+		return $base->modify( $desplazamiento )->format( 'Y-m-d' );
+	}
+
+	/**
 	 * Estado de un documento con esa fecha de caducidad.
 	 *
 	 * @param string $fecha Y-m-d, o '' para no ponerle ninguna.
@@ -46,7 +63,7 @@ class DocumentoVigenciaTest extends TestCase {
 	}
 
 	public function test_una_fecha_pasada_esta_caducado(): void {
-		$ayer = gmdate( 'Y-m-d', strtotime( '-3 days' ) );
+		$ayer = $this->desplaza( '-3 days' );
 		$estado = $this->estado( $ayer );
 
 		$this->assertSame( 'caducado', $estado['estado'] );
@@ -55,7 +72,7 @@ class DocumentoVigenciaTest extends TestCase {
 	}
 
 	public function test_lo_que_caduca_pronto_avisa(): void {
-		$proximo = gmdate( 'Y-m-d', strtotime( '+10 days' ) );
+		$proximo = $this->desplaza( '+10 days' );
 		$estado  = $this->estado( $proximo );
 
 		$this->assertSame( 'caduca_pronto', $estado['estado'], 'Dentro del aviso de 30 días tiene que avisar' );
@@ -63,7 +80,7 @@ class DocumentoVigenciaTest extends TestCase {
 	}
 
 	public function test_lo_que_queda_lejos_esta_vigente(): void {
-		$lejos  = gmdate( 'Y-m-d', strtotime( '+400 days' ) );
+		$lejos  = $this->desplaza( '+400 days' );
 		$estado = $this->estado( $lejos );
 
 		$this->assertSame( 'vigente', $estado['estado'] );
@@ -72,16 +89,16 @@ class DocumentoVigenciaTest extends TestCase {
 
 	public function test_hoy_mismo_caduca_pronto_no_caducado(): void {
 		// El día de la caducidad todavía vale: caduca al terminar el día, no al empezar.
-		$hoy = $this->estado( gmdate( 'Y-m-d' ) );
+		$hoy = $this->estado( $this->desplaza( '+0 days' ) );
 		$this->assertSame( 'caduca_pronto', $hoy['estado'] );
 		$this->assertSame( 0, $hoy['dias'] );
 	}
 
 	public function test_el_atajo_del_si_o_el_no(): void {
-		$this->estado( gmdate( 'Y-m-d', strtotime( '-1 day' ) ) );
+		$this->estado( $this->desplaza( '-1 day' ) );
 		$this->assertTrue( \Convoca\Members\CPT_Documento::caducado( self::DOC ) );
 
-		$this->estado( gmdate( 'Y-m-d', strtotime( '+400 days' ) ) );
+		$this->estado( $this->desplaza( '+400 days' ) );
 		$this->assertFalse( \Convoca\Members\CPT_Documento::caducado( self::DOC ) );
 	}
 

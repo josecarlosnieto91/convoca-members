@@ -3362,6 +3362,18 @@ msgid ""
 "alta desde el formulario."
 msgstr "Your membership is cancelled. To rejoin, sign up again from the form."
 
+#. translators: 1: plan key, 2: payment id
+#: includes/Payment_Listener.php:101
+#, php-format
+msgid ""
+"Cuota pagada (pago %2$d) que NO se ha podido aplicar: el plan «%1$s» no "
+"existe en esta ficha. Corregir el plan y volver a aplicar el pago antes de "
+"darla por renovada."
+msgstr ""
+"Fee paid (payment %2$d) that could NOT be applied: plan «%1$s» does not exist "
+"on this member record. Correct the plan and re-apply the payment before "
+"considering it renewed."
+
 #: includes/PDF_Card.php:63
 msgid "PENDIENTE"
 msgstr "PENDING"

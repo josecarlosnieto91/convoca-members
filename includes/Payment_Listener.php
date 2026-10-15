@@ -81,19 +81,36 @@ class Payment_Listener {
 			return;
 		}
 
+		// El plan se valida ANTES de tocar nada (members#39). Antes se marcaba la cuota como
+		// «activa» (y se guardaban método y pago) y DESPUÉS se comprobaba el plan: si el plan no
+		// existía, el listener salía dejando la ficha con la cuota pagada, sin fecha de renovación
+		// y sin la condición de socio —un estado que se veía en la ficha y que nadie había anotado
+		// en ninguna parte (medido: ficha con plan inexistente → cuota «activa» + es_socio false).
+		$plan_key  = get_post_meta( $origin_id, '_convoca_plan', true );
+		$plan_data = CPT_Miembro::get_plan( $plan_key );
+		if ( ! $plan_data ) {
+			\Convoca\Core\Logger::error( "No se pudo procesar renovación: el plan '$plan_key' no existe para el miembro #$origin_id.", 'Members/Payment', $origin_id );
+
+			// Y queda anotado donde la junta lo lee: el campo «Incidencias» de la ficha, que ya
+			// existe y ya tiene pantalla. Sin esto el pago entraba y nadie sabía por qué la
+			// persona no contaba como socia.
+			self::anotar_incidencia_cuota(
+				(int) $origin_id,
+				sprintf(
+					/* translators: 1: plan key, 2: payment id */
+					__( 'Cuota pagada (pago %2$d) que NO se ha podido aplicar: el plan «%1$s» no existe en esta ficha. Corregir el plan y volver a aplicar el pago antes de darla por renovada.', 'convoca-members' ),
+					(string) $plan_key,
+					(int) $pago_id
+				)
+			);
+			return;
+		}
+
 		// Update fee information.
 		update_post_meta( $origin_id, '_convoca_estado_cuota', 'activa' );
 		update_post_meta( $origin_id, '_convoca_metodo_pago', $meta['method'] ?? '' );
 		update_post_meta( $origin_id, '_convoca_pago_id', $pago_id );
 		update_post_meta( $origin_id, '_convoca_forma_pago', 'cuota' );
-
-		// Validate plan existence before renewal.
-		$plan_key  = get_post_meta( $origin_id, '_convoca_plan', true );
-		$plan_data = CPT_Miembro::get_plan( $plan_key );
-		if ( ! $plan_data ) {
-			\Convoca\Core\Logger::error( "No se pudo procesar renovación: el plan '$plan_key' no existe para el miembro #$origin_id.", 'Members/Payment', $origin_id );
-			return;
-		}
 
 		// Update renewal date.
 		// Policy (2026-09): a late renewal always adds one year to the previous
@@ -196,5 +213,25 @@ class Payment_Listener {
 
 		$email_manager = new Email_Manager();
 		$email_manager->send_recordatorio_pago( $miembro_id, array( '{link_pago}' => $link ) );
+	}
+
+	/**
+	 * Anota en el campo «Incidencias» de la ficha que una cuota pagada no se ha podido aplicar.
+	 *
+	 * Se usa el campo que ya existe y que la junta lee en la ficha del socio (no se inventa uno
+	 * nuevo): el aviso se **añade** al final, con su fecha, para no pisar lo que haya escrito una
+	 * persona. Nace de `members#39`: una cuota podía quedar pagada sin conceder la condición de
+	 * socio, y el único rastro era una línea del registro que nadie mira.
+	 *
+	 * @param int    $miembro_id Ficha del miembro.
+	 * @param string $texto      Aviso a añadir.
+	 * @return void
+	 */
+	private static function anotar_incidencia_cuota( int $miembro_id, string $texto ): void {
+		$previas = (string) get_post_meta( $miembro_id, 'incidencias', true );
+		$linea   = sprintf( '[%s · cuota] %s', current_time( 'd/m/Y H:i' ), $texto );
+		$nuevo   = '' === trim( $previas ) ? $linea : $previas . "\n" . $linea;
+
+		update_post_meta( $miembro_id, 'incidencias', $nuevo );
 	}
 }

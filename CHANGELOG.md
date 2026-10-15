@@ -1,3 +1,21 @@
+## [2.8.80] — 2026-10-16
+
+### Arreglado
+- **Una cuota pagada ya no puede dejar la ficha «a medias» (issue #39).** El listener marcaba la cuota como
+  «activa» —y guardaba método, pago y forma— **antes** de comprobar que el plan de la ficha existe. Con un plan
+  inexistente (ficha sembrada a mano, plan renombrado, alta antigua) salía por ahí y dejaba la ficha con la cuota
+  pagada, **sin fecha de renovación y sin conceder la condición de socio**, y en silencio: el único rastro era una
+  línea del registro. Medido en la demo antes del arreglo: `cuota='activa'` · `renovación=''` · `es_socio=false`.
+  Ahora el plan se valida **antes** de tocar nada y, si falta, la ficha no se marca y **queda anotado en el campo
+  «Incidencias»** de la propia ficha (que ya existe y que la junta lee), con el plan que falta y el pago de que se
+  trata. El aviso se **añade** al final: no pisa lo que haya escrito una persona.
+- **Dos pruebas de vigencia se ponían rojas solas según la hora (medido el 16/10 a la 01:00).** Construían las
+  fechas con `gmdate()` —UTC— mientras el código compara con `current_time()` —hora local—: entre las 00:00 y las
+  02:00 locales los dos días no coinciden y la suite fallaba **sin que nadie hubiera tocado nada** (`-4` donde
+  esperaba `-3`, y «caducado» donde esperaba «caduca_pronto»; en el CI, que corre en UTC, pasaba). Ahora la
+  aritmética se ancla en UTC sobre la fecha que da el propio código, así el resultado no depende de la zona del que
+  ejecuta.
+
 ## [2.8.75] — 2026-10-15
 
 ## [2.8.76] — 2026-10-15
