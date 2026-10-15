@@ -40,6 +40,16 @@ class Email_Manager {
 	/** Option key for templates. */
 	private const OPTION = 'convoca_email_templates';
 
+	/**
+	 * Nombre de la opción donde viven las plantillas. Público para que la migración que las
+	 * actualiza no tenga que repetir el literal (y no se desincronice si cambia).
+	 *
+	 * @return string
+	 */
+	public static function option_name(): string {
+		return self::OPTION;
+	}
+
 	/** Available template slugs. */
 	public const TEMPLATES = array(
 		'solicitud_recibida',
@@ -168,6 +178,7 @@ class Email_Manager {
 							),
 						)
 					)
+					. '{datos_transferencia}'
 					. __( '<p>Un miembro del equipo revisará tu solicitud y te contactaremos pronto.</p>', 'convoca-members' )
 					. sprintf( /* translators: %s: site name */ __( '<p>¡Gracias por unirte a la familia %s!</p>', 'convoca-members' ), esc_html( get_bloginfo( 'name' ) ) ),
 			),
@@ -781,7 +792,94 @@ class Email_Manager {
 			'{usuario}'                      => $extra_vars['{usuario}'] ?? '—',
 			'{password}'                     => $extra_vars['{password}'] ?? '—',
 			'{login_url}'                    => $extra_vars['{login_url}'] ?? \Convoca\Core\Email_Links::panel(),
+			// Datos para hacer la transferencia, cuando el alta se hizo por esa vía (gateway#9): es lo
+			// que necesita quien acaba de apuntarse para poder ingresar sin preguntar. Vacío si no
+			// procede, para que el correo no deje un hueco.
+			'{datos_transferencia}'          => self::datos_transferencia( $post_id ),
 		);
+	}
+
+	/**
+	 * Bloque con los datos para transferir la cuota, o cadena vacía si esta ficha no va por transferencia.
+	 *
+	 * El concepto lleva el número de pago: es lo que permite a la junta enlazar la transferencia que
+	 * llegue con el alta, que es justo lo que hoy hay que resolver a mano por WhatsApp (gateway#9).
+	 *
+	 * @param int $post_id Ficha del miembro.
+	 * @return string HTML ya escapado, o ''.
+	 */
+	private static function datos_transferencia( int $post_id ): string {
+		if ( 'transferencia' !== (string) get_post_meta( $post_id, '_convoca_metodo_pago', true ) ) {
+			return '';
+		}
+
+		$settings = (array) get_option( 'convoca_gateway_settings', array() );
+		$iban     = trim( (string) ( $settings['iban'] ?? '' ) );
+		if ( '' === $iban ) {
+			// Sin IBAN no se inventa nada: el aviso de que falta va en la pantalla de pago.
+			return '';
+		}
+
+		$pago_id  = (int) get_post_meta( $post_id, '_convoca_pago_id', true );
+		$concepto = $pago_id > 0 ? (string) get_post_meta( $pago_id, '_convoca_order_id', true ) : '';
+		if ( '' === $concepto ) {
+			$concepto = (string) ( get_post_meta( $post_id, 'numero_socio', true ) ?: get_the_title( $post_id ) );
+		}
+
+		// El importe se toma del PAGO (es el que se va a transferir de verdad); si no hay pago, del
+		// precio del plan. `$plan_data` no existe en este ámbito: el primer intento lo usaba y habría
+		// dejado la fila vacía.
+		$importe = '';
+		if ( $pago_id > 0 && class_exists( '\Convoca\Gateway\CPT_Pago' ) ) {
+			$centimos = (int) get_post_meta( $pago_id, '_convoca_amount_cents', true );
+			if ( $centimos > 0 ) {
+				$importe = \Convoca\Gateway\CPT_Pago::format_amount( $centimos );
+			}
+		}
+		if ( '' === $importe ) {
+			$plan    = CPT_Miembro::get_plan( (string) get_post_meta( $post_id, '_convoca_plan', true ) );
+			$importe = isset( $plan['price'] ) ? number_format_i18n( (float) $plan['price'], 2 ) . ' €' : '';
+		}
+
+		$filas = array(
+			array(
+				'label' => __( 'IBAN', 'convoca-members' ),
+				'value' => $iban,
+			),
+			array(
+				'label' => __( 'Beneficiario', 'convoca-members' ),
+				'value' => (string) ( $settings['beneficiary'] ?? '' ),
+			),
+			array(
+				'label' => __( 'Concepto', 'convoca-members' ),
+				'value' => $concepto,
+			),
+			array(
+				'label' => __( 'Importe', 'convoca-members' ),
+				'value' => $importe,
+			),
+		);
+
+		// Se quitan las filas sin valor para que el correo no enseñe etiquetas en blanco. Un `foreach`
+		// explícito y no `array_filter` + `array_values`: la cadena de llamadas dejaba un tipo que PHPStan
+		// no puede resolver (medido al estrenarlo).
+		$con_valor = array();
+		foreach ( $filas as $fila ) {
+			if ( '' !== trim( (string) $fila['value'] ) ) {
+				$con_valor[] = $fila;
+			}
+		}
+		if ( empty( $con_valor ) ) {
+			return '';
+		}
+		$filas = $con_valor;
+
+		$instrucciones = (string) ( $settings['instructions'] ?? '' );
+
+		return '<h3>' . esc_html__( 'Cómo hacer la transferencia', 'convoca-members' ) . '</h3>'
+			. Email_Layout::meta_table( $filas )
+			. ( '' !== trim( $instrucciones ) ? '<p>' . esc_html( $instrucciones ) . '</p>' : '' )
+			. '<p>' . esc_html__( 'Cuando la hagas, puedes adjuntar el justificante desde la página de pago para que podamos validarla antes.', 'convoca-members' ) . '</p>';
 	}
 
 	/**

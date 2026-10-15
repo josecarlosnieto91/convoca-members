@@ -188,6 +188,13 @@ namespace Convoca\Gateway {
 
 	final class CPT_Pago {
 		public static function get_meta( int $post_id ): array { return array(); }
+		/**
+		 * Formatea un importe en céntimos para enseñarlo (lo usa el correo de transferencia, gateway#9).
+		 *
+		 * El formateador de verdad vive en el gateway: aquí está para que el análisis aislado de members
+		 * sepa que existe, igual que con el resto de su API.
+		 */
+		public static function format_amount( int $cents ): string { return ''; }
 	}
 }
 

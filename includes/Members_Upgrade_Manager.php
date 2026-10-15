@@ -59,7 +59,40 @@ class Members_Upgrade_Manager extends Upgrade_Manager {
 			'1.0.2' => array( $this, 'upgrade_to_1_0_2' ),
 			'1.0.3' => array( $this, 'upgrade_to_1_0_3' ),
 			'2.8.47' => array( $this, 'upgrade_to_2_8_47' ),
+			'2.8.81' => array( $this, 'upgrade_to_2_8_81' ),
 		);
+	}
+
+	/**
+	 * Paso 2.8.81: meter los datos de la transferencia en el correo de «solicitud recibida» (gateway#9).
+	 *
+	 * La plantilla vive en una OPCIÓN, así que cambiar la de por defecto no toca las instalaciones que ya
+	 * la tienen guardada: hay que actualizarla aquí. Solo se añade el token si falta, y no se toca nada más
+	 * de lo que la asociación haya escrito.
+	 */
+	protected function upgrade_to_2_8_81(): bool {
+		$opcion    = \Convoca\Members\Email_Manager::option_name();
+		$plantilla = get_option( $opcion, array() );
+
+		if ( ! is_array( $plantilla ) || empty( $plantilla['solicitud_recibida']['body'] ) ) {
+			return true;
+		}
+
+		$cuerpo = (string) $plantilla['solicitud_recibida']['body'];
+		if ( false !== strpos( $cuerpo, '{datos_transferencia}' ) ) {
+			return true;
+		}
+
+		$plantilla['solicitud_recibida']['body'] = str_replace(
+			'<p>Un miembro del equipo revisará tu solicitud',
+			'{datos_transferencia}<p>Un miembro del equipo revisará tu solicitud',
+			$cuerpo
+		);
+		update_option( $opcion, $plantilla );
+
+		\Convoca\Core\Logger::info( 'Plantilla «solicitud_recibida»: añadidos los datos de la transferencia.', 'Members/Upgrade' );
+
+		return true;
 	}
 
 	/**

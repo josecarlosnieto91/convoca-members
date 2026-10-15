@@ -1,3 +1,15 @@
+## [2.8.81] — 2026-10-16
+
+### Añadido
+- **Los datos para transferir, en el correo de «hemos recibido tu solicitud» (issue #9 del gateway).** Quien se
+  apuntaba eligiendo transferencia recibía el correo **sin ningún dato para ingresar** (medido: 0 líneas con IBAN en
+  el registro de correos de la demo) y la junta acababa mandando el número de cuenta por WhatsApp, sin nada que
+  enlazara la transferencia con el alta. Ahora el correo lleva **IBAN, beneficiario, concepto e importe**, y el
+  concepto es el número de pago: es lo que permite enlazar lo que llegue con el alta. Sale del ajuste del gateway
+  (no se inventa nada: sin IBAN configurado no se pinta el bloque) y viene como ficha `{datos_transferencia}`.
+- La plantilla vive en una **opción**, así que las instalaciones que ya la tienen guardada no reciben el cambio solas:
+  hay una migración (2.8.81) que añade la ficha **solo si falta** y no toca lo demás que la asociación haya escrito.
+
 ## [2.8.80] — 2026-10-16
 
 ### Arreglado
