@@ -536,7 +536,7 @@ class CPT_Miembro {
 	 * Borra la fila de la secuencia al eliminar definitivamente una ficha de socio.
 	 *
 	 * La tabla `convoca_member_sequence` solo crecía: nadie borraba la fila al eliminar el socio, así que
-	 * acabó con 124 de 124 filas huérfanas en la demo y 4 de 4 en Lugg (issue #16). Borrar la fila no
+	 * acabó con 124 de 124 filas huérfanas en la demo y con todas las de un sitio de pruebas (issue #16). Borrar la fila no
 	 * cambia la numeración: el número de socio sale del AUTO_INCREMENT de esa tabla, que no reutiliza
 	 * valores aunque se borren filas.
 	 *
