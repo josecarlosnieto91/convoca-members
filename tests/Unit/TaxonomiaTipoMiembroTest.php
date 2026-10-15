@@ -6,7 +6,7 @@
  * taxonomia `show_ui` hereda de `public`, asi que quedaba sin interfaz, y WordPress 7
  * rechaza `edit-tags.php` de una taxonomia sin interfaz con un `wp_die` **sin estado**:
  * al navegador le llega un HTTP 500 (y no un 403) con «no tienes permisos», con el
- * administrador delante. Medido en la demo y en Lugg, que daban 500 los dos.
+ * administrador delante. Medido en la demo y en un sitio de cliente: daban 500 los dos.
  *
  * Se miran los argumentos del registro (los guarda el doble de convoca-core), porque el
  * defecto esta en COMO se declara, no en si se declara.
