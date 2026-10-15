@@ -149,22 +149,22 @@ class Admin_Metaboxes {
 		$estado_cuota = get_post_meta( $post->ID, '_convoca_estado_cuota', true );
 		?>
 		<div class="conv-actions-panel">
-			<p><strong>Estado Cuota:</strong> <?php echo esc_html( ucfirst( $estado_cuota ?: 'pendiente' ) ); ?></p>
+			<p><strong><?php esc_html_e( 'Estado Cuota:', 'convoca-members' ); ?></strong> <?php echo esc_html( ucfirst( $estado_cuota ?: 'pendiente' ) ); ?></p>
 
 			<?php if ( $pago_id ) : ?>
 				<p>
-					<strong>Pago Activo:</strong> #<?php echo esc_html( $pago_id ); ?>
+					<strong><?php esc_html_e( 'Pago Activo:', 'convoca-members' ); ?></strong> #<?php echo esc_html( $pago_id ); ?>
 					<br>
-					<a href="<?php echo esc_url( $pago_link ); ?>" target="_blank" style="text-decoration:none;">🔗 Ver enlace de pago</a>
+					<a href="<?php echo esc_url( $pago_link ); ?>" target="_blank" style="text-decoration:none;"><?php esc_html_e( '🔗 Ver enlace de pago', 'convoca-members' ); ?></a>
 				</p>
 			<?php endif; ?>
 
 			<button type="button" class="convoca-btn convoca-btn-primary convoca-btn--full" id="conv-send-payment-link" style="margin-bottom:10px;">
-				Generar y Enviar Link de Pago
+				<?php esc_html_e( 'Generar y Enviar Link de Pago', 'convoca-members' ); ?>
 			</button>
 
 			<button type="button" class="convoca-btn convoca-btn-secondary convoca-btn--full" id="conv-send-reminder">
-				Enviar Recordatorio
+				<?php esc_html_e( 'Enviar Recordatorio', 'convoca-members' ); ?>
 			</button>
 
 			<div id="conv-ajax-response" style="margin-top:10px;"></div>
@@ -173,10 +173,10 @@ class Admin_Metaboxes {
 
 			<h4 style="margin:15px 0 10px 0;"><?php esc_html_e( 'RGPD', 'convoca-members' ); ?></h4>
 			<button type="button" class="convoca-btn convoca-btn-outline convoca-btn--full" id="conv-export-data" style="margin-bottom:5px;">
-				📥 Exportar datos (JSON)
+				<?php esc_html_e( '📥 Exportar datos (JSON)', 'convoca-members' ); ?>
 			</button>
 			<button type="button" class="convoca-btn convoca-btn-outline convoca-btn--full convoca-btn--danger" id="conv-delete-data">
-				🗑️  Eliminar todos los datos
+				<?php esc_html_e( '🗑️  Eliminar todos los datos', 'convoca-members' ); ?>
 			</button>
 
 			<div id="conv-rgpd-response" style="margin-top:10px;"></div>
@@ -282,7 +282,7 @@ class Admin_Metaboxes {
 								a.download = 'miembro-' + postId + '-datos.json';
 								a.click();
 								URL.revokeObjectURL(url);
-								rgpdMsgBox.innerHTML = '<div class="notice notice-success inline"><p>Datos exportados correctamente.</p></div>';
+								rgpdMsgBox.innerHTML = '<div class="notice notice-success inline"><p><?php echo esc_js( __( 'Datos exportados correctamente.', 'convoca-members' ) ); ?></p></div>';
 							} else {
 								rgpdMsgBox.innerHTML = '<div class="notice notice-error inline"><p>' + escapar(textoError(res)) + '</p></div>';
 							}
@@ -331,10 +331,10 @@ class Admin_Metaboxes {
 		?>
 		<div class="convoca-grid-2">
 			<!-- Status & Plan -->
-			<h3 class="convoca-field" style="grid-column: 1 / -1; margin-top: 1rem; padding-bottom: 0.5rem; border-bottom: 1px solid var(--convoca-border, #ccc);">Estado y Plan</h3>
+			<h3 class="convoca-field" style="grid-column: 1 / -1; margin-top: 1rem; padding-bottom: 0.5rem; border-bottom: 1px solid var(--convoca-border, #ccc);"><?php esc_html_e( 'Estado y Plan', 'convoca-members' ); ?></h3>
 
 			<div class="convoca-field">
-				<label for="convoca_estado_miembro">Estado</label>
+				<label for="convoca_estado_miembro"><?php esc_html_e( 'Estado', 'convoca-members' ); ?></label>
 				<select name="convoca_estado_miembro" id="convoca_estado_miembro">
 					<?php foreach ( Estados::labels() as $slug => $label ) : ?>
 						<option value="<?php echo esc_attr( $slug ); ?>" <?php selected( $get( 'estado_miembro' ), $slug ); ?>>
@@ -345,9 +345,9 @@ class Admin_Metaboxes {
 			</div>
 
 			<div class="convoca-field">
-				<label for="convoca_plan">Plan</label>
+				<label for="convoca_plan"><?php esc_html_e( 'Plan', 'convoca-members' ); ?></label>
 				<select name="convoca_plan" id="convoca_plan">
-					<option value="">— Seleccionar —</option>
+					<option value=""><?php esc_html_e( '— Seleccionar —', 'convoca-members' ); ?></option>
 					<?php foreach ( $plans as $slug => $data ) : ?>
 						<option value="<?php echo esc_attr( $slug ); ?>" <?php selected( $get( 'plan' ), $slug ); ?>>
 							<?php echo esc_html( $data['label'] ); ?>
@@ -357,16 +357,16 @@ class Admin_Metaboxes {
 			</div>
 
 			<div class="convoca-field">
-				<label for="convoca_sub_plan">Sub-plan (si aplica)</label>
+				<label for="convoca_sub_plan"><?php esc_html_e( 'Sub-plan (si aplica)', 'convoca-members' ); ?></label>
 				<input type="text" name="convoca_sub_plan" value="<?php echo esc_attr( $get( 'sub_plan' ) ); ?>"
 					placeholder="e.g. familiar">
 			</div>
 
 			<div class="convoca-field">
-				<label for="convoca_forma_pago">Forma de pago</label>
+				<label for="convoca_forma_pago"><?php esc_html_e( 'Forma de pago', 'convoca-members' ); ?></label>
 				<select name="convoca_forma_pago">
-					<option value="cuota" <?php selected( $get( 'forma_pago' ), 'cuota' ); ?>>Cuota económica</option>
-					<option value="voluntariado" <?php selected( $get( 'forma_pago' ), 'voluntariado' ); ?>>Voluntariado</option>
+					<option value="cuota" <?php selected( $get( 'forma_pago' ), 'cuota' ); ?>><?php esc_html_e( 'Cuota económica', 'convoca-members' ); ?></option>
+					<option value="voluntariado" <?php selected( $get( 'forma_pago' ), 'voluntariado' ); ?>><?php esc_html_e( 'Voluntariado', 'convoca-members' ); ?></option>
 				</select>
 			</div>
 
@@ -378,51 +378,51 @@ class Admin_Metaboxes {
 			</div>
 
 			<!-- Personal Data -->
-			<h3 class="convoca-field" style="grid-column: 1 / -1; margin-top: 1rem; padding-bottom: 0.5rem; border-bottom: 1px solid var(--convoca-border, #ccc);">Datos Personales</h3>
+			<h3 class="convoca-field" style="grid-column: 1 / -1; margin-top: 1rem; padding-bottom: 0.5rem; border-bottom: 1px solid var(--convoca-border, #ccc);"><?php esc_html_e( 'Datos Personales', 'convoca-members' ); ?></h3>
 
 			<div class="convoca-field">
-				<label for="conv_email">Email</label>
+				<label for="conv_email"><?php esc_html_e( 'Email', 'convoca-members' ); ?></label>
 				<input type="email" name="convoca_email" value="<?php echo esc_attr( $get( 'email' ) ); ?>">
 			</div>
 
 			<div class="convoca-field">
-				<label for="convoca_dni">DNI / NIE</label>
+				<label for="convoca_dni"><?php esc_html_e( 'DNI / NIE', 'convoca-members' ); ?></label>
 				<input type="text" name="convoca_dni" value="<?php echo esc_attr( $get( 'dni' ) ); ?>">
 			</div>
 
 			<div class="convoca-field">
-				<label for="convoca_telefono">Teléfono</label>
+				<label for="convoca_telefono"><?php esc_html_e( 'Teléfono', 'convoca-members' ); ?></label>
 				<input type="text" name="convoca_telefono" value="<?php echo esc_attr( $get( 'telefono' ) ); ?>">
 			</div>
 
 			<div class="convoca-field">
-				<label for="convoca_fecha_nacimiento">Fecha de nacimiento</label>
+				<label for="convoca_fecha_nacimiento"><?php esc_html_e( 'Fecha de nacimiento', 'convoca-members' ); ?></label>
 				<input type="date" name="convoca_fecha_nacimiento" value="<?php echo esc_attr( $get( 'fecha_nacimiento' ) ); ?>">
 			</div>
 
 			<!-- Address -->
-			<h3 class="convoca-field" style="grid-column: 1 / -1; margin-top: 1rem; padding-bottom: 0.5rem; border-bottom: 1px solid var(--convoca-border, #ccc);">Dirección</h3>
+			<h3 class="convoca-field" style="grid-column: 1 / -1; margin-top: 1rem; padding-bottom: 0.5rem; border-bottom: 1px solid var(--convoca-border, #ccc);"><?php esc_html_e( 'Dirección', 'convoca-members' ); ?></h3>
 
 			<div class="convoca-field">
-				<label for="convoca_direccion">Dirección</label>
+				<label for="convoca_direccion"><?php esc_html_e( 'Dirección', 'convoca-members' ); ?></label>
 				<input type="text" name="convoca_direccion" value="<?php echo esc_attr( $get( 'direccion' ) ); ?>">
 			</div>
 
 			<div class="convoca-field">
-				<label for="convoca_municipio">Municipio</label>
+				<label for="convoca_municipio"><?php esc_html_e( 'Municipio', 'convoca-members' ); ?></label>
 				<input type="text" name="convoca_municipio" value="<?php echo esc_attr( $get( 'municipio' ) ); ?>">
 			</div>
 
 			<!-- Notes -->
-			<h3 class="convoca-field" style="grid-column: 1 / -1; margin-top: 1rem; padding-bottom: 0.5rem; border-bottom: 1px solid var(--convoca-border, #ccc);">Notas Internas</h3>
+			<h3 class="convoca-field" style="grid-column: 1 / -1; margin-top: 1rem; padding-bottom: 0.5rem; border-bottom: 1px solid var(--convoca-border, #ccc);"><?php esc_html_e( 'Notas Internas', 'convoca-members' ); ?></h3>
 
 			<div class="convoca-field" style="grid-column: 1 / -1;">
-				<label for="convoca_observaciones">Observaciones</label>
+				<label for="convoca_observaciones"><?php esc_html_e( 'Observaciones', 'convoca-members' ); ?></label>
 				<textarea name="convoca_observaciones" rows="4"><?php echo esc_textarea( $get( 'observaciones' ) ); ?></textarea>
 			</div>
 
 			<!-- Voluntariado -->
-			<h3 class="convoca-field" style="grid-column: 1 / -1; margin-top: 1rem; padding-bottom: 0.5rem; border-bottom: 1px solid var(--convoca-border, #ccc);">Voluntariado</h3>
+			<h3 class="convoca-field" style="grid-column: 1 / -1; margin-top: 1rem; padding-bottom: 0.5rem; border-bottom: 1px solid var(--convoca-border, #ccc);"><?php esc_html_e( 'Voluntariado', 'convoca-members' ); ?></h3>
 
 			<div class="convoca-field">
 				<div class="convoca-check-group">
@@ -434,32 +434,32 @@ class Admin_Metaboxes {
 					}
 					?>
 					<input type="checkbox" name="convoca_es_voluntario" value="1" <?php checked( $is_vol, '1' ); ?>>
-					<label>¿Es voluntario?</label>
+					<label><?php esc_html_e( '¿Es voluntario?', 'convoca-members' ); ?></label>
 				</div>
 			</div>
 
 			<div class="convoca-field">
-				<label for="convoca_intereses">Intereses / Áreas</label>
-				<input type="text" name="convoca_intereses" value="<?php echo esc_attr( $get( 'intereses' ) ); ?>" placeholder="e.g. Educación, Aves, Marina">
+				<label for="convoca_intereses"><?php esc_html_e( 'Intereses / Áreas', 'convoca-members' ); ?></label>
+				<input type="text" name="convoca_intereses" value="<?php echo esc_attr( $get( 'intereses' ) ); ?>" placeholder="<?php esc_attr_e( 'e.g. Educación, Aves, Marina', 'convoca-members' ); ?>">
 			</div>
 
 			<div class="convoca-field">
-				<label for="convoca_disponibilidad">Disponibilidad</label>
+				<label for="convoca_disponibilidad"><?php esc_html_e( 'Disponibilidad', 'convoca-members' ); ?></label>
 				<input type="text" name="convoca_disponibilidad" value="<?php echo esc_attr( $get( 'disponibilidad' ) ); ?>">
 			</div>
 
 			<div class="convoca-field">
-				<label for="convoca_tipo_voluntariado">Tipo de voluntariado</label>
+				<label for="convoca_tipo_voluntariado"><?php esc_html_e( 'Tipo de voluntariado', 'convoca-members' ); ?></label>
 				<input type="text" name="convoca_tipo_voluntariado" value="<?php echo esc_attr( $get( 'tipo_voluntariado' ) ); ?>">
 			</div>
 
 			<div class="convoca-field" style="grid-column: 1 / -1;">
-				<label for="conv_experiencia">Experiencia previa</label>
+				<label for="conv_experiencia"><?php esc_html_e( 'Experiencia previa', 'convoca-members' ); ?></label>
 				<textarea name="convoca_experiencia" rows="2"><?php echo esc_textarea( $get( 'experiencia' ) ); ?></textarea>
 			</div>
 
 			<div class="convoca-field" style="grid-column: 1 / -1;">
-				<label for="convoca_motivacion">Motivación</label>
+				<label for="convoca_motivacion"><?php esc_html_e( 'Motivación', 'convoca-members' ); ?></label>
 				<textarea name="convoca_motivacion" rows="2"><?php echo esc_textarea( $get( 'motivacion' ) ); ?></textarea>
 			</div>
 		</div>

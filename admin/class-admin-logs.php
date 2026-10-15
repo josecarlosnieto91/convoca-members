@@ -83,13 +83,13 @@ class Admin_Logs {
 
 		?>
 		<div class="wrap">
-			<h1>Registros de Auditoría</h1>
+			<h1><?php esc_html_e( 'Registros de Auditoría', 'convoca-members' ); ?></h1>
 
 			<p>
 				<a href="<?php echo esc_url( wp_nonce_url( admin_url( 'admin.php?page=conv-members-logs&action=clear' ), 'convoca_clear_members_logs' ) ); ?>" 
 					class="button button-secondary"
 					onclick="return confirm('<?php echo esc_js( __( '¿Estás seguro de que quieres borrar todos los logs de Members?', 'convoca-members' ) ); ?>');">
-					Borrar logs de Members
+					<?php esc_html_e( 'Borrar logs de Members', 'convoca-members' ); ?>
 				</a>
 			</p>
 
@@ -150,11 +150,11 @@ class Admin_Logs {
 			<table class="wp-list-table widefat fixed striped">
 				<thead>
 					<tr>
-						<th style="width: 170px;">Fecha</th>
-						<th style="width: 100px;">Nivel</th>
-						<th>Mensaje</th>
-						<th style="width: 150px;">Contexto</th>
-						<th style="width: 100px;">ID Objeto</th>
+						<th style="width: 170px;"><?php esc_html_e( 'Fecha', 'convoca-members' ); ?></th>
+						<th style="width: 100px;"><?php esc_html_e( 'Nivel', 'convoca-members' ); ?></th>
+						<th><?php esc_html_e( 'Mensaje', 'convoca-members' ); ?></th>
+						<th style="width: 150px;"><?php esc_html_e( 'Contexto', 'convoca-members' ); ?></th>
+						<th style="width: 100px;"><?php esc_html_e( 'ID Objeto', 'convoca-members' ); ?></th>
 					</tr>
 				</thead>
 				<tbody>
@@ -177,7 +177,7 @@ class Admin_Logs {
 							</tr>
 						<?php endforeach; ?>
 					<?php else : ?>
-						<tr><td colspan="5">No hay logs registrados.</td></tr>
+						<tr><td colspan="5"><?php esc_html_e( 'No hay logs registrados.', 'convoca-members' ); ?></td></tr>
 					<?php endif; ?>
 				</tbody>
 			</table>

@@ -586,7 +586,7 @@ class Admin_Settings {
 				<p><?php esc_html_e( 'Para añadir un plan, guarda primero los cambios actuales.', 'convoca-members' ); ?></p>
 				<div style="text-align: left; max_width: 600px; margin: 0 auto; display: inline-block;">
 					<label><?php esc_html_e( 'ID del Plan (ej: <code>socio-colaborador</code>):', 'convoca-members' ); ?> </label>
-					<input type="text" id="new_plan_key" placeholder="slug-unico">
+					<input type="text" id="new_plan_key" placeholder="<?php esc_attr_e( 'slug-unico', 'convoca-members' ); ?>">
 					<button type="button" class="button" onclick="convAddNewPlan()"><?php esc_html_e( 'Añadir', 'convoca-members' ); ?></button>
 				</div>
 			</div>
@@ -717,10 +717,10 @@ class Admin_Settings {
 							<?php $methods = $plan['payment_methods'] ?? array(); ?>
 							<label><input type="checkbox"
 									name="convoca_members_plans[<?php echo esc_attr( $key ); ?>][payment_methods][]" value="bizum"
-									<?php checked( in_array( 'bizum', $methods, true ) ); ?>> Bizum</label>
+									<?php checked( in_array( 'bizum', $methods, true ) ); ?>> <?php esc_html_e( 'Bizum', 'convoca-members' ); ?></label>
 							<label><input type="checkbox"
 									name="convoca_members_plans[<?php echo esc_attr( $key ); ?>][payment_methods][]" value="tarjeta"
-									<?php checked( in_array( 'tarjeta', $methods, true ) ); ?>> Tarjeta</label>
+									<?php checked( in_array( 'tarjeta', $methods, true ) ); ?>> <?php esc_html_e( 'Tarjeta', 'convoca-members' ); ?></label>
 							<label><input type="checkbox"
 									name="convoca_members_plans[<?php echo esc_attr( $key ); ?>][payment_methods][]"
 									value="transferencia" <?php checked( in_array( 'transferencia', $methods, true ) ); ?>>
@@ -864,7 +864,7 @@ class Admin_Settings {
 				<p><?php esc_html_e( 'Para añadir un campo, guarda primero los cambios actuales.', 'convoca-members' ); ?></p>
 				<div style="text-align: left; max_width: 600px; margin: 0 auto; display: inline-block;">
 					<label><?php esc_html_e( 'ID del Campo (solo minúsculas y guiones, ej: alergias):', 'convoca-members' ); ?> </label>
-					<input type="text" id="new_field_name" placeholder="id-del-campo">
+					<input type="text" id="new_field_name" placeholder="<?php esc_attr_e( 'id-del-campo', 'convoca-members' ); ?>">
 					<button type="button" class="button" onclick="convAddNewField()"><?php esc_html_e( 'Añadir', 'convoca-members' ); ?></button>
 				</div>
 			</div>
@@ -884,7 +884,7 @@ class Admin_Settings {
 			<script>
 				function convAddNewField() {
 					var name = document.getElementById('new_field_name').value.trim();
-					if (!name) { alert('Escribe un ID único para el campo'); return; }
+					if (!name) { alert('<?php echo esc_js( __( 'Escribe un ID único para el campo', 'convoca-members' ) ); ?>'); return; }
 					name = name.toLowerCase().replace(/[^a-z0-9-]/g, '-');
 
 					var container = document.getElementById('conv-fields-container');
@@ -975,7 +975,7 @@ class Admin_Settings {
 					<div style="flex: 1;">
 						<p>
 							<label><strong><?php esc_html_e( 'Opciones (solo para Select):', 'convoca-members' ); ?></strong></label><br>
-							<span class="description">Una opción por línea. Ej: Sí \n No \n Tal vez</span><br>
+							<span class="description"><?php esc_html_e( 'Una opción por línea. Ej: Sí \\n No \\n Tal vez', 'convoca-members' ); ?></span><br>
 							<textarea name="convoca_volunteer_fields[<?php echo esc_attr( $index ); ?>][options]" rows="4" class="large-text"><?php echo esc_textarea( $field['options'] ?? '' ); ?></textarea>
 						</p>
 					</div>

@@ -304,10 +304,9 @@ class Admin_List extends \WP_List_Table {
 				<option value="">
 					<?php esc_html_e( 'Todos los tipos', 'convoca-members' ); ?>
 				</option>
-				<option value="socio" <?php selected( $get_data['tipo_filter'] ?? '', 'socio' ); ?>>Socio/a</option>
-				<option value="voluntario" <?php selected( $get_data['tipo_filter'] ?? '', 'voluntario' ); ?>>Voluntario/a</option>
-				<option value="socio_voluntario" <?php selected( $get_data['tipo_filter'] ?? '', 'socio_voluntario' ); ?>>Socio +
-					Vol.</option>
+				<option value="socio" <?php selected( $get_data['tipo_filter'] ?? '', 'socio' ); ?>><?php esc_html_e( 'Socio/a', 'convoca-members' ); ?></option>
+				<option value="voluntario" <?php selected( $get_data['tipo_filter'] ?? '', 'voluntario' ); ?>><?php esc_html_e( 'Voluntario/a', 'convoca-members' ); ?></option>
+				<option value="socio_voluntario" <?php selected( $get_data['tipo_filter'] ?? '', 'socio_voluntario' ); ?>><?php esc_html_e( 'Socio + Vol.', 'convoca-members' ); ?></option>
 			</select>
 			<select name="plan_filter">
 				<option value="">
@@ -430,7 +429,7 @@ class Admin_List extends \WP_List_Table {
 			admin_url( 'admin-post.php?action=convoca_baja_member&member_id=' . $item->ID ),
 			'convoca_baja_member_' . $item->ID
 		);
-		$actions['baja'] = '<a href="' . esc_url( $baja_url ) . '" onclick="return confirm(\'¿Dar de baja a este socio? La ficha se conserva y deja de contar como socio activo.\')" aria-label="' . esc_attr(
+		$actions['baja'] = '<a href="' . esc_url( $baja_url ) . '" onclick="return confirm(\'' . esc_js( __( '¿Dar de baja a este socio? La ficha se conserva y deja de contar como socio activo.', 'convoca-members' ) ) . '\')" aria-label="' . esc_attr(
 			sprintf(
 				/* translators: %s: member name */
 				__( 'Dar de baja a %s', 'convoca-members' ),
@@ -443,7 +442,7 @@ class Admin_List extends \WP_List_Table {
 			admin_url( 'admin-post.php?action=convoca_delete_member&member_id=' . $item->ID ),
 			'convoca_delete_member_' . $item->ID
 		);
-		$actions['delete'] = '<a href="' . esc_url( $delete_url ) . '" style="color:#a00" onclick="return confirm(\'Se borran la ficha, sus cuotas, sus horas y sus inscripciones. No se puede deshacer. ¿Seguir?\')" aria-label="' . esc_attr(
+		$actions['delete'] = '<a href="' . esc_url( $delete_url ) . '" style="color:#a00" onclick="return confirm(\'' . esc_js( __( 'Se borran la ficha, sus cuotas, sus horas y sus inscripciones. No se puede deshacer. ¿Seguir?', 'convoca-members' ) ) . '\')" aria-label="' . esc_attr(
 			sprintf(
 				/* translators: %s: member name */
 				__( 'Eliminar definitivamente a %s', 'convoca-members' ),

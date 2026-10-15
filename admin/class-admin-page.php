@@ -503,7 +503,7 @@ class Admin_Page {
 						</tbody>
 					</table>
 				<?php else : ?>
-					<p>No hay registros de actividad para este miembro.</p>
+					<p><?php esc_html_e( 'No hay registros de actividad para este miembro.', 'convoca-members' ); ?></p>
 				<?php endif; ?>
 			</div>
 		</div>

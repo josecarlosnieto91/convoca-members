@@ -1,3 +1,22 @@
+## [2.8.75] — 2026-10-15
+
+### Cambiado
+- **Las pantallas de administración entran en el catálogo (issue #10, fase 2, decisión de JC).** 54 textos
+  fijos —etiquetas de los metadatos del socio, botones de pago y exportación, cabeceras de la tabla de
+  auditoría, estados y ajustes— pasan ya por gettext, más 3 atributos. Las cadenas que se pintan por
+  JavaScript van con `esc_js`, que es el idioma que ya usaba el fichero: los dos `confirm` de baja y borrado
+  del listado y el `alert` del ID de campo.
+- Se quedan como están **a propósito** los ejemplos y valores técnicos (el IBAN de ejemplo, `key-…`,
+  `mg.tudominio.com`, `e.g. familiar`): son formato, no texto.
+
+### Arreglado
+- **`Datos exportados correctamente.` se pintaba con escape de HTML dentro de una cadena de JavaScript.**
+  Ahora va con `esc_js`, como el resto de mensajes del panel, para que una traducción con apóstrofo no rompa
+  el script.
+
+### Traducciones
+- Catálogo inglés **1014 de 1014** (antes 988). `.pot` regenerado con WP-CLI 2.12.0 y sin avisos.
+
 ## [2.8.74] — 2026-10-15
 
 ### Cambiado
