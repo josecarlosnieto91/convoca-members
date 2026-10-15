@@ -112,6 +112,14 @@ class Payment_Listener {
 		delete_post_meta( $origin_id, '_convoca_last_renewal_notice' );
 		delete_post_meta( $origin_id, '_convoca_msg_renovacion_proxima' );
 
+		// Pagar la cuota concede (o confirma) la condición de socio, sin tocar el voluntariado:
+		// quien colabora y además paga sigue siendo las dos cosas. Si es una renovación, el
+		// ciclo anterior se cierra y empieza uno nuevo.
+		if ( ! empty( $old_renewal_date ) ) {
+			\Convoca\Members\Roles_Miembro::reiniciar_ciclo( (int) $origin_id );
+		}
+		\Convoca\Members\Roles_Miembro::registrar_socio_por_pago( (int) $origin_id );
+
 		$email_manager = new Email_Manager();
 
 		// Activation / Renewal logic.

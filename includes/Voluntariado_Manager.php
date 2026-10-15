@@ -37,6 +37,31 @@ class Voluntariado_Manager {
 	}
 
 	/**
+	 * Horas de voluntariado que pide el ciclo de esta ficha, según **su plan**.
+	 *
+	 * El umbral sale del plan y no de una cifra global (decisión de JC, 15/10/2026): cada plan trae las
+	 * suyas —bronce 15, plata 25, oro 50, voluntariado 20—, así que un socio de oro y uno de bronce no
+	 * renuevan con las mismas horas. Si el plan no está en la configuración se usa el objetivo por defecto,
+	 * que es filtrable; sin plan no hay ciclo que cumplir.
+	 *
+	 * @param int $miembro_id ID de la ficha.
+	 * @return float Horas objetivo, o 0 si no hay plan.
+	 */
+	public static function horas_objetivo( int $miembro_id ): float {
+		$plan = (string) get_post_meta( $miembro_id, '_convoca_plan', true );
+		if ( '' === $plan ) {
+			return 0.0;
+		}
+
+		$plan_data = CPT_Miembro::get_plan( $plan );
+		if ( $plan_data && isset( $plan_data['hours'] ) ) {
+			return (float) $plan_data['hours'];
+		}
+
+		return (float) apply_filters( 'convoca_members_horas_objetivo_defecto', 20.0, $miembro_id, $plan );
+	}
+
+	/**
 	 * Handle hora approved - check if volunteer should be converted to active.
 	 */
 	public static function on_hora_aprobada( int $hora_id, int $miembro_id ): void {
@@ -51,16 +76,7 @@ class Voluntariado_Manager {
 			? self::get_horas_aprobadas_desde( $miembro_id, $inicio_periodo )
 			: self::get_horas_aprobadas( $miembro_id );
 
-		$plan = get_post_meta( $miembro_id, '_convoca_plan', true );
-		if ( empty( $plan ) ) {
-			return;
-		}
-
-		$plan_data = CPT_Miembro::get_plan( $plan );
-		if ( ! $plan_data ) {
-			return;
-		}
-		$horas_objetivo = $plan_data['hours'] ?? 0;
+		$horas_objetivo = self::horas_objetivo( $miembro_id );
 
 		if ( $horas_objetivo <= 0 ) {
 			return;
@@ -106,6 +122,9 @@ class Voluntariado_Manager {
 				// Otro hilo ya completó la conversión.
 				return;
 			}
+			// La conversión necesita saber de qué plan viene la ficha (el umbral ya se calculó arriba con
+			// `horas_objetivo()`, que lo lee del plan: aquí solo se recupera para la llamada).
+			$plan = (string) get_post_meta( $miembro_id, '_convoca_plan', true );
 			self::convertir_en_activo( $miembro_id, $total_horas, $plan );
 		}
 	}
@@ -178,6 +197,11 @@ class Voluntariado_Manager {
 		update_post_meta( $miembro_id, '_convoca_objetivo_horas_completado', '1' );
 		update_post_meta( $miembro_id, '_convoca_fecha_objetivo_completado', current_time( 'mysql' ) );
 		update_post_meta( $miembro_id, '_convoca_horas_totales_voluntariado', $total_horas );
+
+		// Cumplir las horas del plan satisface la condición de socio y deja constancia de la vía,
+		// sin perder el voluntariado: las dos condiciones conviven.
+		\Convoca\Members\Roles_Miembro::anadir( $miembro_id, \Convoca\Members\Roles_Miembro::SOCIO );
+		\Convoca\Members\Roles_Miembro::registrar_cumplimiento_por_horas( $miembro_id );
 
 		$estado_actual = get_post_meta( $miembro_id, '_convoca_estado_miembro', true );
 

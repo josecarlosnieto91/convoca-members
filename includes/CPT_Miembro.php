@@ -241,6 +241,17 @@ class CPT_Miembro {
 				'Descuentos del 50% en todos los formatos.',
 			),
 		),
+		'voluntariado' => array(
+			'label'           => 'Voluntariado',
+			'price'           => 0,
+			'hours'           => 20,
+			'modalidad'       => 'Voluntariado',
+			'payment_methods' => array( 'bizum', 'tarjeta', 'transferencia' ),
+			'advantages'      => array(
+				'Tu compromiso se acredita con horas de voluntariado.',
+				'Las horas cumplidas valen para renovar el ciclo sin cuota.',
+			),
+		),
 	);
 
 
@@ -322,6 +333,13 @@ class CPT_Miembro {
 
 		// If DB is empty, use defaults (legacy mode).
 		$plans = empty( $db_plans ) ? self::get_default_plans() : $db_plans;
+
+		// El plan de voluntariado se usa en las fichas de voluntario (`_convoca_plan`), pero no
+		// siempre está en la configuración guardada: sin él, sus horas no se evalúan nunca
+		// (get_plan() devolvía null y el objetivo del ciclo quedaba sin comprobar).
+		if ( ! isset( $plans['voluntariado'] ) ) {
+			$plans['voluntariado'] = self::DEFAULT_PLANS['voluntariado'];
+		}
 
 		// Normalize: Ensure all plans have critical keys.
 		foreach ( $plans as $key => &$plan ) {

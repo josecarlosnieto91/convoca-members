@@ -1,3 +1,24 @@
+## [2.8.53] — 2026-10-15
+
+### Añadido
+- **Renovar por horas o por cuota (fase 2 de #30).** El umbral de horas sale **del plan de cada socio**, no
+  de una cifra global (decisión de JC, 15/10/2026): bronce 15, plata 25, oro 50, voluntariado 20. Se extrae a
+  `Voluntariado_Manager::horas_objetivo()`, que es el único sitio que decide cuántas horas pide un ciclo, y
+  queda medible. Si el plan no está en la configuración se usa un objetivo por defecto filtrable
+  (`convoca_members_horas_objetivo_defecto`); sin plan no hay ciclo que cumplir.
+- **El plan de voluntariado entra siempre en la configuración.** No estaba garantizado: `get_plan()` devolvía
+  `null` para él y sus horas no se evaluaban nunca, así que un voluntario no podía cumplir el ciclo.
+- **Cumplir las horas concede la condición de socio** y deja constancia de la vía, sin quitar la de
+  voluntario: las dos conviven. Y **pagar la cuota** concede (o confirma) la de socio; si es una renovación,
+  el ciclo anterior se cierra y empieza uno nuevo.
+
+### Pruebas
+- `tests/Unit/HorasObjetivoPorPlanTest.php` (3 casos, 15 aserciones): recorre los planes **reales** y comprueba
+  que el umbral de cada ficha es el de su plan. **Negativo probado**: con una cifra global, la prueba falla y
+  nombra el plan que no cuadra («bronce» pide 15 y el umbral devuelve 20).
+- El arnés del núcleo gana `remove_filter()`: faltaba, y sin él una prueba que añade un filtro lo dejaba
+  puesto para las siguientes.
+
 ## [2.8.52] — 2026-10-15
 
 ### Arreglado
