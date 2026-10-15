@@ -309,25 +309,9 @@ add_action(
 	}
 );
 
-add_action(
-	'admin_post_convoca_delete_member',
-	function () {
-		if ( ! current_user_can( 'delete_posts' ) ) {
-			wp_die( esc_html__( 'No tienes permisos.', 'convoca-members' ) );
-		}
-
-		$id = (int) ( $_GET['member_id'] ?? 0 );
-		check_admin_referer( 'convoca_delete_member_' . $id );
-
-		if ( $id && wp_trash_post( $id ) ) {
-			wp_safe_redirect( admin_url( 'admin.php?page=conv-members&msg=deleted' ) );
-			exit;
-		}
-
-		wp_safe_redirect( admin_url( 'admin.php?page=conv-members&msg=error' ) );
-		exit;
-	}
-);
+// El manejador de `convoca_delete_member` vive en Admin_Member_Editor. Aquí hubo un segundo registro
+// del mismo hook que se ejecutaba antes y, con su `exit`, dejaba muerto al de la clase: el enlace
+// «Eliminar» acababa en la papelera y el manejador bueno nunca corría (issue #27).
 
 add_action(
 	'admin_post_convoca_pdf_card',
