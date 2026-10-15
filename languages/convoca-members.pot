@@ -2,14 +2,14 @@
 # This file is distributed under the GPL-2.0-or-later.
 msgid ""
 msgstr ""
-"Project-Id-Version: Convoca Members 2.8.76\n"
+"Project-Id-Version: Convoca Members 2.8.77\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/convoca-members\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-10-15T16:51:52+00:00\n"
+"POT-Creation-Date: 2026-10-15T20:47:00+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.12.0\n"
 "X-Domain: convoca-members\n"
@@ -105,9 +105,9 @@ msgstr ""
 #: admin/class-admin-horas.php:267
 #: admin/class-admin-horas.php:445
 #: admin/class-admin-horas.php:485
-#: admin/class-admin-list.php:517
-#: includes/Roles_Miembro.php:171
-#: includes/Roles_Miembro.php:267
+#: includes/Roles_Miembro.php:202
+#: includes/Roles_Miembro.php:240
+#: includes/Roles_Miembro.php:336
 msgid "Socio"
 msgstr ""
 
@@ -256,7 +256,7 @@ msgstr ""
 #: admin/class-admin-page.php:654
 #: admin/class-admin-proyectos.php:163
 #: admin/class-admin-settings.php:47
-#: convoca-members.php:331
+#: convoca-members.php:326
 msgid "No tienes permisos."
 msgstr ""
 
@@ -673,20 +673,14 @@ msgid "Eliminar definitivamente"
 msgstr ""
 
 #: admin/class-admin-list.php:475
-#: admin/class-admin-list.php:573
+#: admin/class-admin-list.php:557
 #: admin/class-admin-proyectos.php:204
 #: templates/form-alta.php:250
 #: templates/form-voluntariado.php:136
 msgid "No"
 msgstr ""
 
-#: admin/class-admin-list.php:514
-#: admin/class-csv-exporter.php:66
-#: includes/Roles_Miembro.php:173
-msgid "Voluntario"
-msgstr ""
-
-#: admin/class-admin-list.php:571
+#: admin/class-admin-list.php:555
 #: admin/class-admin-proyectos.php:204
 #: admin/class-admin-proyectos.php:316
 #: templates/form-alta.php:249
@@ -779,7 +773,7 @@ msgid "Quitar"
 msgstr ""
 
 #: admin/class-admin-member-editor.php:128
-msgid "Se imprime en el carnet digital. Cuadrada queda mejor (por ejemplo 600×600)."
+msgid "Se imprime en el carnet digital recortada a un cuadrado de 300 px. Cuadrada queda mejor (por ejemplo 600×600) y con la cara de frente."
 msgstr ""
 
 #: admin/class-admin-member-editor.php:131
@@ -2222,6 +2216,12 @@ msgstr ""
 msgid "Código acceso"
 msgstr ""
 
+#: admin/class-csv-exporter.php:66
+#: includes/Roles_Miembro.php:199
+#: includes/Roles_Miembro.php:242
+msgid "Voluntario"
+msgstr ""
+
 #: admin/class-csv-exporter.php:68
 msgid "Notas"
 msgstr ""
@@ -2256,43 +2256,43 @@ msgstr ""
 msgid "Voluntario Aprobado"
 msgstr ""
 
-#: convoca-members.php:361
+#: convoca-members.php:356
 msgid "ID de miembro no válido."
 msgstr ""
 
-#: convoca-members.php:367
+#: convoca-members.php:362
 msgid "No tienes permisos para ver la tarjeta de este miembro."
 msgstr ""
 
-#: convoca-members.php:416
+#: convoca-members.php:411
 msgid "Escanea el código QR de tu tarjeta de socio para verificar tu membresía."
 msgstr ""
 
-#: convoca-members.php:423
+#: convoca-members.php:418
 msgid "Tarjeta no válida"
 msgstr ""
 
-#: convoca-members.php:424
+#: convoca-members.php:419
 msgid "El código de verificación no coincide."
 msgstr ""
 
-#: convoca-members.php:431
+#: convoca-members.php:426
 msgid "Socio no encontrado."
 msgstr ""
 
-#: convoca-members.php:438
+#: convoca-members.php:433
 msgid "Membresía no activa"
 msgstr ""
 
-#: convoca-members.php:439
+#: convoca-members.php:434
 msgid "El socio no tiene una membresía activa en este momento."
 msgstr ""
 
-#: convoca-members.php:453
+#: convoca-members.php:448
 msgid "Socio Activo"
 msgstr ""
 
-#: convoca-members.php:456
+#: convoca-members.php:451
 msgid "Verificado por Convoca"
 msgstr ""
 
@@ -2358,15 +2358,15 @@ msgstr ""
 msgid "No hay voluntarios activos registrados."
 msgstr ""
 
-#: includes/Admin_Voluntariado.php:248
+#: includes/Admin_Voluntariado.php:251
 msgid "¡Solicitud de voluntariado aprobada!"
 msgstr ""
 
-#: includes/Admin_Voluntariado.php:249
+#: includes/Admin_Voluntariado.php:252
 msgid "Hola, ya puedes acceder y gestionar turnos en el centro social. Adjunto a este correo encontrarás tu Acuerdo de Incorporación si procede."
 msgstr ""
 
-#: includes/Admin_Voluntariado.php:267
+#: includes/Admin_Voluntariado.php:270
 msgid "No puedes revocarte tus propios permisos."
 msgstr ""
 
@@ -3490,7 +3490,7 @@ msgstr ""
 msgid "Guarda primero tu número de teléfono en el perfil."
 msgstr ""
 
-#: includes/Roles_Miembro.php:175
+#: includes/Roles_Miembro.php:244
 msgid "Monitor"
 msgstr ""
 
