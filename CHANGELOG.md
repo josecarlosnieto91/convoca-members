@@ -1,3 +1,18 @@
+## [2.8.82] — 2026-10-16
+
+### Arreglado
+- **El sistema de migraciones no se ejecutaba NUNCA (hallado al verificar el correo de transferencia).**
+  `CONVOCA_MEMBERS_DB_VERSION` estaba **clavada a mano en `1.0.3`**, y el gestor de migraciones compara esa
+  versión con la guardada en la instalación y **sale por el atajo si no ha subido**: la instalación tenía
+  guardado `1.0.3`, el plugin decía `1.0.3`… y ninguna migración se ejecutó jamás — ni la limpieza de filas
+  huérfanas de `2.8.47`, ni la de `2.8.81`. Sin error y sin aviso: simplemente no pasaba nada, que es la peor
+  forma de fallar. Ahora la constante **se deriva de la versión del plugin** (como la de los assets), así que
+  no puede quedarse atrás, y las migraciones declaran la versión del plugin en la que entran.
+  **Consecuencia a tener presente:** al desplegar esto, la limpieza de `2.8.47` se ejecuta por primera vez en
+  las instalaciones que existían (borra filas huérfanas de la secuencia de números de socio).
+- Tres pruebas nuevas vigilan el contrato (`VersionDeBaseDeDatosTest`): que la constante no vuelva a llevar un
+  literal, que el gestor use esa versión y que cada migración declare una versión alcanzable.
+
 ## [2.8.81] — 2026-10-16
 
 ### Añadido

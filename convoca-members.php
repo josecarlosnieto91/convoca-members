@@ -3,7 +3,7 @@
  * Plugin Name:       Convoca Members
  * Plugin URI:        https://getconvoca.app
  * Description:       Members, volunteers and communications management.
- * Version: 2.8.81
+ * Version: 2.8.82
  * Requires at least: 6.4
  * Requires PHP:      8.1
  * Tested up to:      7.1
@@ -55,7 +55,15 @@ if ( ! defined( 'CONVOCA_MEMBERS_VERSION' ) ) {
 	define( 'CONVOCA_MEMBERS_VERSION', ! empty( $convoca_members_header['Version'] ) ? $convoca_members_header['Version'] : '2.8.0' );
 }
 if ( ! defined( 'CONVOCA_MEMBERS_DB_VERSION' ) ) {
-	define( 'CONVOCA_MEMBERS_DB_VERSION', '1.0.3' );
+	// Versión de la BASE DE DATOS. Va pegada a la versión del plugin, y no clavada a mano: el gestor de
+	// migraciones compara esta versión con la guardada en la instalación y **sale por el atajo si no ha
+	// subido**, así que una constante que nadie incrementa deja el sistema de migraciones muerto y en
+	// silencio. Medido el 16/10/2026: esta constante llevaba en `1.0.3` desde el principio, la instalación
+	// tenía guardado `1.0.3` y **ninguna migración se había ejecutado nunca** — tampoco la limpieza de
+	// 2.8.47. Cada migración sigue declarando la versión del plugin en la que entra (`get_upgrade_callbacks`),
+	// y solo se ejecutan las que quedan por encima de la guardada.
+	$convoca_members_header_db = get_file_data( __FILE__, array( 'Version' => 'Version' ), 'plugin' );
+	define( 'CONVOCA_MEMBERS_DB_VERSION', ! empty( $convoca_members_header_db['Version'] ) ? $convoca_members_header_db['Version'] : '2.8.0' );
 }
 if ( ! defined( 'CONVOCA_MEMBERS_FILE' ) ) {
 	define( 'CONVOCA_MEMBERS_FILE', __FILE__ );
