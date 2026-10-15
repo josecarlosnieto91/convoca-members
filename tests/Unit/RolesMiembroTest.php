@@ -87,6 +87,12 @@ class RolesMiembroTest extends TestCase {
 		if ( file_exists( $path ) ) {
 			require_once $path;
 		}
+		// `Roles_Miembro` consulta la meta de aprobación del voluntariado, que vive en `Admin_Voluntariado`:
+		// se carga también para que el entorno de la prueba sea el de producción (members#30).
+		$voluntariado = dirname( __DIR__, 2 ) . '/includes/Admin_Voluntariado.php';
+		if ( file_exists( $voluntariado ) ) {
+			require_once $voluntariado;
+		}
 	}
 
 	/**
@@ -227,5 +233,67 @@ class RolesMiembroTest extends TestCase {
 		$this->assertFalse( Roles_Miembro::anadir( 0, Roles_Miembro::SOCIO ) );
 		$this->assertFalse( Roles_Miembro::es_socio( 0 ) );
 		$this->assertSame( array(), Roles_Miembro::roles( 0 ) );
+	}
+
+	// ── La casilla del alta es una SOLICITUD (members#30) ───────────
+
+	/**
+	 * El agujero que midió la batería: con la casilla de voluntariado marcada en el alta, el usuario
+	 * quedaba en «Solicitudes Pendientes» (`_convoca_voluntario_aprobado = 0`) pero `es_voluntario()`
+	 * devolvía `true` y el espejo le concedía `voluntario_aprobado`, que es el rol que abre la
+	 * acreditación de horas. La solicitud concedía el permiso antes de que nadie la aprobara.
+	 */
+	public function test_una_solicitud_pendiente_no_concede_la_condicion_ni_el_rol(): void {
+		$user = $this->con_usuario();
+		\update_user_meta( self::USER, '_convoca_voluntario_aprobado', '0' );
+
+		Roles_Miembro::anadir( self::ID, Roles_Miembro::VOLUNTARIO );
+
+		$this->assertFalse(
+			Roles_Miembro::es_voluntario( self::ID ),
+			'Sin aprobar, la marca del alta es una solicitud: no es condición'
+		);
+		$this->assertNotContains(
+			'voluntario_aprobado',
+			$user->roles,
+			'Ni concede el rol que abre la acreditación de horas'
+		);
+	}
+
+	/** Y al aprobarla sí: la condición y el rol llegan juntos. */
+	public function test_al_aprobar_la_solicitud_llegan_la_condicion_y_el_rol(): void {
+		$user = $this->con_usuario();
+		\update_post_meta( self::ID, '_convoca_es_voluntario', '1' );
+		\update_user_meta( self::USER, '_convoca_voluntario_aprobado', '0' );
+
+		Roles_Miembro::sincronizar_roles_wp( self::ID );
+		$this->assertFalse( Roles_Miembro::es_voluntario( self::ID ), 'Pendiente: todavía no' );
+
+		// La aprobación marca el usuario y vuelve a sincronizar (lo hace `Admin_Voluntariado`).
+		\update_user_meta( self::USER, '_convoca_voluntario_aprobado', '1' );
+		Roles_Miembro::sincronizar_roles_wp( self::ID );
+
+		$this->assertTrue( Roles_Miembro::es_voluntario( self::ID ) );
+		$this->assertContains( 'voluntario_aprobado', $user->roles );
+	}
+
+	/** Una ficha sin cuenta vinculada no puede quedarse sin su condición por esto. */
+	public function test_sin_cuenta_vinculada_la_marca_sigue_valiendo(): void {
+		\update_post_meta( self::ID, '_convoca_es_voluntario', '1' );
+
+		$this->assertTrue(
+			Roles_Miembro::es_voluntario( self::ID ),
+			'No hay solicitud pendiente que comprobar: se mantiene el comportamiento de siempre'
+		);
+	}
+
+	/** El tipo de la ficha se lee del mismo sitio en el listado y en la ficha (members#28). */
+	public function test_la_etiqueta_del_tipo_sale_de_las_condiciones_cuando_no_hay_taxonomia(): void {
+		$this->assertSame( '—', Roles_Miembro::etiqueta_tipo_miembro( self::ID ), 'Sin datos no se inventa un tipo' );
+
+		Roles_Miembro::anadir( self::ID, Roles_Miembro::SOCIO );
+		Roles_Miembro::anadir( self::ID, Roles_Miembro::VOLUNTARIO );
+
+		$this->assertSame( 'Socio, Voluntario', Roles_Miembro::etiqueta_tipo_miembro( self::ID ) );
 	}
 }

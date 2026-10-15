@@ -193,7 +193,7 @@ class Admin_Horas extends \WP_List_Table {
 			wp_die( esc_html( $post_id->get_error_message() ) );
 		}
 
-		wp_safe_redirect( admin_url( 'admin.php?page=conv-volunteer-hours&message=saved' ) );
+		wp_safe_redirect( admin_url( 'admin.php?page=conv-horas&message=saved' ) );
 		exit;
 	}
 
@@ -339,7 +339,7 @@ class Admin_Horas extends \WP_List_Table {
 							<button type="submit" class="convoca-btn convoca-btn-primary">
 								<?php echo $record_id ? esc_html__( 'Guardar Cambios', 'convoca-members' ) : esc_html__( 'Crear Registro', 'convoca-members' ); ?>
 							</button>
-							<a href="<?php echo esc_url( admin_url( 'admin.php?page=conv-volunteer-hours' ) ); ?>" class="convoca-btn convoca-btn-outline">
+							<a href="<?php echo esc_url( admin_url( 'admin.php?page=conv-horas' ) ); ?>" class="convoca-btn convoca-btn-outline">
 								<?php esc_html_e( 'Cancelar', 'convoca-members' ); ?>
 							</a>
 						</div>
@@ -370,7 +370,7 @@ class Admin_Horas extends \WP_List_Table {
 
 			<form method="get">
 				<input type="hidden" name="post_type" value="miembro">
-				<input type="hidden" name="page" value="conv-volunteer-hours">
+				<input type="hidden" name="page" value="conv-horas">
 				
 				<div class="tablenav top">
 					<div class="alignleft actions">
@@ -780,7 +780,7 @@ class Admin_Horas extends \WP_List_Table {
 					);
 				} else {
 					// Ya estaba en el estado objetivo (otro hilo) → no repetir el hook.
-					wp_safe_redirect( admin_url( 'edit.php?post_type=miembro&page=conv-volunteer-hours' ) );
+					wp_safe_redirect( admin_url( 'admin.php?page=conv-horas' ) );
 					exit;
 				}
 			}
@@ -798,7 +798,7 @@ class Admin_Horas extends \WP_List_Table {
 			\Convoca\Core\Logger::log( "Registro de horas $record_id marcado como $new_status por admin " . get_current_user_id(), 'Members/Hours', $socio_id );
 		}
 
-		wp_safe_redirect( admin_url( 'edit.php?post_type=miembro&page=conv-volunteer-hours' ) );
+		wp_safe_redirect( admin_url( 'admin.php?page=conv-horas' ) );
 		exit;
 	}
 }

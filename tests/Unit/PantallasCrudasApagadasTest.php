@@ -53,14 +53,29 @@ class PantallasCrudasApagadasTest extends TestCase {
 	}
 	public function test_la_url_cruda_lleva_a_la_pantalla_propia(): void {
 		// Con `show_ui => false` la URL sigue existiendo y WordPress la resuelve con un **500 sin mensaje**.
-		// Medido en la demo: las tres daban 500. Aquí se vigila que haya un redirector a la pantalla propia.
+		// Medido en la demo (con administrador): las tres daban 500. El plugin declara aquí **a dónde** va
+		// cada tipo; la ceremonia (el `admin_init`, la salida) vive en el andamiaje del núcleo, en un solo
+		// sitio (core#16) — antes estaba copiada en este fichero y por eso `proyecto` mandaba el alta a la
+		// lista: el mapa no distinguía «alta» de «listado».
 		$arranque = (string) file_get_contents( dirname( __DIR__, 2 ) . '/convoca-members.php' );
 
-		$this->assertStringContainsString( "'admin_init'", $arranque, 'El redirector va en admin_init' );
-		foreach ( $this->tipos() as $tipo => $datos ) {
+		$this->assertStringContainsString(
+			'redirigir_pantallas_crudas(',
+			$arranque,
+			'El redirector se pide al andamiaje: una sola ceremonia en todo el ecosistema'
+		);
+
+		$tipos = $this->tipos();
+		// Los documentos no tienen pantalla propia: se gestionan en la ficha del socio.
+		$tipos['convoca_documento'] = array( 'includes/CPT_Documento.php', 'conv-members' );
+
+		foreach ( $tipos as $tipo => $datos ) {
 			$this->assertStringContainsString( "'{$tipo}'", $arranque, "{$tipo}: tiene que estar en los destinos" );
 			$this->assertStringContainsString( $datos[1], $arranque, "{$tipo}: y llevar a su pantalla propia" );
 		}
-		$this->assertStringContainsString( 'wp_safe_redirect', $arranque );
+
+		// El alta va al editor propio y no a la lista (el defecto de `proyecto`, core#16).
+		$this->assertStringContainsString( "'alta'", $arranque, 'El mapa distingue el alta del listado' );
+		$this->assertStringContainsString( 'conv-proyecto-editor', $arranque, 'La alta de proyecto va a su editor' );
 	}
 }

@@ -3,7 +3,7 @@
  * Plugin Name:       Convoca Members
  * Plugin URI:        https://getconvoca.app
  * Description:       Members, volunteers and communications management.
- * Version: 2.8.76
+ * Version: 2.8.77
  * Requires at least: 6.4
  * Requires PHP:      8.1
  * Tested up to:      7.1
@@ -281,38 +281,33 @@ add_action( 'init', array( \Convoca\Members\Roles_Miembro::class, 'crear_roles' 
 
 add_action( 'init', array( \Convoca\Members\CPT_Miembro::class, 'register' ) );
 
-/**
- * Manda a su pantalla propia quien llegue a la cruda de WordPress de estos tipos (issue #15).
- *
- * Con `show_ui => false` esos tipos ya no tienen listado ni alta crudos, pero la URL sigue existiendo y
- * WordPress la resuelve de la peor forma posible: **un 500 sin mensaje** (es el mismo comportamiento que ya
- * documentamos con `edit-tags.php` en una taxonomía sin interfaz). Un marcador guardado en el navegador se
- * convierte en un error de servidor. Esto lo lleva a donde sí hay pantalla: la del plugin.
- *
- * `post.php?post=N` no se toca: `CPT_Miembro` ya lo redirige a su editor propio, que es mejor destino.
- */
-add_action(
-	'admin_init',
-	function () {
-		if ( ! isset( $GLOBALS['pagenow'] ) || ! in_array( $GLOBALS['pagenow'], array( 'edit.php', 'post-new.php' ), true ) ) {
-			return;
-		}
-
-		$destinos = array(
-			'miembro'       => 'conv-members',
-			'proyecto'      => 'conv-proyectos',
-			'registro_hora' => 'conv-horas',
-		);
-
-		$tipo = isset( $_GET['post_type'] ) ? sanitize_key( wp_unslash( $_GET['post_type'] ) ) : '';
-		if ( '' === $tipo || ! isset( $destinos[ $tipo ] ) ) {
-			return;
-		}
-
-		wp_safe_redirect( admin_url( 'admin.php?page=' . $destinos[ $tipo ] ) );
-		exit;
-	},
-	0
+// Manda a su pantalla propia quien llegue a la cruda de WordPress de estos tipos (issues #15 y #35).
+//
+// Con `show_ui => false` esos tipos ya no tienen listado ni alta crudos, pero la URL sigue existiendo y
+// WordPress la resuelve de la peor forma posible: **un 500 sin mensaje** (medido: 500 en `inscripcion`,
+// `pago` y `convoca_documento`, y lo mismo con `edit-tags.php` en una taxonomía sin interfaz). Un marcador
+// guardado en el navegador se convierte en un error de servidor.
+//
+// El alta va al **editor** y el listado a la **lista**: el mapa viejo mandaba las dos al listado, y por eso
+// `post-new.php?post_type=proyecto` aterrizaba en la lista en vez de en «Añadir proyecto» (core#16).
+// `post.php?post=N` no se toca: `CPT_Miembro` y compañía ya lo redirigen a su editor propio.
+\Convoca\Core\Admin\Andamiaje_Admin::redirigir_pantallas_crudas(
+	array(
+		'miembro'           => array(
+			'lista' => 'conv-members',
+			'alta'  => 'conv-member-editor',
+		),
+		'proyecto'          => array(
+			'lista' => 'conv-proyectos',
+			'alta'  => 'conv-proyecto-editor',
+		),
+		'registro_hora'     => array(
+			'lista' => 'conv-horas',
+			'alta'  => 'conv-horas-editor',
+		),
+		// Los documentos se gestionan en la ficha del socio: no hay lista propia a la que llevar.
+		'convoca_documento' => array( 'lista' => 'conv-members' ),
+	)
 );
 
 // Al borrar una ficha definitivamente se borra también su fila de la secuencia de números de socio:

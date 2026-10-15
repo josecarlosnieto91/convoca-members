@@ -133,7 +133,76 @@ final class Roles_Miembro {
 		if ( $miembro_id <= 0 || '' === self::meta_de( $rol ) ) {
 			return false;
 		}
-		return '1' === (string) get_post_meta( $miembro_id, self::meta_de( $rol ), true );
+
+		if ( '1' !== (string) get_post_meta( $miembro_id, self::meta_de( $rol ), true ) ) {
+			return false;
+		}
+
+		// El voluntariado del alta es una **solicitud**: la marca no concede la condición hasta que
+		// alguien la aprueba (members#30). Sin esto, marcar la casilla al darse de alta abría la
+		// acreditación de horas sin pasar por la bandeja de «Solicitudes Pendientes».
+		return self::VOLUNTARIO !== $rol || self::voluntario_aprobado( $miembro_id );
+	}
+
+	/**
+	 * ¿Su voluntariado está aprobado?
+	 *
+	 * El alta deja la marca en la ficha y el usuario en «Solicitudes Pendientes»
+	 * (`_convoca_voluntario_aprobado = 0`). Hasta que alguien aprueba, la marca no vale como condición ni
+	 * concede el rol que abre la acreditación de horas (decisión de JC, members#30).
+	 *
+	 * Sin cuenta vinculada, o con la meta vacía (fichas anteriores al flujo de aprobación), se mantiene el
+	 * comportamiento de siempre: no hay solicitud pendiente que bloquear.
+	 *
+	 * @param int $miembro_id ID de la ficha.
+	 * @return bool
+	 */
+	public static function voluntario_aprobado( int $miembro_id ): bool {
+		$user_id = (int) get_post_meta( $miembro_id, '_convoca_user_id', true );
+		if ( $user_id <= 0 ) {
+			return true;
+		}
+
+		return '0' !== (string) get_user_meta( $user_id, Admin_Voluntariado::META_APROBADO, true );
+	}
+
+	/**
+	 * Etiqueta del «tipo» de una ficha — la misma para el listado y para la ficha (members#28).
+	 *
+	 * Tres fuentes, en este orden, para que no puedan contradecirse: la taxonomía `tipo_miembro` (que se
+	 * escribe al conceder una condición), las condiciones de la ficha y, si aún no hay nada, el plan, que
+	 * es el dato que existe desde siempre. El listado tenía los tres escalones y la ficha sólo el primero:
+	 * por eso el mismo socio salía con tipo en un sitio y en blanco en el otro.
+	 *
+	 * @param int $miembro_id ID de la ficha.
+	 * @return string Etiqueta lista para pintar ('—' si no hay dato).
+	 */
+	public static function etiqueta_tipo_miembro( int $miembro_id ): string {
+		if ( $miembro_id <= 0 ) {
+			return '—';
+		}
+
+		if ( function_exists( 'wp_get_object_terms' ) ) {
+			$terms = wp_get_object_terms( $miembro_id, self::TAXONOMIA, array( 'fields' => 'names' ) );
+			if ( ! is_wp_error( $terms ) && ! empty( $terms ) ) {
+				return implode( ', ', $terms );
+			}
+		}
+
+		$condiciones = self::roles( $miembro_id );
+		if ( ! empty( $condiciones ) ) {
+			return implode( ', ', array_map( array( __CLASS__, 'etiqueta' ), $condiciones ) );
+		}
+
+		$plan = (string) get_post_meta( $miembro_id, '_convoca_plan', true );
+		if ( 'voluntariado' === $plan ) {
+			return __( 'Voluntario', 'convoca-members' );
+		}
+		if ( '' !== $plan ) {
+			return __( 'Socio', 'convoca-members' );
+		}
+
+		return '—';
 	}
 
 	/**
@@ -412,6 +481,12 @@ final class Roles_Miembro {
 			$ecosistema[] = $wp;
 			$marca        = (string) get_post_meta( $miembro_id, self::meta_de( $rol ), true );
 			$tiene        = in_array( $wp, (array) $user->roles, true );
+
+			// La marca de voluntariado sólo vale como condición si está aprobada: si no, el rol que abre la
+			// acreditación de horas se concede con la simple casilla del alta (members#30).
+			if ( '1' === $marca && self::VOLUNTARIO === $rol && ! self::voluntario_aprobado( $miembro_id ) ) {
+				$marca = '0';
+			}
 
 			if ( '1' === $marca ) {
 				if ( ! $tiene ) {

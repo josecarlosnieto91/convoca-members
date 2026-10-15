@@ -314,11 +314,11 @@ class Admin_Page extends \Convoca\Core\Admin\Pantalla_Admin {
 			return;
 		}
 
-		$meta         = fn( string $key ) => get_post_meta( $post_id, '_convoca_' . $key, true );
-		$estado       = $meta( 'estado_miembro' ) ?: 'pendiente_documentacion';
-		$history      = Estados::get_history( $post_id );
-		$terms        = wp_get_object_terms( $post_id, 'tipo_miembro', array( 'fields' => 'names' ) );
-		$tipo_miembro = is_wp_error( $terms ) ? '—' : implode( ', ', $terms );
+		$meta    = fn( string $key ) => get_post_meta( $post_id, '_convoca_' . $key, true );
+		$estado  = $meta( 'estado_miembro' ) ?: 'pendiente_documentacion';
+		$history = Estados::get_history( $post_id );
+		// El mismo origen que el listado: si no, la ficha y la lista se contradicen (members#28).
+		$tipo_miembro = \Convoca\Members\Roles_Miembro::etiqueta_tipo_miembro( (int) $post_id );
 		?>
 		<div class="wrap conv-members-page">
 			<h1>

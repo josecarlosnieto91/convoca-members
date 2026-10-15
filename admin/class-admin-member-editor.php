@@ -125,7 +125,7 @@ class Admin_Member_Editor {
 							<button type="button" class="button" id="convoca-elegir-foto"><?php esc_html_e( 'Elegir foto', 'convoca-members' ); ?></button>
 							<button type="button" class="button" id="convoca-quitar-foto" <?php echo $conv_foto_url ? '' : 'style="display:none;"'; ?>><?php esc_html_e( 'Quitar', 'convoca-members' ); ?></button>
 						</div>
-						<p class="description"><?php esc_html_e( 'Se imprime en el carnet digital. Cuadrada queda mejor (por ejemplo 600×600).', 'convoca-members' ); ?></p>
+						<p class="description"><?php esc_html_e( 'Se imprime en el carnet digital recortada a un cuadrado de 300 px. Cuadrada queda mejor (por ejemplo 600×600) y con la cara de frente.', 'convoca-members' ); ?></p>
 					</div>
 
 					<h3 style="grid-column:1/-1;margin-top:1rem;padding-bottom:.5rem;border-bottom:1px solid var(--convoca-border,#ccc);"><?php esc_html_e( 'Estado y Plan', 'convoca-members' ); ?></h3>

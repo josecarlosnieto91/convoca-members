@@ -497,24 +497,8 @@ class Admin_List extends \WP_List_Table {
 	 * @return string
 	 */
 	public function column_tipo( $item ): string {
-		$terms = wp_get_object_terms( $item->ID, 'tipo_miembro', array( 'fields' => 'names' ) );
-		if ( ! is_wp_error( $terms ) && ! empty( $terms ) ) {
-			return esc_html( implode( ', ', $terms ) );
-		}
-
 		if ( class_exists( 'Convoca\\Members\\Roles_Miembro' ) ) {
-			$condiciones = Roles_Miembro::roles( (int) $item->ID );
-			if ( ! empty( $condiciones ) ) {
-				return esc_html( implode( ', ', array_map( array( __CLASS__, 'etiqueta_rol' ), $condiciones ) ) );
-			}
-		}
-
-		$plan = (string) get_post_meta( $item->ID, '_convoca_plan', true );
-		if ( 'voluntariado' === $plan ) {
-			return esc_html__( 'Voluntario', 'convoca-members' );
-		}
-		if ( '' !== $plan ) {
-			return esc_html__( 'Socio', 'convoca-members' );
+			return esc_html( Roles_Miembro::etiqueta_tipo_miembro( (int) $item->ID ) );
 		}
 
 		return '—';

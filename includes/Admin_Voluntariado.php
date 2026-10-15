@@ -228,6 +228,11 @@ class Admin_Voluntariado {
 		// La condición de voluntario se SUMA a las que ya tenga: quien además es socio sigue
 		// siéndolo. Antes se usaba set_role(), que sustituye todos los roles del usuario.
 		$ficha = self::ficha_de_usuario( $user_id );
+
+		// La aprobación se marca ANTES de conceder la condición: desde members#30 la marca de voluntariado
+		// sólo vale si está aprobada, así que al revés la propia aprobación no concedería nada.
+		update_user_meta( $user_id, self::META_APROBADO, '1' );
+
 		if ( $ficha ) {
 			\Convoca\Members\Roles_Miembro::anadir( $ficha, \Convoca\Members\Roles_Miembro::VOLUNTARIO );
 		}
@@ -236,8 +241,6 @@ class Admin_Voluntariado {
 		if ( ! in_array( 'voluntario_aprobado', (array) $user->roles, true ) ) {
 			$user->add_role( 'voluntario_aprobado' );
 		}
-
-		update_user_meta( $user_id, self::META_APROBADO, '1' );
 
 		// Mirror legacy members activation: activate member, PDF, role guarantee.
 		do_action( 'convoca_voluntario_aprobado', $user_id );
