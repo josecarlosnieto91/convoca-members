@@ -91,4 +91,33 @@ class OpcionesSeBorranAlDesinstalarTest extends TestCase {
 			"El uninstall.php no borra estas opciones que el plugin crea:\n  - " . implode( "\n  - ", $faltan )
 		);
 	}
+
+	public function test_se_borran_de_verdad_y_no_solo_en_la_lista(): void {
+		$desinstalador = (string) file_get_contents( $this->raiz() . '/uninstall.php' );
+		$lineas        = preg_split( '/\R/', $desinstalador );
+
+		foreach ( $this->opcionesCreadas() as $clave ) {
+			if ( isset( self::EXCEPCIONES[ $clave ] ) ) {
+				continue;
+			}
+
+			$suelta = false;
+			foreach ( $lineas as $linea ) {
+				if ( 0 === strpos( $linea, "delete_option( '" . $clave . "'" ) ) {
+					$suelta = true;
+				}
+			}
+
+			// También vale dentro del array `$options = array( ... )`, que es una lista.
+			$en_lista = false;
+			if ( preg_match( '/\$options = array\((.*?)\);/s', $desinstalador, $bloque ) ) {
+				$en_lista = false !== strpos( $bloque[1], "'" . $clave . "'" );
+			}
+
+			$this->assertTrue(
+				$suelta || $en_lista,
+				"«{$clave}» no se borra a nivel de fichero: si está dentro de un bucle o de un `if`, solo se borra a veces (issue #10)."
+			);
+		}
+	}
 }
