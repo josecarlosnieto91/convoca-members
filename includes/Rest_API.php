@@ -112,6 +112,17 @@ class Rest_API {
 			)
 		);
 
+		// Actividades para el selector de horas del panel del socio.
+		register_rest_route(
+			self::NAMESPACE,
+			'/activities',
+			array(
+				'methods'             => 'GET',
+				'callback'            => array( $this, 'get_activities' ),
+				'permission_callback' => array( $this, 'check_member_auth' ),
+			)
+		);
+
 		// Card download/view.
 		register_rest_route(
 			self::NAMESPACE,
@@ -929,6 +940,34 @@ class Rest_API {
 		\Convoca\Core\Utils::do_action( 'convoca_members_unsubscribe_request', 'convoca_member_unsubscribe_request', $member_id );
 
 		return new \WP_REST_Response( array( 'success' => true ) );
+	}
+
+	/**
+	 * Actividades publicadas, para el selector de horas del panel del socio.
+	 *
+	 * El panel pide `/activities` desde siempre y el endpoint no existía: su `Promise.all` fallaba entero
+	 * y la pestaña de Voluntariado no cargaba nunca.
+	 */
+	public function get_activities(): \WP_REST_Response {
+		$ids   = get_posts(
+			array(
+				'post_type'      => 'actividad',
+				'post_status'    => 'publish',
+				'posts_per_page' => 100,
+				'orderby'        => 'date',
+				'order'          => 'DESC',
+				'fields'         => 'ids',
+			)
+		);
+		$items = array();
+		foreach ( $ids as $id ) {
+			$items[] = array(
+				'id'    => (int) $id,
+				'title' => get_the_title( $id ),
+			);
+		}
+
+		return new \WP_REST_Response( $items, 200 );
 	}
 
 	/**

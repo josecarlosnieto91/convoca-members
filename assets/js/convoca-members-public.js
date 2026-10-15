@@ -283,7 +283,9 @@
       const today = new Date().toLocaleDateString('es-ES');
       setText('#conv-sum-fecha', today);
       setText('#conv-sum-rgpd', 'Sí');
-      setText('#conv-sum-coms', v('comunicaciones_ok') === '1' ? 'Sí' : 'No');
+      // La casilla se llama 'comunicaciones'; se leía 'comunicaciones_ok', que no existe, así que el
+      // resumen decía siempre «No» aunque estuviera marcada. El helper ya traduce la casilla a Sí/No.
+      setText('#conv-sum-coms', v('comunicaciones'));
 
       setText('#conv-card-name', nombre);
       setText('#conv-card-type', planLabel);
@@ -447,6 +449,9 @@
 
       conv.ajaxPost('convoca_voluntariado_submit', fd, nonce, 
           (res) => {
+              // Al acertar hay que retirar el aviso del intento anterior: si no, se leen a la vez el
+              // error viejo y el mensaje de éxito.
+              conv.hideAlert(alert);
               form.style.display = 'none';
               const success = conv.$('#conv-vol-success');
               if (success) success.style.display = 'block';

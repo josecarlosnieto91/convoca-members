@@ -138,6 +138,27 @@
 
 # Changelog — convoca-members
 
+## [2.8.46] - 2026-10-15
+
+### Corregido
+
+- **Ocho defectos del panel del socio y del alta** (auditoría de navegador):
+  - La pestaña de Voluntariado no cargaba nunca: pedía `/activities`, un endpoint que no existía, y su
+    `Promise.all` fallaba entero. Se añade el endpoint **y** cada petición lleva su propio respaldo, para
+    que un solo fallo no tumbe la pestaña.
+  - El certificado se podía descargar **sin haber completado las horas**: el endpoint de descarga no
+    comprobaba nada. Ahora aplica la misma regla que la pantalla.
+  - Cada descarga **acuñaba un identificador nuevo** y sobrescribía el guardado, así que los
+    certificados ya entregados dejaban de verificar. El identificador se emite una sola vez.
+  - El carnet abría una pestaña con **el JSON en crudo** en vez de la tarjeta (se escribía la respuesta
+    entera en lugar de su campo `html`).
+  - La pestaña de pagos mostraba el estado interno **en inglés** (`Paid`): ahora dice «Pagado».
+  - El resumen del alta decía «Comunicaciones: No» aunque la casilla estuviera marcada (leía un nombre
+    de campo que no existe).
+  - El aviso de error del formulario de voluntariado **se quedaba en pantalla** tras un envío correcto.
+  - La marca de voluntariado del alta **no llegaba a «Solicitudes Pendientes»**: se quedaba en la ficha
+    del socio y nadie la revisaba.
+
 ## [2.8.45] - 2026-10-15
 
 ### Corregido

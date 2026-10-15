@@ -554,12 +554,21 @@
     },
 
     fetchHours: function() {
+      // Cada petición lleva su propio respaldo: antes, un solo endpoint que fallara o no existiera
+      // tumbaba la pestaña entera con «Error cargando datos de horas» y el socio no veía nada más.
+      const pedir = (url, conNonce, respaldo) => fetch(
+        window.convMiArea.apiUrl + url,
+        conNonce ? { headers: { 'X-WP-Nonce': window.convMiArea.nonce } } : undefined
+      )
+        .then(res => (res.ok ? res.json() : respaldo))
+        .catch(() => respaldo);
+
       Promise.all([
-        fetch(window.convMiArea.apiUrl + '/me/horas', { headers: { 'X-WP-Nonce': window.convMiArea.nonce } }).then(res => res.json()),
-        fetch(window.convMiArea.apiUrl + '/activities', { headers: { 'X-WP-Nonce': window.convMiArea.nonce } }).then(res => res.json()),
-        fetch(window.convMiArea.apiUrl + '/proyectos').then(res => res.json()),
-        fetch(window.convMiArea.apiUrl + '/me/gamification', { headers: { 'X-WP-Nonce': window.convMiArea.nonce } }).then(res => res.json().catch(function(){return null;})),
-        fetch(window.convMiArea.apiUrl + '/me', { headers: { 'X-WP-Nonce': window.convMiArea.nonce } }).then(res => res.json().catch(function(){return null;}))
+        pedir('/me/horas', true, { items: [] }),
+        pedir('/activities', true, []),
+        pedir('/proyectos', false, []),
+        pedir('/me/gamification', true, null),
+        pedir('/me', true, null)
       ])
       .then(([data, activities, proyectos, gamification, profile]) => {
         const canSubmitHours = profile && profile.estado === 'activo';
@@ -887,11 +896,13 @@
       if (btnCard) {
           btnCard.addEventListener('click', () => {
               fetch(window.convMiArea.apiUrl + '/me/card', { headers: { 'X-WP-Nonce': window.convMiArea.nonce } })
-              .then(res => res.text())
-              .then(html => {
+              .then(res => res.json())
+              .then(data => {
+                  // El endpoint devuelve { html: '...' }, no el HTML suelto: escribir la respuesta tal cual
+                  // abría una pestaña con el JSON en crudo en vez de con el carnet.
                   const win = window.open('', '_blank');
                   if (win) {
-                      win.document.write(html);
+                      win.document.write(data.html || '<p>No se pudo cargar el carnet.</p>');
                       win.document.close();
                   }
               });
@@ -922,7 +933,23 @@
         'failed': 'badge-error',
         'pendiente_pago': 'badge-warning'
       };
-      const label = estado.charAt(0).toUpperCase() + estado.slice(1);
+      // El endpoint devuelve el estado interno en inglés ('paid', 'pending', 'failed') y se pintaba tal
+      // cual. La etiqueta es para quien lee, así que se traduce aquí; un estado nuevo sin traducción se
+      // enseña en crudo en vez de inventarse una palabra.
+      const etiquetas = {
+        'paid': 'Pagado',
+        'pending': 'Pendiente',
+        'failed': 'Fallido',
+        'refunded': 'Reembolsado',
+        'cancelled': 'Cancelado',
+        'confirmed': 'Confirmado',
+        'waitlist': 'Lista de espera',
+        'confirmada': 'Confirmada',
+        'pagada': 'Pagada',
+        'pendiente': 'Pendiente',
+        'pendiente_pago': 'Pendiente de pago'
+      };
+      const label = etiquetas[estado] || (estado ? estado.charAt(0).toUpperCase() + estado.slice(1) : '');
       return `<span class="badge ${map[estado] || 'badge-default'}">${label}</span>`;
     }
   };

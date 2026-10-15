@@ -92,7 +92,13 @@ class Certificate_Generator {
 
 		$proyectos = self::get_proyectos_con_horas( $miembro_id );
 
-		$cert_id = 'VOL-' . wp_date( 'Y' ) . '-' . strtoupper( wp_generate_password( 5, false, false ) );
+		// El certificado se emite UNA vez: volver a generar el PDF (por ejemplo al descargarlo otra vez)
+		// no puede cambiar el identificador, o los certificados ya entregados dejan de verificar. Solo se
+		// acuña uno nuevo la primera vez.
+		$cert_id = (string) get_post_meta( $miembro_id, '_convoca_certificado_id', true );
+		if ( '' === $cert_id ) {
+			$cert_id = 'VOL-' . wp_date( 'Y' ) . '-' . strtoupper( wp_generate_password( 5, false, false ) );
+		}
 
 		$verify_url = home_url( '/verificar-certificado/?id=' . $cert_id );
 		$qr_data    = self::generate_qr_data( $verify_url );
@@ -359,24 +365,32 @@ class Certificate_Generator {
 	}
 
 	public static function serve_pdf( int $miembro_id, string $theme = '' ): void {
-		$cert_id = get_post_meta( $miembro_id, '_convoca_certificado_id', true );
+		// La misma regla que la pantalla: sin las horas completadas no hay certificado. Antes se servía
+		// igualmente, así que el aviso de «aún no has completado las horas» se podía saltar pidiendo el
+		// PDF a mano.
+		$horas_aprobadas = Voluntariado_Manager::get_horas_aprobadas( $miembro_id );
+		$objetivo        = Voluntariado_Manager::get_horas_objetivo( $miembro_id );
 
-		if ( ! $cert_id ) {
-			$result = self::generate( $miembro_id, $theme );
-			if ( is_wp_error( $result ) ) {
-				wp_die( esc_html( $result->get_error_message() ) );
-			}
-			$cert_id = $result['id'];
+		if ( $horas_aprobadas < $objetivo ) {
+			wp_die(
+				esc_html__( 'Aún no has completado las horas mínimas requeridas para generar el certificado.', 'convoca-members' ),
+				'',
+				array( 'response' => 400 )
+			);
+		}
+
+		// UNA sola generación: la anterior generaba dos veces, y el PDF que salía llevaba un identificador
+		// distinto del que quedaba guardado.
+		$result = self::generate( $miembro_id, $theme );
+		if ( is_wp_error( $result ) ) {
+			wp_die( esc_html( $result->get_error_message() ) );
 		}
 
 		header( 'Content-Type: application/pdf' );
-		header( 'Content-Disposition: attachment; filename="certificado-' . $cert_id . '.pdf"' );
+		header( 'Content-Disposition: attachment; filename="certificado-' . $result['id'] . '.pdf"' );
 
-		$result = self::generate( $miembro_id );
-		if ( ! is_wp_error( $result ) ) {
-			// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Binary PDF content, cannot be escaped.
-			echo $result['pdf'];
-		}
+		// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Binary PDF content, cannot be escaped.
+		echo $result['pdf'];
 		exit;
 	}
 

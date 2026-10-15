@@ -169,6 +169,16 @@ class Process_Member {
 		update_user_meta( $user_id, '_convoca_dni', get_post_meta( $member_id, '_convoca_dni', true ) );
 		update_user_meta( $user_id, '_convoca_telefono', get_post_meta( $member_id, '_convoca_telefono', true ) );
 
+		// La marca de voluntariado del alta es una SOLICITUD, no un dato decorativo: la asociación la
+		// revisa en «Voluntarios → Solicitudes Pendientes», que lista los usuarios con
+		// `_convoca_voluntario_aprobado = 0`. Si la marca se quedaba solo en la ficha del socio, el
+		// compromiso no llegaba a ninguna parte y nadie lo veía. No se toca si ya está aprobado (1) o
+		// revocado (-1).
+		if ( '1' === (string) get_post_meta( $member_id, '_convoca_es_voluntario', true )
+			&& '' === (string) get_user_meta( $user_id, \Convoca\Members\Admin_Voluntariado::META_APROBADO, true ) ) {
+			update_user_meta( $user_id, \Convoca\Members\Admin_Voluntariado::META_APROBADO, '0' );
+		}
+
 		Logger::info( "Usuario WP creado para miembro #{$member_id}: {$username}", 'Members', $member_id );
 
 		return array(
