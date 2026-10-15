@@ -79,6 +79,8 @@ jobs:
       # Las clases Convoca\Core (Email_Layout, Mailer) viven en el repositorio del nucleo,
       # que en CI no esta al lado. Se trae para probar contra la clase REAL, no contra un
       # doble que reproduzca su comportamiento y deje la suite corriendo en falso.
+      - name: Instalar gettext (msgfmt, del contrato de traducciones)
+        run: sudo apt-get update -qq && sudo apt-get install -y -qq gettext
       - name: Traer el nucleo (dependencia real)
         run: git clone --depth 1 https://github.com/josecarlosnieto91/convoca-core.git ../convoca-core
 
