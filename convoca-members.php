@@ -3,7 +3,7 @@
  * Plugin Name:       Convoca Members
  * Plugin URI:        https://getconvoca.app
  * Description:       Members, volunteers and communications management.
- * Version:           2.8.51
+ * Version:           2.8.52
  * Requires at least: 6.4
  * Requires PHP:      8.1
  * Tested up to:      7.1
@@ -197,10 +197,6 @@ register_activation_hook(
 			}
 		}
 
-		// Rol de socio: no existía (los socios eran `subscriber` y su condición vivía en una meta), así que
-		// no había forma de conceder nada a «los socios» sin mirar la ficha una a una (issue #30).
-		\Convoca\Members\Roles_Miembro::crear_roles();
-
 		// Save initial DB version.
 		add_option( 'convoca_members_db_version', CONVOCA_MEMBERS_DB_VERSION, '', false );
 	}
@@ -278,6 +274,10 @@ add_action(
 		new \Convoca\Members\Block_Members();
 	}
 );
+
+// El rol de socio se asegura en cada carga, no solo al activar: si no, una instalación que se actualiza
+// (como la demo) se queda sin él hasta que alguien desactive y vuelva a activar el plugin (issue #30).
+add_action( 'init', array( \Convoca\Members\Roles_Miembro::class, 'crear_roles' ) );
 
 add_action( 'init', array( \Convoca\Members\CPT_Miembro::class, 'register' ) );
 

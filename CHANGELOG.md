@@ -1,3 +1,11 @@
+## [2.8.52] — 2026-10-15
+
+### Arreglado
+- **El rol de socio se creaba solo al activar el plugin.** Medido en la demo tras desplegar la 2.8.51: el rol
+  no existía (`wp role list` no lo listaba), porque la llamada quedó dentro del bloque de activación y una
+  instalación que **se actualiza** no pasa por ahí. Ahora se asegura en cada carga (`init`), que es
+  idempotente y cuesta un `get_role()`.
+
 ## [2.8.51] — 2026-10-15
 
 ### Añadido
