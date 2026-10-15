@@ -1,3 +1,25 @@
+## [2.8.70] — 2026-10-15
+
+### Arreglado
+- **PCP marcaba como no preparada la consulta del deduplicador del alta (issue #33).** El `WHERE` se armaba por
+  concatenación y el resultado se le pasaba a `prepare()` por una variable. La consulta **era segura** (los
+  literales eran nuestros y el valor viajaba preparado), pero los analizadores de WordPress.org no pueden
+  comprobar una cadena armada a trozos y marcaban la consulta entera
+  (`WordPress.DB.PreparedSQL.NotPrepared` y `PluginCheck.Security.DirectDB.UnescapedDBParameter`), así que el CI
+  de `main` salía en rojo por código correcto.
+  - Ahora hay **una consulta literal por dato**, sin concatenación. Cuando el DNI y el correo apuntan a fichas
+    distintas decide el **DNI**: antes decidía el orden que quisiera MySQL, porque el `LIMIT 1` no llevaba
+    `ORDER BY`.
+- El **`Stable tag`** del `readme.txt` vuelve a coincidir con la cabecera (venía de 2.8.48 con el plugin ya en
+  2.8.69, y eso tenía el trabajo de PCP en rojo).
+
+### Pruebas
+- `SqlPreparadoConMotivoTest`: el SQL que va a `prepare()` o es un literal, o va anotado con su motivo **en la
+  misma línea**. **Negativo probado**: con el fichero anterior la prueba falla señalando
+  `includes/Process_Member.php:325`.
+- Verificado con **Plugin Check 2.1.0** en local sobre el paquete de distribución: 0 errores en
+  `plugin_repo` + `security`.
+
 ## [2.8.69] — 2026-10-15
 
 ### Arreglado

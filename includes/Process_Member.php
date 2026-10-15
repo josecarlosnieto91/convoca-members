@@ -301,28 +301,41 @@ class Process_Member {
 			// cualquier alta que llegara con el DNI vacío y la rechazaba («Ya existe un miembro registrado
 			// con este DNI o email.»), que es lo que dejaba envenenado el deduplicador tras un alta en
 			// blanco. Issue #23.
-			$condiciones = array();
-			$valores     = array();
+			// Cada dato se consulta con SU consulta literal, sin armar el SQL a trozos: los analizadores de
+			// WordPress.org no pueden comprobar una cadena construida por concatenación y marcan la consulta
+			// entera como no preparada, aunque el valor viaje por `prepare()`. Si el DNI y el correo apuntaran a
+			// fichas distintas decide el DNI (antes decidía el orden que quisiera MySQL: el `LIMIT 1` no
+			// llevaba `ORDER BY`).
+			$exists = false;
 
 			if ( '' !== $dni ) {
-				$condiciones[] = "(pm.meta_key = '_convoca_dni' AND pm.meta_value = %s)";
-				$valores[]     = $dni;
-			}
-			if ( '' !== $email ) {
-				$condiciones[] = "(pm.meta_key = '_convoca_email' AND pm.meta_value = %s)";
-				$valores[]     = $email;
+				$exists = $wpdb->get_var(
+					$wpdb->prepare(
+						"SELECT pm.post_id FROM {$wpdb->postmeta} pm
+						 JOIN {$wpdb->posts} p ON p.ID = pm.post_id
+						 WHERE p.post_type = 'miembro'
+						   AND p.post_status = 'publish'
+						   AND pm.meta_key = '_convoca_dni'
+						   AND pm.meta_value = %s
+						 LIMIT 1 FOR UPDATE",
+						$dni
+					)
+				);
 			}
 
-			$exists = false;
-			if ( ! empty( $condiciones ) ) {
-				$sql = "SELECT pm.post_id FROM {$wpdb->postmeta} pm
-                 JOIN {$wpdb->posts} p ON p.ID = pm.post_id
-                 WHERE p.post_type = 'miembro' 
-                   AND p.post_status = 'publish'
-                   AND (" . implode( ' OR ', $condiciones ) . ')
-                 LIMIT 1 FOR UPDATE';
-
-				$exists = $wpdb->get_var( $wpdb->prepare( $sql, $valores ) );
+			if ( empty( $exists ) && '' !== $email ) {
+				$exists = $wpdb->get_var(
+					$wpdb->prepare(
+						"SELECT pm.post_id FROM {$wpdb->postmeta} pm
+						 JOIN {$wpdb->posts} p ON p.ID = pm.post_id
+						 WHERE p.post_type = 'miembro'
+						   AND p.post_status = 'publish'
+						   AND pm.meta_key = '_convoca_email'
+						   AND pm.meta_value = %s
+						 LIMIT 1 FOR UPDATE",
+						$email
+					)
+				);
 			}
 
 			if ( ! empty( $exists ) ) {

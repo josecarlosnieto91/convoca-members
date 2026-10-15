@@ -2,14 +2,14 @@
 # This file is distributed under the GPL-2.0-or-later.
 msgid ""
 msgstr ""
-"Project-Id-Version: Convoca Members 2.8.69\n"
+"Project-Id-Version: Convoca Members 2.8.70\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/convoca-members\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-10-15T11:02:48+00:00\n"
+"POT-Creation-Date: 2026-10-15T12:49:25+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.12.0\n"
 "X-Domain: convoca-members\n"
@@ -3202,28 +3202,28 @@ msgstr ""
 msgid "El plan seleccionado no está disponible en este momento."
 msgstr ""
 
-#: includes/Process_Member.php:343
+#: includes/Process_Member.php:356
 msgid "Ya existe un miembro registrado con este DNI o email."
 msgstr ""
 
-#: includes/Process_Member.php:358
+#: includes/Process_Member.php:371
 msgid "Error al crear el registro en la base de datos."
 msgstr ""
 
-#: includes/Process_Member.php:425
+#: includes/Process_Member.php:438
 msgid "Error inesperado al crear el registro."
 msgstr ""
 
-#: includes/Process_Member.php:469
-#: includes/Process_Member.php:640
+#: includes/Process_Member.php:482
+#: includes/Process_Member.php:653
 msgid "No se ha podido contactar con la pasarela. Tu registro está guardado pero el pago está pendiente."
 msgstr ""
 
-#: includes/Process_Member.php:518
+#: includes/Process_Member.php:531
 msgid "No se pudo reactivar tu ficha. Contacta con coordinación."
 msgstr ""
 
-#: includes/Process_Member.php:595
+#: includes/Process_Member.php:608
 msgid "Error inesperado al reactivar el registro."
 msgstr ""
 
