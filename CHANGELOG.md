@@ -1,3 +1,20 @@
+## [2.8.69] — 2026-10-15
+
+### Arreglado
+- **Las URLs crudas apagadas devolvían un 500 (issue #15, medido al verificar el cambio anterior).** Apagar
+  `show_ui` en `miembro`, `proyecto` y `registro_hora` quitó las pantallas crudas, pero **la URL sigue
+  existiendo** y WordPress la resuelve de la peor forma posible: `edit.php?post_type=miembro` respondía **500 sin
+  mensaje**. Es el mismo comportamiento que ya estaba documentado con `edit-tags.php` en una taxonomía sin
+  interfaz: un marcador guardado en el navegador se convierte en un error de servidor.
+  - Un redirector en `admin_init` lleva `edit.php` y `post-new.php` de esos tres tipos a **su pantalla propia**
+    (`conv-members`, `conv-proyectos`, `conv-horas`). `post.php?post=N` no se toca: `CPT_Miembro` ya lo redirige
+    a su editor propio, que es mejor destino.
+
+### Pruebas
+- `PantallasCrudasApagadasTest` gana la comprobación del redirector: que esté, y que los tres tipos vayan a su
+  pantalla. **Negativo probado**: quitándolo, cae una prueba.
+- Suite 284 en verde, PHPCS 0, PHPStan `[OK]`.
+
 ## [2.8.68] — 2026-10-15
 
 ### Cambiado

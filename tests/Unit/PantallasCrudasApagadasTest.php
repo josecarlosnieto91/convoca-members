@@ -51,4 +51,16 @@ class PantallasCrudasApagadasTest extends TestCase {
 			$this->assertStringContainsString( $datos[1], $admin, "{$tipo}: apagar la cruda sin la propia dejaría el plugin sin interfaz" );
 		}
 	}
+	public function test_la_url_cruda_lleva_a_la_pantalla_propia(): void {
+		// Con `show_ui => false` la URL sigue existiendo y WordPress la resuelve con un **500 sin mensaje**.
+		// Medido en la demo: las tres daban 500. Aquí se vigila que haya un redirector a la pantalla propia.
+		$arranque = (string) file_get_contents( dirname( __DIR__, 2 ) . '/convoca-members.php' );
+
+		$this->assertStringContainsString( "'admin_init'", $arranque, 'El redirector va en admin_init' );
+		foreach ( $this->tipos() as $tipo => $datos ) {
+			$this->assertStringContainsString( "'{$tipo}'", $arranque, "{$tipo}: tiene que estar en los destinos" );
+			$this->assertStringContainsString( $datos[1], $arranque, "{$tipo}: y llevar a su pantalla propia" );
+		}
+		$this->assertStringContainsString( 'wp_safe_redirect', $arranque );
+	}
 }
