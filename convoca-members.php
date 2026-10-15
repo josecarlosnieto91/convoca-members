@@ -3,7 +3,7 @@
  * Plugin Name:       Convoca Members
  * Plugin URI:        https://getconvoca.app
  * Description:       Members, volunteers and communications management.
- * Version: 2.8.77
+ * Version: 2.8.78
  * Requires at least: 6.4
  * Requires PHP:      8.1
  * Tested up to:      7.1
@@ -291,7 +291,7 @@ add_action( 'init', array( \Convoca\Members\CPT_Miembro::class, 'register' ) );
 // El alta va al **editor** y el listado a la **lista**: el mapa viejo mandaba las dos al listado, y por eso
 // `post-new.php?post_type=proyecto` aterrizaba en la lista en vez de en «Añadir proyecto» (core#16).
 // `post.php?post=N` no se toca: `CPT_Miembro` y compañía ya lo redirigen a su editor propio.
-\Convoca\Core\Admin\Andamiaje_Admin::redirigir_pantallas_crudas(
+\Convoca\Core\Admin\Pantalla_Admin::redirigir_pantallas_crudas(
 	array(
 		'miembro'           => array(
 			'lista' => 'conv-members',
