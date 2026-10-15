@@ -1,3 +1,13 @@
+## [2.8.63] — 2026-10-15
+
+### Arreglado
+- **Las capacidades de los tipos propios se conceden en `init`, no en la activación (issue #15).** Medido
+  verificando el arreglo anterior en la demo: con la concesión dentro del gancho de activación, el
+  **administrador** se quedaba fuera de `edit.php?post_type=miembro` (403) — una instalación que se actualiza
+  **no pasa por la activación**, que es el mismo motivo por el que los roles se crean en `init` desde #30. La
+  prueba se ha reforzado para vigilar **dónde** está la concesión, no solo que exista: es lo que este defecto
+  tenía de invisible. **Negativo probado**: quitándola de `crear_roles()`, cae.
+
 ## [2.8.62] — 2026-10-15
 
 ### Arreglado

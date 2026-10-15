@@ -3,7 +3,7 @@
  * Plugin Name:       Convoca Members
  * Plugin URI:        https://getconvoca.app
  * Description:       Members, volunteers and communications management.
- * Version:           2.8.62
+ * Version:           2.8.63
  * Requires at least: 6.4
  * Requires PHP:      8.1
  * Tested up to:      7.1
@@ -116,14 +116,6 @@ register_activation_hook(
 		// Always ensure administrators have the necessary capabilities.
 		$role = get_role( 'administrator' );
 		if ( $role ) {
-			// Las capacidades derivadas de los tipos propios (issue #15). Sin `capability_type` propio,
-			// `miembro`, `registro_hora` y `proyecto` heredaban las de `post`, que el rol `editor` tiene por
-			// defecto: un editor sin ninguna capacidad de este plugin podia listar el censo y borrar fichas
-			// (datos personales). Se conceden SOLO a administracion, a proposito: las pantallas propias del
-			// plugin siguen gobernadas por `gestionar_miembros` y no cambian para nadie.
-			foreach ( convoca_members_capacidades_de_los_tipos() as $cap_propia ) {
-				$role->add_cap( $cap_propia );
-			}
 			$role->add_cap( 'gestionar_miembros' );
 			$role->add_cap( 'gestionar_documentos_voluntariado' );
 			$role->add_cap( 'view_reports' );

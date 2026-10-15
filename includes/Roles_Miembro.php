@@ -227,6 +227,22 @@ final class Roles_Miembro {
 				array( 'read' => true )
 			);
 		}
+
+		// Las capacidades derivadas de los tipos propios (issue #15), SOLO a administracion: las pantallas
+		// propias del plugin siguen gobernadas por `gestionar_miembros` y no cambian para nadie.
+		//
+		// Esto va aqui, en `init`, y NO en el gancho de activacion, por el mismo motivo que los roles: una
+		// instalacion que se actualiza no pasa por la activacion. Medido: dejandolo en la activacion, el
+		// administrador se quedaba fuera de `edit.php?post_type=miembro` (403), porque esas pantallas miraban
+		// las capacidades derivadas y nadie se las habia concedido. Se comprueba antes de escribir.
+		$administrador = get_role( 'administrator' );
+		if ( $administrador && \function_exists( 'convoca_members_capacidades_de_los_tipos' ) ) {
+			foreach ( \convoca_members_capacidades_de_los_tipos() as $cap_propia ) {
+				if ( ! $administrador->has_cap( $cap_propia ) ) {
+					$administrador->add_cap( $cap_propia );
+				}
+			}
+		}
 	}
 
 	/**

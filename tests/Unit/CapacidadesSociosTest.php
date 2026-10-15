@@ -88,7 +88,12 @@ class CapacidadesSociosTest extends TestCase {
 	public function test_se_conceden_las_trece_de_cada_familia(): void {
 		$bootstrap = (string) file_get_contents( $this->raiz() . '/convoca-members.php' );
 		$this->assertStringContainsString( 'function convoca_members_capacidades_de_los_tipos', $bootstrap );
-		$this->assertStringContainsString( 'foreach ( convoca_members_capacidades_de_los_tipos() as $cap_propia )', $bootstrap, 'Las derivadas tienen que concederse, no solo declararse' );
+		// Y en la función que corre en `init`, no en el gancho de activación: una instalación que se
+		// actualiza no pasa por la activación, y ahí el administrador se quedaba fuera (403, medido).
+		$roles = (string) file_get_contents( $this->raiz() . '/includes/Roles_Miembro.php' );
+		$this->assertStringContainsString( 'foreach ( \\convoca_members_capacidades_de_los_tipos() as $cap_propia )', $roles, 'Las derivadas tienen que concederse, no solo declararse' );
+		$this->assertStringContainsString( "add_action( 'init', array( \\Convoca\\Members\\Roles_Miembro::class, 'crear_roles' ) )", $bootstrap, 'Y en `init`: si va en la activación, la actualización no la ve' );
+		$this->assertStringNotContainsString( 'as $cap_propia', $bootstrap, 'Y no en el gancho de activación, que una actualización no recorre' );
 
 		// Se concede a administración y a nadie más: es la decisión de producto (solo admins).
 		$bloque = substr( $bootstrap, (int) strpos( $bootstrap, 'convoca_members_capacidades_de_los_tipos() as $cap_propia' ), 200 );
