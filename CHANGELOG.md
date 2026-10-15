@@ -1,3 +1,17 @@
+## [2.8.65] — 2026-10-15
+
+### Arreglado
+- **La desinstalación no borraba todas las opciones del plugin (issue #10).** Faltaban
+  `convoca_volunteer_fields` y `convoca_volunteer_legal_text` (los campos y el texto legal del formulario de
+  voluntariado, que se guardan como opciones). Las ha encontrado la **prueba de contrato** que lee las claves del
+  propio código en vez de fiarse de una lista escrita a mano.
+  - Y esa prueba tenía un defecto propio que he corregido: contaba como opciones los **grupos** de
+    `register_setting( 'grupo', 'opcion' )`, con lo que vigilaba lo que no debía y no veía lo que sí. Al
+    arreglarla aparecieron estas dos.
+
+### Pruebas
+- `tests/Unit/OpcionesSeBorranAlDesinstalarTest.php`, hermano del de ganchos programados. **Negativo probado**:
+  quitando una opción del desinstalador, la prueba cae y **la nombra**.
 ## [2.8.64] — 2026-10-15
 
 ### Arreglado

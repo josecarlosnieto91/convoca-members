@@ -45,6 +45,9 @@ delete_option( 'convoca_gamification_tracks' );
 delete_option( 'convoca_members_plans' );
 delete_option( 'convoca_last_member_number' );
 delete_option( 'convoca_last_member_number_fallback' );
+// Las encontró la prueba de contrato de opciones (issue #10): se guardaban y no se borraban.
+delete_option( 'convoca_volunteer_fields' );
+delete_option( 'convoca_volunteer_legal_text' );
 
 // Delete all miembro posts and their meta.
 $miembro_posts = get_posts(
