@@ -11,7 +11,6 @@ parameters:
 		analyseAndScan:
 			- vendor
 			- tests
-			- dev-tools
 			- node_modules (?)
 	scanFiles:
 		- phpstan-convoca-core.stub.php
