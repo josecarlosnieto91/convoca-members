@@ -55,9 +55,17 @@ class Admin_Voluntariado {
 			return false;
 		}
 
+		$roles    = (array) $user->roles;
 		$aprobado = '1' === (string) get_user_meta( $user_id, self::META_APROBADO, true );
 
-		return in_array( 'voluntario_aprobado', (array) $user->roles, true ) || $aprobado;
+		// Quién acredita horas (decisión de JC, 15/10/2026: «aprobación de monitor o administrador»):
+		// el voluntariado aprobado —lo de siempre—, el **monitor de actividad**, que es quien está delante
+		// de la actividad, y quien administra el sitio. Un socio no acredita horas de otros por ser socio:
+		// su condición no le da ese permiso.
+		return in_array( 'voluntario_aprobado', $roles, true )
+			|| in_array( 'monitor_actividad', $roles, true )
+			|| ( function_exists( 'user_can' ) && user_can( $user, 'manage_options' ) )
+			|| $aprobado;
 	}
 
 	/**

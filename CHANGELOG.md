@@ -1,3 +1,16 @@
+## [2.8.54] — 2026-10-15
+
+### Añadido
+- **Un monitor de actividad puede acreditar horas (fase 3 de #30).** `puede_acreditar_horas()` solo admitía
+  al voluntariado aprobado, así que quien está delante de la actividad —el monitor— no podía cerrar la
+  acreditación de nadie, y las horas extra que registre una persona desde su panel se quedaban sin quien las
+  apruebe. Ahora también pueden el **monitor** y quien **administra** el sitio. Un socio no: ser socio no da
+  permiso para acreditar horas de otras personas.
+
+### Pruebas
+- `tests/Unit/PuedeAcreditarHorasTest.php` (4 casos): monitor sí, voluntariado aprobado sí, socio corriente
+  no, sin usuario no. **Negativo probado**: quitando el monitor, la prueba cae.
+
 ## [2.8.53] — 2026-10-15
 
 ### Añadido
