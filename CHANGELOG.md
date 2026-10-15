@@ -1,3 +1,27 @@
+## [2.8.62] — 2026-10-15
+
+### Arreglado
+- **Un editor podía listar y borrar el censo de socios (issue #15, datos personales).** Los tipos `miembro`,
+  `registro_hora` y `proyecto` se registraban sin tipo de capacidad propio —o con el de `post`—, así que
+  WordPress traducía sus capacidades a las primitivas de `post`, **que el rol `editor` tiene por defecto**. Con
+  eso, un usuario con rol `editor`, sin ninguna capacidad de este plugin: abría `edit.php?post_type=miembro`
+  (200), veía el listado con nombres y apellidos, y podía mandar fichas a la papelera —con sus horas y sus
+  proyectos—. Las pantallas propias del plugin siempre comprobaron `gestionar_miembros`; las del tipo de
+  contenido, que existen porque `show_ui` está en `true`, no comprobaban nada.
+  - Cada uno de los tres tipos declara ahora **su propio par** (`convoca_miembro`/`convoca_miembros`,
+    `convoca_hora`/`convoca_horas`, `convoca_proyecto`/`convoca_proyectos`) y las **trece** capacidades que
+    WordPress deriva de cada par se conceden **solo a administración**, que es la decisión de producto: las
+    pantallas propias siguen gobernadas por `gestionar_miembros` y no cambian para nadie.
+  - Las derivadas **se componen** en el código a partir del par, no se escriben a mano: una sola que se quedara
+    fuera sería una puerta abierta.
+
+### Pruebas
+- `tests/Unit/CapacidadesSociosTest.php`: que los tres tipos tengan par propio, que ninguno cuelgue ya de
+  `post`, que las trece capacidades se compongan una por una, que el helper derive del **mismo** par que declara
+  el tipo y que la concesión no incluya a `editor`. **Negativos probados**: devolviendo un tipo a `post` caen
+  dos pruebas; borrando una sola capacidad derivada, cae una.
+- Suite 274 en verde, PHPCS 0, PHPStan `[OK]`.
+
 ## [2.8.61] — 2026-10-15
 
 ### Añadido

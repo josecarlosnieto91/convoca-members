@@ -93,7 +93,8 @@ class CPT_Registro_Hora {
 			'has_archive'         => false,
 			'exclude_from_search' => true,
 			'publicly_queryable'  => false,
-			'capability_type'     => 'post',
+			// Tipo de capacidad propio (issue #15): ver CPT_Miembro.
+			'capability_type'     => array( 'convoca_hora', 'convoca_horas' ),
 			'show_in_rest'        => false,
 		);
 

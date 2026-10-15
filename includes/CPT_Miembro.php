@@ -309,6 +309,12 @@ class CPT_Miembro {
 				'rewrite'      => false,
 				'has_archive'  => false,
 				'show_in_rest' => false, // Datos personales: solo vía rutas REST propias autenticadas (Rest_API).
+				// Tipo de capacidad PROPIO (issue #15): sin esto, WordPress traduce las capacidades de este tipo a
+				// las primitivas de `post`, que el rol `editor` tiene por defecto, y un editor podía listar el
+				// censo de socios y mandar fichas a la papelera. Las pantallas propias del plugin siempre
+				// comprobaron `gestionar_miembros`; las del tipo de contenido, que existen porque `show_ui` está
+				// en true, no comprobaban nada.
+				'capability_type' => array( 'convoca_miembro', 'convoca_miembros' ),
 				'map_meta_cap' => true,
 			)
 		);
