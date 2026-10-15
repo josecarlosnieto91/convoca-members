@@ -84,7 +84,7 @@ class CPT_Registro_Hora {
 			'supports'            => array( 'title', 'editor', 'author', 'revisions', 'custom-fields' ),
 			'hierarchical'        => false,
 			'public'              => false,
-			'show_ui'             => true,
+			'show_ui' => false, // issue #15: tiene pantalla propia (`conv-horas`); la cruda de WordPress sobraba.
 			'show_in_menu'        => false,
 			'menu_position'       => 5,
 			'show_in_admin_bar'   => true,

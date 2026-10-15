@@ -1,3 +1,27 @@
+## [2.8.68] — 2026-10-15
+
+### Cambiado
+- **Los tipos con pantalla propia ya no ofrecen además su pantalla cruda de WordPress (issue #15).** Con
+  `show_ui => true`, WordPress crea `edit.php?post_type=X`, `post-new.php?post_type=X` y `post.php?post=N`; si el
+  plugin registra además su propia página, quedan **dos pantallas para lo mismo** — y `show_in_menu => false` solo
+  esconde una del menú: **la pantalla sigue viva y responde** por URL. Ahora `miembro`, `proyecto` y
+  `registro_hora` llevan `show_ui => false`, que es el patrón que ya usaban `inscripcion`, `pago` y
+  `convoca_documento`.
+  - En socios, además, la lista cruda ofrecía «Mover a la papelera» en cada fila **y en lote** sin que nada la
+    vaciara: el tipo no declara soporte de papelera y el sitio tiene `EMPTY_TRASH_DAYS`. Con la pantalla apagada,
+    ese camino desaparece.
+  - Las pantallas propias (`conv-members`, `conv-proyectos`, `conv-horas` y el editor de ficha) siguen donde
+    estaban: el plugin ya redirigía `post.php` a su propio editor, así que no se pierde nada.
+
+### Pruebas
+- `tests/Unit/PantallasCrudasApagadasTest.php`: que la cruda esté apagada **y que la pantalla propia siga
+  existiendo** (apagar la cruda sin tener la propia dejaría al plugin sin interfaz). **Negativos probados**:
+  volviendo a encender una cruda, cae una prueba; quitando la pantalla propia, caen dos.
+  - Nota: la primera versión de la prueba exigía que no quedara **ningún** `show_ui => true` en el fichero, y se
+    tropezaba con la **taxonomía** de `miembro`, donde ese `true` es legítimo (sin él no hay pantalla de
+    términos). El test estaba mal, no el código.
+- Suite 283 en verde, PHPCS 0, PHPStan `[OK]`.
+
 ## [2.8.67] — 2026-10-15
 
 ### Arreglado

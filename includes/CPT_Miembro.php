@@ -303,7 +303,12 @@ class CPT_Miembro {
 					'not_found_in_trash' => __( 'No se han encontrado miembros en la papelera', 'convoca-members' ),
 				),
 				'public'       => false,
-				'show_ui'      => true,
+				// `show_ui` en falso (issue #15): este tipo tiene PANTALLA PROPIA (`conv-members` y el editor
+				// `conv-member-editor`), y con `show_ui` en true WordPress creaba además `edit.php?post_type=miembro`,
+				// que no está en el menú pero sigue viva y responde por URL. Dos pantallas para lo mismo, y la cruda
+				// ofrecía «Papelera» sin que nada la vaciara (`miembro` no declara soporte de papelera y el sitio
+				// tiene EMPTY_TRASH_DAYS). Es el patrón que ya usan `inscripcion`, `pago` y `convoca_documento`.
+				'show_ui'      => false,
 				'show_in_menu' => false,
 				'supports'     => array( 'title', 'custom-fields' ),
 				'rewrite'      => false,
@@ -312,8 +317,8 @@ class CPT_Miembro {
 				// Tipo de capacidad PROPIO (issue #15): sin esto, WordPress traduce las capacidades de este tipo a
 				// las primitivas de `post`, que el rol `editor` tiene por defecto, y un editor podía listar el
 				// censo de socios y mandar fichas a la papelera. Las pantallas propias del plugin siempre
-				// comprobaron `gestionar_miembros`; las del tipo de contenido, que existen porque `show_ui` está
-				// en true, no comprobaban nada.
+				// comprobaron `gestionar_miembros`; las del tipo de contenido, que existían porque `show_ui` estaba
+				// en true, no comprobaban nada. Desde #15 esas pantallas ya no existen.
 				'capability_type' => array( 'convoca_miembro', 'convoca_miembros' ),
 				'map_meta_cap' => true,
 			)

@@ -81,7 +81,7 @@ class CPT_Proyecto {
 			'supports'            => array( 'title', 'author', 'revisions' ),
 			'hierarchical'        => false,
 			'public'              => false,
-			'show_ui'             => true,
+			'show_ui' => false, // issue #15: tiene pantalla propia (`conv-proyectos`); la cruda de WordPress sobraba.
 			'show_in_menu'        => false,
 			'menu_position'       => 6,
 			'show_in_admin_bar'   => true,
