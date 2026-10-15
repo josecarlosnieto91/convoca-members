@@ -1,3 +1,27 @@
+## [2.8.60] — 2026-10-15
+
+### Añadido
+- **Control de vigencia de los documentos (issue #31).** La web vendía «Documentos: … Control de vigencia» y el
+  tipo `convoca_documento` no tenía ni noción de caducidad (lo que caduca son los certificados, que es otra
+  cosa). Ahora cada documento puede llevar su **fecha de caducidad** y el sistema lo dice en cuatro estados:
+  vigente, **caduca pronto** (dentro de 30 días, ajustable con un filtro), **caducado** —diciendo cuántos días
+  hace— y sin fecha.
+  - El control vive **en la ficha del socio**, que es donde la asociación mira los documentos: el tipo no tiene
+    pantalla propia (`show_ui` está en falso y se generan por código), así que un campo escondido en un editor
+    que no existe no habría servido de nada. Junto a cada documento salen su estado y un formulario para
+    ponerle o cambiarle la fecha; solo con permiso de gestión del voluntariado: un socio no decide cuándo caduca
+    su propio DNI.
+  - La regla vive en un solo sitio (`CPT_Documento::estado_caducidad()`), para que la ficha, los informes y
+    cualquier aviso digan lo mismo; y `caducado()` es el atajo para el sí o el no.
+  - La meta va registrada (`register_post_meta`, visible en REST) y con saneado: lo que no sea una fecha no
+    entra. El día de la caducidad **todavía vale**: caduca al terminar el día, no al empezar.
+
+### Pruebas
+- `tests/Unit/DocumentoVigenciaTest.php`: los cuatro estados, la fecha ilegible, el día de la caducidad, el
+  atajo y el contrato del control (estado en la ficha, formulario, nonce, permiso, meta saneada). **Negativo
+  probado**: retrasando el aviso de caducado cien días caen dos pruebas.
+- Suite 266 en verde, PHPCS 0, PHPStan `[OK]`.
+
 ## [2.8.59] — 2026-10-15
 
 ### Añadido

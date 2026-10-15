@@ -40,6 +40,7 @@ class Admin_Metaboxes {
 		add_action( 'wp_ajax_convoca_send_reminder', array( $this, 'ajax_send_reminder' ) );
 		add_action( 'wp_ajax_convoca_export_member_data', array( $this, 'ajax_export_member_data' ) );
 		add_action( 'wp_ajax_convoca_delete_member_data', array( $this, 'ajax_delete_member_data' ) );
+		add_action( 'admin_post_convoca_guardar_caducidad', array( $this, 'guardar_caducidad' ) );
 
 		// User Profile (for Volunteers).
 		add_action( 'show_user_profile', array( $this, 'render_user_documents_section' ), 10, 1 );
@@ -93,7 +94,7 @@ class Admin_Metaboxes {
 						<ul>
 							<?php foreach ( $docs as $doc ) : ?>
 								<?php $url = get_post_meta( $doc->ID, '_convoca_documento_url', true ); ?>
-								<li style="margin-bottom: 5px;">
+								<li style="margin-bottom: 10px;">
 									<strong><?php echo esc_html( get_the_title( $doc ) ); ?></strong>
 									<?php if ( $url ) : ?>
 										- <a href="<?php echo esc_url( $url ); ?>" target="_blank" class="button button-small"><?php esc_html_e( 'Ver PDF', 'convoca-members' ); ?></a>
@@ -101,6 +102,33 @@ class Admin_Metaboxes {
 									<span style="color: #666; font-size: 0.9em; margin-left: 10px;">
 										(Generado el <?php echo esc_html( get_the_date( 'd/m/Y H:i', $doc ) ); ?>)
 									</span>
+									<?php
+									// Vigencia del documento (issue #31). La web prometía «control de vigencia» y el tipo
+									// no tenía ni noción de caducidad. El tipo no tiene pantalla propia (`show_ui` falso),
+									// así que el control vive donde la asociación mira los documentos: aquí.
+									$conv_estado  = \Convoca\Members\CPT_Documento::estado_caducidad( $doc->ID );
+									$conv_colores = array(
+										'caducado'     => '#b32d2e',
+										'caduca_pronto' => '#996800',
+										'vigente'      => '#1a7a3c',
+										'sin_fecha'    => '#646970',
+									);
+									?>
+									<div style="margin-top:4px;">
+										<span style="font-weight:600;color:<?php echo esc_attr( $conv_colores[ $conv_estado['estado'] ] ?? '#646970' ); ?>;">
+											<?php
+											echo 'caducado' === $conv_estado['estado'] ? '⚠ ' : '';
+											echo esc_html( $conv_estado['etiqueta'] );
+											?>
+										</span>
+									</div>
+									<form method="post" action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>" style="display:flex;gap:6px;align-items:center;margin-top:4px;">
+										<input type="hidden" name="action" value="convoca_guardar_caducidad">
+										<input type="hidden" name="documento_id" value="<?php echo esc_attr( (string) $doc->ID ); ?>">
+										<?php wp_nonce_field( 'convoca_guardar_caducidad_' . $doc->ID ); ?>
+										<input type="date" name="fecha_caducidad" value="<?php echo esc_attr( $conv_estado['fecha'] ); ?>" aria-label="<?php esc_attr_e( 'Fecha de caducidad', 'convoca-members' ); ?>">
+										<button type="submit" class="button button-small"><?php esc_html_e( 'Guardar vigencia', 'convoca-members' ); ?></button>
+									</form>
 								</li>
 							<?php endforeach; ?>
 						</ul>
@@ -709,6 +737,39 @@ class Admin_Metaboxes {
 		wp_delete_post( $member_id, true );
 
 		wp_send_json_success( array( 'message' => __( 'Todos los datos del miembro han sido eliminados.', 'convoca-members' ) ) );
+	}
+
+	/**
+	 * Guarda la fecha de caducidad de un documento (issue #31).
+	 *
+	 * Lo lanza el formulario que hay junto a cada documento en la ficha. Solo quien gestiona el voluntariado:
+	 * un socio no decide cuándo caduca su propio DNI.
+	 */
+	public function guardar_caducidad(): void {
+		$doc = isset( $_POST['documento_id'] ) ? absint( wp_unslash( $_POST['documento_id'] ) ) : 0;
+
+		if ( $doc <= 0 || 'convoca_documento' !== get_post_type( $doc ) ) {
+			wp_die( esc_html__( 'Documento no encontrado.', 'convoca-members' ) );
+		}
+
+		if ( ! current_user_can( 'gestionar_documentos_voluntariado' ) ) {
+			wp_die( esc_html__( 'No tienes permiso para cambiar la vigencia de los documentos.', 'convoca-members' ) );
+		}
+
+		check_admin_referer( 'convoca_guardar_caducidad_' . $doc );
+
+		$fecha = isset( $_POST['fecha_caducidad'] ) ? sanitize_text_field( wp_unslash( $_POST['fecha_caducidad'] ) ) : '';
+		$fecha = preg_match( '/^\d{4}-\d{2}-\d{2}$/', $fecha ) ? $fecha : '';
+
+		if ( '' === $fecha ) {
+			delete_post_meta( $doc, '_convoca_fecha_caducidad' );
+		} else {
+			update_post_meta( $doc, '_convoca_fecha_caducidad', $fecha );
+		}
+
+		$destino = wp_get_referer();
+		wp_safe_redirect( $destino ? $destino : admin_url() );
+		exit;
 	}
 }
 

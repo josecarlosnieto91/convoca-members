@@ -86,6 +86,98 @@ class CPT_Documento {
 		);
 
 		register_post_type( 'convoca_documento', $args );
+
+		register_post_meta(
+			'convoca_documento',
+			'_convoca_fecha_caducidad',
+			array(
+				'type'              => 'string',
+				'single'            => true,
+				'show_in_rest'      => true,
+				'sanitize_callback' => static function ( $valor ) {
+					$valor = (string) $valor;
+
+					return preg_match( '/^\d{4}-\d{2}-\d{2}$/', $valor ) ? $valor : '';
+				},
+			)
+		);
+	}
+
+	/**
+	 * Estado de vigencia de un documento (issue #31).
+	 *
+	 * La web prometía «control de vigencia» de los documentos (DNI, seguros, autorizaciones) y no existía
+	 * nada: el tipo no tenía ni noción de caducidad. La regla vive aquí, en un solo sitio, para que la ficha,
+	 * los informes y cualquier aviso digan lo mismo.
+	 *
+	 * @param int $documento_id Documento.
+	 * @return array{estado: string, dias: int|null, fecha: string, etiqueta: string}
+	 */
+	public static function estado_caducidad( int $documento_id ): array {
+		$fecha = (string) get_post_meta( $documento_id, '_convoca_fecha_caducidad', true );
+		$vacio = array(
+			'estado'   => 'sin_fecha',
+			'dias'     => null,
+			'fecha'    => '',
+			'etiqueta' => __( 'Sin fecha de caducidad', 'convoca-members' ),
+		);
+
+		if ( '' === $fecha || ! preg_match( '/^\d{4}-\d{2}-\d{2}$/', $fecha ) ) {
+			return $vacio;
+		}
+
+		$hoy   = current_time( 'Y-m-d' );
+		$dias  = (int) floor( ( strtotime( $fecha . ' 00:00:00' ) - strtotime( $hoy . ' 00:00:00' ) ) / DAY_IN_SECONDS );
+		$aviso = (int) apply_filters( 'convoca_members_dias_aviso_caducidad', 30, $documento_id );
+
+		if ( $dias < 0 ) {
+			return array(
+				'estado'   => 'caducado',
+				'dias'     => $dias,
+				'fecha'    => $fecha,
+				'etiqueta' => sprintf(
+					/* translators: 1: fecha de caducidad, 2: días transcurridos. */
+					_n( 'Caducado el %1$s (hace %2$d día)', 'Caducado el %1$s (hace %2$d días)', abs( $dias ), 'convoca-members' ),
+					$fecha,
+					abs( $dias )
+				),
+			);
+		}
+
+		if ( $dias <= $aviso ) {
+			return array(
+				'estado'   => 'caduca_pronto',
+				'dias'     => $dias,
+				'fecha'    => $fecha,
+				'etiqueta' => sprintf(
+					/* translators: 1: fecha de caducidad, 2: días que quedan. */
+					_n( 'Caduca el %1$s (quedan %2$d día)', 'Caduca el %1$s (quedan %2$d días)', $dias, 'convoca-members' ),
+					$fecha,
+					$dias
+				),
+			);
+		}
+
+		return array(
+			'estado'   => 'vigente',
+			'dias'     => $dias,
+			'fecha'    => $fecha,
+			'etiqueta' => sprintf(
+				/* translators: %s: fecha de caducidad. */
+				__( 'Vigente hasta el %s', 'convoca-members' ),
+				$fecha
+			),
+		);
+	}
+
+	/**
+	 * ¿Está caducado? Atajo para quien solo necesita el sí o el no.
+	 *
+	 * @param int $documento_id Documento.
+	 * @return bool
+	 */
+	public static function caducado( int $documento_id ): bool {
+		return 'caducado' === self::estado_caducidad( $documento_id )['estado'];
 	}
 
 	/**
