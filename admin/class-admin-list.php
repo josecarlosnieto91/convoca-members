@@ -487,30 +487,10 @@ class Admin_List extends \WP_List_Table {
 
 	public function column_tipo( $item ): string {
 		$terms = wp_get_object_terms( $item->ID, 'tipo_miembro', array( 'fields' => 'names' ) );
-		if ( ! is_wp_error( $terms ) && ! empty( $terms ) ) {
-			return esc_html( implode( ', ', $terms ) );
-		}
-
-		// La taxonomía estaba registrada pero vacía, así que la columna salía en blanco siempre.
-		// Si no hay términos, mandan las condiciones de la ficha.
-		$roles = Roles_Miembro::roles( (int) $item->ID );
-		if ( empty( $roles ) ) {
+		if ( is_wp_error( $terms ) ) {
 			return '—';
 		}
-
-		return esc_html( implode( ', ', array_map( array( __CLASS__, 'etiqueta_rol' ), $roles ) ) );
-	}
-
-	/**
-	 * Etiqueta legible de una condición de la ficha.
-	 *
-	 * @param string $rol Rol del ecosistema (`socio` o `voluntario`).
-	 * @return string
-	 */
-	public static function etiqueta_rol( string $rol ): string {
-		return Roles_Miembro::SOCIO === $rol
-			? __( 'Socio', 'convoca-members' )
-			: __( 'Voluntario', 'convoca-members' );
+		return esc_html( implode( ', ', $terms ) );
 	}
 
 	public function column_estado( $item ): string {
