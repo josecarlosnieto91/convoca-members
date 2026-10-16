@@ -471,15 +471,37 @@ class GDPR_Tools {
 	public static function cuerpo_aviso_supresion( int $member_id, string $fecha ): string {
 		$socio = get_post( $member_id );
 
-		return sprintf(
-			/* translators: 1: member name, 2: member id, 3: date, 4: admin url, 5: tools url. */
-			__( "El socio/a «%1\$s» (ficha #%2\$d) ha pedido la supresión de sus datos personales el %3\$s.\n\nLa baja NO borra nada: la supresión hay que resolverla con el borrador de datos personales.\n\nFicha: %4\$s\nHerramientas -> Borrar datos personales: %5\$s\n", 'convoca-members' ),
-			$socio ? $socio->post_title : '',
-			$member_id,
-			$fecha,
-			(string) get_edit_post_link( $member_id, '' ),
+		$nombre = $socio ? $socio->post_title : '';
+		$enlace = (string) get_edit_post_link( $member_id, '' );
+
+		$lineas = array(
+			sprintf(
+				/* translators: 1: member name, 2: member id, 3: date. */
+				__( 'El socio/a «%1$s» (ficha #%2$d) ha pedido la supresión de sus datos personales el %3$s.', 'convoca-members' ),
+				$nombre,
+				$member_id,
+				$fecha
+			),
+			'',
+			__( 'La baja NO borra nada: la supresión hay que resolverla con el borrador de datos personales.', 'convoca-members' ),
+			'',
+		);
+
+		if ( '' !== $enlace ) {
+			$lineas[] = sprintf(
+				/* translators: %s: link to the member profile in the admin. */
+				__( 'Ficha: %s', 'convoca-members' ),
+				$enlace
+			);
+		}
+
+		$lineas[] = sprintf(
+			/* translators: %s: link to the personal data erasure tool. */
+			__( 'Herramientas -> Borrar datos personales: %s', 'convoca-members' ),
 			admin_url( 'tools.php?page=remove_personal_data' )
 		);
+
+		return implode( "\n", $lineas ) . "\n";
 	}
 
 	/**
