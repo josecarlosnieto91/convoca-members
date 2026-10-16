@@ -3,7 +3,7 @@
  * Plugin Name:       Convoca Members
  * Plugin URI:        https://getconvoca.app
  * Description:       Members, volunteers and communications management.
- * Version: 2.8.85
+ * Version: 2.8.86
  * Requires at least: 6.4
  * Requires PHP:      8.1
  * Tested up to:      7.1
@@ -272,6 +272,11 @@ add_action(
 			new \Convoca\Members\Admin_Proyectos();
 			new \Convoca\Members\Admin_Member_Editor();
 			new \Convoca\Members\Admin_Import_CSV();
+
+			// El botón de registrar el consentimiento (members#41) vive en el listado, pero el listado solo
+			// se instancia al pintar su pantalla: el gancho tiene que estar puesto SIEMPRE o el botón no
+			// hace nada. Por eso el manejador es estático y se registra aquí (medido en la demo).
+			add_action( 'admin_post_convoca_registrar_consentimiento', array( \Convoca\Members\Admin_List::class, 'registrar_consentimiento' ) );
 		}
 
 		// Public.

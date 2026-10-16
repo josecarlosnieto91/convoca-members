@@ -52,7 +52,6 @@ class Admin_List extends \WP_List_Table {
 		// El tipo no admite papelera, así que WordPress pinta «Papelera» y no hace nada: se quita de la
 		// pantalla cruda para que no haya botones muertos (issue #27).
 		add_filter( 'post_row_actions', array( $this, 'sin_papelera' ), 10, 2 );
-		add_action( 'admin_post_convoca_registrar_consentimiento', array( $this, 'registrar_consentimiento' ) );
 		add_filter( 'bulk_actions-edit-miembro', array( $this, 'sin_papelera_bulk' ) );
 	}
 
@@ -679,8 +678,12 @@ class Admin_List extends \WP_List_Table {
 	/**
 	 * Guarda el consentimiento desde el listado (members#41): deja fecha, la versión del texto vigente y
 	 * una nota de que se registró a mano, para que se sepa de dónde sale el dato.
+	 *
+	 * Es ESTÁTICO a propósito: esta clase solo se instancia al pintar su pantalla, así que un gancho de
+	 * instancia no llega nunca a `admin-post.php` y el botón no haría nada (medido en la demo, que es como
+	 * se descubrió). El gancho se registra siempre desde el arranque del plugin.
 	 */
-	public function registrar_consentimiento(): void {
+	public static function registrar_consentimiento(): void {
 		$miembro = (int) ( $_GET['miembro'] ?? 0 );
 
 		if ( $miembro <= 0 || ! current_user_can( 'edit_post', $miembro ) ) {
