@@ -486,13 +486,46 @@
       fetch(window.convMiArea.apiUrl + '/me/pagos', { headers: { 'X-WP-Nonce': window.convMiArea.nonce } })
       .then(res => res.json())
       .then(data => {
-        if (!data.items || data.items.length === 0) {
-          this.$main.innerHTML = '<h2>💳 Pagos y Cuotas</h2><p>No se han encontrado pagos registrados.</p>';
-          return;
+        const cuota = data.cuota || {};
+        const items = data.items || [];
+
+        // El estado de la cuota, DELANTE del botón (members#38): hasta cuándo está pagado el año, o si ya
+        // hay un pago esperando. Medido: con la cuota pagada hasta 14/10/2027, esta pantalla no decía
+        // nada de esa fecha y el socio podía renovar creyendo que le tocaba.
+        let estadoCuota = '';
+        if (cuota.pago_pendiente) {
+          estadoCuota = `
+            <div class="conv-alert conv-alert-warning" style="padding:14px 16px;border-radius:8px;background:#fff7e6;border:1px solid #ffd591;margin-bottom:16px;">
+              <strong>Tienes un pago pendiente.</strong> No hace falta crear otro: puedes terminarlo.
+              ${cuota.pago_pendiente_url ? `<br><a href="${cuota.pago_pendiente_url}" class="btn-primary-mini">Continuar el pago</a>` : ''}
+            </div>`;
+        } else if (cuota.fecha_renovacion) {
+          const hasta = this.formatDate(cuota.fecha_renovacion);
+          if (cuota.cuota_vencida) {
+            estadoCuota = `
+              <div class="conv-alert conv-alert-warning" style="padding:14px 16px;border-radius:8px;background:#fff7e6;border:1px solid #ffd591;margin-bottom:16px;">
+                <strong>Tu cuota venció el ${hasta}.</strong> Al renovar, el año nuevo empieza donde venció, no hoy.
+              </div>`;
+          } else {
+            // Se calcula el vencimiento que quedaría tras renovar, para que se vea que AMPLÍA.
+            const partes = cuota.fecha_renovacion.split('-');
+            const ampliada = (parseInt(partes[0], 10) + 1) + '-' + partes[1] + '-' + partes[2];
+            estadoCuota = `
+              <div class="conv-alert conv-alert-success" style="padding:14px 16px;border-radius:8px;background:#f6ffed;border:1px solid #b7eb8f;margin-bottom:16px;">
+                <strong>Estás al día hasta el ${hasta}.</strong> Si renuevas ahora, se te amplía un año más (hasta el ${this.formatDate(ampliada)}): no se cobra dos veces el mismo periodo.
+              </div>`;
+          }
         }
+
+        const alDia = !!cuota.fecha_renovacion && !cuota.cuota_vencida;
+        const etiquetaBoton = alDia ? '🔄 Renovar por adelantado' : '🔄 Renovar membresía';
+        const avisoAmplia = alDia
+          ? 'Vas a renovar por adelantado. Se te sumará un año más al periodo que ya tienes pagado, no se cobra dos veces lo mismo. ¿Seguir?'
+          : '';
 
         let html = `
           <h2>💳 Mis Pagos</h2>
+          ${estadoCuota}
           <table class="conv-table">
             <thead>
               <tr>
@@ -503,7 +536,7 @@
               </tr>
             </thead>
             <tbody>
-              ${data.items.map(item => `
+              ${items.map(item => `
                 <tr>
                   <td>${item.fecha}</td>
                   <td>${item.concepto}</td>
@@ -516,7 +549,9 @@
           <hr>
           <h3>Renovación</h3>
           <p class="text-muted">Tu membresía se renueva cada año. Puedes renovar por adelantado cuando quieras desde aquí.</p>
-          <button id="conv-btn-renovar-panel" class="btn-primary">🔄 Renovar membresía</button>
+          ${cuota.pago_pendiente
+            ? '<p class="text-muted">Ya tienes un pago pendiente: termínalo antes de crear otro.</p>'
+            : `<button id="conv-btn-renovar-panel" class="btn-primary" ${avisoAmplia ? `data-amplia="${this.escAttr(avisoAmplia)}"` : ''}>${etiquetaBoton}</button>`}
           <div id="conv-renovar-panel-msg"></div>
         `;
         this.$main.innerHTML = html;
@@ -530,6 +565,12 @@
     },
 
     renewMembership: function(btn) {
+      // Renovar con la cuota al día AMPLÍA el periodo (el servidor suma un año al vencimiento anterior):
+      // se dice antes de crear el pago, para que nadie pague creyendo que le tocaba (members#38).
+      if (btn && btn.dataset && btn.dataset.amplia && !window.confirm(btn.dataset.amplia)) {
+        return;
+      }
+
       const msg = conv.$('#conv-renovar-panel-msg');
       btn.disabled = true;
       msg.innerHTML = '<p class="text-muted">Generando pago…</p>';
@@ -931,7 +972,10 @@
         'waitlist': 'badge-warning',
         'cancelled': 'badge-error',
         'failed': 'badge-error',
-        'pendiente_pago': 'badge-warning'
+        'pendiente_pago': 'badge-warning',
+        // El gateway guarda 'pending' y 'refunded': al panel le llegaban sin color ni traducción.
+        'pending': 'badge-warning',
+        'refunded': 'badge-error'
       };
       // El endpoint devuelve el estado interno en inglés ('paid', 'pending', 'failed') y se pintaba tal
       // cual. La etiqueta es para quien lee, así que se traduce aquí; un estado nuevo sin traducción se

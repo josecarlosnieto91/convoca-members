@@ -413,6 +413,82 @@ class Rest_API {
 	/**
 	 * Get profile data.
 	 */
+	/**
+	 * El estado de la cuota tal como lo necesita el panel del socio (members#38).
+	 *
+	 * Una sola fuente para «Mis Datos» y para «Pagos y Cuotas» —la pantalla donde está el botón de
+	 * renovar—. Sin esto, el socio veía el botón sin saber hasta cuándo tiene pagado el año: podía renovar
+	 * en octubre creyendo que le tocaba y pagar otra vez un periodo ya cubierto. Medido: con la cuota
+	 * pagada hasta 14/10/2027, la pantalla del botón no decía nada de esa fecha.
+	 *
+	 * Y `pago_pendiente`: si ya hay un pago de cuota esperando, se enseña ESE en lugar de generar otro
+	 * enlace. Dos enlaces abiertos para el mismo periodo es como se cobra dos veces sin querer.
+	 *
+	 * @param int $member_id Ficha del socio.
+	 * @return array{fecha_renovacion:string,cuota_vencida:bool,puede_renovar:bool,renovable:bool,pago_pendiente:int,pago_pendiente_url:string}
+	 */
+	public static function estado_cuota_panel( int $member_id ): array {
+		$estado = (string) get_post_meta( $member_id, '_convoca_estado_miembro', true );
+		$fecha  = (string) get_post_meta( $member_id, '_convoca_fecha_renovacion', true );
+		$puede  = in_array( $estado, array( 'activo', 'suspendido' ), true );
+
+		$pendiente = 0;
+		$pagos     = get_posts(
+			array(
+				'post_type'      => 'pago',
+				'post_status'    => 'publish',
+				'posts_per_page' => 5,
+				'fields'         => 'ids',
+				'meta_query'     => array(
+					array(
+						'key'   => '_convoca_origin',
+						'value' => 'members',
+					),
+					array(
+						'key'   => '_convoca_origin_id',
+						'value' => $member_id,
+					),
+					array(
+						'key'   => '_convoca_status',
+						'value' => 'pending',
+					),
+				),
+			)
+		);
+		if ( ! empty( $pagos ) ) {
+			$pendiente = (int) $pagos[0];
+		}
+
+		return array(
+			'fecha_renovacion'   => $fecha,
+			'cuota_vencida'      => ( '' !== $fecha && $fecha < current_time( 'Y-m-d' ) ),
+			'puede_renovar'      => $puede,
+			'renovable'          => $puede && ( 'voluntariado' !== (string) get_post_meta( $member_id, '_convoca_forma_pago', true ) ),
+			'pago_pendiente'     => $pendiente,
+			'pago_pendiente_url' => self::url_pago_pendiente( $pendiente ),
+		);
+	}
+
+	/**
+	 * El enlace para terminar un pago ya creado (members#38): quien perdió el correo no tiene por qué
+	 * empezar de cero. Lo construye el gateway, que es quien sabe firmar el enlace; si no está, se devuelve
+	 * vacío y el panel simplemente no ofrece el botón.
+	 *
+	 * @param int $pago_id Pago pendiente (0 si no hay).
+	 * @return string
+	 */
+	private static function url_pago_pendiente( int $pago_id ): string {
+		if ( $pago_id <= 0 || ! class_exists( '\\Convoca\\Gateway\\Payment_Handler' ) ) {
+			return '';
+		}
+
+		if ( ! method_exists( '\\Convoca\\Gateway\\Payment_Handler', 'build_payment_url' ) ) {
+			return '';
+		}
+
+		return (string) \Convoca\Gateway\Payment_Handler::build_payment_url( $pago_id );
+	}
+
 	public function get_profile( \WP_REST_Request $request ): \WP_REST_Response {
 		$member_id = Member_Auth::get_current_member_id();
 		$post      = get_post( $member_id );
@@ -424,12 +500,14 @@ class Rest_API {
 		$access_code = get_post_meta( $member_id, '_convoca_access_code', true );
 		$masked_code = ! empty( $access_code ) ? substr( $access_code, 0, 4 ) . '****' : '';
 
-		$estado        = get_post_meta( $member_id, '_convoca_estado_miembro', true );
-		$fecha_renov   = get_post_meta( $member_id, '_convoca_fecha_renovacion', true );
-		$fecha_baja    = get_post_meta( $member_id, '_convoca_fecha_baja', true );
-		$today         = current_time( 'Y-m-d' );
-		$puede_renovar = in_array( $estado, array( 'activo', 'suspendido' ), true );
-		$vencida       = ( ! empty( $fecha_renov ) && $fecha_renov < $today );
+		$fecha_baja = get_post_meta( $member_id, '_convoca_fecha_baja', true );
+		$estado     = get_post_meta( $member_id, '_convoca_estado_miembro', true );
+
+		// El estado de la cuota lo resuelve una sola pieza (members#38).
+		$cuota         = self::estado_cuota_panel( (int) $member_id );
+		$fecha_renov   = $cuota['fecha_renovacion'];
+		$puede_renovar = $cuota['puede_renovar'];
+		$vencida       = $cuota['cuota_vencida'];
 
 		return new \WP_REST_Response(
 			array(
@@ -450,7 +528,8 @@ class Rest_API {
 				'fecha_baja'          => $fecha_baja,
 				'cuota_vencida'       => $vencida,
 				'puede_renovar'       => $puede_renovar,
-				'renovable'           => $puede_renovar && ( get_post_meta( $member_id, '_convoca_forma_pago', true ) !== 'voluntariado' ),
+				'renovable'           => $cuota['renovable'],
+				'pago_pendiente'      => $cuota['pago_pendiente'],
 				'tipo'                => (array) get_post_meta( $member_id, '_convoca_modalidad', true ) ?: array( 'Socio/a' ),
 			)
 		);
@@ -515,7 +594,14 @@ class Rest_API {
 			}
 		}
 
-		return new \WP_REST_Response( array( 'items' => $items ) );
+		return new \WP_REST_Response(
+			array(
+				'items' => $items,
+				// La pantalla que enseña el botón de renovar necesita saber hasta cuándo está pagada la
+				// cuota y si ya hay un pago esperando (members#38).
+				'cuota' => self::estado_cuota_panel( (int) $member_id ),
+			)
+		);
 	}
 
 	/**
