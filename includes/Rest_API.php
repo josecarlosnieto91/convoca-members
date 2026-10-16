@@ -188,6 +188,17 @@ class Rest_API {
 			)
 		);
 
+		// Mis turnos (shifts#19): el contenido lo renderiza el plugin de turnos con SUS shortcodes.
+		register_rest_route(
+			self::NAMESPACE,
+			'/me/turnos',
+			array(
+				'methods'             => 'GET',
+				'callback'            => array( $this, 'get_turnos' ),
+				'permission_callback' => array( $this, 'check_member_auth' ),
+			)
+		);
+
 		// Unsubscribe request.
 		register_rest_route(
 			self::NAMESPACE,
@@ -818,6 +829,48 @@ class Rest_API {
 				'cuota' => self::estado_cuota_panel( (int) $member_id ),
 			)
 		);
+	}
+
+	/**
+	 * La sección «Mis turnos» del panel (shifts#19).
+	 *
+	 * El panel del socio no tenía nada de turnos, así que quien quería apuntarse tenía que encontrar la página
+	 * del cuadrante por su cuenta. Aquí se trae el cuadrante, sus próximos turnos y la caja de suscripción a su
+	 * calendario `.ics`, **reutilizando los shortcodes del plugin de turnos**: es él quien sabe de turnos, y
+	 * duplicar su lógica aquí sería tener dos versiones de la verdad.
+	 *
+	 * @return \WP_REST_Response
+	 */
+	public function get_turnos(): \WP_REST_Response {
+		if ( ! shortcode_exists( 'convoca_proximos_turnos' ) ) {
+			return new \WP_REST_Response(
+				array(
+					'success' => true,
+					'html'    => '<h2>📅 ' . esc_html__( 'Mis turnos', 'convoca-members' ) . '</h2>'
+						. '<p class="text-muted">' . esc_html__( 'Los turnos no están disponibles en este momento.', 'convoca-members' ) . '</p>',
+					'turnos'  => false,
+				)
+			);
+		}
+
+		$html = '<h2>📅 ' . esc_html__( 'Mis turnos', 'convoca-members' ) . '</h2>';
+
+		// A lo que ya está apuntado, lo primero.
+		$html .= '<section class="conv-turnos-proximos">' . do_shortcode( '[convoca_proximos_turnos]' ) . '</section>';
+
+		// El cuadrante, para ver los huecos libres de esta semana.
+		if ( shortcode_exists( 'convoca_calendario' ) ) {
+			$html .= '<section class="conv-turnos-cuadrante"><h3>' . esc_html__( 'Cuadrante del centro', 'convoca-members' ) . '</h3>'
+				. do_shortcode( '[convoca_calendario]' ) . '</section>';
+		}
+
+		// Y su calendario, para suscribirlo desde aquí (antes solo estaba en una caja de una página suelta).
+		if ( shortcode_exists( 'convoca_suscripcion_turnos' ) ) {
+			$html .= '<section class="conv-turnos-calendario"><h3>' . esc_html__( 'Tu calendario', 'convoca-members' ) . '</h3>'
+				. do_shortcode( '[convoca_suscripcion_turnos]' ) . '</section>';
+		}
+
+		return new \WP_REST_Response( array( 'success' => true, 'html' => $html, 'turnos' => true ) );
 	}
 
 	/**

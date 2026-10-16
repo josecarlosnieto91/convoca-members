@@ -155,12 +155,29 @@
         case 'profile': this.fetchProfile(); break;
         case 'inscriptions': this.fetchInscriptions(); break;
         case 'payments': this.fetchPayments(); break;
+        case 'turnos': this.fetchTurnos(); break;
         case 'hours': this.fetchHours(); break;
         case 'membership': this.renderMembership(); break;
         case 'search': this.renderSearch(); break;
         case 'privacy': this.fetchPrivacidad(); break;
         case 'notifications': this.fetchNotifications(); break;
       }
+    },
+
+    /* ── Mis turnos (shifts#19) ──────────────────────── */
+    /**
+     * El contenido lo trae el plugin de turnos ya renderizado (sus shortcodes): aquí solo se pinta.
+     */
+    fetchTurnos: function() {
+      fetch(window.convMiArea.apiUrl + '/me/turnos', { headers: { 'X-WP-Nonce': window.convMiArea.nonce } })
+        .then(function(r) { return r.json(); })
+        .then(function(d) {
+          if (d && d.html) { this.$main.innerHTML = '<div class="conv-turnos-wrap">' + d.html + '</div>'; }
+          else { this.$main.innerHTML = '<p class="text-error">No se han podido cargar tus turnos.</p>'; }
+        }.bind(this))
+        .catch(function() {
+          this.$main.innerHTML = '<p class="text-error">No se han podido cargar tus turnos.</p>';
+        }.bind(this));
     },
 
     /* ── Search activities (public) ──────────────────── */

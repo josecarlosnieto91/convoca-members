@@ -1,12 +1,14 @@
-## [2.8.102] — 2026-10-16
+## [2.8.103] — 2026-10-16
 
-### Arreglado
-- **Entrar por el panel abre también la sesión de WordPress (shifts#19).** Medido en la misma página con
-  cuatro estados: un socio con su **sesión de panel** abierta leía «Si eres voluntario/a, inicia sesión para
-  apuntarte», porque `Member_Auth::login()` crea su propia sesión (`convoca_member_session`) y **no abría la de
-  WordPress**: para WordPress seguía siendo un visitante anónimo y todos los shortcodes de turnos le contestaban
-  que entrara. Tenía que descubrir un **segundo formulario de acceso**, con las mismas credenciales y sin que
-  nadie se lo dijera.
-  Ahora el login del panel establece también la sesión de WordPress del usuario vinculado a la ficha
-  (`wp_set_auth_cookie()`), así que una sola entrada sirve para todo: panel, turnos e inscripciones.
+### Añadido
+- **«Mis turnos» en el panel del socio (shifts#19).** El panel tenía siete secciones y ninguna de turnos, así
+  que quien quería apuntarse tenía que encontrar la página del cuadrante por su cuenta, y la suscripción a su
+  calendario `.ics` solo vivía en una caja de una página suelta (ver shifts#16).
+  La pestaña nueva trae **sus próximos turnos**, el **cuadrante** del centro para ver los huecos libres y la
+  **caja de suscripción a su calendario**, y todo ello **delegando en los shortcodes del plugin de turnos**
+  (`convoca_proximos_turnos`, `convoca_calendario`, `convoca_suscripcion_turnos`): es él quien sabe de turnos y
+  copiar su lógica aquí sería tener dos versiones de la verdad. Sin el plugin de turnos, la pestaña no se pinta
+  y el endpoint contesta que los turnos no están disponibles, en vez de romperse.
+- Cuatro pruebas nuevas (`SeccionMisTurnosTest`), una de ellas comprobando de verdad el caso «sin plugin de
+  turnos» contra el endpoint.
 

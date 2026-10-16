@@ -342,6 +342,13 @@ class Mi_Area {
 						<li data-tab="inscriptions">📝 <?php esc_html_e( 'Inscripciones', 'convoca-members' ); ?></li>
 						<li data-tab="hours">⏳ <?php esc_html_e( 'Voluntariado', 'convoca-members' ); ?></li>
 						<li data-tab="payments">💳 <?php esc_html_e( 'Pagos y Cuotas', 'convoca-members' ); ?></li>
+						<?php
+						// Mis turnos (shifts#19): solo si el plugin de turnos está puesto. El contenido lo pone él
+						// (sus shortcodes), aquí no se reescribe nada suyo.
+						if ( shortcode_exists( 'convoca_proximos_turnos' ) ) :
+							?>
+						<li data-tab="turnos">📅 <?php esc_html_e( 'Mis turnos', 'convoca-members' ); ?></li>
+						<?php endif; ?>
 						<li data-tab="privacy">🔒 <?php esc_html_e( 'Mis datos y privacidad', 'convoca-members' ); ?></li>
 						<li data-tab="search">🔍 <?php esc_html_e( 'Buscar', 'convoca-members' ); ?></li>
 						<li data-tab="notifications" class="conv-notif-tab">🔔 <?php esc_html_e( 'Notificaciones', 'convoca-members' ); ?> <span class="conv-notif-badge" id="conv-notif-count" style="display:none">0</span></li>
