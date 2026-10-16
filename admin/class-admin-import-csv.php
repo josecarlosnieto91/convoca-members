@@ -143,7 +143,7 @@ class Admin_Import_CSV {
 					<form method="post" action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>">
 						<?php wp_nonce_field( 'convoca_import_csv_run' ); ?>
 						<input type="hidden" name="action" value="convoca_import_csv_run">
-						<input type="hidden" name="filename" value="<?php echo esc_attr( $preview['filename'] ); ?>">
+						<input type="hidden" name="token" value="<?php echo esc_attr( $preview['token'] ); ?>">
 						<input type="hidden" name="total_rows" value="<?php echo esc_attr( $preview['total'] ); ?>">
 
 						<div class="convoca-field">
@@ -237,7 +237,7 @@ class Admin_Import_CSV {
 		if ( 'xlsx' === $ext ) {
 			try {
 				$csv_data = \Convoca\Members\Admin\Xlsx_Reader::to_csv( $filename );
-				$temp_csv = tempnam( sys_get_temp_dir(), 'convoca_xlsx_' ) . '.csv';
+				$temp_csv = tempnam( self::dir_importacion(), 'xlsx_' ) . '.csv';
 				file_put_contents( $temp_csv, $csv_data ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_file_put_contents -- temp file.
 				$filename = $temp_csv;
 			} catch ( \RuntimeException $e ) {
@@ -269,8 +269,22 @@ class Admin_Import_CSV {
 		}
 		fclose( $handle ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_fclose
 
-		$target_filename = 'convoca_import_' . uniqid() . '.csv';
-		copy( $filename, sys_get_temp_dir() . '/' . $target_filename );
+		// El censo se guarda en el directorio privado, con nombre de ficha aleatoria (members#48).
+		$token   = bin2hex( random_bytes( 16 ) );
+		$destino = self::dir_importacion() . '/' . $token . '.csv';
+		if ( ! copy( $filename, $destino ) ) {
+			wp_die( esc_html__( 'No se ha podido guardar el archivo para la importación.', 'convoca-members' ) );
+		}
+		chmod( $destino, 0600 ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_chmod -- Permisos del dueño para un fichero con datos personales.
+
+		set_transient(
+			'convoca_csv_fichero_' . $token,
+			array(
+				'ruta'    => $destino,
+				'usuario' => get_current_user_id(),
+			),
+			HOUR_IN_SECONDS
+		);
 
 		set_transient(
 			'convoca_csv_preview_' . get_current_user_id(),
@@ -278,7 +292,8 @@ class Admin_Import_CSV {
 				'headers'  => $headers,
 				'rows'     => $rows,
 				'total'    => $total,
-				'filename' => $target_filename,
+				'token'    => $token,
+				'nombre'   => sanitize_file_name( (string) ( $_FILES['csv_file']['name'] ?? '' ) ),
 			),
 			600
 		);
@@ -305,16 +320,82 @@ class Admin_Import_CSV {
 		exit;
 	}
 
+	/**
+	 * El directorio donde vive el censo entre los dos pasos de la importación (members#48).
+	 *
+	 * ANTES: el CSV se copiaba al `/tmp` **compartido** del servidor (modo 1777) y en el segundo paso se abría
+	 * la ruta que mandaba el cliente (`$_POST['filename']`). Un censo con nombres, DNI, correos y direcciones
+	 * pasaba por un directorio que cualquier otro usuario de la máquina puede leer, y con un `filename` a mano
+	 * la importación leía CUALQUIER fichero de ese directorio.
+	 *
+	 * AHORA: un subdirectorio propio del sitio, con permisos de dueño (0700, así nadie de fuera puede ni
+	 * entrar), fuera de la raíz web (no se puede pedir por URL ni con nginx, donde un `.htaccess` no valdría),
+	 * y con el fichero nombrado con una ficha aleatoria. En el segundo paso el navegador manda la **ficha**,
+	 * no una ruta: el servidor resuelve la ruta él mismo y comprueba que el fichero está dentro de su carpeta.
+	 *
+	 * @return string Ruta del directorio, sin barra final.
+	 */
+	private static function dir_importacion(): string {
+		$dir = rtrim( sys_get_temp_dir(), '/' ) . '/convoca-imports-' . substr( md5( ABSPATH ), 0, 12 );
+
+		if ( ! is_dir( $dir ) ) {
+			// Se crea ya en 0700 (`wp_mkdir_p()` lo haría en 0755 y dejaría una ventana con el censo dentro).
+			mkdir( $dir, 0700, true ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_mkdir -- Carpeta privada de trabajo.
+		}
+
+		// Los restos de una importación abandonada en el primer paso se limpian aquí (viven dos horas).
+		// phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_glob, WordPress.WP.AlternativeFunctions.file_system_operations_filemtime -- Directorio propio del sitio.
+		foreach ( (array) glob( $dir . '/*.csv' ) as $viejo ) {
+			if ( filemtime( $viejo ) < time() - 2 * HOUR_IN_SECONDS ) {
+				unlink( $viejo ); // phpcs:ignore WordPress.WP.AlternativeFunctions.unlink_unlink -- Limpieza de restos.
+			}
+		}
+
+		return $dir;
+	}
+
+	/**
+	 * Resuelve la ruta del censo a partir de la ficha que manda el navegador (members#48).
+	 *
+	 * @param string $token Ficha (32 caracteres hexadecimales).
+	 * @return string Ruta del fichero, o '' si la ficha no vale.
+	 */
+	private static function ruta_por_ficha( string $token ): string {
+		if ( ! preg_match( '/^[a-f0-9]{32}$/', $token ) ) {
+			return '';
+		}
+
+		$ficha = get_transient( 'convoca_csv_fichero_' . $token );
+		if ( ! is_array( $ficha ) || empty( $ficha['ruta'] ) ) {
+			return '';
+		}
+
+		// Solo sirve el fichero de esta importación y de quien la empezó.
+		if ( (int) ( $ficha['usuario'] ?? 0 ) !== get_current_user_id() ) {
+			return '';
+		}
+
+		$ruta = (string) $ficha['ruta'];
+		$real = realpath( $ruta );
+		$dir  = realpath( self::dir_importacion() );
+
+		if ( ! $real || ! $dir || 0 !== strpos( $real, $dir . '/' ) || ! is_file( $real ) ) {
+			return '';
+		}
+
+		return $real;
+	}
+
 	public function handle_import(): void {
 		check_admin_referer( 'convoca_import_csv_run' );
 		if ( ! current_user_can( 'manage_options' ) ) {
 			wp_die( esc_html__( 'No tienes permisos.', 'convoca-members' ) );
 		}
 
-		$filename = sanitize_file_name( wp_unslash( $_POST['filename'] ?? '' ) );
-		$filepath = sys_get_temp_dir() . '/' . $filename;
-		if ( ! file_exists( $filepath ) ) {
-			wp_die( esc_html__( 'Archivo temporal no encontrado. Vuelve a subir el CSV.', 'convoca-members' ) );
+		// La ruta la resuelve el servidor a partir de la ficha; el navegador no manda rutas (members#48).
+		$filepath = self::ruta_por_ficha( (string) wp_unslash( $_POST['token'] ?? '' ) );
+		if ( '' === $filepath ) {
+			wp_die( esc_html__( 'La importación ha caducado o no se ha podido comprobar el archivo. Vuelve a subir el CSV.', 'convoca-members' ) );
 		}
 
 		$map             = array_map( 'sanitize_text_field', wp_unslash( $_POST['map'] ?? array() ) );
