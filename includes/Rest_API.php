@@ -199,6 +199,25 @@ class Rest_API {
 			)
 		);
 
+		// El circuito del voluntariado, en el panel del socio (members#50): leer el paso y mover lo que
+		// decide la propia persona (cuestionario, acuerdo, pedir la baja).
+		register_rest_route(
+			self::NAMESPACE,
+			'/me/voluntariado',
+			array(
+				array(
+					'methods'             => 'GET',
+					'callback'            => array( $this, 'get_voluntariado' ),
+					'permission_callback' => array( $this, 'check_member_auth' ),
+				),
+				array(
+					'methods'             => 'POST',
+					'callback'            => array( $this, 'submit_voluntariado' ),
+					'permission_callback' => array( $this, 'check_active_member' ),
+				),
+			)
+		);
+
 		// Unsubscribe request.
 		register_rest_route(
 			self::NAMESPACE,
@@ -1226,6 +1245,66 @@ class Rest_API {
 	/**
 	 * Process unsubscribe request.
 	 */
+	/**
+	 * El bloque del circuito del voluntariado, para el panel del socio (members#50).
+	 */
+	public function get_voluntariado(): \WP_REST_Response {
+		$member_id = (int) Member_Auth::get_current_member_id();
+
+		return new \WP_REST_Response(
+			array( 'html' => \Convoca\Members\Circuito_Voluntariado::bloque_panel( $member_id ) )
+		);
+	}
+
+	/**
+	 * Mueve un paso del circuito desde el panel: lo que decide la persona, y nada más.
+	 *
+	 * El cuestionario contestado cierra la entrevista, y a partir de ahí la persona es voluntaria (es la
+	 * regla del circuito, decidida con JC el 16/10/2026, no una decisión del panel). Pedir la baja **no** da
+	 * de baja: avisa a la junta, que es quien la confirma.
+	 *
+	 * @param \WP_REST_Request $request Petición (accion + los datos del paso).
+	 */
+	public function submit_voluntariado( \WP_REST_Request $request ): \WP_REST_Response {
+		$member_id = (int) Member_Auth::get_current_member_id();
+		$accion    = sanitize_key( (string) $request->get_param( 'accion' ) );
+		$mensaje   = '';
+
+		switch ( $accion ) {
+			case 'cuestionario':
+				$preguntas  = \Convoca\Members\Circuito_Voluntariado::preguntas();
+				$respuestas = array();
+
+				foreach ( (array) $request->get_param( 'respuestas' ) as $indice => $respuesta ) {
+					$pregunta = $preguntas[ (int) $indice ] ?? '';
+					if ( '' !== $pregunta ) {
+						$respuestas[ $pregunta ] = sanitize_textarea_field( (string) $respuesta );
+					}
+				}
+
+				\Convoca\Members\Circuito_Voluntariado::resolver_entrevista( $member_id, $respuestas );
+				$mensaje = __( '¡Gracias! Ya has enviado el cuestionario.', 'convoca-members' );
+				break;
+
+			case 'acuerdo':
+				\Convoca\Members\Circuito_Voluntariado::aceptar_acuerdo( $member_id );
+				$mensaje = __( 'Acuerdo aceptado: queda guardado con su fecha.', 'convoca-members' );
+				break;
+
+			case 'baja':
+				\Convoca\Members\Circuito_Voluntariado::solicitar_desvinculacion( $member_id, sanitize_textarea_field( (string) $request->get_param( 'motivo' ) ) );
+				$mensaje = __( 'Hemos avisado a la junta para confirmar tu desvinculación.', 'convoca-members' );
+				break;
+		}
+
+		return new \WP_REST_Response(
+			array(
+				'message' => $mensaje,
+				'html'    => \Convoca\Members\Circuito_Voluntariado::bloque_panel( $member_id ),
+			)
+		);
+	}
+
 	public function unsubscribe_request( \WP_REST_Request $request ): \WP_REST_Response {
 		$member_id = Member_Auth::get_current_member_id();
 

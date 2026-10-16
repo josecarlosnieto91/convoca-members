@@ -29,6 +29,11 @@
         } else if (e.target && e.target.id === 'conv-hours-form') {
             e.preventDefault();
             self.submitHours(e.target);
+        } else if (e.target && e.target.matches('form[data-convoca-voluntariado]')) {
+            // El circuito del voluntariado (members#50): el cuestionario, el acuerdo y la baja se
+            // mandan por la misma puerta que todo lo demás del panel.
+            e.preventDefault();
+            self.enviarVoluntariado(e.target);
         }
       });
 
@@ -797,7 +802,54 @@
       });
     },
 
+    /* ── El circuito del voluntariado (members#50) ────── */
+    /**
+     * Trae el bloque que dice en qué paso está la persona y le ofrece lo que le toca.
+     *
+     * Va aparte del resto de la pestaña a propósito: si este endpoint fallara, lo que ya había —las horas,
+     * los proyectos— tiene que seguir viéndose.
+     */
+    cargarBloqueVoluntariado: function() {
+      const self = this;
+      fetch(window.convMiArea.apiUrl + '/me/voluntariado', { headers: { 'X-WP-Nonce': window.convMiArea.nonce } })
+        .then(function(r) { return r.ok ? r.json() : { html: '' }; })
+        .then(function(d) {
+          if (!d || !d.html) return;
+          const previo = self.$main.querySelector('#conv-bloque-voluntariado');
+          if (previo) previo.remove();
+          self.$main.insertAdjacentHTML('afterbegin', d.html);
+        })
+        .catch(function() {});
+    },
+
+    /**
+     * Manda un paso del circuito y repinta el bloque con lo que responda el servidor.
+     *
+     * @param {HTMLFormElement} form El formulario del paso.
+     */
+    enviarVoluntariado: function(form) {
+      const self = this;
+      const datos = new FormData(form);
+      datos.append('accion', form.dataset.convocaVoluntariado);
+
+      fetch(window.convMiArea.apiUrl + '/me/voluntariado', {
+        method: 'POST',
+        headers: { 'X-WP-Nonce': window.convMiArea.nonce },
+        body: datos
+      })
+        .then(function(r) { return r.ok ? r.json() : null; })
+        .then(function(d) {
+          if (!d) { alert('No se ha podido enviar. Inténtalo de nuevo.'); return; }
+          const previo = self.$main.querySelector('#conv-bloque-voluntariado');
+          if (previo && d.html) { previo.outerHTML = d.html; }
+          if (d.message) { alert(d.message); }
+        })
+        .catch(function() { alert('No se ha podido enviar. Inténtalo de nuevo.'); });
+    },
+
     fetchHours: function() {
+      this.cargarBloqueVoluntariado();
+
       // Cada petición lleva su propio respaldo: antes, un solo endpoint que fallara o no existiera
       // tumbaba la pestaña entera con «Error cargando datos de horas» y el socio no veía nada más.
       const pedir = (url, conNonce, respaldo) => fetch(

@@ -815,4 +815,95 @@ class Circuito_Voluntariado {
 
 		update_post_meta( $miembro_id, self::META_HISTORIAL, $historial );
 	}
+	/**
+	 * El bloque del panel del socio: en qué paso está su voluntariado y qué le toca a él.
+	 *
+	 * Solo las acciones que decide la persona: contestar el cuestionario, aceptar el acuerdo y pedir la
+	 * desvinculación. Lo que decide la junta —dar el paso a voluntariado, confirmar la baja— no se ofrece
+	 * aquí, porque no es suyo.
+	 *
+	 * @param int $miembro_id Ficha del socio.
+	 */
+	public static function bloque_panel( int $miembro_id ): string {
+		$estado = self::estado( $miembro_id );
+		$pasos  = self::pasos();
+
+		$html  = '<div id="conv-bloque-voluntariado" class="conv-card" style="margin-bottom:1.25rem">';
+		$html .= '<h3>🧭 ' . esc_html__( 'Tu voluntariado', 'convoca-members' ) . '</h3>';
+		$html .= '<p>' . sprintf(
+			/* translators: %s: current step */
+			esc_html__( 'Estás en: %s', 'convoca-members' ),
+			'<strong>' . esc_html( $pasos[ $estado ] ?? $estado ) . '</strong>'
+		) . '</p>';
+
+		$faltantes = self::faltantes( $miembro_id );
+		if ( ! empty( $faltantes ) ) {
+			$html .= '<p>⚠ ' . esc_html( implode( ' · ', $faltantes ) ) . '</p>';
+		}
+
+		if ( self::ESTADO_ENTREVISTA === $estado ) {
+			$cita = self::entrevista( $miembro_id );
+			if ( '' !== $cita['fecha'] ) {
+				$html .= '<p>' . sprintf(
+					/* translators: %s: interview date and time */
+					esc_html__( 'Tu entrevista: %s', 'convoca-members' ),
+					esc_html( trim( $cita['fecha'] . ' ' . $cita['hora'] ) )
+				) . '</p>';
+			}
+
+			$preguntas = self::preguntas();
+			if ( ! empty( $preguntas ) ) {
+				$html .= '<form data-convoca-voluntariado="cuestionario">';
+				foreach ( $preguntas as $indice => $pregunta ) {
+					$html .= '<p><label>' . esc_html( $pregunta ) . '<br>'
+						. '<textarea name="respuestas[' . (int) $indice . ']" rows="3" style="width:100%"></textarea></label></p>';
+				}
+				$html .= '<button type="submit" class="conv-btn">' . esc_html__( 'Enviar mis respuestas', 'convoca-members' ) . '</button></form>';
+			}
+		}
+
+		if ( self::ESTADO_ACTIVO === $estado && ! self::acuerdo_aceptado( $miembro_id ) ) {
+			$html .= '<form data-convoca-voluntariado="acuerdo">'
+				. '<p>' . esc_html__( 'Te falta aceptar el acuerdo de voluntariado. Al aceptarlo se genera tu acuerdo firmado, con su fecha, y queda guardado.', 'convoca-members' ) . '</p>'
+				. '<button type="submit" class="conv-btn">' . esc_html__( 'Acepto el acuerdo de voluntariado', 'convoca-members' ) . '</button></form>';
+		}
+
+		if ( self::ESTADO_ACTIVO === $estado ) {
+			if ( self::baja_solicitada( $miembro_id ) ) {
+				$html .= '<p>' . esc_html__( 'Has pedido desvincularte: la junta lo confirma en cuanto lo vea.', 'convoca-members' ) . '</p>';
+			} else {
+				$html .= '<details><summary>' . esc_html__( 'Quiero desvincularme', 'convoca-members' ) . '</summary>'
+					. '<form data-convoca-voluntariado="baja">'
+					. '<p><label>' . esc_html__( '¿Nos cuentas por qué? (opcional)', 'convoca-members' ) . '<br>'
+					. '<textarea name="motivo" rows="3" style="width:100%"></textarea></label></p>'
+					. '<p>' . esc_html__( 'Tus horas quedan registradas y podrás descargar tu certificado igual.', 'convoca-members' ) . '</p>'
+					. '<button type="submit" class="conv-btn">' . esc_html__( 'Pedir la desvinculación', 'convoca-members' ) . '</button></form></details>';
+			}
+		}
+
+		if ( self::ESTADO_DESVINCULADO === $estado ) {
+			$baja  = self::desvinculacion( $miembro_id );
+			$html .= '<p>' . sprintf(
+				/* translators: 1: date, 2: reason for leaving */
+				esc_html__( 'Tu etapa como voluntario se cerró el %1$s (%2$s).', 'convoca-members' ),
+				esc_html( substr( $baja['fecha'], 0, 10 ) ),
+				esc_html( self::causas()[ $baja['causa'] ] ?? $baja['causa'] )
+			) . '</p>';
+			$html .= '<p>' . esc_html__( 'Tus horas quedan registradas y tu certificado se puede seguir descargando y validando.', 'convoca-members' ) . '</p>';
+		}
+
+		if ( Roles_Miembro::es_monitor( $miembro_id ) ) {
+			$html .= '<p>' . esc_html__( 'Además, eres monitor de actividades: puedes acreditar horas de otras personas.', 'convoca-members' ) . '</p>';
+		}
+
+		$html .= '</div>';
+
+		/**
+		 * El bloque del circuito del voluntariado en el panel del socio.
+		 *
+		 * @param string $html       El HTML del bloque.
+		 * @param int    $miembro_id Ficha del socio.
+		 */
+		return (string) apply_filters( 'convoca_voluntariado_bloque_panel', $html, $miembro_id );
+	}
 }

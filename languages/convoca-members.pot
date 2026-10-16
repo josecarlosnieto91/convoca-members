@@ -2,14 +2,14 @@
 # This file is distributed under the GPL-2.0-or-later.
 msgid ""
 msgstr ""
-"Project-Id-Version: Convoca Members 2.9.0\n"
+"Project-Id-Version: Convoca Members 2.9.1\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/convoca-members\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-10-16T05:38:39+00:00\n"
+"POT-Creation-Date: 2026-10-16T05:43:17+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.12.0\n"
 "X-Domain: convoca-members\n"
@@ -1262,7 +1262,7 @@ msgid "Todos los datos del miembro han sido eliminados."
 msgstr ""
 
 #: admin/class-admin-metaboxes.php:752
-#: includes/Rest_API.php:1338
+#: includes/Rest_API.php:1417
 msgid "Documento no encontrado."
 msgstr ""
 
@@ -2444,8 +2444,8 @@ msgid "No tienes permisos suficientes para exportar la lista de miembros."
 msgstr ""
 
 #: admin/class-csv-exporter.php:136
-#: includes/Rest_API.php:1356
-#: includes/Rest_API.php:1370
+#: includes/Rest_API.php:1435
+#: includes/Rest_API.php:1449
 msgid "Acceso Denegado"
 msgstr ""
 
@@ -2702,7 +2702,7 @@ msgstr[0] ""
 msgstr[1] ""
 
 #: includes/Certificate_Generator.php:376
-#: includes/Rest_API.php:1189
+#: includes/Rest_API.php:1208
 msgid "Aún no has completado las horas mínimas requeridas para generar el certificado."
 msgstr ""
 
@@ -2809,6 +2809,68 @@ msgstr ""
 
 #: includes/Circuito_Voluntariado.php:548
 msgid "acuerdo aceptado"
+msgstr ""
+
+#: includes/Circuito_Voluntariado.php:832
+msgid "Tu voluntariado"
+msgstr ""
+
+#. translators: %s: current step
+#: includes/Circuito_Voluntariado.php:835
+#, php-format
+msgid "Estás en: %s"
+msgstr ""
+
+#. translators: %s: interview date and time
+#: includes/Circuito_Voluntariado.php:849
+#, php-format
+msgid "Tu entrevista: %s"
+msgstr ""
+
+#: includes/Circuito_Voluntariado.php:861
+msgid "Enviar mis respuestas"
+msgstr ""
+
+#: includes/Circuito_Voluntariado.php:867
+msgid "Te falta aceptar el acuerdo de voluntariado. Al aceptarlo se genera tu acuerdo firmado, con su fecha, y queda guardado."
+msgstr ""
+
+#: includes/Circuito_Voluntariado.php:868
+msgid "Acepto el acuerdo de voluntariado"
+msgstr ""
+
+#: includes/Circuito_Voluntariado.php:873
+msgid "Has pedido desvincularte: la junta lo confirma en cuanto lo vea."
+msgstr ""
+
+#: includes/Circuito_Voluntariado.php:875
+msgid "Quiero desvincularme"
+msgstr ""
+
+#: includes/Circuito_Voluntariado.php:877
+msgid "¿Nos cuentas por qué? (opcional)"
+msgstr ""
+
+#: includes/Circuito_Voluntariado.php:879
+msgid "Tus horas quedan registradas y podrás descargar tu certificado igual."
+msgstr ""
+
+#: includes/Circuito_Voluntariado.php:880
+msgid "Pedir la desvinculación"
+msgstr ""
+
+#. translators: 1: date, 2: reason for leaving
+#: includes/Circuito_Voluntariado.php:888
+#, php-format
+msgid "Tu etapa como voluntario se cerró el %1$s (%2$s)."
+msgstr ""
+
+#: includes/Circuito_Voluntariado.php:892
+msgid "Tus horas quedan registradas y tu certificado se puede seguir descargando y validando."
+msgstr ""
+
+#: includes/Circuito_Voluntariado.php:896
+msgid "Además, eres monitor de actividades: puedes acreditar horas de otras personas."
 msgstr ""
 
 #: includes/CPT_Documento.php:49
@@ -3714,7 +3776,7 @@ msgid ""
 msgstr ""
 
 #: includes/Member_Auth.php:55
-#: includes/Rest_API.php:442
+#: includes/Rest_API.php:461
 msgid "Usuario y contraseña son obligatorios."
 msgstr ""
 
@@ -3825,135 +3887,147 @@ msgstr ""
 msgid "api.mailgun.net (US) o api.eu.mailgun.net (EU)."
 msgstr ""
 
-#: includes/Rest_API.php:386
+#: includes/Rest_API.php:405
 msgid "Tu cuenta no está activa. Contacta con coordinación si crees que es un error."
 msgstr ""
 
-#: includes/Rest_API.php:417
+#: includes/Rest_API.php:436
 msgid "Tu membresía está dada de baja. Vuelve a darte de alta desde el formulario para reincorporarte."
 msgstr ""
 
-#: includes/Rest_API.php:424
+#: includes/Rest_API.php:443
 msgid "Tu cuenta no puede renovar en este estado. Contacta con coordinación."
 msgstr ""
 
-#: includes/Rest_API.php:554
+#: includes/Rest_API.php:573
 msgid "No hemos podido identificarte como socio."
 msgstr ""
 
-#: includes/Rest_API.php:564
+#: includes/Rest_API.php:583
 msgid "Todavía no has llegado a las horas de tu plan, así que este año te toca cuota. En cuanto las tengas, la renovación te sale sin pago."
 msgstr ""
 
-#: includes/Rest_API.php:575
+#: includes/Rest_API.php:594
 msgid "¡Hecho! Tu membresía se ha renovado sin pago con tus horas de voluntariado."
 msgstr ""
 
-#: includes/Rest_API.php:606
-#: includes/Rest_API.php:1177
-#: includes/Rest_API.php:1397
-#: includes/Rest_API.php:1459
-#: includes/Rest_API.php:1597
+#: includes/Rest_API.php:625
+#: includes/Rest_API.php:1196
+#: includes/Rest_API.php:1476
+#: includes/Rest_API.php:1538
+#: includes/Rest_API.php:1676
 msgid "Miembro no encontrado."
 msgstr ""
 
-#: includes/Rest_API.php:685
+#: includes/Rest_API.php:704
 msgid "Actividad desconocida"
 msgstr ""
 
-#: includes/Rest_API.php:760
+#: includes/Rest_API.php:779
 msgid "No se ha podido registrar la solicitud. Escríbenos y lo arreglamos."
 msgstr ""
 
-#: includes/Rest_API.php:770
+#: includes/Rest_API.php:789
 msgid "Solicitud registrada. La junta la revisará y borrará tus datos personales; recibirás aviso cuando esté."
 msgstr ""
 
-#: includes/Rest_API.php:849
-#: includes/Rest_API.php:856
+#: includes/Rest_API.php:868
+#: includes/Rest_API.php:875
 #: public/class-mi-area.php:350
 msgid "Mis turnos"
 msgstr ""
 
-#: includes/Rest_API.php:850
+#: includes/Rest_API.php:869
 msgid "Los turnos no están disponibles en este momento."
 msgstr ""
 
-#: includes/Rest_API.php:863
+#: includes/Rest_API.php:882
 msgid "Cuadrante del centro"
 msgstr ""
 
-#: includes/Rest_API.php:869
+#: includes/Rest_API.php:888
 msgid "Tu calendario"
 msgstr ""
 
-#: includes/Rest_API.php:983
+#: includes/Rest_API.php:1002
 msgid "Demasiadas peticiones."
 msgstr ""
 
-#: includes/Rest_API.php:1220
+#: includes/Rest_API.php:1239
 msgid "Miembro no encontrado o no autorizado"
 msgstr ""
 
-#: includes/Rest_API.php:1310
+#: includes/Rest_API.php:1286
+msgid "¡Gracias! Ya has enviado el cuestionario."
+msgstr ""
+
+#: includes/Rest_API.php:1291
+msgid "Acuerdo aceptado: queda guardado con su fecha."
+msgstr ""
+
+#: includes/Rest_API.php:1296
+msgid "Hemos avisado a la junta para confirmar tu desvinculación."
+msgstr ""
+
+#: includes/Rest_API.php:1389
 msgid "Falta ID de notificación."
 msgstr ""
 
-#: includes/Rest_API.php:1338
-#: includes/Rest_API.php:1362
+#: includes/Rest_API.php:1417
+#: includes/Rest_API.php:1441
 #: public/class-mi-area.php:168
 msgid "Error"
 msgstr ""
 
-#: includes/Rest_API.php:1356
+#: includes/Rest_API.php:1435
 msgid "No tienes permiso para ver este documento."
 msgstr ""
 
-#: includes/Rest_API.php:1362
+#: includes/Rest_API.php:1441
 msgid "El archivo físico no existe en el servidor."
 msgstr ""
 
-#: includes/Rest_API.php:1370
+#: includes/Rest_API.php:1449
 msgid "Archivo no válido."
 msgstr ""
 
-#: includes/Rest_API.php:1404
+#: includes/Rest_API.php:1483
 msgid "No se encontró el plan de la membresía."
 msgstr ""
 
-#: includes/Rest_API.php:1410
+#: includes/Rest_API.php:1489
 msgid "Este plan no requiere pago."
 msgstr ""
 
-#: includes/Rest_API.php:1414
+#: includes/Rest_API.php:1493
 msgid "La pasarela de pago no está disponible."
 msgstr ""
 
-#: includes/Rest_API.php:1485
+#: includes/Rest_API.php:1564
 msgid "El cumpleaños ya está establecido y no puede modificarse."
 msgstr ""
 
-#: includes/Rest_API.php:1494
+#: includes/Rest_API.php:1573
 msgid "Fecha de cumpleaños no válida."
 msgstr ""
 
-#: includes/Rest_API.php:1505
+#: includes/Rest_API.php:1584
 msgid "Email no válido."
 msgstr ""
 
-#: includes/Rest_API.php:1524
+#: includes/Rest_API.php:1603
 msgid "Ese email ya está en uso por otro socio."
 msgstr ""
 
-#: includes/Rest_API.php:1567
+#: includes/Rest_API.php:1646
 msgid "Token de confirmación no válido."
 msgstr ""
 
-#: includes/Rest_API.php:1570
+#: includes/Rest_API.php:1649
 msgid "El enlace de confirmación ha caducado. Solicítalo de nuevo."
 msgstr ""
 
-#: includes/Rest_API.php:1603
+#: includes/Rest_API.php:1682
 msgid "Guarda primero tu número de teléfono en el perfil."
 msgstr ""
 
