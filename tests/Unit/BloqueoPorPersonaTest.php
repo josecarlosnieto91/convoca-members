@@ -80,7 +80,7 @@ class BloqueoPorPersonaTest extends TestCase {
 	/**
 	 * El botón devuelve a la pantalla de verdad.
 	 *
-	 * DEFECTO PROPIO, medido en Lugg y en la demo (16/10/2026): la redirección apuntaba a
+	 * DEFECTO PROPIO, medido en el sitio de producción y en la demo (16/10/2026): la redirección iba a
 	 * `page=convoca-members-settings` y el slug real de la pantalla es `conv-members-settings`, así que al
 	 * pulsar «Desbloquear» el bloqueo SÍ se levantaba y acto seguido salía un 403 («No tienes permiso para
 	 * acceder a esta página»). Esta prueba compara los dos slugs: si se separan, vuelve el mismo error.
