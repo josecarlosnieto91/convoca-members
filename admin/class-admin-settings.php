@@ -281,7 +281,7 @@ class Admin_Settings {
 		wp_safe_redirect(
 			add_query_arg(
 				array(
-					'page'                 => 'convoca-members-settings',
+					'page'                 => 'conv-members-settings',
 					'tab'                  => 'seguridad',
 					'convoca_desbloqueado' => $hecho ? '1' : '0',
 				),

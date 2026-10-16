@@ -77,6 +77,31 @@ class BloqueoPorPersonaTest extends TestCase {
 		$this->assertStringContainsString( '$tope_conexion = max( $max * 5, $max + 20 );', $nucleo, 'El tope de conexión es más alto a propósito' );
 	}
 
+	/**
+	 * El botón devuelve a la pantalla de verdad.
+	 *
+	 * DEFECTO PROPIO, medido en Lugg y en la demo (16/10/2026): la redirección apuntaba a
+	 * `page=convoca-members-settings` y el slug real de la pantalla es `conv-members-settings`, así que al
+	 * pulsar «Desbloquear» el bloqueo SÍ se levantaba y acto seguido salía un 403 («No tienes permiso para
+	 * acceder a esta página»). Esta prueba compara los dos slugs: si se separan, vuelve el mismo error.
+	 */
+	public function test_el_boton_vuelve_a_la_pantalla_de_verdad(): void {
+		$ajustes = $this->leer( 'admin/class-admin-settings.php' );
+
+		preg_match_all( '/page=([a-z-]*members-settings)/', $ajustes, $enlaces );
+		$this->assertNotEmpty( $enlaces[1], 'No se han encontrado los enlaces de las pestañas' );
+
+		preg_match( "/'page'\s*=>\s*'([^']+)'/", $ajustes, $destino );
+		$this->assertNotEmpty( $destino[1], 'No se ha encontrado la redirección del desbloqueo' );
+
+		$this->assertContains(
+			$destino[1],
+			array_unique( $enlaces[1] ),
+			"La redirección del botón ($destino[1]) tiene que llevar a la misma pantalla que las pestañas ("
+				. implode( ', ', array_unique( $enlaces[1] ) ) . '): si no, el botón termina en un 403.'
+		);
+	}
+
 	/** La junta lo ve y lo levanta desde el panel, sin tocar la base de datos. */
 	public function test_la_junta_lo_ve_y_lo_levanta(): void {
 		$ajustes = $this->leer( 'admin/class-admin-settings.php' );
