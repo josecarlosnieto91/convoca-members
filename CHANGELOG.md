@@ -1,10 +1,8 @@
-## [2.8.86] — 2026-10-16
+## [2.8.87] — 2026-10-16
 
 ### Arreglado
-- **El botón de registrar el consentimiento se veía pero no guardaba nada (members#41).** El gancho lo
-  registraba el constructor de la clase del listado, y esa clase **solo se instancia al pintar su
-  pantalla**: en `admin-post.php` —la petición que dispara el botón— no llegaba a existir, así que la
-  petición se perdía sin error. Medido en la demo: el clic no cambiaba nada y no salía ningún aviso. Ahora
-  el manejador es **estático** y se registra en el arranque del plugin, junto al resto de la carga del
-  panel.
+- **El aviso de «consentimiento registrado» podía no salir (members#41).** Tras guardar, la vuelta a la
+  pantalla usaba `edit.php?post_type=miembro` como destino de respaldo, y esa URL **redirige** a la pantalla
+  propia del plugin por el camino del andamiaje, así que el aviso se perdía. Ahora el respaldo apunta
+  directamente a `admin.php?page=conv-members`.
 

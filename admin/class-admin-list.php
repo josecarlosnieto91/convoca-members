@@ -703,7 +703,7 @@ class Admin_List extends \WP_List_Table {
 			add_query_arg(
 				'convoca_consentimiento',
 				'ok',
-				wp_get_referer() ? wp_get_referer() : admin_url( 'edit.php?post_type=miembro' )
+				wp_get_referer() ? wp_get_referer() : admin_url( 'admin.php?page=conv-members' )
 			)
 		);
 		exit;
