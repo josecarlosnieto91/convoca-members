@@ -237,6 +237,25 @@ class Admin_List extends \WP_List_Table {
 			);
 		}
 
+		// Filter by privacidad (members#42): las solicitudes de supresión sin resolver.
+		$privacidad_filter = sanitize_text_field( $get_data['privacidad_filter'] ?? '' );
+		if ( 'supresion' === $privacidad_filter ) {
+			$args['meta_query'] = array_merge(
+				$args['meta_query'] ?? array(),
+				array(
+					'relation' => 'AND',
+					array(
+						'key'     => '_convoca_supresion_solicitada',
+						'compare' => 'EXISTS',
+					),
+					array(
+						'key'     => '_convoca_supresion_resuelta',
+						'compare' => 'NOT EXISTS',
+					),
+				)
+			);
+		}
+
 		// Filter by consentimiento (members#41).
 		$consentimiento_filter = sanitize_text_field( $get_data['consentimiento_filter'] ?? '' );
 		if ( 'con' === $consentimiento_filter || 'sin' === $consentimiento_filter ) {
@@ -342,6 +361,12 @@ class Admin_List extends \WP_List_Table {
 						<?php echo esc_html( $label ); ?>
 					</option>
 				<?php endforeach; ?>
+			</select>
+			<select name="privacidad_filter">
+				<option value="">
+					<?php esc_html_e( 'Privacidad (todas)', 'convoca-members' ); ?>
+				</option>
+				<option value="supresion" <?php selected( $get_data['privacidad_filter'] ?? '', 'supresion' ); ?>><?php esc_html_e( 'Con supresión pedida', 'convoca-members' ); ?></option>
 			</select>
 			<select name="consentimiento_filter">
 				<option value="">
@@ -570,7 +595,16 @@ class Admin_List extends \WP_List_Table {
 
 	public function column_estado( $item ): string {
 		$estado = get_post_meta( $item->ID, '_convoca_estado_miembro', true ) ?: 'pendiente_documentacion';
-		return Estados::badge_html( $estado );
+		$salida = Estados::badge_html( $estado );
+
+		// La supresión de datos pedida desde el panel del socio (members#42): la junta tiene que verla en el
+		// listado, no solo recibir el correo. Si no, la solicitud se queda sin resolver sin que nadie lo sepa.
+		$privacidad = GDPR_Tools::estado_privacidad( (int) $item->ID );
+		if ( $privacidad['pendiente'] ) {
+			$salida .= '<br><span style="color:#b32d2e;" title="' . esc_attr( sprintf( /* translators: %s: date of the request. */ __( 'Pidió la supresión de sus datos el %s', 'convoca-members' ), $privacidad['solicitada'] ) ) . '">🗑️ ' . esc_html__( 'Pide supresión', 'convoca-members' ) . '</span>';
+		}
+
+		return $salida;
 	}
 
 	/**

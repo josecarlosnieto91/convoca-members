@@ -246,6 +246,18 @@ class Admin_Dashboard {
 	private function get_alerts( array $stats ): array {
 		$alerts = array();
 
+		// Supresiones pedidas y sin resolver (members#42). El socio las pide desde su panel y la junta recibe
+		// correo, pero el aviso del escritorio es lo que hace que no se queden ahí.
+		$supresiones = \Convoca\Members\GDPR_Tools::contar_supresiones_pendientes();
+		if ( $supresiones > 0 ) {
+			$alerts[] = array(
+				'severity' => 'warning',
+				'icon'     => '🗑️',
+				'message'  => $supresiones . ' socio(s) han pedido la supresión de sus datos: hay que resolverla con el borrador de datos personales.',
+				'link'     => admin_url( 'edit.php?post_type=miembro&privacidad_filter=supresion' ),
+			);
+		}
+
 		// Consentimiento sin registrar (members#41): el RGPD pide poder demostrarlo, así que mientras haya
 		// socios activos sin constancia, esto es un aviso de verdad y no un adorno del escritorio.
 		$sin_consentimiento = \Convoca\Members\GDPR_Tools::contar_sin_consentimiento();

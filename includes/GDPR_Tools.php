@@ -402,6 +402,173 @@ class GDPR_Tools {
 	}
 
 	/**
+	 * Registra la solicitud de supresión de datos de un socio (members#42). Devuelve la fecha.
+	 *
+	 * Antes, quien quería ejercer el derecho de supresión tenía que escribir un correo y esperar a que
+	 * alguien de la junta supiera dónde estaba la herramienta (Herramientas → Borrar datos personales).
+	 * Ahora lo pide desde su panel, queda anotado en su ficha con su fecha y **la junta recibe aviso**.
+	 *
+	 * No borra nada por sí sola: la supresión la resuelve una persona con el borrador que ya existe. Pedirla
+	 * no destruye datos, que es justo lo que la ley pide (se atiende, no se ejecuta sola).
+	 *
+	 * @param int $member_id Ficha del socio.
+	 * @return string Fecha de la solicitud ('' si no se pudo registrar).
+	 */
+	public static function solicitar_supresion( int $member_id ): string {
+		if ( $member_id <= 0 || ! get_post( $member_id ) ) {
+			return '';
+		}
+
+		$ya = (string) get_post_meta( $member_id, '_convoca_supresion_solicitada', true );
+		if ( '' !== $ya ) {
+			return $ya; // Ya estaba pedida: no se duplica ni se vuelve a avisar.
+		}
+
+		$fecha = current_time( 'mysql' );
+		update_post_meta( $member_id, '_convoca_supresion_solicitada', $fecha );
+		delete_post_meta( $member_id, '_convoca_supresion_resuelta' );
+
+		Logger::info( "Solicitud de supresión de datos del socio #{$member_id}", 'Members/GDPR', $member_id );
+
+		self::avisar_solicitud_supresion( $member_id, $fecha );
+
+		return $fecha;
+	}
+
+	/**
+	 * Avisa a la junta por correo de que alguien ha pedido la supresión (members#42).
+	 *
+	 * @param int    $member_id Ficha del socio.
+	 * @param string $fecha     Fecha de la solicitud.
+	 */
+	private static function avisar_solicitud_supresion( int $member_id, string $fecha ): void {
+		$ajustes = get_option( 'convoca_members_settings', array() );
+		$destino = (string) ( $ajustes['admin_email'] ?? '' );
+		if ( '' === $destino ) {
+			$destino = (string) get_option( 'admin_email' );
+		}
+
+		if ( '' === $destino || ! is_email( $destino ) ) {
+			return;
+		}
+
+		$asunto = sprintf(
+			/* translators: %s: site name. */
+			__( '[%s] Solicitud de supresión de datos de un socio/a', 'convoca-members' ),
+			get_bloginfo( 'name' )
+		);
+
+		wp_mail( $destino, $asunto, self::cuerpo_aviso_supresion( $member_id, $fecha ) );
+	}
+
+	/**
+	 * El cuerpo del correo de aviso a la junta (members#42). Separado para poder comprobarlo.
+	 *
+	 * @param int    $member_id Ficha del socio.
+	 * @param string $fecha     Fecha de la solicitud.
+	 * @return string
+	 */
+	public static function cuerpo_aviso_supresion( int $member_id, string $fecha ): string {
+		$socio = get_post( $member_id );
+
+		return sprintf(
+			/* translators: 1: member name, 2: member id, 3: date, 4: admin url, 5: tools url. */
+			__( "El socio/a «%1\$s» (ficha #%2\$d) ha pedido la supresión de sus datos personales el %3\$s.\n\nLa baja NO borra nada: la supresión hay que resolverla con el borrador de datos personales.\n\nFicha: %4\$s\nHerramientas -> Borrar datos personales: %5\$s\n", 'convoca-members' ),
+			$socio ? $socio->post_title : '',
+			$member_id,
+			$fecha,
+			(string) get_edit_post_link( $member_id, '' ),
+			admin_url( 'tools.php?page=remove_personal_data' )
+		);
+	}
+
+	/**
+	 * Marca la solicitud de supresión como resuelta (la llama el borrador cuando termina).
+	 *
+	 * @param int $member_id Ficha del socio.
+	 */
+	public static function marcar_supresion_resuelta( int $member_id ): void {
+		if ( '' !== (string) get_post_meta( $member_id, '_convoca_supresion_solicitada', true ) ) {
+			update_post_meta( $member_id, '_convoca_supresion_resuelta', current_time( 'mysql' ) );
+		}
+	}
+
+	/**
+	 * El estado de la privacidad del socio, para su panel y para la junta (members#42).
+	 *
+	 * @param int $member_id Ficha del socio.
+	 * @return array{solicitada:string,resuelta:string,pendiente:bool,politica_version:string,consentimiento_fecha:string,consentimiento_version:string}
+	 */
+	public static function estado_privacidad( int $member_id ): array {
+		$solicitada = (string) get_post_meta( $member_id, '_convoca_supresion_solicitada', true );
+		$resuelta   = (string) get_post_meta( $member_id, '_convoca_supresion_resuelta', true );
+		$consent    = self::etiqueta_consentimiento( $member_id );
+		$ajustes    = get_option( 'convoca_members_settings', array() );
+
+		return array(
+			'solicitada'             => $solicitada,
+			'resuelta'               => $resuelta,
+			'pendiente'              => ( '' !== $solicitada && '' === $resuelta ),
+			'politica_version'       => (string) ( $ajustes['rgpd_version'] ?? '1.0' ),
+			'politica_url'           => (string) ( $ajustes['rgpd_url'] ?? '' ),
+			'consentimiento_fecha'   => $consent['fecha'],
+			'consentimiento_version' => $consent['version'],
+		);
+	}
+
+	/**
+	 * Cuántas solicitudes de supresión están sin resolver (para el aviso de la junta).
+	 *
+	 * @return int
+	 */
+	public static function contar_supresiones_pendientes(): int {
+		$fichas = get_posts(
+			array(
+				'post_type'      => 'miembro',
+				'post_status'    => 'any',
+				'posts_per_page' => -1,
+				'fields'         => 'ids',
+				'meta_query'     => array(
+					'relation' => 'AND',
+					array(
+						'key'     => '_convoca_supresion_solicitada',
+						'compare' => 'EXISTS',
+					),
+					array(
+						'key'     => '_convoca_supresion_resuelta',
+						'compare' => 'NOT EXISTS',
+					),
+				),
+			)
+		);
+
+		return count( $fichas );
+	}
+
+	/**
+	 * Los datos del socio para que se los pueda descargar (members#42).
+	 *
+	 * Se reutiliza el EXPORTADOR que ya existe (el que usa Herramientas → Exportar datos personales) y se le
+	 * añade lo que él no mira: el consentimiento, la privacidad y cuándo se generó la copia. Que sea el mismo
+	 * exportador es lo que garantiza que el socio reciba exactamente lo que la asociación guarda.
+	 *
+	 * @param int $member_id Ficha del socio.
+	 * @return array
+	 */
+	public static function datos_para_descargar( int $member_id ): array {
+		$email      = (string) get_post_meta( $member_id, '_convoca_email', true );
+		$export     = '' !== $email ? self::export_personal_data( $email, 1 ) : array( 'data' => array() );
+		$privacidad = self::estado_privacidad( $member_id );
+
+		return array(
+			'generado'      => current_time( 'mysql' ),
+			'sitio'         => get_bloginfo( 'name' ),
+			'privacidad'    => $privacidad,
+			'datos'         => $export['data'] ?? array(),
+		);
+	}
+
+	/**
 	 * Borra la foto del documento de identidad: el adjunto se va de verdad (members#40).
 	 *
 	 * La lista de campos que anonimiza el borrador es toda de la ficha y no incluía `_convoca_foto_id`:
@@ -534,6 +701,10 @@ class GDPR_Tools {
 			// Mark as erased.
 			update_post_meta( $member_id, '_convoca_estado', 'baja' );
 			update_post_meta( $member_id, '_convoca_gdpr_erased', current_time( 'mysql' ) );
+
+			// Y si había pedido la supresión desde su panel, queda resuelta (members#42): la junta tiene que
+			// poder ver que ya está hecha, o el aviso se queda encendido para siempre.
+			self::marcar_supresion_resuelta( $member_id );
 
 			++$items_removed;
 			$messages[] = "Datos personales de socio #{$member_id} anonimizados.";

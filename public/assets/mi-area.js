@@ -36,9 +36,13 @@
         if (e.target.closest('#conv-logout-btn')) {
             e.preventDefault();
             self.handleLogout();
+        } else if (e.target.closest('#conv-btn-descargar-datos')) {
+          this.descargarDatos(e.target.closest('#conv-btn-descargar-datos'));
+        } else if (e.target.closest('#conv-btn-pedir-supresion')) {
+          this.pedirSupresion(e.target.closest('#conv-btn-pedir-supresion'));
         } else if (e.target.closest('#conv-btn-unsubscribe')) {
             e.preventDefault();
-            if (confirm('¿Estás seguro de que quieres solicitar la baja del club de socios?')) {
+            if (confirm('¿Seguro que quieres solicitar la baja como socio/a?\n\nLa baja CONSERVA tu historial (pagos e inscripciones): solo deja de ser socio/a.\nSi además quieres que borremos tus datos personales, pídelo después en «Mis datos y privacidad».')) {
                 self.requestUnsubscribe();
             }
         } else {
@@ -154,6 +158,7 @@
         case 'hours': this.fetchHours(); break;
         case 'membership': this.renderMembership(); break;
         case 'search': this.renderSearch(); break;
+        case 'privacy': this.fetchPrivacidad(); break;
         case 'notifications': this.fetchNotifications(); break;
       }
     },
@@ -482,6 +487,68 @@
       .catch(() => { this.$main.innerHTML = '<p>Error cargando inscripciones.</p>'; });
     },
 
+    /**
+     * «Mis datos y privacidad» (members#42).
+     *
+     * Antes no había forma de ejercer los derechos desde aquí: quien quería sus datos o su supresión tenía
+     * que escribir un correo y esperar a que alguien de la junta supiera dónde estaba la herramienta del
+     * escritorio. Y quien pedía la baja creía que con eso desaparecían sus datos, y no: la baja conserva el
+     * historial. Aquí se ve lo que se guarda, se descarga en un fichero y se pide la supresión —que la
+     * resuelve una persona, no el botón.
+     */
+    fetchPrivacidad: function() {
+      fetch(window.convMiArea.apiUrl + '/me/privacidad', { headers: { 'X-WP-Nonce': window.convMiArea.nonce } })
+      .then(res => res.json())
+      .then(p => {
+        const consentimiento = p.consentimiento_fecha
+          ? `Aceptaste la política (versión ${this.esc(p.consentimiento_version || '—')}) el ${this.formatDate(p.consentimiento_fecha)}.`
+          : `No tenemos constancia de que hayas aceptado la política. Si la aceptaste en papel o por correo, la junta puede registrarlo desde su panel.`;
+
+        let estadoSupresion = '';
+        if (p.pendiente) {
+          estadoSupresion = `
+            <div class="conv-alert conv-alert-warning" style="padding:14px 16px;border-radius:8px;background:#fff7e6;border:1px solid #ffd591;margin:14px 0;">
+              <strong>Has pedido la supresión de tus datos.</strong>
+              La pediste el ${this.formatDate(p.solicitada)} y está pendiente: la junta la revisará y borrará tus datos personales.
+            </div>`;
+        } else if (p.resuelta) {
+          estadoSupresion = `
+            <div class="conv-alert conv-alert-success" style="padding:14px 16px;border-radius:8px;background:#f6ffed;border:1px solid #b7eb8f;margin:14px 0;">
+              <strong>Tus datos personales se borraron</strong> el ${this.formatDate(p.resuelta)}.
+            </div>`;
+        }
+
+        this.$main.innerHTML = `
+          <h2>🔒 Mis datos y privacidad</h2>
+          <p class="text-muted">Aquí puedes ver qué guardamos, llevártelo en un fichero y pedir que borremos tus
+          datos personales. Lo que sigue guardándose después de un borrado son los <strong>pagos</strong>, y
+          solo porque la ley obliga a conservarlos.</p>
+
+          <h3>Qué guardamos</h3>
+          <p>Los datos que diste al darte de alta (nombre, apellidos, documento, correo, teléfono y
+          dirección) para gestionar tu membresía; tus inscripciones; tus horas de voluntariado; y los pagos,
+          que la asociación debe conservar por obligación fiscal.</p>
+          <p>${consentimiento}</p>
+          ${p.politica_url ? `<p><a href="${this.escAttr(p.politica_url)}" target="_blank" rel="noopener">Leer la política de privacidad</a></p>` : ''}
+
+          <h3>Llevarte tus datos</h3>
+          <p class="text-muted">Se descarga un fichero con todo lo que la asociación tiene sobre ti.</p>
+          <button id="conv-btn-descargar-datos" class="btn-secondary">⬇️ Descargar mis datos</button>
+          <div id="conv-datos-msg"></div>
+
+          <hr>
+          <h3>Borrar mis datos</h3>
+          ${estadoSupresion}
+          <p class="text-muted">Pedir la supresión <strong>no borra nada al momento</strong>: deja la solicitud
+          en tu ficha, la junta recibe aviso y la resuelve borrando tus datos personales. Tus pagos se
+          conservan por obligación fiscal.</p>
+          ${p.pendiente || p.resuelta ? '' : `<button id="conv-btn-pedir-supresion" class="btn-danger-outline">🗑️ Pedir la supresión de mis datos</button>`}
+          <div id="conv-supresion-msg"></div>
+        `;
+      })
+      .catch(() => { this.$main.innerHTML = '<p>Error cargando tu privacidad.</p>'; });
+    },
+
     fetchPayments: function() {
       fetch(window.convMiArea.apiUrl + '/me/pagos', { headers: { 'X-WP-Nonce': window.convMiArea.nonce } })
       .then(res => res.json())
@@ -562,6 +629,58 @@
         }
       })
       .catch(() => { this.$main.innerHTML = '<p>Error cargando pagos.</p>'; });
+    },
+
+    /** Descarga los datos personales del socio como fichero (members#42). */
+    descargarDatos: function(btn) {
+      const msg = conv.$('#conv-datos-msg');
+      btn.disabled = true;
+      if (msg) { msg.innerHTML = '<p class="text-muted">Preparando tu fichero…</p>'; }
+
+      fetch(window.convMiArea.apiUrl + '/me/datos', { headers: { 'X-WP-Nonce': window.convMiArea.nonce } })
+      .then(res => res.json())
+      .then(datos => {
+        const texto = JSON.stringify(datos, null, 2);
+        const url   = URL.createObjectURL(new Blob([texto], { type: 'application/json' }));
+        const a     = document.createElement('a');
+        a.href = url;
+        a.download = 'mis-datos-convoca.json';
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+        URL.revokeObjectURL(url);
+        if (msg) { msg.innerHTML = '<p class="text-muted">Fichero descargado. Guárdalo donde quieras.</p>'; }
+        btn.disabled = false;
+      })
+      .catch(() => {
+        if (msg) { msg.innerHTML = '<p class="text-error">No se ha podido preparar el fichero. Inténtalo de nuevo.</p>'; }
+        btn.disabled = false;
+      });
+    },
+
+    /** Pide la supresión de los datos personales: queda en la ficha y la junta recibe aviso (members#42). */
+    pedirSupresion: function(btn) {
+      if (!window.confirm('Vas a pedir que se borren tus datos personales. Se avisará a la junta y lo resolverá una persona; tus pagos se conservan por obligación fiscal. ¿Seguir?')) {
+        return;
+      }
+
+      const msg = conv.$('#conv-supresion-msg');
+      btn.disabled = true;
+      fetch(window.convMiArea.apiUrl + '/me/supresion', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'X-WP-Nonce': window.convMiArea.nonce }
+      })
+      .then(res => res.json())
+      .then(d => {
+        if (msg) {
+          msg.innerHTML = '<p class="' + (d.ok ? 'text-muted' : 'text-error') + '">' + this.esc(d.mensaje || '') + '</p>';
+        }
+        if (d.ok) { setTimeout(() => this.fetchPrivacidad(), 900); } else { btn.disabled = false; }
+      })
+      .catch(() => {
+        if (msg) { msg.innerHTML = '<p class="text-error">No se ha podido registrar la solicitud. Inténtalo de nuevo.</p>'; }
+        btn.disabled = false;
+      });
     },
 
     renewMembership: function(btn) {
