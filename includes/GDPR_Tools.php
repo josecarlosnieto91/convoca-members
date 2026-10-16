@@ -350,6 +350,85 @@ class GDPR_Tools {
 	 * @param int    $page
 	 * @return array
 	 */
+	/**
+	 * Borra la foto del documento de identidad: el adjunto se va de verdad (members#40).
+	 *
+	 * La lista de campos que anonimiza el borrador es toda de la ficha y no incluía `_convoca_foto_id`:
+	 * el DNI en imagen se quedaba en la biblioteca de medios y el carné (`PDF_Card.php`) lo seguía
+	 * insertando en el PDF. Un adjunto borrado no vuelve.
+	 *
+	 * @param int $member_id Ficha del socio.
+	 * @return bool true si había foto y se ha borrado.
+	 */
+	public static function erase_identity_photo( int $member_id ): bool {
+		$foto_id = (int) get_post_meta( $member_id, '_convoca_foto_id', true );
+
+		if ( $foto_id <= 0 ) {
+			return false;
+		}
+
+		wp_delete_attachment( $foto_id, true );
+		update_post_meta( $member_id, '_convoca_foto_id', '[Eliminado]' );
+
+		return true;
+	}
+
+	/**
+	 * Borra los datos personales que viven en el USUARIO de WordPress (members#40). Devuelve cuántos.
+	 *
+	 * El alta copia el DNI y el teléfono al usuario (`Process_Member.php`) y el certificado de
+	 * voluntariado los lee DE AHÍ (`PDF_Document.php:152`): anonimizando solo la ficha, el DNI
+	 * sobrevivía y el documento seguía saliendo con él. Medido antes de este arreglo: **0 operaciones
+	 * sobre metadatos de usuario**, y la cuenta seguía entrando con su rol de socia o voluntaria.
+	 *
+	 * Los roles que se retiran son SOLO los de este módulo: si la cuenta tuviera otros (administración,
+	 * por ejemplo) no se tocan. La cuenta no se borra —eso es una decisión de producto— pero deja de
+	 * ser la de un socio o un voluntario aprobado y no conserva ningún dato suyo.
+	 *
+	 * @param int $user_id Usuario de WordPress.
+	 * @return int Número de datos borrados (campos + roles + marca de voluntariado).
+	 */
+	public static function erase_user_personal_data( int $user_id ): int {
+		if ( $user_id <= 0 ) {
+			return 0;
+		}
+
+		$campos = array(
+			'_convoca_email',
+			'_convoca_dni',
+			'_convoca_telefono',
+			'_convoca_voluntario_direccion',
+			'_convoca_shifts_direccion',
+			'_convoca_access_code',
+			'_convoca_consent_ip',
+		);
+
+		$borrados = 0;
+		foreach ( $campos as $campo ) {
+			if ( '' !== (string) get_user_meta( $user_id, $campo, true ) ) {
+				update_user_meta( $user_id, $campo, '[Eliminado]' );
+				++$borrados;
+			}
+		}
+
+		$usuario = get_userdata( $user_id );
+		if ( $usuario instanceof \WP_User ) {
+			foreach ( array( Roles_Miembro::ROL_WP_SOCIO, Roles_Miembro::ROL_WP_VOLUNTARIO ) as $rol ) {
+				if ( in_array( $rol, (array) $usuario->roles, true ) ) {
+					$usuario->remove_role( $rol );
+					++$borrados;
+				}
+			}
+		}
+
+		if ( '' !== (string) get_user_meta( $user_id, Admin_Voluntariado::META_APROBADO, true ) ) {
+			update_user_meta( $user_id, Admin_Voluntariado::META_APROBADO, '-1' );
+			++$borrados;
+		}
+
+		return $borrados;
+	}
+
 	public static function erase_personal_data( string $email_address, int $page = 1 ): array {
 		$items_removed  = 0;
 		$items_retained = 0;
@@ -407,6 +486,27 @@ class GDPR_Tools {
 
 			++$items_removed;
 			$messages[] = "Datos personales de socio #{$member_id} anonimizados.";
+
+			// ── La foto del documento (members#40) ──
+			if ( self::erase_identity_photo( $member_id ) ) {
+				++$items_removed;
+				$messages[] = 'Foto del documento de identidad eliminada.';
+			}
+
+			// ── El usuario de WordPress: ahí vive OTRA copia de los datos (members#40) ──
+			$usuario_id = (int) get_post_meta( $member_id, '_convoca_user_id', true );
+			if ( ! $usuario_id && ! empty( $member_email ) && '[Eliminado]' !== $member_email ) {
+				$por_email  = get_user_by( 'email', $member_email );
+				$usuario_id = $por_email ? (int) $por_email->ID : 0;
+			}
+
+			if ( $usuario_id ) {
+				$borrados_usuario = self::erase_user_personal_data( $usuario_id );
+				if ( $borrados_usuario > 0 ) {
+					++$items_removed;
+					$messages[] = "Usuario de WordPress #{$usuario_id}: {$borrados_usuario} datos personales borrados y roles retirados.";
+				}
+			}
 
 			// ── Anonymize payments (retain for fiscal compliance) ──
 			$pagos = get_posts(

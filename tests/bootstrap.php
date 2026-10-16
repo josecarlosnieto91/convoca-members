@@ -270,6 +270,29 @@ namespace {
     if (!\function_exists('load_plugin_textdomain')) { function load_plugin_textdomain($d, $dep, $p) {} }
     if (!\function_exists('remove_action')) { function remove_action($h, $c, $p = 10) { return true; } }
     if (!\function_exists('get_user_by')) { function get_user_by($field, $value) { return false; } }
+    if (!\function_exists('wp_delete_attachment')) { function wp_delete_attachment($id, $force = false) { $GLOBALS['_wp_stores']['deleted_attachments'][] = (int) $id; return true; } }
+    if (!\class_exists('WP_User')) {
+        class WP_User {
+            public $ID = 0;
+            public $roles = array();
+            public function __construct($id = 0) {
+                $this->ID = (int) $id;
+                $this->roles = (array) ($GLOBALS['_wp_stores']['user_roles'][$this->ID] ?? array());
+            }
+            public function remove_role($rol) {
+                $this->roles = \array_values(\array_diff($this->roles, array((string) $rol)));
+                $GLOBALS['_wp_stores']['user_roles'][$this->ID] = $this->roles;
+            }
+            public function add_role($rol) {
+                if (!\in_array((string) $rol, $this->roles, true)) { $this->roles[] = (string) $rol; }
+                $GLOBALS['_wp_stores']['user_roles'][$this->ID] = $this->roles;
+            }
+            public function set_role($rol) {
+                $this->roles = array((string) $rol);
+                $GLOBALS['_wp_stores']['user_roles'][$this->ID] = $this->roles;
+            }
+        }
+    }
     if (!\function_exists('delete_post_meta_by_key')) { function delete_post_meta_by_key($key) { return true; } }
     if (!\function_exists('get_users')) { function get_users($args = []) { return []; } }
     if (!\function_exists('wp_list_pluck')) { function wp_list_pluck($list, $field) { $r = []; foreach ($list as $item) { if (\is_object($item) && isset($item->$field)) $r[] = $item->$field; } return $r; } }

@@ -2,14 +2,14 @@
 # This file is distributed under the GPL-2.0-or-later.
 msgid ""
 msgstr ""
-"Project-Id-Version: Convoca Members 2.8.81\n"
+"Project-Id-Version: Convoca Members 2.8.83\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/convoca-members\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-10-15T23:44:42+00:00\n"
+"POT-Creation-Date: 2026-10-16T00:00:55+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.12.0\n"
 "X-Domain: convoca-members\n"
@@ -260,7 +260,7 @@ msgstr ""
 #: admin/class-admin-page.php:654
 #: admin/class-admin-proyectos.php:163
 #: admin/class-admin-settings.php:47
-#: convoca-members.php:326
+#: convoca-members.php:334
 msgid "No tienes permisos."
 msgstr ""
 
@@ -2248,55 +2248,55 @@ msgstr ""
 msgid "Formato inválido."
 msgstr ""
 
-#: convoca-members.php:81
+#: convoca-members.php:89
 msgid "Convoca Members requires Convoca Core to be active. Please activate Convoca Core first."
 msgstr ""
 
-#: convoca-members.php:141
+#: convoca-members.php:149
 msgid "Monitor de Actividad"
 msgstr ""
 
-#: convoca-members.php:187
+#: convoca-members.php:195
 msgid "Voluntario Aprobado"
 msgstr ""
 
-#: convoca-members.php:356
+#: convoca-members.php:364
 msgid "ID de miembro no válido."
 msgstr ""
 
-#: convoca-members.php:362
+#: convoca-members.php:370
 msgid "No tienes permisos para ver la tarjeta de este miembro."
 msgstr ""
 
-#: convoca-members.php:411
+#: convoca-members.php:419
 msgid "Escanea el código QR de tu tarjeta de socio para verificar tu membresía."
 msgstr ""
 
-#: convoca-members.php:418
+#: convoca-members.php:426
 msgid "Tarjeta no válida"
 msgstr ""
 
-#: convoca-members.php:419
+#: convoca-members.php:427
 msgid "El código de verificación no coincide."
 msgstr ""
 
-#: convoca-members.php:426
+#: convoca-members.php:434
 msgid "Socio no encontrado."
 msgstr ""
 
-#: convoca-members.php:433
+#: convoca-members.php:441
 msgid "Membresía no activa"
 msgstr ""
 
-#: convoca-members.php:434
+#: convoca-members.php:442
 msgid "El socio no tiene una membresía activa en este momento."
 msgstr ""
 
-#: convoca-members.php:448
+#: convoca-members.php:456
 msgid "Socio Activo"
 msgstr ""
 
-#: convoca-members.php:451
+#: convoca-members.php:459
 msgid "Verificado por Convoca"
 msgstr ""
 
