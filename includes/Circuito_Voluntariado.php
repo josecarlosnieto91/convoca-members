@@ -719,14 +719,26 @@ class Circuito_Voluntariado {
 	 * @return array<int,array{ficha:int,nombre:string,email:string,estado:string,pendiente:bool,monitor:bool}>
 	 */
 	public static function personas(): array {
+		// Quien está o ha estado en el circuito: con la condición puesta, o con un paso apuntado. Sin lo
+		// segundo, al desvincular a alguien desaparecía del tablero —y con él su causa y su fecha—, que es
+		// justo lo que la junta necesita tener delante.
 		$fichas = get_posts(
 			array(
 				'post_type'      => 'miembro',
 				'post_status'    => 'any',
 				'posts_per_page' => 300,
 				'fields'         => 'ids',
-				'meta_key'       => Roles_Miembro::META_VOLUNTARIO,
-				'meta_value'     => '1',
+				'meta_query'     => array(
+					'relation' => 'OR',
+					array(
+						'key'   => Roles_Miembro::META_VOLUNTARIO,
+						'value' => '1',
+					),
+					array(
+						'key'     => self::META_ESTADO,
+						'compare' => 'EXISTS',
+					),
+				),
 			)
 		);
 
