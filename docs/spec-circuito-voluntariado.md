@@ -84,6 +84,10 @@ aprobados entran como `activo` sin pasar por los pasos anteriores.
 
 ## 5. Respuestas de JC (16/10/2026) y qué se ha construido
 
+> **Las cuatro, confirmadas por JC** («Ok a las decisiones», 16/10/2026). Lo construido se queda como está:
+> cita con fecha y hora, acuerdo aceptado en línea, baja pedida por la persona y confirmada por la junta, y
+> las horas intactas.
+
 Las cuatro preguntas de esta spec, contestadas por JC, y lo que hay hecho con cada una:
 
 1. **La entrevista: cita con fecha y hora, y además un cuestionario.** «La entrevista se cita con fecha y hora.
@@ -116,7 +120,7 @@ Las cuatro preguntas de esta spec, contestadas por JC, y lo que hay hecho con ca
 | 2 · Mover de paso, con fecha y quién | **Hecha** (citar, entrevista hecha, con monitor, desvincular con causa y confirmar la baja) |
 | 3 · El bloque del panel del socio y la aceptación del acuerdo | **Hecha** (cuestionario, acuerdo firmado y petición de baja) |
 | 4 · Desvinculación con motivo, aviso y efecto en horas y renovación | **Hecha** (las tres causas, caducidad automática, horas y certificado intactos) |
-| 5 · Correos de cada paso | **Hecha** con textos del propio circuito. Las plantillas editables desde los ajustes quedan como mejora: hoy los textos son fijos, en castellano y traducibles. |
+| 5 · Correos de cada paso | **Hecha**, con las cinco plantillas **editables desde los ajustes** (`convoca_email_templates`, 15 → 20): cita, acuerdo, baja solicitada, desvinculación y horas pendientes, con sus variables (`{fecha_cita}`, `{horas}`, `{enlace_horas}`…). Verificado en la demo y en Lugg: cambiar el texto cambia el correo. |
 
 ## 6. Criterios de aceptación
 
