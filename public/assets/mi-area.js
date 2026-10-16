@@ -890,6 +890,7 @@
             ${canSubmitHours ? `
             <section class="card-inner">
               <h3>Añadir Nuevo Registro</h3>
+              <p class="text-muted" style="margin:0 0 10px;font-size:0.95em;">Anota el trabajo voluntario que no va con una actividad (carteles, contabilidad, arreglos…). <strong>Queda pendiente de que la junta lo apruebe</strong>: hasta entonces no cuenta en tu total ni en tu nivel.</p>
               <form id="conv-hours-form" class="conv-inline-form">
                 <div class="form-group"><input type="date" name="fecha" required></div>
                 <div class="form-group">

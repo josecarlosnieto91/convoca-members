@@ -1,25 +1,14 @@
-## [2.8.99] — 2026-10-16
+## [2.8.100] — 2026-10-16
 
-### Añadido
-- **El socio ve su renovación por horas y puede usarla sin pagar (members#45).** La regla estaba bien
-  implementada —el cron renueva el ciclo sin pago cuando el socio llega a las horas de su plan— pero vivía
-  **dentro** de `check_volunteer_cycle()`, así que el panel no podía contar nada sin repetirla. Medido en la
-  demo con la ficha 2215 (20 h aprobadas, plan Bronce de 15 h): su próxima renovación **ya le salía gratis** y
-  el panel solo le ofrecía pagar 30 €.
-  Ahora `CPT_Miembro::ciclo_voluntariado()` es la **única fuente** del ciclo (la usan el cron y el panel) y
-  `renovar_por_horas()` el único camino que renueva (cron y botón del socio).
-  En «Mis Pagos»: «Llevas 20 h de las 15 h de tu plan: tu próxima renovación es sin pagar», con barra de
-  progreso, la fecha que quedaría cubierta y un botón **«🌱 Renovar ahora sin pago»** — no hace falta esperar al
-  vencimiento ni pasar por caja—. Quien no llega ve cuántas horas le faltan. El servidor vuelve a contar las
-  horas antes de renovar: el botón no da nada que no esté ganado.
-- Columna **«Renueva por horas»** en el listado de socios, para que la junta sepa a quién no hay que cobrar.
-  Sin filtro a propósito: las horas se calculan (plan + horas aprobadas del ciclo), no son una meta consultable
-  en SQL y un filtro obligaría a recalcular ficha a ficha en cada página.
-
-### Notas
-- Cinco pruebas nuevas (`RenovacionPorHorasTest`). El comportamiento se mide en vivo (necesita registros de
-  horas y fechas): está en el issue.
-- Los correos de aviso de la propuesta 3 (avisar al socio cuando cumple horas, y recordar un mes antes del
-  vencimiento si le faltan) **no se implementan**: notificar por correo a todos los socios es una decisión de
-  producto, no técnica.
+### Arreglado
+- **El voluntario ya puede apuntar sus propias horas (members#37).** El formulario «Añadir Nuevo Registro» de
+  la pestaña de Voluntariado **ya existía** y enviaba un `POST` a `/me/horas`, pero esa ruta solo aceptaba
+  `GET`: el `fetch` no encontraba a quién llamar y no había forma de anotar «hoy he ido a limpiar el río».
+  Ahora la ruta acepta el `POST` y las horas entran por `Hours_Manager::save_hours_record( $datos, false )` —el
+  mismo camino que usa la junta, sin duplicar nada—, en estado **pendiente**: no cuentan para el total ni para
+  el nivel hasta que la JD las apruebe. La ficha es siempre la del socio con sesión.
+- El formulario lo avisa: «Queda pendiente de que la junta lo apruebe: hasta entonces no cuenta en tu total ni
+  en tu nivel», y se guarda también la actividad opcional.
+- Cuatro pruebas nuevas (`HorasDelVoluntarioTest`), una de ellas comparando **el envío del panel con los
+  métodos de la ruta**: ese desajuste (POST en el navegador, GET en el servidor) era el defecto completo.
 
