@@ -1282,8 +1282,12 @@ class Rest_API {
 					}
 				}
 
-				\Convoca\Members\Circuito_Voluntariado::resolver_entrevista( $member_id, $respuestas );
-				$mensaje = __( '¡Gracias! Ya has enviado el cuestionario.', 'convoca-members' );
+				if ( \Convoca\Members\Circuito_Voluntariado::resolver_entrevista( $member_id, $respuestas ) ) {
+					$mensaje = __( '¡Gracias! Ya has enviado el cuestionario.', 'convoca-members' );
+				} else {
+					// Un envío en blanco no cierra la entrevista (members#52): se dice y no se cambia nada.
+					$mensaje = __( 'Te falta contestar alguna pregunta: el cuestionario está en blanco.', 'convoca-members' );
+				}
 				break;
 
 			case 'acuerdo':

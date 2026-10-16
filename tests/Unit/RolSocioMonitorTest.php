@@ -95,6 +95,28 @@ class RolSocioMonitorTest extends TestCase {
 	}
 
 	/**
+	 * Y una marca de monitor escrita a mano no vale (members#53).
+	 *
+	 * Medido en la demo: el rol de WordPress se negaba, pero la marca `_convoca_es_monitor` sobrevivía y
+	 * `es_monitor()` contestaba que sí. La marca sola no puede dejar a alguien de monitor.
+	 */
+	public function test_una_marca_de_monitor_escrita_a_mano_no_vale(): void {
+		$this->con_usuario();
+		update_post_meta( self::ID, Roles_Miembro::META_MONITOR, '1' );
+
+		$this->assertFalse( Roles_Miembro::es_monitor( self::ID ), 'Sin voluntariado, no es monitor' );
+
+		// Y al rechazar la concesión, la marca se retira: no queda una ficha marcada de mentira.
+		$this->assertFalse( Roles_Miembro::anadir( self::ID, Roles_Miembro::MONITOR ) );
+		$this->assertSame( '0', (string) get_post_meta( self::ID, Roles_Miembro::META_MONITOR, true ) );
+
+		// Con voluntariado delante, la marca que se escribe es la que vale.
+		Roles_Miembro::anadir( self::ID, Roles_Miembro::VOLUNTARIO );
+		$this->assertTrue( Roles_Miembro::anadir( self::ID, Roles_Miembro::MONITOR ) );
+		$this->assertTrue( Roles_Miembro::es_monitor( self::ID ) );
+	}
+
+	/**
 	 * «Solo voluntario o voluntario y monitor, pero nunca monitor solo» (JC, 16/10/2026).
 	 *
 	 * La regla se comprueba donde nace la condición, así que da igual el camino: la ficha no queda marcada

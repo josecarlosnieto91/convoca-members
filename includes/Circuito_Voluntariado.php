@@ -247,7 +247,10 @@ class Circuito_Voluntariado {
 			return self::ESTADO_DESVINCULADO;
 		}
 
-		if ( Roles_Miembro::voluntario_aprobado( $miembro_id ) ) {
+		// «En activo» exige ser voluntariado **y** estar aprobado. Antes bastaba la marca de aprobación, y una
+		// ficha sin ella —la socia que nunca pidió ser voluntaria— pasaba por aprobada: el panel le ofrecía
+		// aceptar el acuerdo y darse de baja (members#51).
+		if ( Roles_Miembro::es_voluntario( $miembro_id ) && Roles_Miembro::voluntario_aprobado( $miembro_id ) ) {
 			return self::ESTADO_ACTIVO;
 		}
 
@@ -477,13 +480,31 @@ class Circuito_Voluntariado {
 	 * que deja la aprobación donde la leen Enroll y Shifts; el monitor se **suma** aquí, y solo si hay
 	 * voluntariado: nunca monitor solo.
 	 *
-	 * @param int                 $miembro_id Ficha del socio.
-	 * @param array<string,string> $respuestas Pregunta => respuesta (vacío si se marca como hecha).
-	 * @param bool                $monitor    Si además se le da la condición de monitor.
+	 * @param int                  $miembro_id          Ficha del socio.
+	 * @param array<string,string> $respuestas          Pregunta => respuesta (vacío si se marca como hecha).
+	 * @param bool                 $monitor             Si además se le da la condición de monitor.
+	 * @param bool                 $desde_administracion Si lo marca la junta, que puede dar la entrevista por
+	 *                                                  hecha sin cuestionario.
 	 * @return bool
 	 */
-	public static function resolver_entrevista( int $miembro_id, array $respuestas = array(), bool $monitor = false ): bool {
+	public static function resolver_entrevista( int $miembro_id, array $respuestas = array(), bool $monitor = false, bool $desde_administracion = false ): bool {
 		if ( $miembro_id <= 0 ) {
+			return false;
+		}
+
+		// Con cuestionario configurado, un envío en blanco no cierra la entrevista (members#52): antes daba las
+		// gracias y pasaba a la persona a activo sin haber contestado nada. La junta sí puede darla por hecha
+		// sin respuestas: para eso está el botón del tablero, y es una decisión suya, no un descuido.
+		$limpias = array_filter(
+			array_map( 'trim', array_map( 'strval', $respuestas ) ),
+			static fn( string $respuesta ): bool => '' !== $respuesta
+		);
+
+		if ( ! $desde_administracion && ! empty( self::preguntas() ) && empty( $limpias ) ) {
+			\Convoca\Core\Logger::info(
+				sprintf( 'Cuestionario en blanco: no cierra la entrevista de la ficha #%d', $miembro_id ),
+				'Members/Voluntariado'
+			);
 			return false;
 		}
 
@@ -669,23 +690,25 @@ class Circuito_Voluntariado {
 	 * @return int Cuántas se han desvinculado.
 	 */
 	public static function revisar_caducidades(): int {
+		// La misma vara que el tablero (`personas()`): condición puesta **o** paso apuntado. Antes se filtraba
+		// por `_convoca_voluntariado_estado != 'desvinculado'`, que es un INNER JOIN: una ficha sin esa marca
+		// —las anteriores al circuito— quedaba fuera y no se revisaba nunca, aunque el tablero la enseñara
+		// «en activo» (members#54).
 		$fichas = get_posts(
 			array(
 				'post_type'      => 'miembro',
 				'post_status'    => 'any',
-				'posts_per_page' => 200,
+				'posts_per_page' => 300,
 				'fields'         => 'ids',
 				'meta_query'     => array(
-					'relation' => 'AND',
+					'relation' => 'OR',
 					array(
-						'key'     => self::META_ESTADO,
-						'value'   => self::ESTADO_DESVINCULADO,
-						'compare' => '!=',
+						'key'   => Roles_Miembro::META_VOLUNTARIO,
+						'value' => '1',
 					),
 					array(
-						'key'     => Roles_Miembro::META_VOLUNTARIO,
-						'value'   => '1',
-						'compare' => '=',
+						'key'     => self::META_ESTADO,
+						'compare' => 'EXISTS',
 					),
 				),
 			)
@@ -694,6 +717,11 @@ class Circuito_Voluntariado {
 		$cuantas = 0;
 		foreach ( $fichas as $ficha ) {
 			$ficha = (int) $ficha;
+
+			// Quien ya está desvinculado, no se toca otra vez.
+			if ( self::ESTADO_DESVINCULADO === self::estado( $ficha ) ) {
+				continue;
+			}
 
 			// Solo a quien YA era voluntariado aprobado y ha perdido la membresía: una solicitud que
 			// nunca llegó a serlo no «se desvincula» de nada, se queda donde está hasta que la junta la
@@ -782,6 +810,27 @@ class Circuito_Voluntariado {
 	}
 
 	/**
+	 * ¿Está esta persona en el circuito del voluntariado? Es voluntariado, o alguna vez lo fue.
+	 *
+	 * La misma vara que usa el tablero para listar (`personas()`): condición puesta **o** paso apuntado.
+	 * Un desvinculado conserva su paso, así que sigue viendo el cierre de su etapa; una socia que nunca
+	 * pidió ser voluntaria no ve nada (members#51).
+	 *
+	 * @param int $miembro_id Ficha del socio.
+	 */
+	public static function en_el_circuito( int $miembro_id ): bool {
+		if ( $miembro_id <= 0 ) {
+			return false;
+		}
+
+		if ( Roles_Miembro::es_voluntario( $miembro_id ) ) {
+			return true;
+		}
+
+		return '' !== (string) get_post_meta( $miembro_id, self::META_ESTADO, true );
+	}
+
+	/**
 	 * El usuario de WordPress de una ficha (por vínculo directo; si no, por correo).
 	 *
 	 * @param int $miembro_id Ficha del socio.
@@ -845,6 +894,13 @@ class Circuito_Voluntariado {
 	 * @param int $miembro_id Ficha del socio.
 	 */
 	public static function bloque_panel( int $miembro_id ): string {
+		// Solo para quien está en el circuito: es voluntariado, o alguna vez lo fue (tiene paso apuntado).
+		// A una socia que nunca pidió ser voluntaria no se le pinta nada, y menos un botón para aceptar
+		// un acuerdo que no le toca (members#51).
+		if ( ! self::en_el_circuito( $miembro_id ) ) {
+			return '';
+		}
+
 		$estado = self::estado( $miembro_id );
 		$pasos  = self::pasos();
 

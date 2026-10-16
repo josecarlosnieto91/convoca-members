@@ -254,7 +254,10 @@ final class Roles_Miembro {
 	 * @return bool
 	 */
 	public static function es_monitor( int $miembro_id ): bool {
-		return self::tiene( $miembro_id, self::MONITOR );
+		// El monitorado se apoya en el voluntariado: sin él, la respuesta es que no. Si solo se mirara la
+		// marca, una escrita a mano dejaría la ficha como monitora sin haber pasado por el circuito
+		// (members#53).
+		return self::es_voluntario( $miembro_id ) && self::tiene( $miembro_id, self::MONITOR );
 	}
 
 	/**
@@ -397,6 +400,13 @@ final class Roles_Miembro {
 				sprintf( 'No se concede monitor sin voluntariado: ficha #%d', $miembro_id ),
 				'Members/Roles'
 			);
+
+			// Y si alguien había escrito la marca a mano, se retira: el rol de WordPress ya se negaba, pero la
+			// marca sobrevivía y `es_monitor()` contestaba que sí (members#53).
+			if ( '1' === (string) get_post_meta( $miembro_id, self::META_MONITOR, true ) ) {
+				update_post_meta( $miembro_id, self::META_MONITOR, '0' );
+			}
+
 			return false;
 		}
 

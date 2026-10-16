@@ -197,6 +197,71 @@ class CircuitoVoluntariadoTest extends TestCase {
 		$this->assertSame( 'inventada', Circuito_Voluntariado::fecha_legible( 'inventada' ), 'Lo que no se puede leer se deja igual' );
 	}
 
+	/**
+	 * A quien no es voluntariado no se le ofrece el circuito (members#51).
+	 *
+	 * Medido en la demo: una socia con usuario y **sin** la marca de voluntariado veía el bloque entero,
+	 * «Estás en: Voluntariado en activo» y el botón de aceptar el acuerdo, porque la marca de aprobación
+	 * ausente se daba por aprobada.
+	 */
+	public function test_a_quien_no_es_voluntario_no_se_le_ofrece_el_circuito(): void {
+		// Socia de verdad: usuario vinculado y sin marca de voluntariado.
+		update_post_meta( self::ID, '_convoca_user_id', (string) self::USER );
+		update_user_meta( self::USER, Admin_Voluntariado::META_APROBADO, '' );
+
+		$this->assertFalse( Roles_Miembro::es_voluntario( self::ID ), 'No es voluntaria' );
+		$this->assertNotSame( Circuito_Voluntariado::ESTADO_ACTIVO, Circuito_Voluntariado::estado( self::ID ), 'Ni está en activo' );
+		$this->assertFalse( Circuito_Voluntariado::en_el_circuito( self::ID ), 'Ni está en el circuito' );
+		$this->assertSame( '', Circuito_Voluntariado::bloque_panel( self::ID ), 'Y no se le pinta nada' );
+	}
+
+	/** Pero quien fue voluntariado sigue viendo el cierre de su etapa. */
+	public function test_el_desvinculado_si_ve_su_cierre(): void {
+		$this->ficha( '1' );
+		$this->assertTrue( Circuito_Voluntariado::en_el_circuito( self::ID ) );
+
+		Circuito_Voluntariado::desvincular( self::ID, Circuito_Voluntariado::CAUSA_VOLUNTARIO );
+
+		$this->assertFalse( Roles_Miembro::es_voluntario( self::ID ), 'Ya no es voluntaria' );
+		$this->assertTrue( Circuito_Voluntariado::en_el_circuito( self::ID ), 'Pero conserva su paso' );
+		$this->assertStringContainsString( 'se cerró', Circuito_Voluntariado::bloque_panel( self::ID ) );
+	}
+
+	/**
+	 * Un cuestionario en blanco no cierra la entrevista (members#52).
+	 *
+	 * Medido en la demo: el envío sin respuestas daba las gracias y pasaba a la persona a activo sin haber
+	 * contestado nada. La junta sí puede darla por hecha desde el tablero: es su decisión.
+	 */
+	public function test_un_cuestionario_en_blanco_no_cierra_la_entrevista(): void {
+		update_option( 'convoca_members_settings', array( 'entrevista_preguntas' => "¿Por qué?
+¿Cuándo?" ) );
+		$this->ficha();
+		Circuito_Voluntariado::citar_entrevista( self::ID, '2026-12-01', '19:00' );
+
+		$this->assertFalse( Circuito_Voluntariado::resolver_entrevista( self::ID ), 'En blanco, no' );
+		$this->assertFalse( Circuito_Voluntariado::resolver_entrevista( self::ID, array( '¿Por qué?' => '   ' ) ), 'Ni con respuestas vacías' );
+		$this->assertSame( Circuito_Voluntariado::ESTADO_ENTREVISTA, Circuito_Voluntariado::estado( self::ID ), 'Sigue en entrevista' );
+		$this->assertFalse( Roles_Miembro::es_voluntario( self::ID ), 'Y no es voluntaria todavía' );
+
+		$this->assertTrue( Circuito_Voluntariado::resolver_entrevista( self::ID, array( '¿Por qué?' => 'Porque vivo al lado.' ) ), 'Con una respuesta, sí' );
+		$this->assertSame( Circuito_Voluntariado::ESTADO_ACTIVO, Circuito_Voluntariado::estado( self::ID ) );
+
+		delete_option( 'convoca_members_settings' );
+	}
+
+	/** Y la junta puede darla por hecha sin cuestionario, que es lo que dice la decisión de JC. */
+	public function test_la_junta_puede_dar_la_entrevista_por_hecha(): void {
+		update_option( 'convoca_members_settings', array( 'entrevista_preguntas' => "¿Por qué?" ) );
+		$this->ficha();
+		Circuito_Voluntariado::citar_entrevista( self::ID, '2026-12-01', '19:00' );
+
+		$this->assertTrue( Circuito_Voluntariado::resolver_entrevista( self::ID, array(), false, true ) );
+		$this->assertSame( Circuito_Voluntariado::ESTADO_ACTIVO, Circuito_Voluntariado::estado( self::ID ) );
+
+		delete_option( 'convoca_members_settings' );
+	}
+
 	/** Las preguntas de la entrevista son de cada organización, y salen de los ajustes. */
 	public function test_las_preguntas_de_la_entrevista_salen_de_los_ajustes(): void {
 		$this->assertSame( array(), Circuito_Voluntariado::preguntas(), 'Sin preguntas configuradas no hay cuestionario' );

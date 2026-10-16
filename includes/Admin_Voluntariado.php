@@ -356,11 +356,13 @@ class Admin_Voluntariado {
 				break;
 
 			case 'entrevista_hecha':
-				\Convoca\Members\Circuito_Voluntariado::resolver_entrevista( $ficha );
+				// La junta puede dar la entrevista por hecha sin cuestionario: es su decisión, no un envío en
+				// blanco (members#52).
+				\Convoca\Members\Circuito_Voluntariado::resolver_entrevista( $ficha, array(), false, true );
 				break;
 
 			case 'entrevista_monitor':
-				\Convoca\Members\Circuito_Voluntariado::resolver_entrevista( $ficha, array(), true );
+				\Convoca\Members\Circuito_Voluntariado::resolver_entrevista( $ficha, array(), true, true );
 				break;
 
 			case 'confirmar_baja':
