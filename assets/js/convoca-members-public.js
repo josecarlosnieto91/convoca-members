@@ -186,25 +186,42 @@
       }
 
       if (n === 2) {
-        let ok = true;
-        conv.$$('input[required]', stepEl).forEach(f => {
-          const field = f.closest('.convoca-field');
-          if (!f.value || (f.pattern && !new RegExp(f.pattern).test(f.value))) {
-            if (field) field.classList.add('has-error');
-            ok = false;
-          } else {
-            if (field) field.classList.remove('has-error');
-          }
-        });
-        
+        // Obligatorios del paso + los del tutor/a si quien se apunta es menor de edad.
+        //
+        // Cada fallo se MARCA en su campo (`has-error` para el color y el aviso, `aria-invalid` para quien
+        // navega con lector de pantalla) y el foco va al PRIMERO que falta. Antes, en el caso del menor, el
+        // asistente se quedaba parado sin señalar nada: ni campo en rojo, ni aviso junto al tutor, ni foco
+        // —medido en la demo el 16/10/2026— y quien rellenaba el formulario no tenía forma de saber qué
+        // le faltaba. Los mismos 7 campos del caso adulto ya se marcaban bien; el hueco era el tutor.
+        const obligatorios = Array.from(conv.$$('input[required]', stepEl));
         const age = calcAge(fechaInput?.value);
         if (age !== null && age < 18) {
           const tutorNombre = conv.$('#conv-tutor-nombre');
           const tutorDni = conv.$('#conv-tutor-dni');
-          if (tutorNombre && !tutorNombre.value.trim()) { ok = false; }
-          if (tutorDni && !tutorDni.value.trim()) { ok = false; }
+          if (tutorNombre) obligatorios.push(tutorNombre);
+          if (tutorDni) obligatorios.push(tutorDni);
         }
-        if (!ok) { conv.showAlert(alert, 'Rellena todos los campos obligatorios.'); return false; }
+
+        let ok = true;
+        let primerFallo = null;
+        obligatorios.forEach(f => {
+          const field = f.closest('.convoca-field');
+          const falta = !f.value || (f.pattern && !new RegExp(f.pattern).test(f.value));
+          if (field) field.classList.toggle('has-error', falta);
+          if (falta) {
+            f.setAttribute('aria-invalid', 'true');
+            ok = false;
+            if (!primerFallo) primerFallo = f;
+          } else {
+            f.removeAttribute('aria-invalid');
+          }
+        });
+
+        if (!ok) {
+          conv.showAlert(alert, 'Revisa los campos marcados: falta algún dato obligatorio.');
+          if (primerFallo) primerFallo.focus();
+          return false;
+        }
       }
 
       if (n === 3) {

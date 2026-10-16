@@ -282,10 +282,17 @@ endif;
 					<div class="convoca-field">
 						<label for="conv-tutor-nombre"><?php esc_html_e( 'Nombre del tutor/a legal *', 'convoca-members' ); ?></label>
 						<input type="text" id="conv-tutor-nombre" name="tutor_nombre">
+						<?php
+						// Aviso propio: sin él, a quien se apunta siendo menor el asistente se le quedaba parado
+						// sin señalarle NADA (medido en la demo el 16/10/2026). No llevan `required` a propósito:
+						// solo hacen falta si es menor, y marcarlos obligatorios bloquearía a los adultos.
+						?>
+						<span class="convoca-error-msg"><?php esc_html_e( 'Hace falta el nombre de tu tutor/a legal.', 'convoca-members' ); ?></span>
 					</div>
 					<div class="convoca-field">
 						<label for="conv-tutor-dni"><?php esc_html_e( 'DNI del tutor/a *', 'convoca-members' ); ?></label>
 						<input type="text" id="conv-tutor-dni" name="tutor_dni">
+						<span class="convoca-error-msg"><?php esc_html_e( 'Hace falta el DNI de tu tutor/a legal.', 'convoca-members' ); ?></span>
 					</div>
 				</div>
 			</div>
