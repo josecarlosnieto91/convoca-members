@@ -57,9 +57,22 @@ class Admin_Import_CSV {
 		<div class="wrap" style="max-width:900px;">
 			<h1><?php esc_html_e( 'Importar Socios desde CSV', 'convoca-members' ); ?></h1>
 
-			<?php if ( isset( $_GET['import_result'] ) ) : ?>
-				<div class="convoca-alert convoca-alert--success" style="display:block;margin-bottom:20px;">
-					<p><?php echo esc_html( sanitize_text_field( wp_unslash( $_GET['import_result'] ) ) ); ?></p>
+			<?php
+			if ( isset( $_GET['import_result'] ) ) :
+				// El color del cartel depende del resultado: verde es «todo bien», y con filas fallidas no lo era.
+				$estado_import = sanitize_key( wp_unslash( $_GET['import_status'] ?? 'ok' ) );
+				$clase_import  = 'convoca-alert--success';
+				$icono_import  = '✅';
+				if ( 'parcial' === $estado_import ) {
+					$clase_import = 'convoca-alert--warning';
+					$icono_import = '⚠️';
+				} elseif ( 'error' === $estado_import ) {
+					$clase_import = 'convoca-alert--danger';
+					$icono_import = '❌';
+				}
+				?>
+				<div class="convoca-alert <?php echo esc_attr( $clase_import ); ?>" style="display:block;margin-bottom:20px;" role="alert">
+					<p><strong><?php echo esc_html( $icono_import ); ?></strong> <?php echo esc_html( sanitize_text_field( wp_unslash( $_GET['import_result'] ) ) ); ?></p>
 				</div>
 			<?php endif; ?>
 
@@ -76,7 +89,7 @@ class Admin_Import_CSV {
 
 			<div class="convoca-box" style="background:#fff;border-radius:12px;padding:30px;margin-top:20px;">
 				<h2><?php esc_html_e( '1. Sube el archivo CSV', 'convoca-members' ); ?></h2>
-				<p><?php esc_html_e( 'El archivo debe incluir una fila de cabeceras. Columnas esperadas: nombre, email, dni, plan, teléfono, dirección, municipio.', 'convoca-members' ); ?></p>
+				<p><?php esc_html_e( 'El archivo debe incluir una fila de cabeceras. Columnas esperadas: nombre, apellidos, email, dni, plan, teléfono, dirección, municipio.', 'convoca-members' ); ?></p>
 				<form method="post" enctype="multipart/form-data" action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>" style="margin-bottom:16px;">
 					<?php wp_nonce_field( 'convoca_import_csv' ); ?>
 					<input type="hidden" name="action" value="convoca_import_csv_preview">
@@ -139,6 +152,10 @@ class Admin_Import_CSV {
 								<?php
 								foreach ( array(
 									'nombre'    => 'Nombre',
+									// Los apellidos tienen su propio campo en la ficha (`_convoca_apellidos`) y el carnet y los
+									// documentos los usan: el importador no los ofrecía, así que un censo con la columna
+									// «apellidos» no tenía dónde meterlos (issue #44).
+									'apellidos' => 'Apellidos',
 									'email'     => 'Email',
 									'dni'       => 'DNI',
 									'plan'      => 'Plan',
@@ -277,7 +294,7 @@ class Admin_Import_CSV {
 
 		$filename = 'plantilla-socios.csv';
 
-		$headers = array( 'nombre', 'email', 'dni', 'plan', 'telefono', 'direccion', 'municipio' );
+		$headers = array( 'nombre', 'apellidos', 'email', 'dni', 'plan', 'telefono', 'direccion', 'municipio' );
 		$example = array( 'Juan García López', 'juan@example.com', '12345678Z', 'socio-adulto', '612345678', 'Calle Ejemplo 1 123', 'Madrid' );
 
 		// La ceremonia vive en el núcleo, con el separador que exige SU LECTOR: esta plantilla se
@@ -391,12 +408,30 @@ class Admin_Import_CSV {
 			'Members/Admin'
 		);
 
-		$message = sprintf( /* translators: %d: number of members */ __( '%d socios importados correctamente.', 'convoca-members' ), $imported );
-		if ( ! empty( $errors ) ) {
-			$message .= ' ' . sprintf( /* translators: %d: error count */ __( '%d errores:', 'convoca-members' ), count( $errors ) ) . ' ' . implode( ' | ', array_slice( $errors, 0, 10 ) );
+		// El aviso tiene que decir lo que ha pasado DE VERDAD: en verde no se leen los errores.
+		//
+		// Medido el 15/10/2026 con un CSV de tres filas (una buena, una duplicada y una sin email): el resumen
+		// salía en un cartel VERDE de éxito con el texto «1 socios importados correctamente. 2 errores: …».
+		// Para quien no es técnico, verde es «todo bien» y se va sin leer nada. Ahora: verde solo si todo ha
+		// ido bien, aviso si hubo filas fallidas, y rojo si no se importó ninguna. Y «1 socio importado».
+		$message = sprintf(
+			/* translators: %d: number of members */
+			_n( '%d socio importado correctamente.', '%d socios importados correctamente.', $imported, 'convoca-members' ),
+			$imported
+		);
+
+		if ( empty( $errors ) ) {
+			$estado = 'ok';
+		} else {
+			$estado   = ( $imported > 0 ) ? 'parcial' : 'error';
+			$message .= ' ' . sprintf(
+				/* translators: %d: error count */
+				_n( '%d fila con errores:', '%d filas con errores:', count( $errors ), 'convoca-members' ),
+				count( $errors )
+			) . ' ' . implode( ' | ', array_slice( $errors, 0, 10 ) );
 		}
 
-		wp_safe_redirect( admin_url( 'admin.php?page=conv-import-csv&import_result=' . rawurlencode( $message ) ) );
+		wp_safe_redirect( admin_url( 'admin.php?page=conv-import-csv&import_status=' . $estado . '&import_result=' . rawurlencode( $message ) ) );
 		exit;
 	}
 
@@ -564,7 +599,7 @@ class Admin_Import_CSV {
 		}
 
 		// Save meta (for both new and updated members).
-		$meta_map = array( 'email', 'dni', 'telefono', 'direccion', 'municipio', 'plan' );
+		$meta_map = array( 'apellidos', 'email', 'dni', 'telefono', 'direccion', 'municipio', 'plan' );
 		foreach ( $meta_map as $m ) {
 			if ( ! empty( $row[ $m ] ) ) {
 				update_post_meta( $post_id, '_convoca_' . $m, sanitize_text_field( $row[ $m ] ) );
