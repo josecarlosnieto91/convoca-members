@@ -68,6 +68,11 @@ class Cron_Manager {
 			$this->process_renewals();
 			$this->process_automatic_renewals();
 			$this->process_expirations();
+
+			// Y quien era voluntariado y acaba de perder la membresía se desvincula solo, con su causa
+			// («se aplica cuando caduca su membresía», JC 16/10/2026). Sus horas y su certificado se quedan.
+			\Convoca\Members\Circuito_Voluntariado::revisar_caducidades();
+
 			$this->process_volunteer_reminders();
 		} finally {
 			\Convoca\Core\Utils::release_lock( 'convoca_members_daily_lock' );

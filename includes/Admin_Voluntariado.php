@@ -166,6 +166,10 @@ class Admin_Voluntariado {
 
 		echo '<hr style="margin: 40px 0;">';
 
+		self::render_circuito();
+
+		echo '<hr style="margin: 40px 0;">';
+
 		// ── ACTIVE ──.
 		echo '<h2 class="title">' . esc_html__( 'Voluntarios Activos', 'convoca-members' ) . '</h2>';
 		if ( ! empty( $active_users ) ) {
@@ -195,11 +199,128 @@ class Admin_Voluntariado {
 	}
 
 	/**
+	 * El tablero del circuito: en qué paso está cada persona y qué queda por hacer.
+	 *
+	 * Es la pantalla donde la junta deja de llevar el circuito en la cabeza. Cada fila trae las acciones
+	 * del paso en el que está la persona, y nada más: lo que no toca no se ofrece.
+	 */
+	public static function render_circuito(): void {
+		$personas = \Convoca\Members\Circuito_Voluntariado::personas();
+		$pasos    = \Convoca\Members\Circuito_Voluntariado::pasos();
+		$causas   = \Convoca\Members\Circuito_Voluntariado::causas();
+
+		$por_paso = array();
+		foreach ( $personas as $persona ) {
+			$por_paso[ $persona['estado'] ][] = $persona;
+		}
+
+		echo '<h2 class="title">' . esc_html__( 'El circuito del voluntariado', 'convoca-members' ) . '</h2>';
+		echo '<p>' . esc_html__( 'En qué punto está cada persona: solicitud, entrevista inicial, voluntariado en activo y desvinculación. Lo que queda pendiente sale marcado con ⚠.', 'convoca-members' ) . '</p>';
+
+		foreach ( $pasos as $estado => $etiqueta ) {
+			$gente = $por_paso[ $estado ] ?? array();
+			printf(
+				'<h3>%s <span class="count">(%d)</span></h3>',
+				esc_html( $etiqueta ),
+				count( $gente )
+			);
+
+			if ( empty( $gente ) ) {
+				echo '<p>' . esc_html__( 'Nadie en este paso.', 'convoca-members' ) . '</p>';
+				continue;
+			}
+
+			echo '<table class="wp-list-table widefat fixed striped">';
+			echo '<thead><tr><th>' . esc_html__( 'Nombre', 'convoca-members' ) . '</th><th>' . esc_html__( 'Email', 'convoca-members' ) . '</th><th>' . esc_html__( 'Pendiente', 'convoca-members' ) . '</th><th>' . esc_html__( 'Acciones', 'convoca-members' ) . '</th></tr></thead><tbody>';
+
+			foreach ( $gente as $persona ) {
+				echo '<tr>';
+				echo '<td><strong>' . esc_html( $persona['nombre'] ) . '</strong>' . ( $persona['monitor'] ? ' <span class="convoca-badge">' . esc_html__( 'monitor', 'convoca-members' ) . '</span>' : '' ) . '</td>';
+				echo '<td>' . esc_html( $persona['email'] ) . '</td>';
+				echo '<td>' . ( $persona['pendiente'] ? '⚠ ' . esc_html( implode( ' · ', \Convoca\Members\Circuito_Voluntariado::faltantes( $persona['ficha'] ) ) ) : '—' ) . '</td>';
+				echo '<td>' . self::acciones_de( $persona, $causas ) . '</td>';
+				echo '</tr>';
+			}
+
+			echo '</tbody></table>';
+		}
+	}
+
+	/**
+	 * Las acciones que se ofrecen para una persona, según el paso en el que está.
+	 *
+	 * @param array<string,mixed>  $persona Datos de la persona (ficha, estado…).
+	 * @param array<string,string> $causas  Causas de desvinculación.
+	 */
+	private static function acciones_de( array $persona, array $causas ): string {
+		$ficha = (int) $persona['ficha'];
+		$html  = array();
+
+		if ( \Convoca\Members\Circuito_Voluntariado::ESTADO_DESVINCULADO === $persona['estado'] ) {
+			$motivo = \Convoca\Members\Circuito_Voluntariado::desvinculacion( $ficha );
+			return '<em>' . esc_html(
+				sprintf(
+				/* translators: 1: date, 2: reason */
+					__( '%1$s · %2$s', 'convoca-members' ),
+					substr( $motivo['fecha'], 0, 10 ),
+					$causas[ $motivo['causa'] ] ?? $motivo['causa']
+				) 
+			) . '</em>';
+		}
+
+		$nonce = static fn( string $accion ): string => wp_nonce_url(
+			admin_url( 'admin.php?page=' . self::SLUG . '&action=' . $accion . '&ficha=' . $ficha ),
+			'convoca_circuito_' . $accion . '_' . $ficha
+		);
+
+		if ( in_array( $persona['estado'], array( \Convoca\Members\Circuito_Voluntariado::ESTADO_SOLICITUD, \Convoca\Members\Circuito_Voluntariado::ESTADO_ENTREVISTA ), true ) ) {
+			$hoy    = current_time( 'Y-m-d' );
+			$html[] = '<form method="get" action="' . esc_url( admin_url( 'admin.php' ) ) . '" style="display:inline-flex;gap:4px;align-items:center;">'
+				. '<input type="hidden" name="page" value="' . esc_attr( self::SLUG ) . '">'
+				. '<input type="hidden" name="action" value="citar">'
+				. '<input type="hidden" name="ficha" value="' . esc_attr( (string) $ficha ) . '">'
+				. wp_nonce_field( 'convoca_circuito_citar_' . $ficha, '_wpnonce', true, false )
+				. '<input type="date" name="fecha" value="' . esc_attr( $hoy ) . '" required>'
+				. '<input type="time" name="hora" value="">'
+				. '<button class="button">' . esc_html__( 'Citar entrevista', 'convoca-members' ) . '</button>'
+				. '</form> ';
+			$html[] = '<a class="button button-primary" href="' . esc_url( $nonce( 'entrevista_hecha' ) ) . '">' . esc_html__( 'Entrevista hecha', 'convoca-members' ) . '</a> ';
+			$html[] = '<a class="button" href="' . esc_url( $nonce( 'entrevista_monitor' ) ) . '">' . esc_html__( 'Entrevista hecha + monitor', 'convoca-members' ) . '</a>';
+		}
+
+		if ( \Convoca\Members\Circuito_Voluntariado::ESTADO_ACTIVO === $persona['estado'] ) {
+			if ( \Convoca\Members\Circuito_Voluntariado::baja_solicitada( $ficha ) ) {
+				$html[] = '<a class="button button-primary" href="' . esc_url( $nonce( 'confirmar_baja' ) ) . '">' . esc_html__( '⚠ Confirmar la baja que pide', 'convoca-members' ) . '</a> ';
+			}
+			$html[] = '<form method="get" action="' . esc_url( admin_url( 'admin.php' ) ) . '" style="display:inline-flex;gap:4px;align-items:center;">'
+				. '<input type="hidden" name="page" value="' . esc_attr( self::SLUG ) . '">'
+				. '<input type="hidden" name="action" value="desvincular">'
+				. '<input type="hidden" name="ficha" value="' . esc_attr( (string) $ficha ) . '">'
+				. wp_nonce_field( 'convoca_circuito_desvincular_' . $ficha, '_wpnonce', true, false )
+				. '<select name="causa">';
+			foreach ( $causas as $clave => $nombre ) {
+				$html[] = '<option value="' . esc_attr( $clave ) . '">' . esc_html( $nombre ) . '</option>';
+			}
+			$html[] = '</select><input type="text" name="motivo" placeholder="' . esc_attr__( 'Motivo (opcional)', 'convoca-members' ) . '">'
+				. '<button class="button">' . esc_html__( 'Desvincular', 'convoca-members' ) . '</button></form>';
+		}
+
+		return implode( ' ', $html );
+	}
+
+	/**
 	 * Handle approve/revoke GET actions.
 	 */
 	private static function handle_actions(): void {
 		$action = sanitize_key( wp_unslash( $_GET['action'] ?? '' ) );
 		$user   = (int) ( wp_unslash( $_GET['user'] ?? 0 ) );
+
+		$circuito = array( 'citar', 'entrevista_hecha', 'entrevista_monitor', 'desvincular', 'confirmar_baja' );
+
+		if ( in_array( $action, $circuito, true ) ) {
+			self::handle_circuito( $action );
+			return;
+		}
 
 		if ( ! in_array( $action, array( 'approve', 'revoke' ), true ) || ! $user ) {
 			return;
@@ -211,6 +332,49 @@ class Admin_Voluntariado {
 		} else {
 			check_admin_referer( 'convoca_volunteer_revoke_' . $user );
 			self::revoke_volunteer( $user );
+		}
+	}
+
+	/**
+	 * Mueve un paso del circuito desde la administración.
+	 *
+	 * @param string $action Acción pedida.
+	 */
+	private static function handle_circuito( string $action ): void {
+		$ficha = (int) ( wp_unslash( $_GET['ficha'] ?? 0 ) );
+		if ( $ficha <= 0 ) {
+			return;
+		}
+
+		check_admin_referer( 'convoca_circuito_' . $action . '_' . $ficha );
+
+		switch ( $action ) {
+			case 'citar':
+				$fecha = sanitize_text_field( wp_unslash( $_GET['fecha'] ?? '' ) );
+				$hora  = sanitize_text_field( wp_unslash( $_GET['hora'] ?? '' ) );
+				\Convoca\Members\Circuito_Voluntariado::citar_entrevista( $ficha, $fecha, $hora );
+				break;
+
+			case 'entrevista_hecha':
+				\Convoca\Members\Circuito_Voluntariado::resolver_entrevista( $ficha );
+				break;
+
+			case 'entrevista_monitor':
+				\Convoca\Members\Circuito_Voluntariado::resolver_entrevista( $ficha, array(), true );
+				break;
+
+			case 'confirmar_baja':
+				\Convoca\Members\Circuito_Voluntariado::desvincular( $ficha, \Convoca\Members\Circuito_Voluntariado::CAUSA_VOLUNTARIO );
+				break;
+
+			case 'desvincular':
+				$causa  = sanitize_key( wp_unslash( $_GET['causa'] ?? '' ) );
+				$motivo = sanitize_text_field( wp_unslash( $_GET['motivo'] ?? '' ) );
+				if ( ! isset( \Convoca\Members\Circuito_Voluntariado::causas()[ $causa ] ) ) {
+					$causa = \Convoca\Members\Circuito_Voluntariado::CAUSA_JUNTA;
+				}
+				\Convoca\Members\Circuito_Voluntariado::desvincular( $ficha, $causa, $motivo );
+				break;
 		}
 	}
 

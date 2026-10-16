@@ -3,7 +3,7 @@
  * Plugin Name:       Convoca Members
  * Plugin URI:        https://getconvoca.app
  * Description:       Members, volunteers and communications management.
- * Version: 2.8.104
+ * Version: 2.9.0
  * Requires at least: 6.4
  * Requires PHP:      8.1
  * Tested up to:      7.1
@@ -280,6 +280,10 @@ add_action(
 			// Y la reconciliación de la ficha (members#39), por el mismo motivo: el manejador tiene que estar
 			// enganchado cuando llega la petición, no solo cuando se pinta la pantalla.
 			add_action( 'admin_post_convoca_reconciliar_ficha', array( \Convoca\Members\Admin_List::class, 'handle_reconciliar' ) );
+
+			// Los avisos del circuito del voluntariado (members#50): un correo por paso, y solo cuando hay
+			// algo que hacer.
+			\Convoca\Members\Circuito_Voluntariado::init();
 		}
 
 		// Public.

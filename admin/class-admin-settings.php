@@ -137,6 +137,9 @@ class Admin_Settings {
 			// A dónde van los avisos de horas pendientes de aprobar (petición de JC, 16/10/2026). Vacío =
 			// al correo de administración, que es donde ya llegan los demás avisos.
 			'voluntariado_email'      => sanitize_email( $input['voluntariado_email'] ?? '' ),
+			// Las preguntas de la entrevista inicial, una por línea: cada organización tiene las suyas
+			// (decisión de JC, 16/10/2026). Sin preguntas, la entrevista se resuelve marcándola como hecha.
+			'entrevista_preguntas'    => sanitize_textarea_field( $input['entrevista_preguntas'] ?? '' ),
 			'doc_protocolo'           => esc_url_raw( $input['doc_protocolo'] ?? '' ),
 			'sender_name'             => sanitize_text_field( $input['sender_name'] ?? get_bloginfo( 'name' ) ),
 			'min_age'                 => (int) ( $input['min_age'] ?? 0 ),
@@ -532,6 +535,12 @@ class Admin_Settings {
 				<label for="doc_voluntariado"><?php esc_html_e( 'Programa de Voluntariado (URL)', 'convoca-members' ); ?></label>
 				<input type="url" id="doc_voluntariado" name="convoca_members_settings[doc_voluntariado]"
 					value="<?php echo esc_attr( $settings['doc_voluntariado'] ?? '' ); ?>">
+			</div>
+
+			<div class="convoca-field">
+				<label for="entrevista_preguntas"><?php esc_html_e( 'Preguntas de la entrevista inicial', 'convoca-members' ); ?></label>
+				<textarea id="entrevista_preguntas" name="convoca_members_settings[entrevista_preguntas]" rows="6" class="large-text"><?php echo esc_textarea( $settings['entrevista_preguntas'] ?? '' ); ?></textarea>
+				<small class="convoca-small"><?php esc_html_e( 'Una por línea. La persona voluntaria las contesta desde su panel y con eso queda hecha la entrevista. Si se deja vacío, la entrevista se marca como hecha desde aquí.', 'convoca-members' ); ?></small>
 			</div>
 
 			<div class="convoca-field">

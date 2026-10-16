@@ -361,6 +361,18 @@ final class Roles_Miembro {
 	 * @param int $miembro_id ID de la ficha.
 	 * @return bool
 	 */
+	/**
+	 * ¿Puede tener la condición de monitor? Solo si ya es voluntariado.
+	 *
+	 * Decisión de JC (16/10/2026): «solo voluntario o voluntario y monitor, pero nunca monitor solo».
+	 * El monitor está delante de una actividad, y esa posición la da el voluntariado.
+	 *
+	 * @param int $miembro_id Ficha del socio.
+	 */
+	public static function puede_tener_monitor( int $miembro_id ): bool {
+		return self::es_voluntario( $miembro_id );
+	}
+
 	public static function tiene_doble_rol( int $miembro_id ): bool {
 		return self::es_socio( $miembro_id ) && self::es_voluntario( $miembro_id );
 	}
@@ -374,6 +386,17 @@ final class Roles_Miembro {
 	 */
 	public static function anadir( int $miembro_id, string $rol ): bool {
 		if ( $miembro_id <= 0 || '' === self::meta_de( $rol ) ) {
+			return false;
+		}
+
+		// Nunca monitor solo (JC, 16/10/2026): el monitorado se APOYA en el voluntariado, así que aquí
+		// no se concede nada. Al estar en el sitio donde nace la condición, ninguna vía —pantalla,
+		// importación o API— puede dejar una ficha marcada como monitor sin ser voluntaria.
+		if ( self::MONITOR === $rol && ! self::es_voluntario( $miembro_id ) ) {
+			\Convoca\Core\Logger::warning(
+				sprintf( 'No se concede monitor sin voluntariado: ficha #%d', $miembro_id ),
+				'Members/Roles'
+			);
 			return false;
 		}
 
@@ -399,6 +422,13 @@ final class Roles_Miembro {
 		// Se escribe '0' y no se borra la meta: así se distingue «nunca se le puso» (fichas antiguas, donde
 		// el rol de WordPress es la única prueba) de «se le quitó», que es lo que hay que reflejar.
 		update_post_meta( $miembro_id, self::meta_de( $rol ), '0' );
+
+		// La otra cara de «nunca monitor solo»: si se va el voluntariado, se va el monitorado. Sin esto
+		// la ficha quedaría marcada como monitor sin ser voluntaria, que es justo lo que no puede pasar.
+		if ( self::VOLUNTARIO === $rol && '1' === (string) get_post_meta( $miembro_id, self::META_MONITOR, true ) ) {
+			update_post_meta( $miembro_id, self::META_MONITOR, '0' );
+		}
+
 		self::sincronizar_roles_wp( $miembro_id );
 		self::sincronizar_taxonomia( $miembro_id );
 
@@ -485,6 +515,13 @@ final class Roles_Miembro {
 			// La marca de voluntariado sólo vale como condición si está aprobada: si no, el rol que abre la
 			// acreditación de horas se concede con la simple casilla del alta (members#30).
 			if ( '1' === $marca && self::VOLUNTARIO === $rol && ! self::voluntario_aprobado( $miembro_id ) ) {
+				$marca = '0';
+			}
+
+			// Y nunca monitor solo (JC, 16/10/2026: «solo voluntario o voluntario y monitor, pero nunca
+			// monitor solo»). El monitorado se APOYA en el voluntariado: sin él no significa nada. Esta es
+			// la única función que escribe los roles de WordPress, así que ninguna vía puede saltársela.
+			if ( '1' === $marca && self::MONITOR === $rol && ! self::es_voluntario( $miembro_id ) ) {
 				$marca = '0';
 			}
 

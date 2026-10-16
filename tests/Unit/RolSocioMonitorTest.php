@@ -89,9 +89,28 @@ class RolSocioMonitorTest extends TestCase {
 
 		Roles_Miembro::quitar( self::ID, Roles_Miembro::VOLUNTARIO );
 
-		$this->assertSame( array( 'socio', 'monitor' ), Roles_Miembro::roles( self::ID ) );
+		$this->assertSame( array( 'socio' ), Roles_Miembro::roles( self::ID ) );
 		$this->assertNotContains( 'voluntario_aprobado', $user->roles );
-		$this->assertContains( 'socio', $user->roles );
+		$this->assertContains( 'socio', $user->roles, 'La condición de socio no se toca' );
+	}
+
+	/**
+	 * «Solo voluntario o voluntario y monitor, pero nunca monitor solo» (JC, 16/10/2026).
+	 *
+	 * La regla se comprueba donde nace la condición, así que da igual el camino: la ficha no queda marcada
+	 * como monitor y el rol de WordPress —el que miran Enroll y Shifts— tampoco se concede.
+	 */
+	public function test_nunca_monitor_solo(): void {
+		$user = $this->con_usuario();
+
+		$this->assertFalse( Roles_Miembro::anadir( self::ID, Roles_Miembro::MONITOR ), 'Sin voluntariado no se concede' );
+		$this->assertNotContains( 'monitor', Roles_Miembro::roles( self::ID ) );
+		$this->assertNotContains( 'monitor_actividad', $user->roles );
+
+		// Con voluntariado delante, sí.
+		Roles_Miembro::anadir( self::ID, Roles_Miembro::VOLUNTARIO );
+		$this->assertTrue( Roles_Miembro::anadir( self::ID, Roles_Miembro::MONITOR ) );
+		$this->assertSame( array( 'voluntario', 'monitor' ), Roles_Miembro::roles( self::ID ) );
 		$this->assertContains( 'monitor_actividad', $user->roles );
 	}
 
