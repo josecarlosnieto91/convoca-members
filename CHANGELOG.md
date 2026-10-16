@@ -1,14 +1,23 @@
-## [2.8.100] — 2026-10-16
+## [2.8.101] — 2026-10-16
 
 ### Arreglado
-- **El voluntario ya puede apuntar sus propias horas (members#37).** El formulario «Añadir Nuevo Registro» de
-  la pestaña de Voluntariado **ya existía** y enviaba un `POST` a `/me/horas`, pero esa ruta solo aceptaba
-  `GET`: el `fetch` no encontraba a quién llamar y no había forma de anotar «hoy he ido a limpiar el río».
-  Ahora la ruta acepta el `POST` y las horas entran por `Hours_Manager::save_hours_record( $datos, false )` —el
-  mismo camino que usa la junta, sin duplicar nada—, en estado **pendiente**: no cuentan para el total ni para
-  el nivel hasta que la JD las apruebe. La ficha es siempre la del socio con sesión.
-- El formulario lo avisa: «Queda pendiente de que la junta lo apruebe: hasta entonces no cuenta en tu total ni
-  en tu nivel», y se guarda también la actividad opcional.
-- Cuatro pruebas nuevas (`HorasDelVoluntarioTest`), una de ellas comparando **el envío del panel con los
-  métodos de la ruta**: ese desajuste (POST en el navegador, GET en el servidor) era el defecto completo.
+- **El voluntario ya puede apuntar el trabajo que no es de ningún proyecto (members#37).** El formulario y su
+  ruta ya existían y funcionaban; lo que impedía anotar era que `Hours_Manager::validate_hours_data()`
+  **exigía un proyecto** («Debes seleccionar un proyecto») y el selector del formulario iba `required`. El
+  trabajo voluntario que sale en el issue —repartir carteles, llevar la contabilidad, arreglar el local— no
+  pertenece a ningún proyecto, así que esas horas no se podían apuntar: el certificado y los niveles salían
+  cortos por muy voluntario que fuera alguien.
+  Ahora el proyecto es **opcional para el socio** (su selector dice «Proyecto (opcional)») y **sigue siendo
+  obligatorio para la junta**, cuyo libro tiene que cuadrar por proyectos. Si se elige uno, se comprueba que
+  sea un proyecto de verdad.
+- El formulario avisa: «Queda pendiente de que la junta lo apruebe: hasta entonces no cuenta en tu total ni en
+  tu nivel».
+
+### Corrección de mi diagnóstico
+- Un commit anterior (`ab6dce7`) decía que la ruta «solo aceptaba GET». **Era falso**: el `POST` ya estaba, con
+  `submit_hours()`. Añadí un `POST` duplicado con otro manejador antes de medirlo, y al medir lo **retiré**:
+  un duplicado sombrea al primero y confunde. Por eso esta versión no añade ninguna ruta.
+- Cuatro pruebas nuevas (`HorasDelVoluntarioTest`): que el panel y la ruta se entiendan, que el manejador de la
+  ruta **exista** (una ruta apuntando a un método inexistente es un 500 esperando), que haya **un solo** POST,
+  y que el proyecto sea opcional para el socio y obligatorio para la junta.
 

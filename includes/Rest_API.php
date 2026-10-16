@@ -101,14 +101,6 @@ class Rest_API {
 					'callback'            => array( $this, 'get_hours' ),
 					'permission_callback' => array( $this, 'check_member_auth' ),
 				),
-				// El voluntario apunta sus propias horas (members#37). DEFECTO MEDIDO: el formulario del panel
-				// ya existía y enviaba aquí un POST, pero la ruta solo aceptaba GET — el `fetch` no encontraba
-				// a quién llamar y el voluntario no podía anotar nada. Entran como PENDIENTES de aprobación.
-				array(
-					'methods'             => 'POST',
-					'callback'            => array( $this, 'apuntar_horas' ),
-					'permission_callback' => array( $this, 'check_active_member' ),
-				),
 				array(
 					'methods'             => 'POST',
 					'callback'            => array( $this, 'submit_hours' ),
@@ -825,64 +817,6 @@ class Rest_API {
 				// donde está el botón; el primer intento lo puse en el endpoint de inscripciones.
 				'cuota' => self::estado_cuota_panel( (int) $member_id ),
 			)
-		);
-	}
-
-	/**
-	 * El voluntario apunta sus propias horas (members#37).
-	 *
-	 * Hay trabajo voluntario que no es una actividad con inscripción —repartir carteles, llevar la
-	 * contabilidad, arreglar el local— y hasta ahora esas horas no se podían apuntar: el certificado y los
-	 * niveles salían cortos por muy voluntario que fuera alguien, y el voluntario lo vivía como un fallo suyo.
-	 *
-	 * Entran como **pendientes**: no cuentan para el total ni para el nivel hasta que la JD las apruebe, y se
-	 * lo decimos en la respuesta y en su pantalla. La creación y las metas las pone `Hours_Manager`, el mismo
-	 * camino que usa la JD: aquí no se duplica nada.
-	 *
-	 * @param \WP_REST_Request $request Petición.
-	 * @return \WP_REST_Response
-	 */
-	public function apuntar_horas( \WP_REST_Request $request ): \WP_REST_Response {
-		$member_id = Member_Auth::get_current_member_id();
-		if ( $member_id <= 0 ) {
-			return new \WP_REST_Response(
-				array(
-					'success' => false, 'message' => __( 'No hemos podido identificarte como socio.', 'convoca-members' )
-				),
-				403 
-			);
-		}
-
-		$datos = array(
-			'miembro_id'  => $member_id,
-			'fecha'       => sanitize_text_field( (string) ( $request->get_param( 'fecha' ) ?? current_time( 'Y-m-d' ) ) ),
-			'horas'       => (float) $request->get_param( 'horas' ),
-			'proyecto_id' => (int) $request->get_param( 'proyecto_id' ),
-			'actividad_id' => (int) $request->get_param( 'actividad_id' ),
-			'tareas'      => sanitize_textarea_field( (string) $request->get_param( 'tareas' ) ),
-			'descripcion' => sanitize_textarea_field( (string) $request->get_param( 'descripcion' ) ),
-		);
-
-		// `false` = no es la JD: el estado sale 'pendiente' pase lo que pase.
-		$resultado = \Convoca\Members\Hours_Manager::save_hours_record( $datos, false );
-
-		if ( is_wp_error( $resultado ) ) {
-			return new \WP_REST_Response(
-				array(
-					'success' => false, 'message' => $resultado->get_error_message()
-				),
-				400
-			);
-		}
-
-		return new \WP_REST_Response(
-			array(
-				'success' => true,
-				'message' => __( 'Anotadas. Quedan pendientes de que la junta las apruebe: hasta entonces no cuentan para tu total.', 'convoca-members' ),
-				'horas'   => (float) $datos['horas'],
-				'estado'  => 'pendiente',
-			),
-			201
 		);
 	}
 

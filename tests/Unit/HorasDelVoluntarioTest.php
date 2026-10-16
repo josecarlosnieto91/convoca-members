@@ -1,22 +1,17 @@
 <?php
 /**
- * El voluntario puede apuntar sus propias horas (members#37).
+ * El voluntario puede apuntar sus horas y no le exigen un proyecto que no existe (members#37).
  *
- * CAUSA RAÍZ MEDIDA (16/10/2026): el formulario «Añadir Nuevo Registro» **ya existía** en la pestaña de
- * Voluntariado y enviaba un `POST` a `/me/horas`, pero esa ruta solo aceptaba `GET`: el `fetch` no encontraba
- * a quién llamar y el voluntario no podía anotar nada. De ahí que el issue lo viera como «ni un botón»: la
- * pantalla estaba, la puerta no.
+ * CAUSA RAÍZ MEDIDA (16/10/2026, tras un diagnóstico mío equivocado que dejo escrito aquí): el formulario
+ * «Añadir Nuevo Registro» y su ruta (`POST /me/horas` → `Rest_API::submit_hours()`) **ya existían y
+ * funcionaban**. Lo que impedía anotar era que `Hours_Manager::validate_hours_data()` **exigía un proyecto**
+ * («Debes seleccionar un proyecto»), y el trabajo voluntario del issue —repartir carteles, llevar la
+ * contabilidad, arreglar el local— no pertenece a ningún proyecto: el selector del formulario iba `required`
+ * y sin proyecto no había forma humana de apuntar nada.
  *
- * Lo que fija esta prueba:
- *  · el envío del panel y los métodos de la ruta **coinciden** (era el defecto: GET en el servidor, POST en
- *    el navegador);
- *  · las horas entran por `Hours_Manager::save_hours_record( $datos, false )`, o sea **pendientes** —el mismo
- *    camino que usa la JD, sin duplicar la creación—;
- *  · la ficha que se apunta es la del socio con sesión, nunca una que venga en la petición;
- *  · y el formulario avisa de que no cuentan hasta que la junta las apruebe.
- *
- * El circuito completo (2 h apuntadas → la JD aprueba → el total y el nivel suben) se mide **en vivo**: está
- * en el issue.
+ * (Primero di por hecho que la ruta solo aceptaba GET y añadí un POST duplicado con otro manejador. Al medir
+ * resultó que `submit_hours` ya estaba: el duplicado se retiró. Por eso esta prueba fija lo que de verdad
+ * estaba mal, y también que el manejador de la ruta EXISTE: era la otra trampa posible.)
  *
  * @package Convoca\Members\Tests
  */
@@ -31,46 +26,47 @@ class HorasDelVoluntarioTest extends TestCase {
 		return (string) file_get_contents( dirname( __DIR__, 2 ) . '/' . $rel );
 	}
 
-	/** El defecto: el navegador enviaba un POST a una ruta que solo tenía GET. */
-	public function test_el_panel_y_la_ruta_se_entienden(): void {
+	/** El panel y la ruta se entienden… y el manejador de la ruta existe. */
+	public function test_el_panel_la_ruta_y_el_manejador_se_entienden(): void {
 		$js  = $this->leer( 'public/assets/mi-area.js' );
 		$api = $this->leer( 'includes/Rest_API.php' );
 
 		$this->assertStringContainsString( "+ '/me/horas', {\n        method: 'POST'", $js, 'El panel envía un POST a /me/horas' );
 
-		// La ruta tiene que aceptar POST, no solo GET.
 		$pos = strpos( $api, "'/me/horas'," );
 		$this->assertNotFalse( $pos );
 		$bloque = substr( $api, $pos, 900 );
-		$this->assertStringContainsString( "'methods'             => 'POST'", $bloque, 'La ruta /me/horas acepta POST: si solo acepta GET, el formulario del panel no tiene a quién llamar' );
-		$this->assertStringContainsString( 'apuntar_horas', $bloque, 'Y llama al manejador del voluntario' );
+		$this->assertStringContainsString( "'methods'             => 'POST'", $bloque, 'La ruta acepta POST' );
+		$this->assertStringContainsString( 'submit_hours', $bloque, 'Y llama a un manejador que existe' );
+		$this->assertStringContainsString( 'public function submit_hours( \\WP_REST_Request $request )', $api, 'El manejador está definido: una ruta que apunta a un método inexistente es un 500 esperando' );
+		$this->assertSame( 1, substr_count( $bloque, "'methods'             => 'POST'" ), 'Un solo POST en la ruta: un duplicado sombrea al primero y confunde' );
 	}
 
-	/** Las horas entran pendientes, por el mismo camino que usa la JD. */
-	public function test_las_horas_entran_pendientes(): void {
-		$api = $this->leer( 'includes/Rest_API.php' );
-
-		$this->assertStringContainsString( 'Hours_Manager::save_hours_record( $datos, false )', $api, '`false` = no es la JD: el estado sale pendiente' );
-		$this->assertStringContainsString( "'miembro_id'  => \$member_id,", $api, 'La ficha es la del socio con sesión' );
-		$this->assertStringNotContainsString( "\$request->get_param( 'miembro_id' )", $api, 'Y nunca la que venga en la petición' );
-		$this->assertStringContainsString( 'Quedan pendientes de que la junta las apruebe', $api, 'Se lo decimos al socio' );
-	}
-
-	/** El circuito de aprobación de la JD ya existía y se reutiliza (no se duplica). */
-	public function test_la_aprobacion_es_la_de_siempre(): void {
+	/** El proyecto es opcional para el socio y obligatorio para la junta. */
+	public function test_el_proyecto_es_opcional_para_el_socio(): void {
 		$manager = $this->leer( 'includes/Hours_Manager.php' );
 
 		$this->assertStringContainsString( 'public static function save_hours_record( array $data, bool $is_admin = false )', $manager );
-		$this->assertStringContainsString( "'pendiente'", $manager, 'Sin ser la JD, el estado por defecto es pendiente' );
-		$this->assertStringContainsString( 'public static function process_approval(', $manager, 'La aprobación la sigue haciendo la JD desde su pantalla' );
+		$this->assertStringContainsString( '$validation = self::validate_hours_data( $data, ! $is_admin );', $manager, 'El socio (is_admin = false) puede ir sin proyecto' );
+		$this->assertStringContainsString( 'public static function validate_hours_data( array $data, bool $proyecto_opcional = false )', $manager );
+		$this->assertStringContainsString( "if ( ! \$proyecto_opcional && empty( \$data['proyecto_id'] ) ) {", $manager, 'La junta sigue exigiéndolo' );
 	}
 
-	/** Y el formulario lo dice claro. */
+	/** Y el formulario ya no obliga a elegir proyecto. */
+	public function test_el_formulario_no_obliga_a_elegir_proyecto(): void {
+		$js = $this->leer( 'public/assets/mi-area.js' );
+
+		$this->assertStringNotContainsString( '<select name="proyecto_id" required>', $js, 'El selector ya no es obligatorio' );
+		$this->assertStringContainsString( '<option value="">Proyecto (opcional)</option>', $js );
+		$this->assertStringContainsString( '<option value="">Selecciona actividad (opcional)</option>', $js, 'La actividad ya se ofrecía como opcional' );
+	}
+
+	/** Y se le dice claro que no cuentan hasta que la junta apruebe. */
 	public function test_el_formulario_avisa(): void {
 		$js = $this->leer( 'public/assets/mi-area.js' );
 
 		$this->assertStringContainsString( '<strong>Queda pendiente de que la junta lo apruebe</strong>', $js );
 		$this->assertStringContainsString( 'hasta entonces no cuenta en tu total ni en tu nivel', $js );
-		$this->assertStringContainsString( 'id="conv-hours-form"', $js, 'Y el formulario que ya existía sigue siendo el que se usa' );
+		$this->assertStringContainsString( 'id="conv-hours-form"', $js );
 	}
 }

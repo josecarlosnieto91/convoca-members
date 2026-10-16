@@ -894,8 +894,8 @@
               <form id="conv-hours-form" class="conv-inline-form">
                 <div class="form-group"><input type="date" name="fecha" required></div>
                 <div class="form-group">
-                  <select name="proyecto_id" required>
-                    <option value="">Selecciona proyecto *</option>
+                  <select name="proyecto_id">
+                    <option value="">Proyecto (opcional)</option>
                     ${proyectoOptions}
                   </select>
                 </div>

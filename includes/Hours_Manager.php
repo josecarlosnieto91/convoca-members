@@ -36,7 +36,7 @@ class Hours_Manager {
 	 * @param array $data Data to validate.
 	 * @return bool|\WP_Error True if valid, WP_Error otherwise.
 	 */
-	public static function validate_hours_data( array $data ): bool|\WP_Error {
+	public static function validate_hours_data( array $data, bool $proyecto_opcional = false ): bool|\WP_Error {
 		if ( empty( $data['miembro_id'] ) ) {
 			return new \WP_Error( 'missing_miembro', __( 'Debes seleccionar un socio.', 'convoca-members' ) );
 		}
@@ -46,16 +46,26 @@ class Hours_Manager {
 		if ( empty( $data['horas'] ) || (float) $data['horas'] <= 0 ) {
 			return new \WP_Error( 'invalid_horas', __( 'El número de horas debe ser mayor que cero.', 'convoca-members' ) );
 		}
-		if ( empty( $data['proyecto_id'] ) ) {
+		// members#37: para las horas que apunta el propio voluntario el proyecto es OPCIONAL.
+		//
+		// Hay trabajo voluntario que no es de ningún proyecto —repartir carteles, llevar la contabilidad,
+		// arreglar el local— y exigir proyecto dejaba esas horas fuera: no se podían apuntar, así que el
+		// certificado y los niveles salían cortos. La JD, en su pantalla, sigue exigiéndolo (su libro tiene
+		// que cuadrar por proyectos).
+		if ( ! $proyecto_opcional && empty( $data['proyecto_id'] ) ) {
 			return new \WP_Error( 'missing_proyecto', __( 'Debes seleccionar un proyecto.', 'convoca-members' ) );
 		}
 		if ( empty( $data['tareas'] ) ) {
 			return new \WP_Error( 'missing_tareas', __( 'Debes describir las tareas realizadas.', 'convoca-members' ) );
 		}
 
-		// Validate proyecto_id.
-		$proyecto = get_post( (int) $data['proyecto_id'] );
-		if ( ! $proyecto || $proyecto->post_type !== 'proyecto' ) {
+		// Validate proyecto_id: si viene, tiene que ser un proyecto de verdad.
+		if ( ! empty( $data['proyecto_id'] ) ) {
+			$proyecto = get_post( (int) $data['proyecto_id'] );
+		} else {
+			$proyecto = null;
+		}
+		if ( ! empty( $data['proyecto_id'] ) && ( ! $proyecto || 'proyecto' !== $proyecto->post_type ) ) {
 			return new \WP_Error( 'invalid_proyecto', __( 'El proyecto seleccionado no es válido.', 'convoca-members' ) );
 		}
 
@@ -70,7 +80,8 @@ class Hours_Manager {
 	 * @return int|\WP_Error  Post ID on success, WP_Error on failure.
 	 */
 	public static function save_hours_record( array $data, bool $is_admin = false ): int|\WP_Error {
-		$validation = self::validate_hours_data( $data );
+		// El socio puede apuntar horas sin proyecto; la JD no (members#37).
+		$validation = self::validate_hours_data( $data, ! $is_admin );
 		if ( is_wp_error( $validation ) ) {
 			return $validation;
 		}
