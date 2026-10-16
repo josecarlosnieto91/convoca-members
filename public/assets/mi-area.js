@@ -815,11 +815,29 @@
         .then(function(r) { return r.ok ? r.json() : { html: '' }; })
         .then(function(d) {
           if (!d || !d.html) return;
-          const previo = self.$main.querySelector('#conv-bloque-voluntariado');
-          if (previo) previo.remove();
-          self.$main.insertAdjacentHTML('afterbegin', d.html);
+          self.pintarBloqueVoluntariado(d.html);
         })
         .catch(function() {});
+    },
+
+    /**
+     * Pinta el bloque **fuera** del contenedor que repinta cada pestaña.
+     *
+     * Dentro no vale: la pestaña de Voluntariado reemplaza su propio contenido entero al cargar las horas, y
+     * se llevaba por delante este bloque (medido: el bloque no aparecía nunca en el panel).
+     *
+     * @param {string} html El bloque tal cual lo manda el servidor.
+     */
+    pintarBloqueVoluntariado: function(html) {
+      const previo = document.getElementById('conv-bloque-voluntariado');
+      if (previo) { previo.outerHTML = html; return; }
+      if (this.$main && this.$main.parentNode) {
+        // El bloque se convierte en nodo con un contenedor de usar y tirar: el panel no tiene helper de HTML.
+        const caja = document.createElement('div');
+        caja.innerHTML = html;
+        const nodo = caja.firstElementChild;
+        if (nodo) { this.$main.parentNode.insertBefore(nodo, this.$main); }
+      }
     },
 
     /**
@@ -840,8 +858,7 @@
         .then(function(r) { return r.ok ? r.json() : null; })
         .then(function(d) {
           if (!d) { alert('No se ha podido enviar. Inténtalo de nuevo.'); return; }
-          const previo = self.$main.querySelector('#conv-bloque-voluntariado');
-          if (previo && d.html) { previo.outerHTML = d.html; }
+          if (d.html) { self.pintarBloqueVoluntariado(d.html); }
           if (d.message) { alert(d.message); }
         })
         .catch(function() { alert('No se ha podido enviar. Inténtalo de nuevo.'); });
