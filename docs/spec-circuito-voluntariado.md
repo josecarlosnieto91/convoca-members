@@ -82,15 +82,41 @@ aprobados entran como `activo` sin pasar por los pasos anteriores.
 
 **La fase 1 no toca el flujo actual:** es leer lo que ya hay y ordenarlo por pasos.
 
-## 5. Preguntas para JC (antes de empezar la fase 2)
+## 5. Respuestas de JC (16/10/2026) y qué se ha construido
 
-1. **La entrevista**: ¿se cita con fecha y hora desde el sistema (y el voluntario la ve en su panel), o basta
-   con anotar «entrevista hecha»?
-2. **El acuerdo**: ¿vale con que el voluntario lo acepte en línea desde su panel, o se sube el PDF firmado a
-   mano? (Hoy el PDF se genera y se guarda como documento.)
-3. **La desvinculación**: ¿puede pedirla el propio voluntario desde su panel, o solo la junta?
-4. **Horas al desvincularse**: se quedan como están, ¿no? (certificado de lo hecho, y el ciclo sigue contando
-   lo aprobado hasta esa fecha).
+Las cuatro preguntas de esta spec, contestadas por JC, y lo que hay hecho con cada una:
+
+1. **La entrevista: cita con fecha y hora, y además un cuestionario.** «La entrevista se cita con fecha y hora.
+   También puede resolverse con un formulario de preguntas y respuestas a cumplimentar (las propias preguntas de
+   la entrevista, cada organización podría tener las suyas)». Hecho: se cita desde el tablero con fecha y hora
+   (y se avisa por correo), y las preguntas se configuran en los ajustes, una por línea. La persona las contesta
+   desde su panel; con eso, o marcándola como hecha desde administración, **la entrevista está resuelta**.
+2. **Y desde ese momento es voluntario y/o monitor: «solo voluntario o voluntario y monitor, pero nunca monitor
+   solo».** Hecho: la regla vive en `Roles_Miembro::anadir()` —donde nace la condición— y se refuerza al
+   escribir los roles de WordPress; quitar el voluntariado quita el monitorado. Con prueba que lo fija.
+3. **El acuerdo lo acepta la persona.** «Puede generársele un PDF con sus datos y una firma, como ya se firman
+   otros documentos de Convoca». Hecho: se acepta desde el panel con un botón, y el acuerdo se genera **firmado**
+   por el camino de siempre (`PDF_Document` + `Convoca\Core\Signature`), quedando la fecha, la huella y el
+   documento en la ficha.
+4. **La desvinculación: la pide el voluntario, o caduca su membresía, o fuerza mayor de la junta.** Hecho:
+   las tres causas, con su fecha y su motivo. La baja que pide la persona **no** la da de baja: la confirma la
+   junta. La caducidad se aplica sola en el repaso diario (solo a quien **era** voluntariado aprobado: una
+   solicitud no se «desvincula» de nada).
+5. **Las horas, intactas.** «Al desvincularse las horas quedan como están, el certificado debe poder
+   descargarse y validarse contra la plataforma, y se sigue contando lo aprobado hasta esa fecha». Verificado
+   tras una desvinculación real: horas y certificado siguen ahí; el certificado ya tiene sus rutas
+   (`/me/certificate`, `/me/certificate/download`) y su página pública de verificación, y ese camino **no mira
+   la condición de voluntariado**, solo las horas.
+
+### Estado de las fases
+
+| Fase | Estado |
+|---|---|
+| 1 · El estado en la ficha y el tablero por pasos | **Hecha** (y verificada en la demo con el recorrido completo) |
+| 2 · Mover de paso, con fecha y quién | **Hecha** (citar, entrevista hecha, con monitor, desvincular con causa y confirmar la baja) |
+| 3 · El bloque del panel del socio y la aceptación del acuerdo | **Hecha** (cuestionario, acuerdo firmado y petición de baja) |
+| 4 · Desvinculación con motivo, aviso y efecto en horas y renovación | **Hecha** (las tres causas, caducidad automática, horas y certificado intactos) |
+| 5 · Correos de cada paso | **Hecha** con textos del propio circuito. Las plantillas editables desde los ajustes quedan como mejora: hoy los textos son fijos, en castellano y traducibles. |
 
 ## 6. Criterios de aceptación
 
