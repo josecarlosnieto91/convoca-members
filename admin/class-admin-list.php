@@ -52,7 +52,6 @@ class Admin_List extends \WP_List_Table {
 		// El tipo no admite papelera, así que WordPress pinta «Papelera» y no hace nada: se quita de la
 		// pantalla cruda para que no haya botones muertos (issue #27).
 		add_filter( 'post_row_actions', array( $this, 'sin_papelera' ), 10, 2 );
-		add_filter( 'post_row_actions', array( $this, 'accion_consentimiento' ), 10, 2 );
 		add_action( 'admin_post_convoca_registrar_consentimiento', array( $this, 'registrar_consentimiento' ) );
 		add_filter( 'bulk_actions-edit-miembro', array( $this, 'sin_papelera_bulk' ) );
 	}
@@ -590,7 +589,8 @@ class Admin_List extends \WP_List_Table {
 
 		if ( ! $consentimiento['registrado'] ) {
 			return '<span style="color:#b32d2e;" title="' . esc_attr__( 'Sin constancia de consentimiento', 'convoca-members' ) . '">'
-				. esc_html__( 'Sin registrar', 'convoca-members' ) . '</span>';
+				. esc_html__( 'Sin registrar', 'convoca-members' ) . '</span>'
+				. $this->enlace_consentimiento( (int) $item->ID );
 		}
 
 		$texto = esc_html( $consentimiento['fecha'] );
@@ -598,7 +598,7 @@ class Admin_List extends \WP_List_Table {
 			$texto .= '<br><small>' . esc_html( sprintf( /* translators: %s: version of the accepted text. */ __( 'texto v%s', 'convoca-members' ), $consentimiento['version'] ) ) . '</small>';
 		}
 
-		return $texto;
+		return $texto . $this->enlace_consentimiento( (int) $item->ID );
 	}
 
 	public function column_plan( $item ): string {
@@ -648,35 +648,32 @@ class Admin_List extends \WP_List_Table {
 	 * @return array
 	 */
 	/**
-	 * El botón «Registrar consentimiento» en la fila del socio (members#41).
+	 * El enlace para registrar el consentimiento de una fila (members#41).
 	 *
-	 * Hay socios que dieron su consentimiento en papel o por correo, y otros que vienen de otra base: hasta
-	 * ahora no había forma de dejarlo apuntado sin tocar la base de datos a mano, así que el RGPD no se
-	 * podía demostrar. Esto solo abre la puerta; el que apunta es quien administra, con su sesión.
+	 * Va DENTRO de la columna y no en `post_row_actions`: medido en la demo, esa acción no se pinta en la
+	 * pantalla propia del plugin (que no es la tabla de `edit.php`), así que el botón no aparecía por
+	 * ninguna parte. Aquí se ve, que es de lo que se trata.
 	 *
-	 * @param array   $acciones Acciones de la fila.
-	 * @param \WP_Post $post     Ficha de la fila.
-	 * @return array
+	 * @param int $miembro Ficha del socio.
+	 * @return string HTML del enlace (vacío si no hay permiso).
 	 */
-	public function accion_consentimiento( $acciones, $post ) {
-		if ( 'miembro' !== $post->post_type || ! current_user_can( 'edit_post', $post->ID ) ) {
-			return $acciones;
+	private function enlace_consentimiento( int $miembro ): string {
+		if ( ! current_user_can( 'edit_post', $miembro ) ) {
+			return '';
 		}
 
-		$consentimiento = GDPR_Tools::etiqueta_consentimiento( (int) $post->ID );
+		$registrado = GDPR_Tools::etiqueta_consentimiento( $miembro )['registrado'];
 
-		$acciones['convoca_consentimiento'] = sprintf(
-			'<a href="%s">%s</a>',
+		return sprintf(
+			'<br><a href="%s">%s</a>',
 			esc_url(
 				wp_nonce_url(
-					admin_url( 'admin-post.php?action=convoca_registrar_consentimiento&miembro=' . (int) $post->ID ),
-					'convoca_consentimiento_' . (int) $post->ID
+					admin_url( 'admin-post.php?action=convoca_registrar_consentimiento&miembro=' . $miembro ),
+					'convoca_consentimiento_' . $miembro
 				)
 			),
-			esc_html( $consentimiento['registrado'] ? __( 'Volver a registrar el consentimiento', 'convoca-members' ) : __( 'Registrar consentimiento', 'convoca-members' ) )
+			esc_html( $registrado ? __( 'Volver a registrar', 'convoca-members' ) : __( 'Registrar consentimiento', 'convoca-members' ) )
 		);
-
-		return $acciones;
 	}
 
 	/**
