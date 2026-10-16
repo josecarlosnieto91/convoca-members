@@ -277,6 +277,9 @@ add_action(
 			// se instancia al pintar su pantalla: el gancho tiene que estar puesto SIEMPRE o el botón no
 			// hace nada. Por eso el manejador es estático y se registra aquí (medido en la demo).
 			add_action( 'admin_post_convoca_registrar_consentimiento', array( \Convoca\Members\Admin_List::class, 'registrar_consentimiento' ) );
+			// Y la reconciliación de la ficha (members#39), por el mismo motivo: el manejador tiene que estar
+			// enganchado cuando llega la petición, no solo cuando se pinta la pantalla.
+			add_action( 'admin_post_convoca_reconciliar_ficha', array( \Convoca\Members\Admin_List::class, 'handle_reconciliar' ) );
 		}
 
 		// Public.

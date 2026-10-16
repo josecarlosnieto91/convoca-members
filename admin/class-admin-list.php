@@ -54,16 +54,15 @@ class Admin_List extends \WP_List_Table {
 		add_filter( 'post_row_actions', array( $this, 'sin_papelera' ), 10, 2 );
 		add_filter( 'bulk_actions-edit-miembro', array( $this, 'sin_papelera_bulk' ) );
 
-		// Reconciliación (members#39). Ojo: `post_row_actions` NO se pinta en esta pantalla —es una pantalla
-		// propia del plugin, con su propia lista—, así que la acción va montada con las demás en
-		// `column_nombre()`. Aquí solo se engancha el manejador.
-		add_action( 'admin_post_convoca_reconciliar_ficha', array( $this, 'handle_reconciliar' ) );
+		// Reconciliación (members#39): la acción va montada con las demás en `column_nombre()` (en esta pantalla
+		// `post_row_actions` NO se pinta) y su manejador se engancha en el bootstrap del plugin, no aquí: este
+		// constructor solo corre al pintar la lista, y el manejador tiene que estar cuando llega la petición.
 	}
 
 	/**
 	 * Pone la ficha de acuerdo con sus datos: cuota pagada ⇒ condición de socio.
 	 */
-	public function handle_reconciliar(): void {
+	public static function handle_reconciliar(): void {
 		$id = (int) ( wp_unslash( $_GET['id'] ?? 0 ) );
 
 		if ( ! $id || ! wp_verify_nonce( wp_unslash( $_GET['_wpnonce'] ?? '' ), 'convoca_reconciliar_' . $id ) ) {
