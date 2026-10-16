@@ -108,7 +108,12 @@ namespace Convoca\Core {
 		public static function stream_csv( string $filename, array $headers, iterable $rows, string $separator = ';' ): int { return 0; }
 		public static function generate_access_code( int $length = 8 ): string { return ''; }
 		public static function do_action( string $new_hook, string $old_hook = '', ...$args ): void {}
-		public static function check_rate_limit( string $action, int $max = 10, int $window = 300 ): bool { return true; }
+		public static function check_rate_limit( string $action, int $max = 10, int $window = 300, string $identity = '' ): bool { return true; }
+
+		/** @return array<int, array<string, mixed>> */
+		public static function rate_limit_blocks( string $action = '' ): array { return array(); }
+
+		public static function rate_limit_clear( string $clave ): bool { return true; }
 		public static function acquire_lock( string $key, int $ttl = 60 ): bool { return true; }
 		public static function release_lock( string $key ): bool { return true; }
 		public static function get_branding_html( string $filter_suffix = 'common', string $css_class = '', string $style = 'color:#ffffff;margin:0;font-size:24px;' ): string { return ''; }

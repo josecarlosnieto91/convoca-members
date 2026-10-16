@@ -34,6 +34,11 @@ class Admin_Settings {
 	public function __construct() {
 		add_action( 'admin_init', array( $this, 'register_settings' ) );
 		add_action( 'admin_init', array( $this, 'handle_custom_save' ) );
+
+		// El desbloqueo de intentos se atiende desde aquí porque esta clase se instancia en CADA petición
+		// del panel (a diferencia de otras que solo existen al pintar su pantalla, y entonces el gancho no
+		// llega nunca). Medido con el botón del consentimiento, que fallaba por eso mismo (members#41).
+		add_action( 'admin_post_convoca_desbloquear_intentos', array( $this, 'desbloquear_intentos' ) );
 	}
 
 	public function handle_custom_save(): void {
@@ -253,6 +258,86 @@ class Admin_Settings {
 		return isset( $_GET['tab'] ) ? sanitize_key( $_GET['tab'] ) : 'general';
 	}
 
+	/**
+	 * Levanta un bloqueo de intentos desde el panel (members#46).
+	 *
+	 * Antes había que tocar la base de datos a mano: quien administra no tenía ningún botón, y el socio se
+	 * quedaba fuera hasta que caducara el bloqueo.
+	 */
+	public function desbloquear_intentos(): void {
+		if ( ! current_user_can( 'manage_options' ) ) {
+			wp_die( esc_html__( 'No tienes permiso para levantar bloqueos.', 'convoca-members' ) );
+		}
+
+		check_admin_referer( 'convoca_desbloquear_intentos' );
+
+		$clave = sanitize_text_field( wp_unslash( $_GET['clave'] ?? '' ) );
+		$hecho = \Convoca\Core\Utils::rate_limit_clear( $clave );
+
+		if ( $hecho ) {
+			\Convoca\Core\Logger::info( 'Bloqueo de intentos levantado desde el panel: ' . $clave, 'Members/Admin' );
+		}
+
+		wp_safe_redirect(
+			add_query_arg(
+				array(
+					'page'                 => 'convoca-members-settings',
+					'tab'                  => 'seguridad',
+					'convoca_desbloqueado' => $hecho ? '1' : '0',
+				),
+				admin_url( 'admin.php' )
+			)
+		);
+		exit;
+	}
+
+	/**
+	 * La pestaña «Intentos bloqueados»: quién está cortado, desde cuándo y el botón para levantarlo.
+	 */
+	public function render_seguridad_tab(): void {
+		$bloqueos = \Convoca\Core\Utils::rate_limit_blocks();
+
+		echo '<h2>🔒 ' . esc_html__( 'Intentos bloqueados', 'convoca-members' ) . '</h2>';
+		echo '<p class="description">' . esc_html__( 'La protección corta los intentos repetidos para que nadie inunde el formulario. Aquí ves quién está cortado ahora mismo y puedes levantarlo sin tocar la base de datos.', 'convoca-members' ) . '</p>';
+
+		if ( isset( $_GET['convoca_desbloqueado'] ) ) {
+			$ok = '1' === sanitize_text_field( wp_unslash( $_GET['convoca_desbloqueado'] ) );
+			echo '<div class="convoca-alert ' . ( $ok ? 'convoca-alert--success' : 'convoca-alert--warning' ) . '" style="display:block;margin:14px 0;"><p>'
+				. esc_html( $ok ? __( 'Bloqueo levantado. Ya puede volver a intentarlo.', 'convoca-members' ) : __( 'No había nada que levantar (puede que ya hubiera caducado).', 'convoca-members' ) )
+				. '</p></div>';
+		}
+
+		if ( empty( $bloqueos ) ) {
+			echo '<div class="convoca-alert convoca-alert--success" style="display:block;margin:20px 0;"><p>✅ '
+				. esc_html__( 'No hay ningún bloqueo activo.', 'convoca-members' ) . '</p></div>';
+
+			return;
+		}
+
+		echo '<table class="widefat striped" style="max-width:900px;margin-top:16px;"><thead><tr>';
+		foreach ( array( __( 'Quién', 'convoca-members' ), __( 'Formulario', 'convoca-members' ), __( 'Intentos', 'convoca-members' ), __( 'Bloqueado hasta', 'convoca-members' ), '' ) as $conv_th ) {
+			echo '<th>' . esc_html( $conv_th ) . '</th>';
+		}
+		echo '</tr></thead><tbody>';
+
+		foreach ( $bloqueos as $conv_b ) {
+			$conv_url = wp_nonce_url(
+				admin_url( 'admin-post.php?action=convoca_desbloquear_intentos&clave=' . rawurlencode( (string) $conv_b['clave'] ) ),
+				'convoca_desbloquear_intentos'
+			);
+
+			echo '<tr>';
+			echo '<td>' . esc_html( (string) $conv_b['quien'] ) . '<br><small>' . esc_html( $conv_b['es_persona'] ? __( 'una persona', 'convoca-members' ) : __( 'una conexión (puede afectar a varias personas)', 'convoca-members' ) ) . '</small></td>';
+			echo '<td><code>' . esc_html( (string) $conv_b['accion'] ) . '</code></td>';
+			echo '<td>' . (int) $conv_b['intentos'] . '</td>';
+			echo '<td>' . esc_html( wp_date( 'd/m/Y H:i', (int) $conv_b['bloqueado_hasta'] ) ) . '</td>';
+			echo '<td><a class="button button-primary" href="' . esc_url( $conv_url ) . '">' . esc_html__( 'Desbloquear', 'convoca-members' ) . '</a></td>';
+			echo '</tr>';
+		}
+
+		echo '</tbody></table>';
+	}
+
 	public function render(): void {
 		$active_tab = $this->get_active_tab();
 		?>
@@ -292,6 +377,17 @@ class Admin_Settings {
 					class="nav-tab <?php echo $active_tab === 'status' ? 'nav-tab-active' : ''; ?>">
 					<?php esc_html_e( 'Estado', 'convoca-members' ); ?>
 				</a>
+				<a href="?page=conv-members-settings&tab=seguridad"
+					class="nav-tab <?php echo $active_tab === 'seguridad' ? 'nav-tab-active' : ''; ?>">
+					🔒 <?php esc_html_e( 'Intentos bloqueados', 'convoca-members' ); ?>
+					<?php
+					// Con el número delante cuando hay algo que mirar: si está en cero, no hace falta gritar.
+					$conv_bloqueos = \Convoca\Core\Utils::rate_limit_blocks();
+					if ( ! empty( $conv_bloqueos ) ) {
+						echo ' <span class="awaiting-mod">' . (int) count( $conv_bloqueos ) . '</span>';
+					}
+					?>
+				</a>
 			</nav>
 
 			<?php \Convoca\Core\Utils::render_stored_notices(); ?>
@@ -317,6 +413,9 @@ class Admin_Settings {
 						break;
 					case 'status':
 						$this->render_status_tab();
+						break;
+					case 'seguridad':
+						$this->render_seguridad_tab();
 						break;
 					case 'general':
 					default:

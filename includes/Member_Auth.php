@@ -56,7 +56,12 @@ class Member_Auth {
 		}
 
 		// Rate limiting: prevent brute-force attacks.
-		if ( ! Utils::check_rate_limit( 'login', self::MAX_LOGIN_ATTEMPTS, self::LOGIN_LOCKOUT_SECONDS ) ) {
+		//
+		// Se cuenta por USUARIO + CONEXIÓN (members#46): así las erratas de una persona no cierran la puerta a
+		// toda la sede que comparte línea, y nadie puede dejar fuera la cuenta de otro probando desde su
+		// propia conexión. La conexión, por su parte, lleva su tope alto en el núcleo.
+		$identidad_intento = $username . '@' . (string) ( $_SERVER['REMOTE_ADDR'] ?? '' );
+		if ( ! Utils::check_rate_limit( 'login', self::MAX_LOGIN_ATTEMPTS, self::LOGIN_LOCKOUT_SECONDS, $identidad_intento ) ) {
 			return new \WP_Error(
 				'rate_limited',
 				__( 'Demasiados intentos de acceso. Por favor, espera 15 minutos e inténtalo de nuevo.', 'convoca-members' )

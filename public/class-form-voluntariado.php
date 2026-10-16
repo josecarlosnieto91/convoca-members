@@ -107,9 +107,10 @@ class Form_Voluntariado {
 	public function handle_submit(): void {
 		check_ajax_referer( 'convoca_voluntariado_nonce', 'nonce' );
 
-		// Rate limit: max 3 volunteer registrations per hour per IP.
-		if ( ! \Convoca\Core\Utils::check_rate_limit( 'convoca_voluntariado_submit', 3, 3600 ) ) {
-			wp_send_json_error( array( 'errors' => array( __( 'Demasiados intentos. Inténtalo de nuevo en una hora.', 'convoca-members' ) ) ), 429 );
+		// Rate limit por persona (su correo) y por conexión como segundo criterio (members#46): los errores
+		// de una persona no pueden dejar fuera a toda la sede.
+		if ( ! \Convoca\Core\Utils::check_rate_limit( 'convoca_voluntariado_submit', 3, 3600, sanitize_email( (string) ( $_POST['email'] ?? '' ) ) ) ) {
+			wp_send_json_error( array( 'errors' => array( Form_Handler::mensaje_bloqueo() ) ), 429 );
 		}
 
 		// Unslash POST data to handle magic_quotes.

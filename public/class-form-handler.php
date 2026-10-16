@@ -120,12 +120,19 @@ class Form_Handler {
 			);
 		}
 
-		// 1b. Rate limit
-		if ( ! \Convoca\Core\Utils::check_rate_limit( 'alta_socio', 3, 3600 ) ) {
+		// 1b. Rate limit, POR PERSONA (su correo) y por conexión como segundo criterio.
+		//
+		// Antes era solo por IP: varios errores de una persona dejaban fuera a todos los demás de su misma
+		// conexión durante una hora —una sede, un telecentro, una familia— y el siguiente leía «Demasiados
+		// intentos» sin saber que no era culpa suya (members#46).
+		$datos_peticion = (array) ( $request->get_json_params() ?: $request->get_params() );
+		$email_intento  = sanitize_email( (string) ( $datos_peticion['email'] ?? '' ) );
+
+		if ( ! \Convoca\Core\Utils::check_rate_limit( 'alta_socio', 3, 3600, $email_intento ) ) {
 			return new \WP_REST_Response(
 				array(
 					'success' => false,
-					'data'    => array( 'errors' => array( __( 'Demasiados intentos de registro. Inténtalo de nuevo en una hora.', 'convoca-members' ) ) ),
+					'data'    => array( 'errors' => array( self::mensaje_bloqueo() ) ),
 				),
 				429
 			);
@@ -159,11 +166,34 @@ class Form_Handler {
 	/**
 	 * AJAX form submission handler (legacy — kept for backward compat).
 	 */
+	/**
+	 * El aviso de bloqueo por intentos repetidos (members#46).
+	 *
+	 * El mensaje viejo («Demasiados intentos de registro. Inténtalo de nuevo en una hora.») dejaba a la
+	 * persona sin saber qué hacer ni adónde ir, y —cuando el bloqueo era por la conexión— le hacía creer que
+	 * la culpa era suya. Ahora dice qué hacer y a quién escribir.
+	 *
+	 * @return string
+	 */
+	public static function mensaje_bloqueo(): string {
+		$ajustes  = get_option( 'convoca_members_settings', array() );
+		$contacto = (string) ( $ajustes['contact_email'] ?? '' );
+		if ( '' === $contacto || ! is_email( $contacto ) ) {
+			$contacto = (string) get_option( 'admin_email' );
+		}
+
+		return sprintf(
+			/* translators: %s: contact email of the association. */
+			__( 'Se han hecho varios intentos de registro desde tu conexión. Espera unos minutos y vuelve a probarlo. Si no eras tú, escríbenos a %s y lo miramos.', 'convoca-members' ),
+			$contacto
+		);
+	}
+
 	public function handle_submit(): void {
 		check_ajax_referer( 'convoca_alta_nonce', 'nonce' );
 
-		if ( ! \Convoca\Core\Utils::check_rate_limit( 'alta_socio', 3, 3600 ) ) {
-			wp_send_json_error( array( 'errors' => array( __( 'Demasiados intentos de registro. Inténtalo de nuevo en una hora.', 'convoca-members' ) ) ), 429 );
+		if ( ! \Convoca\Core\Utils::check_rate_limit( 'alta_socio', 3, 3600, sanitize_email( (string) ( $_POST['email'] ?? '' ) ) ) ) {
+			wp_send_json_error( array( 'errors' => array( self::mensaje_bloqueo() ) ), 429 );
 		}
 
 		$result = Process_Member::register( wp_unslash( $_POST ), $_FILES );

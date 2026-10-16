@@ -1,15 +1,19 @@
-## [2.8.95] — 2026-10-16
+## [2.8.96] — 2026-10-16
 
-### Añadido
-- **El socio puede descargar el recibo de su cuota desde su panel (gateway#8).** En «Pagos y Cuotas» se veía
-  fecha, concepto, importe y estado, y **ningún recibo**: ni botón, ni número, ni enlace. Cuando el correo se
-  perdía —o cuando el socio necesitaba el justificante para su empresa, una subvención o una ayuda— había que
-  pedírselo a la junta por WhatsApp y alguien tenía que buscarlo: un trámite de dos minutos que costaba dos
-  días. Ahora la tabla lleva una columna **«Recibo»** con el número (el que el gateway ya guardaba) y un
-  enlace para verlo o imprimirlo, que se abre aparte para no sacar al socio de su panel.
-- El enlace lo construye **el gateway** (es quien firma la clave y comprueba que el recibo es de quien lo
-  pide) y solo se ofrece en **pagos cobrados**: en uno pendiente el recibo todavía no existe y el enlace
-  responde 404. Sin el gateway instalado, el panel no ofrece enlace y no se rompe nada.
-- El enlace directo desde el correo del recibo **ya existía** (`{recibo_url}`): lo que faltaba era el panel.
-- Cuatro pruebas nuevas (`ReciboEnElPanelTest`).
+### Arreglado
+- **Los intentos repetidos ya no cierran la puerta a toda la sede, y la junta puede levantar el bloqueo
+  (members#46).** El contador era solo por IP (ver el arreglo del núcleo, 2.3.37): ahora **el alta y el
+  voluntariado cuentan por el correo de quien lo intenta**, y **el acceso por usuario + conexión** —así las
+  erratas de una persona no dejan fuera a sus compañeros de línea, y nadie puede dejar fuera la cuenta de otro
+  probando desde su propia conexión.
+- **El aviso dice qué hacer**: «Se han hecho varios intentos de registro desde tu conexión. Espera unos
+  minutos y vuelve a probarlo. Si no eras tú, escríbenos a <correo de contacto>». El mensaje viejo
+  («Demasiados intentos de registro. Inténtalo de nuevo en una hora.») dejaba a la persona sin saber si era
+  culpa suya ni adónde ir.
+- **Pestaña «🔒 Intentos bloqueados»** en los ajustes, con el número delante cuando hay algo que mirar: quién
+  está cortado (correo o conexión), en qué formulario, cuántos intentos y hasta cuándo, con un botón
+  **«Desbloquear»** (con nonce y permiso) que lo levanta sin tocar la base de datos. Antes había que editar
+  `convoca_rl_alta_socio_<hash>` a mano.
+- Seis pruebas nuevas (`BloqueoPorPersonaTest`). El limitador se mide **en vivo** (su contador vive en
+  `wp_options` con SQL directo y el arnés unitario no tiene base de datos): está en el issue.
 
