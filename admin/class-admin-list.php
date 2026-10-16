@@ -52,6 +52,8 @@ class Admin_List extends \WP_List_Table {
 		// El tipo no admite papelera, así que WordPress pinta «Papelera» y no hace nada: se quita de la
 		// pantalla cruda para que no haya botones muertos (issue #27).
 		add_filter( 'post_row_actions', array( $this, 'sin_papelera' ), 10, 2 );
+		add_filter( 'post_row_actions', array( $this, 'accion_consentimiento' ), 10, 2 );
+		add_action( 'admin_post_convoca_registrar_consentimiento', array( $this, 'registrar_consentimiento' ) );
 		add_filter( 'bulk_actions-edit-miembro', array( $this, 'sin_papelera_bulk' ) );
 	}
 
@@ -65,6 +67,7 @@ class Admin_List extends \WP_List_Table {
 			'whatsapp'   => __( 'WhatsApp', 'convoca-members' ),
 			'tipo'       => __( 'Tipo', 'convoca-members' ),
 			'estado'     => __( 'Estado', 'convoca-members' ),
+			'consentimiento' => __( 'Consentimiento', 'convoca-members' ),
 			'plan'       => __( 'Plan', 'convoca-members' ),
 			'cuota'      => __( 'Cuota', 'convoca-members' ),
 			'recurrente' => __( 'Renov. Pago', 'convoca-members' ),
@@ -236,6 +239,20 @@ class Admin_List extends \WP_List_Table {
 			);
 		}
 
+		// Filter by consentimiento (members#41).
+		$consentimiento_filter = sanitize_text_field( $get_data['consentimiento_filter'] ?? '' );
+		if ( 'con' === $consentimiento_filter || 'sin' === $consentimiento_filter ) {
+			$args['meta_query'] = array_merge(
+				$args['meta_query'] ?? array(),
+				array(
+					array(
+						'key'     => '_convoca_consent_timestamp',
+						'compare' => ( 'con' === $consentimiento_filter ) ? 'EXISTS' : 'NOT EXISTS',
+					),
+				)
+			);
+		}
+
 		$query = new \WP_Query( $args );
 
 		$this->items = $query->posts;
@@ -328,8 +345,44 @@ class Admin_List extends \WP_List_Table {
 					</option>
 				<?php endforeach; ?>
 			</select>
+			<select name="consentimiento_filter">
+				<option value="">
+					<?php esc_html_e( 'Consentimiento (todos)', 'convoca-members' ); ?>
+				</option>
+				<option value="con" <?php selected( $get_data['consentimiento_filter'] ?? '', 'con' ); ?>><?php esc_html_e( 'Con consentimiento', 'convoca-members' ); ?></option>
+				<option value="sin" <?php selected( $get_data['consentimiento_filter'] ?? '', 'sin' ); ?>><?php esc_html_e( 'Sin consentimiento', 'convoca-members' ); ?></option>
+			</select>
 			<?php submit_button( __( 'Filtrar', 'convoca-members' ), '', 'filter_action', false ); ?>
 		</div>
+		<?php
+		if ( 'ok' === ( $get_data['convoca_consentimiento'] ?? '' ) ) {
+			?>
+			<div class="notice notice-success inline" style="margin: 8px 0;">
+				<p><?php esc_html_e( 'Consentimiento registrado: queda la fecha y la versión del texto aceptado.', 'convoca-members' ); ?></p>
+			</div>
+			<?php
+		}
+
+		// Contador de lo que falta por justificar (members#41): el RGPD pide poder DEMOSTRAR el
+		// consentimiento, y hasta ahora no había ni forma de saber a quién le faltaba.
+		$sin_consentimiento = GDPR_Tools::contar_sin_consentimiento();
+		if ( $sin_consentimiento > 0 ) :
+			?>
+		<div class="notice notice-warning inline" style="margin: 8px 0;">
+			<p>
+				<?php
+				printf(
+					/* translators: %d: number of members without registered consent. */
+					esc_html( _n( '%d socio activo sin consentimiento registrado.', '%d socios activos sin consentimiento registrado.', $sin_consentimiento, 'convoca-members' ) ),
+					(int) $sin_consentimiento
+				);
+				?>
+				<a href="<?php echo esc_url( add_query_arg( 'consentimiento_filter', 'sin', remove_query_arg( array( 'paged', 'convoca_consentimiento' ) ) ) ); ?>"><?php esc_html_e( 'Ver cuáles', 'convoca-members' ); ?></a>
+			</p>
+		</div>
+			<?php
+		endif;
+		?>
 		<?php
 	}
 
@@ -522,6 +575,32 @@ class Admin_List extends \WP_List_Table {
 		return Estados::badge_html( $estado );
 	}
 
+	/**
+	 * La columna «Consentimiento» (members#41).
+	 *
+	 * El consentimiento se registraba SOLO al darse de alta, así que la mitad del censo podía estar sin
+	 * justificar y no había forma de verlo. Aquí se enseña la fecha y la versión del texto aceptado; si no
+	 * hay constancia, se dice en rojo y bien claro, que es lo que la junta necesita saber.
+	 *
+	 * @param \WP_Post $item Ficha de la fila.
+	 * @return string
+	 */
+	public function column_consentimiento( $item ): string {
+		$consentimiento = GDPR_Tools::etiqueta_consentimiento( (int) $item->ID );
+
+		if ( ! $consentimiento['registrado'] ) {
+			return '<span style="color:#b32d2e;" title="' . esc_attr__( 'Sin constancia de consentimiento', 'convoca-members' ) . '">'
+				. esc_html__( 'Sin registrar', 'convoca-members' ) . '</span>';
+		}
+
+		$texto = esc_html( $consentimiento['fecha'] );
+		if ( '' !== $consentimiento['version'] ) {
+			$texto .= '<br><small>' . esc_html( sprintf( /* translators: %s: version of the accepted text. */ __( 'texto v%s', 'convoca-members' ), $consentimiento['version'] ) ) . '</small>';
+		}
+
+		return $texto;
+	}
+
 	public function column_plan( $item ): string {
 		$plan = get_post_meta( $item->ID, '_convoca_plan', true );
 		$sub  = get_post_meta( $item->ID, '_convoca_sub_plan', true );
@@ -568,6 +647,68 @@ class Admin_List extends \WP_List_Table {
 	 * @param \WP_Post $post     Entrada de la fila.
 	 * @return array
 	 */
+	/**
+	 * El botón «Registrar consentimiento» en la fila del socio (members#41).
+	 *
+	 * Hay socios que dieron su consentimiento en papel o por correo, y otros que vienen de otra base: hasta
+	 * ahora no había forma de dejarlo apuntado sin tocar la base de datos a mano, así que el RGPD no se
+	 * podía demostrar. Esto solo abre la puerta; el que apunta es quien administra, con su sesión.
+	 *
+	 * @param array   $acciones Acciones de la fila.
+	 * @param \WP_Post $post     Ficha de la fila.
+	 * @return array
+	 */
+	public function accion_consentimiento( $acciones, $post ) {
+		if ( 'miembro' !== $post->post_type || ! current_user_can( 'edit_post', $post->ID ) ) {
+			return $acciones;
+		}
+
+		$consentimiento = GDPR_Tools::etiqueta_consentimiento( (int) $post->ID );
+
+		$acciones['convoca_consentimiento'] = sprintf(
+			'<a href="%s">%s</a>',
+			esc_url(
+				wp_nonce_url(
+					admin_url( 'admin-post.php?action=convoca_registrar_consentimiento&miembro=' . (int) $post->ID ),
+					'convoca_consentimiento_' . (int) $post->ID
+				)
+			),
+			esc_html( $consentimiento['registrado'] ? __( 'Volver a registrar el consentimiento', 'convoca-members' ) : __( 'Registrar consentimiento', 'convoca-members' ) )
+		);
+
+		return $acciones;
+	}
+
+	/**
+	 * Guarda el consentimiento desde el listado (members#41): deja fecha, la versión del texto vigente y
+	 * una nota de que se registró a mano, para que se sepa de dónde sale el dato.
+	 */
+	public function registrar_consentimiento(): void {
+		$miembro = (int) ( $_GET['miembro'] ?? 0 );
+
+		if ( $miembro <= 0 || ! current_user_can( 'edit_post', $miembro ) ) {
+			wp_die( esc_html__( 'No tienes permiso para registrar el consentimiento de este socio.', 'convoca-members' ) );
+		}
+
+		check_admin_referer( 'convoca_consentimiento_' . $miembro );
+
+		$ajustes = get_option( 'convoca_members_settings', array() );
+		GDPR_Tools::log_consent(
+			$miembro,
+			__( 'Consentimiento registrado por la junta desde el listado de socios (soporte: papel, correo o presencial).', 'convoca-members' ),
+			(string) ( $ajustes['rgpd_version'] ?? '1.0' )
+		);
+
+		wp_safe_redirect(
+			add_query_arg(
+				'convoca_consentimiento',
+				'ok',
+				wp_get_referer() ? wp_get_referer() : admin_url( 'edit.php?post_type=miembro' )
+			)
+		);
+		exit;
+	}
+
 	public function sin_papelera( $acciones, $post ) {
 		if ( 'miembro' === $post->post_type ) {
 			unset( $acciones['trash'] );

@@ -246,6 +246,18 @@ class Admin_Dashboard {
 	private function get_alerts( array $stats ): array {
 		$alerts = array();
 
+		// Consentimiento sin registrar (members#41): el RGPD pide poder demostrarlo, así que mientras haya
+		// socios activos sin constancia, esto es un aviso de verdad y no un adorno del escritorio.
+		$sin_consentimiento = \Convoca\Members\GDPR_Tools::contar_sin_consentimiento();
+		if ( $sin_consentimiento > 0 ) {
+			$alerts[] = array(
+				'severity' => 'warning',
+				'icon'     => '🔏',
+				'message'  => $sin_consentimiento . ' socio(s) activo(s) sin consentimiento registrado.',
+				'link'     => admin_url( 'edit.php?post_type=miembro&consentimiento_filter=sin' ),
+			);
+		}
+
 		if ( $stats['expiring_soon'] > 0 ) {
 			$alerts[] = array(
 				'severity' => 'warning',

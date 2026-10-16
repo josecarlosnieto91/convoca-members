@@ -351,6 +351,57 @@ class GDPR_Tools {
 	 * @return array
 	 */
 	/**
+	 * Cuántos socios ACTIVOS no tienen consentimiento registrado (members#41).
+	 *
+	 * Medido en la demo el 15/10/2026: de 13 fichas, solo 6 tenían constancia. El consentimiento solo se
+	 * podía registrar al darse de alta, así que la mitad del censo quedaba sin justificar y no había forma
+	 * de saber quién faltaba.
+	 *
+	 * @return int Número de socios activos sin consentimiento.
+	 */
+	public static function contar_sin_consentimiento(): int {
+		$sin = get_posts(
+			array(
+				'post_type'      => 'miembro',
+				'post_status'    => array( 'publish', 'private' ),
+				'posts_per_page' => -1,
+				'fields'         => 'ids',
+				'meta_query'     => array(
+					'relation' => 'AND',
+					array(
+						'key'   => '_convoca_estado_miembro',
+						'value' => 'activo',
+					),
+					array(
+						'key'     => '_convoca_consent_timestamp',
+						'compare' => 'NOT EXISTS',
+					),
+				),
+			)
+		);
+
+		return count( $sin );
+	}
+
+	/**
+	 * Lo que se enseña de un socio en materia de consentimiento (members#41). Una sola fuente para el
+	 * listado, para que la fecha y la versión no se pinten de dos maneras distintas.
+	 *
+	 * @param int $member_id Ficha del socio.
+	 * @return array{fecha:string,version:string,registrado:bool}
+	 */
+	public static function etiqueta_consentimiento( int $member_id ): array {
+		$fecha   = (string) get_post_meta( $member_id, '_convoca_consent_timestamp', true );
+		$version = (string) get_post_meta( $member_id, '_convoca_consent_version', true );
+
+		return array(
+			'fecha'      => $fecha,
+			'version'    => $version,
+			'registrado' => '' !== $fecha,
+		);
+	}
+
+	/**
 	 * Borra la foto del documento de identidad: el adjunto se va de verdad (members#40).
 	 *
 	 * La lista de campos que anonimiza el borrador es toda de la ficha y no incluía `_convoca_foto_id`:
