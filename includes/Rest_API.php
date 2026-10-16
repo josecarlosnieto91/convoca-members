@@ -592,14 +592,7 @@ class Rest_API {
 			}
 		}
 
-		return new \WP_REST_Response(
-			array(
-				'items' => $items,
-				// La pantalla que enseña el botón de renovar necesita saber hasta cuándo está pagada la
-				// cuota y si ya hay un pago esperando (members#38).
-				'cuota' => self::estado_cuota_panel( (int) $member_id ),
-			)
-		);
+		return new \WP_REST_Response( array( 'items' => $items ) );
 	}
 
 	/**
@@ -642,7 +635,15 @@ class Rest_API {
 			}
 		}
 
-		return new \WP_REST_Response( array( 'items' => $items ) );
+		return new \WP_REST_Response(
+			array(
+				'items' => $items,
+				// La pantalla que enseña el botón de renovar necesita saber hasta cuándo está pagada la
+				// cuota y si ya hay un pago esperando (members#38). Va AQUÍ, en «Pagos y Cuotas», que es
+				// donde está el botón; el primer intento lo puse en el endpoint de inscripciones.
+				'cuota' => self::estado_cuota_panel( (int) $member_id ),
+			)
+		);
 	}
 
 	/**

@@ -2,14 +2,14 @@
 # This file is distributed under the GPL-2.0-or-later.
 msgid ""
 msgstr ""
-"Project-Id-Version: Convoca Members 2.8.89\n"
+"Project-Id-Version: Convoca Members 2.8.90\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/convoca-members\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-10-16T00:20:02+00:00\n"
+"POT-Creation-Date: 2026-10-16T00:21:50+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.12.0\n"
 "X-Domain: convoca-members\n"
@@ -1188,7 +1188,7 @@ msgid "Todos los datos del miembro han sido eliminados."
 msgstr ""
 
 #: admin/class-admin-metaboxes.php:752
-#: includes/Rest_API.php:1106
+#: includes/Rest_API.php:1107
 msgid "Documento no encontrado."
 msgstr ""
 
@@ -2301,8 +2301,8 @@ msgid "No tienes permisos suficientes para exportar la lista de miembros."
 msgstr ""
 
 #: admin/class-csv-exporter.php:136
-#: includes/Rest_API.php:1124
-#: includes/Rest_API.php:1138
+#: includes/Rest_API.php:1125
+#: includes/Rest_API.php:1139
 msgid "Acceso Denegado"
 msgstr ""
 
@@ -2513,7 +2513,7 @@ msgstr[0] ""
 msgstr[1] ""
 
 #: includes/Certificate_Generator.php:376
-#: includes/Rest_API.php:957
+#: includes/Rest_API.php:958
 msgid "Aún no has completado las horas mínimas requeridas para generar el certificado."
 msgstr ""
 
@@ -3499,10 +3499,10 @@ msgid "Tu cuenta no puede renovar en este estado. Contacta con coordinación."
 msgstr ""
 
 #: includes/Rest_API.php:495
-#: includes/Rest_API.php:945
-#: includes/Rest_API.php:1165
-#: includes/Rest_API.php:1227
-#: includes/Rest_API.php:1365
+#: includes/Rest_API.php:946
+#: includes/Rest_API.php:1166
+#: includes/Rest_API.php:1228
+#: includes/Rest_API.php:1366
 msgid "Miembro no encontrado."
 msgstr ""
 
@@ -3510,73 +3510,73 @@ msgstr ""
 msgid "Actividad desconocida"
 msgstr ""
 
-#: includes/Rest_API.php:751
+#: includes/Rest_API.php:752
 msgid "Demasiadas peticiones."
 msgstr ""
 
-#: includes/Rest_API.php:988
+#: includes/Rest_API.php:989
 msgid "Miembro no encontrado o no autorizado"
 msgstr ""
 
-#: includes/Rest_API.php:1078
+#: includes/Rest_API.php:1079
 msgid "Falta ID de notificación."
 msgstr ""
 
-#: includes/Rest_API.php:1106
-#: includes/Rest_API.php:1130
+#: includes/Rest_API.php:1107
+#: includes/Rest_API.php:1131
 #: public/class-mi-area.php:168
 msgid "Error"
 msgstr ""
 
-#: includes/Rest_API.php:1124
+#: includes/Rest_API.php:1125
 msgid "No tienes permiso para ver este documento."
 msgstr ""
 
-#: includes/Rest_API.php:1130
+#: includes/Rest_API.php:1131
 msgid "El archivo físico no existe en el servidor."
 msgstr ""
 
-#: includes/Rest_API.php:1138
+#: includes/Rest_API.php:1139
 msgid "Archivo no válido."
 msgstr ""
 
-#: includes/Rest_API.php:1172
+#: includes/Rest_API.php:1173
 msgid "No se encontró el plan de la membresía."
 msgstr ""
 
-#: includes/Rest_API.php:1178
+#: includes/Rest_API.php:1179
 msgid "Este plan no requiere pago."
 msgstr ""
 
-#: includes/Rest_API.php:1182
+#: includes/Rest_API.php:1183
 msgid "La pasarela de pago no está disponible."
 msgstr ""
 
-#: includes/Rest_API.php:1253
+#: includes/Rest_API.php:1254
 msgid "El cumpleaños ya está establecido y no puede modificarse."
 msgstr ""
 
-#: includes/Rest_API.php:1262
+#: includes/Rest_API.php:1263
 msgid "Fecha de cumpleaños no válida."
 msgstr ""
 
-#: includes/Rest_API.php:1273
+#: includes/Rest_API.php:1274
 msgid "Email no válido."
 msgstr ""
 
-#: includes/Rest_API.php:1292
+#: includes/Rest_API.php:1293
 msgid "Ese email ya está en uso por otro socio."
 msgstr ""
 
-#: includes/Rest_API.php:1335
+#: includes/Rest_API.php:1336
 msgid "Token de confirmación no válido."
 msgstr ""
 
-#: includes/Rest_API.php:1338
+#: includes/Rest_API.php:1339
 msgid "El enlace de confirmación ha caducado. Solicítalo de nuevo."
 msgstr ""
 
-#: includes/Rest_API.php:1371
+#: includes/Rest_API.php:1372
 msgid "Guarda primero tu número de teléfono en el perfil."
 msgstr ""
 

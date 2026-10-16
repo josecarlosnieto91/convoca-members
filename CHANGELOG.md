@@ -1,7 +1,10 @@
-## [2.8.89] — 2026-10-16
+## [2.8.90] — 2026-10-16
 
 ### Arreglado
-- **2.8.88 se publicó con un aviso de PHPStan** (`method_exists()` sobre la API del gateway: el doble del
-  análisis lo declara, así que sobra). Retirada la comprobación redundante: la guarda que importa —que el
-  gateway esté instalado— sigue puesta con `class_exists()`. El comportamiento no cambia.
+- **La cuota no llegaba al panel: la puse en el endpoint equivocado.** En 2.8.88 metí el estado de la cuota
+  en el primer `return … 'items' => $items` que encontré y ese era el de **inscripciones**, no el de
+  **pagos**: el panel seguía sin recibir nada. Medido en la demo con una sesión de socio real: la respuesta
+  de `/me/pagos` traía los pagos y **ningún** `cuota`. Ahora va donde tiene que ir —`get_payments`— y la
+  prueba comprueba **la posición**, no solo que la cadena exista: dentro de ese método y antes del
+  siguiente.
 

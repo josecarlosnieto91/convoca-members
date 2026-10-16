@@ -94,7 +94,14 @@ class EstadoCuotaPanelTest extends TestCase {
 	public function test_los_dos_endpoints_y_el_panel_la_usan(): void {
 		$api = (string) file_get_contents( dirname( __DIR__, 2 ) . '/includes/Rest_API.php' );
 		$this->assertGreaterThanOrEqual( 2, substr_count( $api, 'self::estado_cuota_panel(' ), 'La usan «Mis Datos» y «Pagos y Cuotas»' );
-		$this->assertStringContainsString( "'cuota' => self::estado_cuota_panel(", $api, 'El endpoint de pagos la devuelve' );
+		// Y va en «Pagos y Cuotas» (get_payments), no en otro endpoint: el primer intento cayó en el de
+		// inscripciones y el panel no recibía nada.
+		$i_pagos = strpos( $api, 'function get_payments' );
+		$i_cuota = strpos( $api, "'cuota' => self::estado_cuota_panel(" );
+		$i_siguiente = strpos( $api, 'function ', (int) $i_pagos + 10 );
+		$this->assertIsInt( $i_cuota );
+		$this->assertGreaterThan( $i_pagos, $i_cuota, 'La cuota viaja en el endpoint de pagos' );
+		$this->assertLessThan( $i_siguiente, $i_cuota, 'Y dentro de ese método, no en el siguiente' );
 
 		$js = (string) file_get_contents( dirname( __DIR__, 2 ) . '/public/assets/mi-area.js' );
 		$this->assertStringContainsString( 'cuota.fecha_renovacion', $js, 'El panel la pinta' );
