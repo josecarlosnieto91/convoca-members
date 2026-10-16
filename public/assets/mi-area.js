@@ -584,6 +584,34 @@
           }
         }
 
+        // La renovación por horas (members#45): el socio ve por dónde va y si su próxima renovación ya le sale
+        // gratis. Medido en la demo (ficha 2215: 20 h con plan Bronce de 15 h): su renovación ya estaba
+        // cubierta y el panel solo le ofrecía pagar 30 €. Quien pagó sin saberlo se siente engañado.
+        let estadoHoras = '';
+        if (cuota.horas_plan > 0) {
+          const pct = Math.min(100, Math.round((cuota.horas_ciclo / cuota.horas_plan) * 100));
+          const barra = (color) => `<div style="background:#f0f0f1;border-radius:6px;height:8px;margin:10px 0;"><div style="background:${color};height:8px;border-radius:6px;width:${pct}%"></div></div>`;
+          if (cuota.renueva_por_horas) {
+            estadoHoras = `
+              <div class="conv-alert conv-alert-success" style="padding:14px 16px;border-radius:8px;background:#f6ffed;border:1px solid #b7eb8f;margin-bottom:16px;">
+                <strong>Llevas ${cuota.horas_ciclo} h de las ${cuota.horas_plan} h de tu plan: tu próxima renovación es sin pagar.</strong>
+                ${barra('#52c41a')}
+                ${cuota.renovacion_gratuita ? `<span>Con tus horas, te quedaría cubierto hasta el ${this.formatDate(cuota.renovacion_gratuita)}.</span>` : ''}
+                <div style="margin-top:10px;">
+                  <button id="conv-btn-renovar-horas" class="btn-primary-mini">🌱 Renovar ahora sin pago</button>
+                </div>
+                <div id="conv-renovar-horas-msg" style="margin-top:8px;"></div>
+              </div>`;
+          } else {
+            estadoHoras = `
+              <div class="conv-alert" style="padding:14px 16px;border-radius:8px;background:#fafafa;border:1px solid #e0e0e0;margin-bottom:16px;">
+                <strong>Llevas ${cuota.horas_ciclo} h de las ${cuota.horas_plan} h de tu plan.</strong>
+                ${barra('#1677ff')}
+                <span>Te faltan ${cuota.horas_faltan} h para que tu próxima renovación sea sin pagar. Las horas de voluntariado valen por la cuota.</span>
+              </div>`;
+          }
+        }
+
         const alDia = !!cuota.fecha_renovacion && !cuota.cuota_vencida;
         const etiquetaBoton = alDia ? '🔄 Renovar por adelantado' : '🔄 Renovar membresía';
         const avisoAmplia = alDia
@@ -592,6 +620,7 @@
 
         let html = `
           <h2>💳 Mis Pagos</h2>
+          ${estadoHoras}
           ${estadoCuota}
           <table class="conv-table">
             <thead>
@@ -626,6 +655,11 @@
           <div id="conv-renovar-panel-msg"></div>
         `;
         this.$main.innerHTML = html;
+
+        const btnHoras = conv.$('#conv-btn-renovar-horas');
+        if (btnHoras) {
+          btnHoras.addEventListener('click', () => this.renovarPorHoras(btnHoras));
+        }
 
         const btn = conv.$('#conv-btn-renovar-panel');
         if (btn) {
@@ -685,6 +719,35 @@
         if (msg) { msg.innerHTML = '<p class="text-error">No se ha podido registrar la solicitud. Inténtalo de nuevo.</p>'; }
         btn.disabled = false;
       });
+    },
+
+    /**
+     * Renovar sin pago por las horas hechas (members#45).
+     *
+     * El servidor vuelve a contar las horas antes de renovar: si no llegan, responde que no y se le dice sin
+     * rodeos. Este botón no da nada que no esté ganado.
+     */
+    renovarPorHoras: function(btn) {
+      const msg = document.getElementById('conv-renovar-horas-msg');
+      if (btn) { btn.disabled = true; }
+      if (msg) { msg.innerHTML = '<p>Comprobando tus horas…</p>'; }
+      fetch(window.convMiArea.apiUrl + '/me/renovar-por-horas', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'X-WP-Nonce': window.convMiArea.nonce }
+      })
+        .then(r => r.json().then(d => ({ ok: r.ok, d: d })))
+        .then(({ ok, d }) => {
+          if (!ok || !d.success) { throw new Error(d.message || 'No se ha podido renovar.'); }
+          if (msg) {
+            msg.innerHTML = '<p class="text-success">' + this.escHtml(d.message)
+              + (d.renovacion ? ' Nueva fecha: ' + this.formatDate(d.renovacion) + '.' : '') + '</p>';
+          }
+          window.setTimeout(() => window.location.reload(), 1500);
+        })
+        .catch(e => {
+          if (msg) { msg.innerHTML = '<p class="text-error">' + this.escHtml(e.message) + '</p>'; }
+          if (btn) { btn.disabled = false; }
+        });
     },
 
     renewMembership: function(btn) {

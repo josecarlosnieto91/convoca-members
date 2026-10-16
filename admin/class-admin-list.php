@@ -66,6 +66,7 @@ class Admin_List extends \WP_List_Table {
 			'tipo'       => __( 'Tipo', 'convoca-members' ),
 			'estado'     => __( 'Estado', 'convoca-members' ),
 			'consentimiento' => __( 'Consentimiento', 'convoca-members' ),
+			'renueva_horas'  => __( 'Renueva por horas', 'convoca-members' ),
 			'plan'       => __( 'Plan', 'convoca-members' ),
 			'cuota'      => __( 'Cuota', 'convoca-members' ),
 			'recurrente' => __( 'Renov. Pago', 'convoca-members' ),
@@ -617,6 +618,34 @@ class Admin_List extends \WP_List_Table {
 	 * @param \WP_Post $item Ficha de la fila.
 	 * @return string
 	 */
+	/**
+	 * La columna «Renueva por horas» (members#45): quién ya ha hecho las horas de su plan y, por tanto, no hay
+	 * que cobrarle. Es lo que la junta necesita para no mandar recibos de más.
+	 *
+	 * Sin filtro a propósito: las horas se **calculan** (horas del plan + horas aprobadas del ciclo), no son
+	 * una meta que se pueda consultar en SQL. Un filtro obligaría a recalcular ficha a ficha en cada página.
+	 *
+	 * @param \WP_Post $item Ficha.
+	 * @return string
+	 */
+	public function column_renueva_horas( $item ): string {
+		$ciclo = \Convoca\Members\CPT_Miembro::ciclo_voluntariado( (int) $item->ID );
+
+		if ( $ciclo['sin_plan'] ) {
+			return '<span style="color:#646970;" title="' . esc_attr__( 'Su plan no pide horas: renueva pagando.', 'convoca-members' ) . '">—</span>';
+		}
+
+		$texto = esc_html( sprintf( '%s/%s h', $ciclo['horas'], $ciclo['objetivo'] ) );
+
+		if ( $ciclo['cumple'] ) {
+			return '<span style="color:#1a7f37;font-weight:600;" title="'
+				. esc_attr__( 'Ya cumple: su próxima renovación es sin pago.', 'convoca-members' ) . '">✓ ' . $texto . '</span>';
+		}
+
+		return '<span title="' . esc_attr__( 'Todavía no llega: le faltan horas para renovar sin pago.', 'convoca-members' ) . '">'
+			. $texto . ' <small>(' . esc_html( sprintf( /* translators: %s: hours still missing. */ __( 'faltan %s h', 'convoca-members' ), $ciclo['faltan'] ) ) . ')</small></span>';
+	}
+
 	public function column_consentimiento( $item ): string {
 		$consentimiento = GDPR_Tools::etiqueta_consentimiento( (int) $item->ID );
 

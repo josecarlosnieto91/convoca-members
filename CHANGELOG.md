@@ -1,15 +1,25 @@
-## [2.8.98] — 2026-10-16
+## [2.8.99] — 2026-10-16
 
-### Arreglado
-- **El censo de la importación ya no pasa por el `/tmp` compartido ni lo abre una ruta que mande el navegador
-  (members#48).** Durante los dos pasos de la importación, el CSV con nombres, apellidos, DNI, correo, teléfono
-  y dirección se copiaba a `/tmp` (modo 1777, visible para cualquier otro usuario de la máquina) y el segundo
-  paso abría `sys_get_temp_dir() . '/' . $_POST['filename']`: con un `filename` a mano, la importación leía
-  **cualquier** fichero de ese directorio.
-  Ahora vive en un subdirectorio propio del sitio, **creado ya en 0700** (nadie de fuera puede ni entrar) y
-  fuera de la raíz web, el fichero se llama con una **ficha aleatoria** y se crea en 0600, y el segundo paso
-  manda la **ficha**: la ruta la resuelve el servidor y `ruta_por_ficha()` rechaza lo que se salga de la carpeta
-  aunque la ficha sea válida. El XLSX temporal también sale del `/tmp` compartido.
-  Tres pruebas nuevas (`ImportacionSinRutaDelClienteTest`), con control real: una ficha válida que apunte a
-  `/etc/passwd` se rechaza, y un fichero de la carpeta con su ficha se resuelve.
+### Añadido
+- **El socio ve su renovación por horas y puede usarla sin pagar (members#45).** La regla estaba bien
+  implementada —el cron renueva el ciclo sin pago cuando el socio llega a las horas de su plan— pero vivía
+  **dentro** de `check_volunteer_cycle()`, así que el panel no podía contar nada sin repetirla. Medido en la
+  demo con la ficha 2215 (20 h aprobadas, plan Bronce de 15 h): su próxima renovación **ya le salía gratis** y
+  el panel solo le ofrecía pagar 30 €.
+  Ahora `CPT_Miembro::ciclo_voluntariado()` es la **única fuente** del ciclo (la usan el cron y el panel) y
+  `renovar_por_horas()` el único camino que renueva (cron y botón del socio).
+  En «Mis Pagos»: «Llevas 20 h de las 15 h de tu plan: tu próxima renovación es sin pagar», con barra de
+  progreso, la fecha que quedaría cubierta y un botón **«🌱 Renovar ahora sin pago»** — no hace falta esperar al
+  vencimiento ni pasar por caja—. Quien no llega ve cuántas horas le faltan. El servidor vuelve a contar las
+  horas antes de renovar: el botón no da nada que no esté ganado.
+- Columna **«Renueva por horas»** en el listado de socios, para que la junta sepa a quién no hay que cobrar.
+  Sin filtro a propósito: las horas se calculan (plan + horas aprobadas del ciclo), no son una meta consultable
+  en SQL y un filtro obligaría a recalcular ficha a ficha en cada página.
+
+### Notas
+- Cinco pruebas nuevas (`RenovacionPorHorasTest`). El comportamiento se mide en vivo (necesita registros de
+  horas y fechas): está en el issue.
+- Los correos de aviso de la propuesta 3 (avisar al socio cuando cumple horas, y recordar un mes antes del
+  vencimiento si le faltan) **no se implementan**: notificar por correo a todos los socios es una decisión de
+  producto, no técnica.
 

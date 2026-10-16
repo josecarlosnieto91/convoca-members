@@ -778,6 +778,79 @@ class CPT_Miembro {
 	 * @param string $status       Current member state.
 	 * @param string $renewal_date Current renewal date (Y-m-d).
 	 */
+	/**
+	 * El ciclo de voluntariado del socio: qué se le pide, cuánto lleva y si ya cumple (members#45).
+	 *
+	 * Una sola fuente, para el cron (que renueva al vencer) y para el panel (que se lo cuenta al socio). Hasta
+	 * ahora la regla vivía **dentro** de `check_volunteer_cycle()`, así que el panel no podía decirle nada sin
+	 * repetirla — y repetir una regla es como se acaban teniendo dos versiones de la verdad.
+	 *
+	 * @param int $post_id Ficha del socio.
+	 * @return array{objetivo:float,horas:float,inicio:string,faltan:float,cumple:bool,sin_plan:bool}
+	 */
+	public static function ciclo_voluntariado( int $post_id ): array {
+		$plan_data = self::get_plan( (string) get_post_meta( $post_id, '_convoca_plan', true ) );
+		$objetivo  = (float) ( $plan_data['hours'] ?? 0 );
+
+		$renovacion = (string) get_post_meta( $post_id, '_convoca_fecha_renovacion', true );
+
+		// El ciclo empieza en el inicio de periodo explícito; si no lo hay, un año antes de la renovación;
+		// y nunca antes del alta.
+		$inicio = (string) get_post_meta( $post_id, '_convoca_fecha_inicio_periodo', true );
+		if ( '' === $inicio && '' !== $renovacion ) {
+			$inicio = \Convoca\Core\Utils::format_date( $renovacion . ' -1 year', 'Y-m-d' );
+		}
+		$fecha_alta = (string) get_post_meta( $post_id, '_convoca_fecha_alta', true );
+		if ( '' !== $fecha_alta && $fecha_alta > $inicio ) {
+			$inicio = $fecha_alta;
+		}
+
+		$horas = ( $objetivo > 0 ) ? (float) Voluntariado_Manager::get_horas_aprobadas_desde( $post_id, $inicio ) : 0.0;
+
+		return array(
+			'objetivo' => $objetivo,
+			'horas'    => $horas,
+			'inicio'   => $inicio,
+			'faltan'   => max( 0.0, $objetivo - $horas ),
+			'cumple'   => ( $objetivo > 0 && $horas >= $objetivo ),
+			'sin_plan' => ( $objetivo <= 0 ),
+		);
+	}
+
+	/**
+	 * Renueva el ciclo sin pago porque cumple las horas de su plan.
+	 *
+	 * Lo llama el cron cuando vence la cuota, y el propio socio desde su panel cuando ya cumple (members#45):
+	 * es lo que hace atractivo el modelo (horas en vez de dinero) y hasta ahora el socio no podía ni saberlo
+	 * ni usarlo — tenía que esperar a que venciera y pasar por caja.
+	 *
+	 * @param int    $post_id Ficha del socio.
+	 * @param string $origen  'cron' o 'panel', solo para el registro.
+	 * @return bool true si ha renovado.
+	 */
+	public static function renovar_por_horas( int $post_id, string $origen = 'panel' ): bool {
+		$ciclo = self::ciclo_voluntariado( $post_id );
+		if ( ! $ciclo['cumple'] ) {
+			return false;
+		}
+
+		$renovacion = (string) get_post_meta( $post_id, '_convoca_fecha_renovacion', true );
+		$base       = ( '' !== $renovacion ) ? $renovacion : current_time( 'Y-m-d' );
+		$next       = \Convoca\Core\Utils::format_date( $base . ' +1 year', 'Y-m-d' );
+
+		update_post_meta( $post_id, '_convoca_fecha_renovacion', $next );
+		update_post_meta( $post_id, '_convoca_fecha_inicio_periodo', $base );
+		update_post_meta( $post_id, '_convoca_estado_cuota', 'activa' );
+
+		\Convoca\Core\Logger::info(
+			"#$post_id renueva por horas ({$ciclo['horas']}h >= {$ciclo['objetivo']}h, desde {$origen}). Nueva renovación: {$next}.",
+			'Members/' . ( 'cron' === $origen ? 'Cron' : 'Panel' ),
+			$post_id
+		);
+
+		return true;
+	}
+
 	private static function check_volunteer_cycle( int $post_id, string $status, string $renewal_date ): bool {
 		$today = current_time( 'Y-m-d' );
 
@@ -785,49 +858,25 @@ class CPT_Miembro {
 			return false;
 		}
 
-		$plan_data = self::get_plan( get_post_meta( $post_id, '_convoca_plan', true ) );
-		$objetivo  = (float) ( $plan_data['hours'] ?? 0 );
-		if ( ! $plan_data || $objetivo <= 0 ) {
+		$ciclo = self::ciclo_voluntariado( $post_id );
+		if ( $ciclo['sin_plan'] ) {
 			// Sin objetivo de horas en el plan no hay vía de voluntariado.
 			return false;
 		}
 
-		// Cycle start = explicit period start; fallback to one year before the
-		// renewal, then fecha_alta.
-		$cycle_start = get_post_meta( $post_id, '_convoca_fecha_inicio_periodo', true );
-		if ( empty( $cycle_start ) ) {
-			$cycle_start = \Convoca\Core\Utils::format_date( $renewal_date . ' -1 year', 'Y-m-d' );
-		}
-		$fecha_alta = get_post_meta( $post_id, '_convoca_fecha_alta', true );
-		if ( $fecha_alta && $fecha_alta > $cycle_start ) {
-			$cycle_start = $fecha_alta;
-		}
-
-		$horas = Voluntariado_Manager::get_horas_aprobadas_desde( $post_id, $cycle_start );
-
-		if ( $horas < $objetivo ) {
+		if ( ! $ciclo['cumple'] ) {
 			// No llega al mínimo: NO se degrada al socio. La cuota del ciclo sigue
 			// su curso (gracia, suspensión y baja por impago) y las horas se le
 			// siguen contando desde el inicio del periodo.
 			\Convoca\Core\Logger::info(
-				"#$post_id: {$horas}h de {$objetivo}h requeridas para renovar por voluntariado (venció {$renewal_date}). Se le exige la cuota.",
+				"#$post_id: {$ciclo['horas']}h de {$ciclo['objetivo']}h requeridas para renovar por voluntariado (venció {$renewal_date}). Se le exige la cuota.",
 				'Members/Cron',
 				$post_id
 			);
+
 			return false;
 		}
 
-		// Cumple las horas del plan → renueva el ciclo sin pago.
-		$next = \Convoca\Core\Utils::format_date( $renewal_date . ' +1 year', 'Y-m-d' );
-		update_post_meta( $post_id, '_convoca_fecha_renovacion', $next );
-		update_post_meta( $post_id, '_convoca_fecha_inicio_periodo', $renewal_date );
-		update_post_meta( $post_id, '_convoca_estado_cuota', 'activa' );
-		\Convoca\Core\Logger::info(
-			"#$post_id renueva por horas ({$horas}h >= {$objetivo}h). Nueva renovación: {$next}.",
-			'Members/Cron',
-			$post_id
-		);
-
-		return true;
+		return self::renovar_por_horas( $post_id, 'cron' );
 	}
 }

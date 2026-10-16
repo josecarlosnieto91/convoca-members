@@ -175,6 +175,19 @@ class Rest_API {
 			)
 		);
 
+		// Renovar sin pago por horas (members#45): el socio que ya ha hecho las horas de su plan no tiene que
+		// esperar al vencimiento ni pasar por caja. La puerta la guarda el propio método, que vuelve a
+		// comprobar las horas en el servidor: el panel solo enseña lo que hay.
+		register_rest_route(
+			self::NAMESPACE,
+			'/me/renovar-por-horas',
+			array(
+				'methods'             => 'POST',
+				'callback'            => array( $this, 'renovar_por_horas' ),
+				'permission_callback' => array( $this, 'check_active_member' ),
+			)
+		);
+
 		// Unsubscribe request.
 		register_rest_route(
 			self::NAMESPACE,
@@ -490,13 +503,69 @@ class Rest_API {
 			$pendiente = (int) $pagos[0];
 		}
 
+		// El ciclo de voluntariado, para que el socio sepa por dónde va (members#45). Sale de la MISMA fuente
+		// que usa el cron para renovar: si algún día cambia la regla, cambia en un sitio.
+		$ciclo = \Convoca\Members\CPT_Miembro::ciclo_voluntariado( $member_id );
+
 		return array(
 			'fecha_renovacion'   => $fecha,
 			'cuota_vencida'      => ( '' !== $fecha && $fecha < current_time( 'Y-m-d' ) ),
+			// Horas del plan y del ciclo: 0/0 si el plan no pide horas (entonces no hay vía de voluntariado).
+			'horas_plan'         => $ciclo['objetivo'],
+			'horas_ciclo'        => $ciclo['horas'],
+			'horas_faltan'       => $ciclo['faltan'],
+			'renueva_por_horas'  => $ciclo['cumple'],
+			// La fecha que tendría si renovara sin pago AHORA (la renovación por horas se aplica en cuanto
+			// cumple, sin esperar al vencimiento: es lo que ha ganado con su trabajo).
+			'renovacion_gratuita' => ( $ciclo['cumple'] && '' !== $fecha )
+				? \Convoca\Core\Utils::format_date( $fecha . ' +1 year', 'Y-m-d' )
+				: '',
 			'puede_renovar'      => $puede,
 			'renovable'          => $puede && ( 'voluntariado' !== (string) get_post_meta( $member_id, '_convoca_forma_pago', true ) ),
 			'pago_pendiente'     => $pendiente,
 			'pago_pendiente_url' => self::url_pago_pendiente( $pendiente ),
+		);
+	}
+
+	/**
+	 * Renueva el ciclo sin pago porque el socio cumple las horas de su plan (members#45).
+	 *
+	 * No se fía de lo que diga el panel: vuelve a contar las horas aprobadas en el servidor y solo renueva si
+	 * llega. Así el botón no puede dar lo que no está ganado.
+	 *
+	 * @return \WP_REST_Response
+	 */
+	public function renovar_por_horas(): \WP_REST_Response {
+		$member_id = Member_Auth::get_current_member_id();
+		if ( $member_id <= 0 ) {
+			return new \WP_REST_Response(
+				array(
+					'success' => false, 'message' => __( 'No hemos podido identificarte como socio.', 'convoca-members' )
+				),
+				403 
+			);
+		}
+
+		if ( ! \Convoca\Members\CPT_Miembro::renovar_por_horas( $member_id, 'panel' ) ) {
+			return new \WP_REST_Response(
+				array(
+					'success' => false,
+					'message' => __( 'Todavía no has llegado a las horas de tu plan, así que este año te toca cuota. En cuanto las tengas, la renovación te sale sin pago.', 'convoca-members' ),
+				),
+				409
+			);
+		}
+
+		$estado = self::estado_cuota_panel( $member_id );
+
+		return new \WP_REST_Response(
+			array(
+				'success'    => true,
+				'message'    => __( '¡Hecho! Tu membresía se ha renovado sin pago con tus horas de voluntariado.', 'convoca-members' ),
+				'cuota'      => $estado,
+				'renovacion' => (string) $estado['fecha_renovacion'],
+			),
+			200
 		);
 	}
 
