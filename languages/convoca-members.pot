@@ -2,14 +2,14 @@
 # This file is distributed under the GPL-2.0-or-later.
 msgid ""
 msgstr ""
-"Project-Id-Version: Convoca Members 2.8.94\n"
+"Project-Id-Version: Convoca Members 2.8.95\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/convoca-members\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-10-16T00:40:05+00:00\n"
+"POT-Creation-Date: 2026-10-16T00:46:02+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.12.0\n"
 "X-Domain: convoca-members\n"
@@ -1216,7 +1216,7 @@ msgid "Todos los datos del miembro han sido eliminados."
 msgstr ""
 
 #: admin/class-admin-metaboxes.php:752
-#: includes/Rest_API.php:1188
+#: includes/Rest_API.php:1212
 msgid "Documento no encontrado."
 msgstr ""
 
@@ -2329,8 +2329,8 @@ msgid "No tienes permisos suficientes para exportar la lista de miembros."
 msgstr ""
 
 #: admin/class-csv-exporter.php:136
-#: includes/Rest_API.php:1206
-#: includes/Rest_API.php:1220
+#: includes/Rest_API.php:1230
+#: includes/Rest_API.php:1244
 msgid "Acceso Denegado"
 msgstr ""
 
@@ -2541,7 +2541,7 @@ msgstr[0] ""
 msgstr[1] ""
 
 #: includes/Certificate_Generator.php:376
-#: includes/Rest_API.php:1039
+#: includes/Rest_API.php:1063
 msgid "Aún no has completado las horas mínimas requeridas para generar el certificado."
 msgstr ""
 
@@ -3555,10 +3555,10 @@ msgid "Tu cuenta no puede renovar en este estado. Contacta con coordinación."
 msgstr ""
 
 #: includes/Rest_API.php:526
-#: includes/Rest_API.php:1027
-#: includes/Rest_API.php:1247
-#: includes/Rest_API.php:1309
-#: includes/Rest_API.php:1447
+#: includes/Rest_API.php:1051
+#: includes/Rest_API.php:1271
+#: includes/Rest_API.php:1333
+#: includes/Rest_API.php:1471
 msgid "Miembro no encontrado."
 msgstr ""
 
@@ -3566,81 +3566,81 @@ msgstr ""
 msgid "Actividad desconocida"
 msgstr ""
 
-#: includes/Rest_API.php:664
+#: includes/Rest_API.php:680
 msgid "No se ha podido registrar la solicitud. Escríbenos y lo arreglamos."
 msgstr ""
 
-#: includes/Rest_API.php:674
+#: includes/Rest_API.php:690
 msgid "Solicitud registrada. La junta la revisará y borrará tus datos personales; recibirás aviso cuando esté."
 msgstr ""
 
-#: includes/Rest_API.php:833
+#: includes/Rest_API.php:857
 msgid "Demasiadas peticiones."
 msgstr ""
 
-#: includes/Rest_API.php:1070
+#: includes/Rest_API.php:1094
 msgid "Miembro no encontrado o no autorizado"
 msgstr ""
 
-#: includes/Rest_API.php:1160
+#: includes/Rest_API.php:1184
 msgid "Falta ID de notificación."
 msgstr ""
 
-#: includes/Rest_API.php:1188
 #: includes/Rest_API.php:1212
+#: includes/Rest_API.php:1236
 #: public/class-mi-area.php:168
 msgid "Error"
 msgstr ""
 
-#: includes/Rest_API.php:1206
+#: includes/Rest_API.php:1230
 msgid "No tienes permiso para ver este documento."
 msgstr ""
 
-#: includes/Rest_API.php:1212
+#: includes/Rest_API.php:1236
 msgid "El archivo físico no existe en el servidor."
 msgstr ""
 
-#: includes/Rest_API.php:1220
+#: includes/Rest_API.php:1244
 msgid "Archivo no válido."
 msgstr ""
 
-#: includes/Rest_API.php:1254
+#: includes/Rest_API.php:1278
 msgid "No se encontró el plan de la membresía."
 msgstr ""
 
-#: includes/Rest_API.php:1260
+#: includes/Rest_API.php:1284
 msgid "Este plan no requiere pago."
 msgstr ""
 
-#: includes/Rest_API.php:1264
+#: includes/Rest_API.php:1288
 msgid "La pasarela de pago no está disponible."
 msgstr ""
 
-#: includes/Rest_API.php:1335
+#: includes/Rest_API.php:1359
 msgid "El cumpleaños ya está establecido y no puede modificarse."
 msgstr ""
 
-#: includes/Rest_API.php:1344
+#: includes/Rest_API.php:1368
 msgid "Fecha de cumpleaños no válida."
 msgstr ""
 
-#: includes/Rest_API.php:1355
+#: includes/Rest_API.php:1379
 msgid "Email no válido."
 msgstr ""
 
-#: includes/Rest_API.php:1374
+#: includes/Rest_API.php:1398
 msgid "Ese email ya está en uso por otro socio."
 msgstr ""
 
-#: includes/Rest_API.php:1417
+#: includes/Rest_API.php:1441
 msgid "Token de confirmación no válido."
 msgstr ""
 
-#: includes/Rest_API.php:1420
+#: includes/Rest_API.php:1444
 msgid "El enlace de confirmación ha caducado. Solicítalo de nuevo."
 msgstr ""
 
-#: includes/Rest_API.php:1453
+#: includes/Rest_API.php:1477
 msgid "Guarda primero tu número de teléfono en el perfil."
 msgstr ""
 

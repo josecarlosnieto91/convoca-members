@@ -627,6 +627,22 @@ class Rest_API {
 	}
 
 	/**
+	 * El enlace público del recibo de un pago (gateway#8). Lo construye el gateway, que es quien firma el
+	 * enlace y comprueba la clave; aquí solo se pide. Sin gateway instalado, no hay enlace y el panel no
+	 * ofrece el botón.
+	 *
+	 * @param int $pago_id Pago.
+	 * @return string
+	 */
+	private static function url_recibo( int $pago_id ): string {
+		if ( $pago_id <= 0 || ! class_exists( '\\Convoca\\Gateway\\Receipt_Generator' ) ) {
+			return '';
+		}
+
+		return (string) \Convoca\Gateway\Receipt_Generator::receipt_url( $pago_id );
+	}
+
+	/**
 	 * El estado de privacidad del socio para su panel (members#42).
 	 */
 	public function get_privacidad( \WP_REST_Request $request ): \WP_REST_Response {
@@ -706,12 +722,20 @@ class Rest_API {
 				$status = get_post_meta( $post->ID, '_convoca_status', true );
 				$amount = (int) get_post_meta( $post->ID, '_convoca_amount_cents', true );
 
+				// El recibo (members#8 del gateway): el número que ya se guardaba y, si el pago está cobrado, el
+				// enlace público del gateway para verlo o imprimirlo. El socio lo tenía solo si no perdía el
+				// correo: cuando se perdía, acababa pidiéndoselo a la junta por WhatsApp.
+				$recibo     = (string) get_post_meta( $post->ID, '_convoca_receipt_number', true );
+				$recibo_url = ( 'paid' === $status ) ? self::url_recibo( (int) $post->ID ) : '';
+
 				$items[] = array(
-					'id'       => $post->ID,
-					'fecha'    => get_the_date( 'd/m/Y', $post->ID ),
-					'concepto' => get_post_meta( $post->ID, '_convoca_product_desc', true ),
-					'importe'  => number_format( $amount / 100, 2, ',', '.' ),
-					'estado'   => $status,
+					'id'         => $post->ID,
+					'fecha'      => get_the_date( 'd/m/Y', $post->ID ),
+					'concepto'   => get_post_meta( $post->ID, '_convoca_product_desc', true ),
+					'importe'    => number_format( $amount / 100, 2, ',', '.' ),
+					'estado'     => $status,
+					'recibo'     => $recibo,
+					'recibo_url' => $recibo_url,
 				);
 			}
 		}

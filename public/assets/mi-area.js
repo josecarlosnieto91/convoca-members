@@ -600,6 +600,7 @@
                 <th>Concepto</th>
                 <th>Importe</th>
                 <th>Estado</th>
+                <th>Recibo</th>
               </tr>
             </thead>
             <tbody>
@@ -609,6 +610,9 @@
                   <td>${item.concepto}</td>
                   <td>${item.importe}€</td>
                   <td>${this.formatEstadoBadge(item.estado)}</td>
+                  <td>${item.recibo_url
+                    ? `<a href="${this.escAttr(item.recibo_url)}" target="_blank" rel="noopener" title="Ver o imprimir el recibo (se abre en otra pestaña)">🧾 ${item.recibo ? this.esc(item.recibo) : 'Ver recibo'}</a>`
+                    : (item.recibo ? this.esc(item.recibo) : '—')}</td>
                 </tr>
               `).join('')}
             </tbody>
