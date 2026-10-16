@@ -97,6 +97,18 @@ class Member_Auth {
 			);
 		}
 
+		// El login del panel abre también la sesión de WordPress (shifts#19).
+		//
+		// Medido: el socio ya está dentro de su panel, pero para WordPress seguía siendo un visitante anónimo
+		// —esta función crea su propia sesión (`convoca_member_session`) y no tocaba la de WordPress—, así que
+		// en la página de turnos le contestaba «si eres voluntario/a, inicia sesión para apuntarte» y tenía que
+		// descubrir un SEGUNDO formulario de acceso, con las mismas credenciales y sin que nadie se lo dijera.
+		// Ahora una sola entrada sirve para todo: panel, turnos e inscripciones.
+		if ( ! is_user_logged_in() ) {
+			wp_set_current_user( $user->ID );
+			wp_set_auth_cookie( $user->ID, false, is_ssl() );
+		}
+
 		// Members with status 'baja' cannot log in; their membership ended.
 		$member_status = get_post_meta( $member_id, '_convoca_estado_miembro', true );
 		if ( $member_status === 'baja' ) {
