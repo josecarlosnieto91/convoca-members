@@ -90,6 +90,30 @@ class Circuito_Voluntariado {
 	}
 
 	/**
+	 * Una fecha de la ficha, en el formato que lee una persona.
+	 *
+	 * Las fechas viven en ISO (Y-m-d) porque así se ordenan y se comparan; en un correo eso se lee fatal. Aquí
+	 * se traducen al formato del sitio, y si no se puede leer se devuelve lo que había en vez de inventarse nada.
+	 *
+	 * @param string $fecha Fecha en ISO.
+	 */
+	public static function fecha_legible( string $fecha ): string {
+		if ( '' === $fecha ) {
+			return '';
+		}
+
+		// A las doce del mediodía y no a medianoche: `date_i18n` pinta en la zona del sitio, y una fecha a
+		// las 00:00 se va al día anterior en cuanto el huso va por detrás (medido: salía «04/11» con una
+		// fecha del 5). A mediodía ningún huso del mundo cambia el día.
+		$marca = strtotime( $fecha . ' 12:00:00' );
+		if ( false === $marca ) {
+			return $fecha;
+		}
+
+		return (string) date_i18n( (string) get_option( 'date_format', 'd/m/Y' ), $marca );
+	}
+
+	/**
 	 * A quién se avisa cuando hay algo que hacer: al correo del voluntariado y, si no lo hay, al de
 	 * administración, que es donde ya llegan los demás avisos del plugin.
 	 */
@@ -117,12 +141,14 @@ class Circuito_Voluntariado {
 			return;
 		}
 
-		// El texto vive en la plantilla editable (`voluntariado_cita`), no aquí.
+		// El texto vive en la plantilla editable (`voluntariado_cita`), no aquí. La fecha va ya en el
+		// formato del sitio: si sale la de la ficha tal cual, el correo dice «2026-11-05» y eso no es lo que
+		// lee una persona (medido en la demo).
 		\Convoca\Core\Utils::do_action(
 			'convoca_members_email_voluntariado_cita',
 			'',
 			$miembro_id,
-			$cita['fecha'],
+			self::fecha_legible( $cita['fecha'] ),
 			$cita['hora']
 		);
 	}

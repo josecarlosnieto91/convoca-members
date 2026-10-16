@@ -194,7 +194,7 @@ class Hours_Manager {
 			'',
 			$miembro_id,
 			number_format_i18n( $horas, 1 ),
-			$fecha,
+			\Convoca\Members\Circuito_Voluntariado::fecha_legible( $fecha ),
 			$destino
 		);
 	}

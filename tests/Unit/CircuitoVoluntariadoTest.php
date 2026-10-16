@@ -186,6 +186,17 @@ class CircuitoVoluntariadoTest extends TestCase {
 		}
 	}
 
+	/**
+	 * Las fechas salen en el formato que lee una persona.
+	 *
+	 * Medido en la demo: con la fecha de la ficha tal cual, el correo de la cita decía «2026-11-05».
+	 */
+	public function test_las_fechas_salen_en_formato_legible(): void {
+		$this->assertSame( '05/11/2026', Circuito_Voluntariado::fecha_legible( '2026-11-05' ) );
+		$this->assertSame( '', Circuito_Voluntariado::fecha_legible( '' ) );
+		$this->assertSame( 'inventada', Circuito_Voluntariado::fecha_legible( 'inventada' ), 'Lo que no se puede leer se deja igual' );
+	}
+
 	/** Las preguntas de la entrevista son de cada organización, y salen de los ajustes. */
 	public function test_las_preguntas_de_la_entrevista_salen_de_los_ajustes(): void {
 		$this->assertSame( array(), Circuito_Voluntariado::preguntas(), 'Sin preguntas configuradas no hay cuestionario' );

@@ -2,14 +2,14 @@
 # This file is distributed under the GPL-2.0-or-later.
 msgid ""
 msgstr ""
-"Project-Id-Version: Convoca Members 2.9.2\n"
+"Project-Id-Version: Convoca Members 2.9.3\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/convoca-members\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-10-16T05:53:59+00:00\n"
+"POT-Creation-Date: 2026-10-16T05:55:42+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.12.0\n"
 "X-Domain: convoca-members\n"
@@ -2726,131 +2726,131 @@ msgstr[1] ""
 msgid "Aún no has completado las horas mínimas requeridas para generar el certificado."
 msgstr ""
 
-#: includes/Circuito_Voluntariado.php:182
+#: includes/Circuito_Voluntariado.php:208
 msgid "Solicitud"
 msgstr ""
 
-#: includes/Circuito_Voluntariado.php:183
+#: includes/Circuito_Voluntariado.php:209
 msgid "Entrevista inicial"
 msgstr ""
 
-#: includes/Circuito_Voluntariado.php:184
+#: includes/Circuito_Voluntariado.php:210
 msgid "Voluntariado en activo"
 msgstr ""
 
-#: includes/Circuito_Voluntariado.php:185
+#: includes/Circuito_Voluntariado.php:211
 msgid "Desvinculación"
 msgstr ""
 
-#: includes/Circuito_Voluntariado.php:196
+#: includes/Circuito_Voluntariado.php:222
 msgid "Lo pide el voluntario"
 msgstr ""
 
-#: includes/Circuito_Voluntariado.php:197
+#: includes/Circuito_Voluntariado.php:223
 msgid "Caduca su membresía"
 msgstr ""
 
-#: includes/Circuito_Voluntariado.php:198
+#: includes/Circuito_Voluntariado.php:224
 msgid "Fuerza mayor de la junta"
 msgstr ""
 
-#: includes/Circuito_Voluntariado.php:358
+#: includes/Circuito_Voluntariado.php:384
 msgid "Citar para la entrevista inicial"
 msgstr ""
 
 #. translators: %s: interview date
-#: includes/Circuito_Voluntariado.php:366
+#: includes/Circuito_Voluntariado.php:392
 #, php-format
 msgid "Hacer la entrevista del %s (o marcar el cuestionario como recibido)"
 msgstr ""
 
-#: includes/Circuito_Voluntariado.php:369
+#: includes/Circuito_Voluntariado.php:395
 msgid "Hacer la entrevista inicial"
 msgstr ""
 
-#: includes/Circuito_Voluntariado.php:373
+#: includes/Circuito_Voluntariado.php:399
 msgid "Firmar el acuerdo de voluntariado"
 msgstr ""
 
-#: includes/Circuito_Voluntariado.php:377
+#: includes/Circuito_Voluntariado.php:403
 msgid "Confirmar la baja que ha pedido"
 msgstr ""
 
-#: includes/Circuito_Voluntariado.php:483
+#: includes/Circuito_Voluntariado.php:509
 msgid "entrevista marcada como hecha"
 msgstr ""
 
-#: includes/Circuito_Voluntariado.php:483
+#: includes/Circuito_Voluntariado.php:509
 msgid "cuestionario contestado"
 msgstr ""
 
-#: includes/Circuito_Voluntariado.php:506
+#: includes/Circuito_Voluntariado.php:532
 msgid "condición de monitor"
 msgstr ""
 
-#: includes/Circuito_Voluntariado.php:542
+#: includes/Circuito_Voluntariado.php:568
 msgid "acuerdo aceptado"
 msgstr ""
 
-#: includes/Circuito_Voluntariado.php:826
+#: includes/Circuito_Voluntariado.php:852
 msgid "Tu voluntariado"
 msgstr ""
 
 #. translators: %s: current step
-#: includes/Circuito_Voluntariado.php:829
+#: includes/Circuito_Voluntariado.php:855
 #, php-format
 msgid "Estás en: %s"
 msgstr ""
 
 #. translators: %s: interview date and time
-#: includes/Circuito_Voluntariado.php:843
+#: includes/Circuito_Voluntariado.php:869
 #, php-format
 msgid "Tu entrevista: %s"
 msgstr ""
 
-#: includes/Circuito_Voluntariado.php:855
+#: includes/Circuito_Voluntariado.php:881
 msgid "Enviar mis respuestas"
 msgstr ""
 
-#: includes/Circuito_Voluntariado.php:861
+#: includes/Circuito_Voluntariado.php:887
 msgid "Te falta aceptar el acuerdo de voluntariado. Al aceptarlo se genera tu acuerdo firmado, con su fecha, y queda guardado."
 msgstr ""
 
-#: includes/Circuito_Voluntariado.php:862
+#: includes/Circuito_Voluntariado.php:888
 msgid "Acepto el acuerdo de voluntariado"
 msgstr ""
 
-#: includes/Circuito_Voluntariado.php:867
+#: includes/Circuito_Voluntariado.php:893
 msgid "Has pedido desvincularte: la junta lo confirma en cuanto lo vea."
 msgstr ""
 
-#: includes/Circuito_Voluntariado.php:869
+#: includes/Circuito_Voluntariado.php:895
 msgid "Quiero desvincularme"
 msgstr ""
 
-#: includes/Circuito_Voluntariado.php:871
+#: includes/Circuito_Voluntariado.php:897
 msgid "¿Nos cuentas por qué? (opcional)"
 msgstr ""
 
-#: includes/Circuito_Voluntariado.php:873
+#: includes/Circuito_Voluntariado.php:899
 msgid "Tus horas quedan registradas y podrás descargar tu certificado igual."
 msgstr ""
 
-#: includes/Circuito_Voluntariado.php:874
+#: includes/Circuito_Voluntariado.php:900
 msgid "Pedir la desvinculación"
 msgstr ""
 
 #. translators: 1: date, 2: reason for leaving
-#: includes/Circuito_Voluntariado.php:882
+#: includes/Circuito_Voluntariado.php:908
 #, php-format
 msgid "Tu etapa como voluntario se cerró el %1$s (%2$s)."
 msgstr ""
 
-#: includes/Circuito_Voluntariado.php:886
+#: includes/Circuito_Voluntariado.php:912
 msgid "Tus horas quedan registradas y tu certificado se puede seguir descargando y validando."
 msgstr ""
 
-#: includes/Circuito_Voluntariado.php:890
+#: includes/Circuito_Voluntariado.php:916
 msgid "Además, eres monitor de actividades: puedes acreditar horas de otras personas."
 msgstr ""
 
