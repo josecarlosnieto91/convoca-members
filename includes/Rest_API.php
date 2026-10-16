@@ -870,7 +870,11 @@ class Rest_API {
 				. do_shortcode( '[convoca_suscripcion_turnos]' ) . '</section>';
 		}
 
-		return new \WP_REST_Response( array( 'success' => true, 'html' => $html, 'turnos' => true ) );
+		return new \WP_REST_Response(
+			array(
+				'success' => true, 'html' => $html, 'turnos' => true
+			) 
+		);
 	}
 
 	/**
