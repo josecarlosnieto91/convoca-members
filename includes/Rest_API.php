@@ -482,10 +482,8 @@ class Rest_API {
 			return '';
 		}
 
-		if ( ! method_exists( '\\Convoca\\Gateway\\Payment_Handler', 'build_payment_url' ) ) {
-			return '';
-		}
-
+		// `build_payment_url()` es API pública del gateway y este plugin ya la usa: basta con comprobar que el
+		// plugin esté ahí (PHPStan ve el doble y avisa, con razón, de que `method_exists` sobra).
 		return (string) \Convoca\Gateway\Payment_Handler::build_payment_url( $pago_id );
 	}
 
