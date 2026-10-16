@@ -145,6 +145,12 @@ class Hours_Manager {
 			self::process_approval( $post_id, $estado, get_current_user_id() );
 		}
 
+		// Horas apuntadas por el socio: la junta tiene que enterarse para aprobarlas. Sin este aviso, la
+		// solicitud espera a que alguien se acuerde de mirar la pantalla (petición de JC, 16/10/2026).
+		if ( ! $is_admin && 'pendiente' === $estado && '' === (string) $old_status ) {
+			self::avisar_horas_pendientes( $miembro_id, $horas, $fecha, $post_id );
+		}
+
 		return $post_id;
 	}
 
@@ -156,6 +162,51 @@ class Hours_Manager {
 	 * @param int    $admin_id   The admin user ID performing the action.
 	 * @return bool
 	 */
+	/**
+	 * Avisa de que hay horas esperando aprobación.
+	 *
+	 * Va al correo del responsable del programa de voluntariado si está configurado, y si no al de
+	 * administración (así, quien no toque nada sigue recibiendo el aviso donde ya recibe los demás).
+	 *
+	 * @param int    $miembro_id ID de la ficha.
+	 * @param float  $horas      Horas apuntadas.
+	 * @param string $fecha      Fecha del servicio.
+	 * @param int    $registro   ID del registro de horas.
+	 */
+	public static function avisar_horas_pendientes( int $miembro_id, float $horas, string $fecha, int $registro ): void {
+		$ajustes = (array) get_option( 'convoca_members_settings', array() );
+		$destino = sanitize_email( $ajustes['voluntariado_email'] ?? '' );
+		if ( '' === $destino ) {
+			$destino = sanitize_email( $ajustes['admin_email'] ?? '' );
+		}
+		if ( '' === $destino ) {
+			$destino = sanitize_email( (string) get_option( 'admin_email' ) );
+		}
+		if ( '' === $destino ) {
+			return;
+		}
+
+		$nombre = (string) get_the_title( $miembro_id );
+		$enlace = admin_url( 'admin.php?page=conv-horas' );
+
+		$asunto = sprintf(
+			/* translators: %s: nombre del socio. */
+			__( 'Horas de voluntariado pendientes de aprobar: %s', 'convoca-members' ),
+			$nombre
+		);
+
+		$cuerpo = sprintf(
+			/* translators: 1: nombre, 2: horas, 3: fecha, 4: enlace. */
+			__( "%1\$s\n\nHa apuntado %2\$s horas de voluntariado del día %3\$s.\n\nSe aprueban (o se rechazan) aquí: %4\$s", 'convoca-members' ),
+			$nombre,
+			number_format_i18n( $horas, 1 ),
+			$fecha,
+			$enlace
+		);
+
+		wp_mail( $destino, $asunto, $cuerpo );
+	}
+
 	public static function process_approval( int $record_id, string|bool $new_status, int $admin_id ): bool {
 		// Normalize bool values: true → 'aprobada', false → 'rechazada'.
 		if ( is_bool( $new_status ) ) {

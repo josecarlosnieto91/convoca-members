@@ -134,6 +134,9 @@ class Admin_Settings {
 			'entity_name'             => sanitize_text_field( $input['entity_name'] ?? '' ),
 			'doc_codigo_etico'        => esc_url_raw( $input['doc_codigo_etico'] ?? '' ),
 			'doc_voluntariado'        => esc_url_raw( $input['doc_voluntariado'] ?? '' ),
+			// A dónde van los avisos de horas pendientes de aprobar (petición de JC, 16/10/2026). Vacío =
+			// al correo de administración, que es donde ya llegan los demás avisos.
+			'voluntariado_email'      => sanitize_email( $input['voluntariado_email'] ?? '' ),
 			'doc_protocolo'           => esc_url_raw( $input['doc_protocolo'] ?? '' ),
 			'sender_name'             => sanitize_text_field( $input['sender_name'] ?? get_bloginfo( 'name' ) ),
 			'min_age'                 => (int) ( $input['min_age'] ?? 0 ),
@@ -529,6 +532,13 @@ class Admin_Settings {
 				<label for="doc_voluntariado"><?php esc_html_e( 'Programa de Voluntariado (URL)', 'convoca-members' ); ?></label>
 				<input type="url" id="doc_voluntariado" name="convoca_members_settings[doc_voluntariado]"
 					value="<?php echo esc_attr( $settings['doc_voluntariado'] ?? '' ); ?>">
+			</div>
+
+			<div class="convoca-field">
+				<label for="voluntariado_email"><?php esc_html_e( 'Correo del voluntariado', 'convoca-members' ); ?></label>
+				<input type="email" id="voluntariado_email" name="convoca_members_settings[voluntariado_email]"
+					value="<?php echo esc_attr( $settings['voluntariado_email'] ?? '' ); ?>">
+				<small class="convoca-small"><?php esc_html_e( 'Recibe los avisos de horas apuntadas pendientes de aprobar. Vacío = se avisa al correo de administración.', 'convoca-members' ); ?></small>
 			</div>
 
 			<div class="convoca-field">

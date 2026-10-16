@@ -619,6 +619,113 @@ final class Roles_Miembro {
 	 * @param int $miembro_id ID de la ficha.
 	 * @return bool `true` si la ficha queda como socia.
 	 */
+	/**
+	 * ¿Tiene la cuota pagada y al día?
+	 *
+	 * «Al día» = hay un pago cobrado de esta ficha y su renovación no está pasada. Es la comprobación que
+	 * usa la reconciliación: en una asociación, la cuota pagada es la prueba de que alguien es socio.
+	 *
+	 * @param int $miembro_id ID de la ficha.
+	 */
+	public static function tiene_cuota_pagada( int $miembro_id ): bool {
+		if ( $miembro_id <= 0 ) {
+			return false;
+		}
+
+		$vigente = (string) get_post_meta( $miembro_id, '_convoca_fecha_renovacion', true );
+		if ( '' !== $vigente ) {
+			$hoy = current_time( 'Y-m-d' );
+			if ( $vigente < $hoy ) {
+				return false;
+			}
+		}
+
+		$pagos = get_posts(
+			array(
+				'post_type'      => 'pago',
+				'post_status'    => 'publish',
+				'posts_per_page' => 1,
+				'fields'         => 'ids',
+				'meta_query'     => array( // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_query
+					array(
+						'key'   => '_convoca_origin',
+						'value' => 'members',
+					),
+					array(
+						'key'   => '_convoca_origin_id',
+						'value' => $miembro_id,
+					),
+					array(
+						'key'   => '_convoca_status',
+						'value' => 'paid',
+					),
+				),
+			)
+		);
+
+		return ! empty( $pagos );
+	}
+
+	/**
+	 * Fichas con la cuota pagada a las que les falta la condición de socio.
+	 *
+	 * Es el descuadre del informe members#39: la junta cuenta socios y la ficha del que paga dice
+	 * «Voluntario». Se busca en las fichas con la condición de voluntario, que son las únicas que pueden
+	 * quedarse sin la de socio.
+	 *
+	 * @param int $limite Cuántas revisar.
+	 * @return int[] IDs de las fichas descuadradas.
+	 */
+	public static function descuadres( int $limite = 50 ): array {
+		$fichas = get_posts(
+			array(
+				'post_type'      => 'miembro',
+				'post_status'    => 'any',
+				'posts_per_page' => $limite,
+				'fields'         => 'ids',
+				'meta_query'     => array( // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_query
+					array(
+						'key'   => self::META_VOLUNTARIO,
+						'value' => '1',
+					),
+				),
+			)
+		);
+
+		$descuadradas = array();
+		foreach ( $fichas as $ficha ) {
+			if ( self::tiene_cuota_pagada( (int) $ficha ) && ! self::es_socio( (int) $ficha ) ) {
+				$descuadradas[] = (int) $ficha;
+			}
+		}
+
+		return $descuadradas;
+	}
+
+	/**
+	 * Pone la ficha de acuerdo con los datos: cuota pagada ⇒ condición de socio.
+	 *
+	 * No inventa nada: si hay un pago cobrado y la renovación está en vigor, esa persona es socia, y la
+	 * ficha lo dice. Lo que cambia queda en el registro, para que se pueda responder a «¿por qué esta
+	 * persona es socia hoy y ayer no?».
+	 *
+	 * @param int $miembro_id ID de la ficha.
+	 * @return string[] Qué se ha cambiado (vacío si estaba bien).
+	 */
+	public static function reconciliar( int $miembro_id ): array {
+		$cambios = array();
+
+		if ( self::tiene_cuota_pagada( $miembro_id ) && ! self::es_socio( $miembro_id ) ) {
+			self::registrar_socio_por_pago( $miembro_id );
+			$cambios[] = 'socio (cuota pagada)';
+			if ( class_exists( '\\Convoca\\Core\\Logger' ) ) {
+				\Convoca\Core\Logger::info( sprintf( 'Reconciliación de la ficha #%d: recupera la condición de socio (cuota pagada y al día).', $miembro_id ), 'Members/Roles' );
+			}
+		}
+
+		return $cambios;
+	}
+
 	public static function registrar_socio_por_pago( int $miembro_id ): bool {
 		if ( $miembro_id <= 0 ) {
 			return false;

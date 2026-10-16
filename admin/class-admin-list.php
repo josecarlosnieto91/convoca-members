@@ -53,6 +53,64 @@ class Admin_List extends \WP_List_Table {
 		// pantalla cruda para que no haya botones muertos (issue #27).
 		add_filter( 'post_row_actions', array( $this, 'sin_papelera' ), 10, 2 );
 		add_filter( 'bulk_actions-edit-miembro', array( $this, 'sin_papelera_bulk' ) );
+
+		// Reconciliación de la ficha con sus datos (members#39): el botón vive en la fila, que es donde la
+		// junta ve el aviso, y no hay que entrar a la ficha para arreglarlo.
+		add_filter( 'post_row_actions', array( $this, 'accion_reconciliar' ), 10, 2 );
+		add_action( 'admin_post_convoca_reconciliar_ficha', array( $this, 'handle_reconciliar' ) );
+	}
+
+	/**
+	 * Añade «Reconciliar» a la fila cuando la ficha está descuadrada.
+	 *
+	 * @param array<string,string> $actions Acciones de la fila.
+	 * @param \WP_Post             $post    Ficha de la fila.
+	 * @return array<string,string>
+	 */
+	public function accion_reconciliar( $actions, $post ) {
+		if ( 'miembro' !== $post->post_type ) {
+			return $actions;
+		}
+
+		$id = (int) $post->ID;
+		if ( ! Roles_Miembro::tiene_cuota_pagada( $id ) || Roles_Miembro::es_socio( $id ) ) {
+			return $actions;
+		}
+
+		$actions['convoca_reconciliar'] = sprintf(
+			'<a href="%s">%s</a>',
+			esc_url( wp_nonce_url( admin_url( 'admin-post.php?action=convoca_reconciliar_ficha&id=' . $id ), 'convoca_reconciliar_' . $id ) ),
+			esc_html__( 'Reconciliar', 'convoca-members' )
+		);
+
+		return $actions;
+	}
+
+	/**
+	 * Pone la ficha de acuerdo con sus datos: cuota pagada ⇒ condición de socio.
+	 */
+	public function handle_reconciliar(): void {
+		$id = (int) ( wp_unslash( $_GET['id'] ?? 0 ) );
+
+		if ( ! $id || ! wp_verify_nonce( wp_unslash( $_GET['_wpnonce'] ?? '' ), 'convoca_reconciliar_' . $id ) ) {
+			wp_die( esc_html__( 'Nonce inválido.', 'convoca-members' ) );
+		}
+		if ( ! current_user_can( 'edit_posts' ) ) {
+			wp_die( esc_html__( 'No tienes permisos.', 'convoca-members' ) );
+		}
+
+		$cambios = Roles_Miembro::reconciliar( $id );
+
+		wp_safe_redirect(
+			add_query_arg(
+				array(
+					'page'         => 'conv-members',
+					'reconciliada' => $cambios ? 1 : 0,
+				),
+				admin_url( 'admin.php' )
+			)
+		);
+		exit;
 	}
 
 	public function get_columns(): array {
@@ -574,11 +632,20 @@ class Admin_List extends \WP_List_Table {
 	 * @return string
 	 */
 	public function column_tipo( $item ): string {
-		if ( class_exists( 'Convoca\\Members\\Roles_Miembro' ) ) {
-			return esc_html( Roles_Miembro::etiqueta_tipo_miembro( (int) $item->ID ) );
+		if ( ! class_exists( 'Convoca\\Members\\Roles_Miembro' ) ) {
+			return '—';
 		}
 
-		return '—';
+		$id     = (int) $item->ID;
+		$salida = esc_html( Roles_Miembro::etiqueta_tipo_miembro( $id ) );
+
+		// El descuadre del informe members#39: la cuota está pagada y la ficha no dice «socio». Se avisa aquí,
+		// en la pantalla donde la junta cuenta socios, en vez de dejar que lo descubra el socio al quejarse.
+		if ( Roles_Miembro::tiene_cuota_pagada( $id ) && ! Roles_Miembro::es_socio( $id ) ) {
+			$salida .= ' <span class="convoca-alerta-tipo" title="' . esc_attr__( 'Tiene la cuota pagada y al día, pero a la ficha le falta la condición de socio. Se arregla con «Reconciliar».', 'convoca-members' ) . '">⚠</span>';
+		}
+
+		return $salida;
 	}
 
 	/**
