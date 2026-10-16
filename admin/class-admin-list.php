@@ -54,36 +54,10 @@ class Admin_List extends \WP_List_Table {
 		add_filter( 'post_row_actions', array( $this, 'sin_papelera' ), 10, 2 );
 		add_filter( 'bulk_actions-edit-miembro', array( $this, 'sin_papelera_bulk' ) );
 
-		// Reconciliación de la ficha con sus datos (members#39): el botón vive en la fila, que es donde la
-		// junta ve el aviso, y no hay que entrar a la ficha para arreglarlo.
-		add_filter( 'post_row_actions', array( $this, 'accion_reconciliar' ), 10, 2 );
+		// Reconciliación (members#39). Ojo: `post_row_actions` NO se pinta en esta pantalla —es una pantalla
+		// propia del plugin, con su propia lista—, así que la acción va montada con las demás en
+		// `column_nombre()`. Aquí solo se engancha el manejador.
 		add_action( 'admin_post_convoca_reconciliar_ficha', array( $this, 'handle_reconciliar' ) );
-	}
-
-	/**
-	 * Añade «Reconciliar» a la fila cuando la ficha está descuadrada.
-	 *
-	 * @param array<string,string> $actions Acciones de la fila.
-	 * @param \WP_Post             $post    Ficha de la fila.
-	 * @return array<string,string>
-	 */
-	public function accion_reconciliar( $actions, $post ) {
-		if ( 'miembro' !== $post->post_type ) {
-			return $actions;
-		}
-
-		$id = (int) $post->ID;
-		if ( ! Roles_Miembro::tiene_cuota_pagada( $id ) || Roles_Miembro::es_socio( $id ) ) {
-			return $actions;
-		}
-
-		$actions['convoca_reconciliar'] = sprintf(
-			'<a href="%s">%s</a>',
-			esc_url( wp_nonce_url( admin_url( 'admin-post.php?action=convoca_reconciliar_ficha&id=' . $id ), 'convoca_reconciliar_' . $id ) ),
-			esc_html__( 'Reconciliar', 'convoca-members' )
-		);
-
-		return $actions;
 	}
 
 	/**
@@ -548,6 +522,23 @@ class Admin_List extends \WP_List_Table {
 					$item->post_title 
 				) 
 			) . '">' . __( 'Aprobar alta', 'convoca-members' ) . '</a>';
+		}
+
+		// Reconciliación con los datos de la ficha (members#39): cuota pagada y al día, pero sin la condición
+		// de socio. Se ofrece aquí, en la pantalla donde la junta cuenta socios.
+		if ( Roles_Miembro::tiene_cuota_pagada( (int) $item->ID ) && ! Roles_Miembro::es_socio( (int) $item->ID ) ) {
+			$actions['convoca_reconciliar'] = '<a href="' . esc_url(
+				wp_nonce_url(
+					admin_url( 'admin-post.php?action=convoca_reconciliar_ficha&id=' . $item->ID ),
+					'convoca_reconciliar_' . $item->ID
+				)
+			) . '" style="color:#d63638" aria-label="' . esc_attr(
+				sprintf(
+					/* translators: %s: member name */
+					__( 'Reconciliar la ficha de %s', 'convoca-members' ),
+					$item->post_title
+				)
+			) . '">' . esc_html__( '⚠ Reconciliar', 'convoca-members' ) . '</a>';
 		}
 
 		// PDF Card action.
