@@ -65,6 +65,13 @@ class Email_Manager {
 		'renovacion_completada',
 		'voluntariado_recordatorio',
 		'objetivo_voluntariado_completado',
+		// El circuito del voluntariado (members#50): cuatro avisos que se pueden editar desde el editor de
+		// plantillas de siempre, con sus variables. Los textos de fábrica están abajo.
+		'voluntariado_cita',
+		'voluntariado_acuerdo',
+		'voluntariado_baja_solicitada',
+		'voluntariado_desvinculacion',
+		'voluntariado_horas_pendientes',
 		// Estas dos las envía el propio plugin (cambio de email y verificación de
 		// teléfono). Si no están en la lista, el editor de plantillas no las pinta
 		// y al guardar las borra de la opción: el correo desaparece en silencio.
@@ -102,6 +109,14 @@ class Email_Manager {
 		'{link_confirmacion}',
 		'{nuevo_email}',
 		'{telefono}',
+		// Del circuito del voluntariado (members#50).
+		'{fecha_cita}',
+		'{hora_cita}',
+		'{motivo}',
+		'{causa_baja}',
+		'{horas}',
+		'{fecha_horas}',
+		'{enlace_horas}',
 	);
 
 	public function __construct() {
@@ -115,6 +130,14 @@ class Email_Manager {
 		add_action( 'convoca_members_email_confirm', array( $this, 'send_confirm' ), 10, 3 );
 		add_action( 'convoca_members_email_verify_phone', array( $this, 'send_verify_phone' ), 10, 3 );
 		add_action( 'convoca_members_email_objetivo_voluntariado', array( $this, 'send_objetivo_voluntariado' ) );
+
+		// El circuito del voluntariado (members#50). Cuatro avisos más, editables como los demás: el texto
+		// vive en la plantilla y la dirección la decide quien dispara (la del socio, o la del voluntariado
+		// configurada en los ajustes).
+		add_action( 'convoca_members_email_voluntariado_cita', array( $this, 'send_voluntariado_cita' ), 10, 3 );
+		add_action( 'convoca_members_email_voluntariado_baja_solicitada', array( $this, 'send_voluntariado_baja_solicitada' ), 10, 3 );
+		add_action( 'convoca_members_email_voluntariado_desvinculacion', array( $this, 'send_voluntariado_desvinculacion' ), 10, 2 );
+		add_action( 'convoca_members_email_voluntariado_horas_pendientes', array( $this, 'send_voluntariado_horas_pendientes' ), 10, 4 );
 
 		// Los nombres legacy NO se registran: `Utils::do_action()` dispara el
 		// nombre nuevo y, si queda algún oyente en el viejo, lo dispara también
@@ -396,6 +419,53 @@ class Email_Manager {
 					. __( '<p style="font-size:13px;color:#64748b;margin-top:8px">ID del certificado: {certificado_id}</p>', 'convoca-members' )
 					. '<p>¡Gracias por tu dedicación y apoyo a la naturaleza! 🌍</p>',
 			),
+			'voluntariado_cita'                => array(
+				'subject' => __( 'Tu entrevista de voluntariado: {fecha_cita} a las {hora_cita}', 'convoca-members' ),
+				'body'    => __( '<h1>Hola {nombre},</h1>', 'convoca-members' )
+					. __( '<p>Queremos conocerte. Te esperamos para la entrevista inicial de voluntariado:</p>', 'convoca-members' )
+					. Email_Layout::meta_table(
+						array(
+							array(
+								'label' => __( 'Día', 'convoca-members' ),
+								'value' => '{fecha_cita}',
+							),
+							array(
+								'label' => __( 'Hora', 'convoca-members' ),
+								'value' => '{hora_cita}',
+							),
+						)
+					)
+					. __( '<p>Si te viene mal, respóndenos a este correo y buscamos otro día.</p>', 'convoca-members' )
+					. Email_Layout::button_html( '{login_url}', __( 'Ver mi área', 'convoca-members' ) ),
+			),
+			'voluntariado_acuerdo'             => array(
+				'subject' => __( 'Tu acuerdo de voluntariado — ', 'convoca-members' ) . get_bloginfo( 'name' ),
+				'body'    => __( '<h1>Hola {nombre},</h1>', 'convoca-members' )
+					. __( '<p>Aquí tienes tu acuerdo de voluntariado, con tus datos y tu firma. Guárdalo: es tu compromiso con la entidad y el nuestro contigo.</p>', 'convoca-members' )
+					. __( '<p>Puedes aceptarlo (y volver a descargarlo) desde tu área.</p>', 'convoca-members' )
+					. Email_Layout::button_html( '{login_url}', __( 'Ver y aceptar mi acuerdo', 'convoca-members' ) ),
+			),
+			'voluntariado_baja_solicitada'     => array(
+				'subject' => __( 'Un voluntariado ha pedido la baja: {nombre}', 'convoca-members' ),
+				'body'    => __( '<h1>{nombre} ha pedido desvincularse</h1>', 'convoca-members' )
+					. __( '<p>Lo que cuenta:</p>', 'convoca-members' )
+					. '<blockquote>{motivo}</blockquote>'
+					. __( '<p>La baja no se aplica sola: confírmala desde Miembros → Voluntarios.</p>', 'convoca-members' )
+					. Email_Layout::button_html( '{login_url}', __( 'Confirmarla', 'convoca-members' ) ),
+			),
+			'voluntariado_desvinculacion'      => array(
+				'subject' => __( 'Tu etapa como voluntario se ha cerrado', 'convoca-members' ),
+				'body'    => __( '<h1>Gracias por el tiempo, {nombre}</h1>', 'convoca-members' )
+					. __( '<p>Tu etapa como voluntario se ha cerrado ({causa_baja}).</p>', 'convoca-members' )
+					. __( '<p>Lo que hiciste no se borra: tus horas quedan registradas ({horas} h) y tu certificado se puede descargar y validar cuando quieras.</p>', 'convoca-members' )
+					. Email_Layout::button_html( '{login_url}', __( 'Descargar mi certificado', 'convoca-members' ) ),
+			),
+			'voluntariado_horas_pendientes'    => array(
+				'subject' => __( 'Horas de voluntariado pendientes de aprobar: {nombre}', 'convoca-members' ),
+				'body'    => __( '<h1>{nombre} ha apuntado horas</h1>', 'convoca-members' )
+					. __( '<p>{horas} horas del día {fecha_horas}. Se aprueban (o se rechazan) aquí:</p>', 'convoca-members' )
+					. Email_Layout::button_html( '{enlace_horas}', __( 'Aprobar las horas', 'convoca-members' ) ),
+			),
 		);
 	}
 
@@ -536,6 +606,85 @@ class Email_Manager {
 	 */
 	public function send_credenciales( int $post_id, array $extra_vars = array() ): void {
 		$this->send( 'credenciales_acceso', $post_id, $extra_vars );
+	}
+
+	/* ── El circuito del voluntariado (members#50) ─────── */
+
+	/**
+	 * Avisa a la persona de su cita para la entrevista inicial.
+	 *
+	 * @param int    $post_id Ficha del socio.
+	 * @param string $fecha   Día de la cita.
+	 * @param string $hora    Hora de la cita.
+	 */
+	public function send_voluntariado_cita( int $post_id, string $fecha, string $hora ): void {
+		$this->send(
+			'voluntariado_cita',
+			$post_id,
+			array(
+				'{fecha_cita}' => $fecha,
+				'{hora_cita}'  => $hora,
+			)
+		);
+	}
+
+	/**
+	 * Avisa a la junta de que alguien ha pedido la baja.
+	 *
+	 * La dirección la decide quien dispara el aviso (el correo del voluntariado, o el de administración):
+	 * eso es configuración del sitio, no texto del correo.
+	 *
+	 * @param int    $post_id  Ficha del socio.
+	 * @param string $motivo   Lo que haya contado la persona.
+	 * @param string $to_email A quién se avisa.
+	 */
+	public function send_voluntariado_baja_solicitada( int $post_id, string $motivo, string $to_email ): void {
+		$this->send(
+			'voluntariado_baja_solicitada',
+			$post_id,
+			array( '{motivo}' => '' !== $motivo ? $motivo : __( '(sin motivo)', 'convoca-members' ) ),
+			$to_email
+		);
+	}
+
+	/**
+	 * Avisa a la persona de que su desvinculación está aplicada.
+	 *
+	 * Sus horas quedan: el correo las dice, porque es la duda razonable de quien se va.
+	 *
+	 * @param int    $post_id Ficha del socio.
+	 * @param string $causa   Causa de la desvinculación, ya legible.
+	 */
+	public function send_voluntariado_desvinculacion( int $post_id, string $causa ): void {
+		$this->send(
+			'voluntariado_desvinculacion',
+			$post_id,
+			array(
+				'{causa_baja}' => $causa,
+				'{horas}'      => number_format_i18n( Voluntariado_Manager::get_horas_aprobadas( $post_id ), 1 ),
+			)
+		);
+	}
+
+	/**
+	 * Avisa de que hay horas apuntadas esperando aprobación.
+	 *
+	 * @param int    $post_id  Ficha del socio.
+	 * @param string $horas    Las horas, ya formateadas.
+	 * @param string $fecha    El día del trabajo.
+	 * @param string $to_email A quién se avisa.
+	 */
+	public function send_voluntariado_horas_pendientes( int $post_id, string $horas, string $fecha, string $to_email ): void {
+		$this->send(
+			'voluntariado_horas_pendientes',
+			$post_id,
+			array(
+				'{horas}'        => $horas,
+				'{fecha_horas}'  => $fecha,
+				'{enlace_horas}' => admin_url( 'admin.php?page=conv-horas' ),
+			),
+			$to_email
+		);
 	}
 
 	/* ── Core send logic ───────────────────────────────── */
@@ -985,6 +1134,13 @@ class Email_Manager {
 			'{link_confirmacion}'            => 'https://ejemplo.test/confirmar',
 			'{nuevo_email}'                  => 'nuevo@ejemplo.com',
 			'{telefono}'                     => '600 000 000',
+			'{fecha_cita}'                   => '05/11/2026',
+			'{hora_cita}'                    => '18:30',
+			'{motivo}'                       => 'Me mudo de ciudad.',
+			'{causa_baja}'                   => 'Fuerza mayor de la junta',
+			'{horas}'                        => '42,5',
+			'{fecha_horas}'                  => '15/10/2026',
+			'{enlace_horas}'                 => 'https://ejemplo.test/wp-admin/admin.php?page=conv-horas',
 		);
 	}
 
@@ -1042,7 +1198,7 @@ class Email_Manager {
 	/* ── Migración de plantillas ya guardadas ─────────── */
 
 	const TEMPLATES_VERSION_OPTION = 'convoca_email_templates_version';
-	const TEMPLATES_VERSION        = '2026-09-26-4';
+	const TEMPLATES_VERSION        = '2026-10-16-1';
 
 	/**
 	 * Corrige las plantillas ya guardadas en sitios existentes: `install_defaults()`

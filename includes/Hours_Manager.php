@@ -186,25 +186,17 @@ class Hours_Manager {
 			return;
 		}
 
-		$nombre = (string) get_the_title( $miembro_id );
-		$enlace = admin_url( 'admin.php?page=conv-horas' );
-
-		$asunto = sprintf(
-			/* translators: %s: nombre del socio. */
-			__( 'Horas de voluntariado pendientes de aprobar: %s', 'convoca-members' ),
-			$nombre
-		);
-
-		$cuerpo = sprintf(
-			/* translators: 1: nombre, 2: horas, 3: fecha, 4: enlace. */
-			__( "%1\$s\n\nHa apuntado %2\$s horas de voluntariado del día %3\$s.\n\nSe aprueban (o se rechazan) aquí: %4\$s", 'convoca-members' ),
-			$nombre,
+		// El texto vive en la plantilla editable (`voluntariado_horas_pendientes`): antes estaba aquí, en
+		// duro, y no había forma de cambiarlo sin tocar código. La dirección la sigue decidiendo el
+		// ajuste, que eso sí es configuración del sitio.
+		\Convoca\Core\Utils::do_action(
+			'convoca_members_email_voluntariado_horas_pendientes',
+			'',
+			$miembro_id,
 			number_format_i18n( $horas, 1 ),
 			$fecha,
-			$enlace
+			$destino
 		);
-
-		wp_mail( $destino, $asunto, $cuerpo );
 	}
 
 	public static function process_approval( int $record_id, string|bool $new_status, int $admin_id ): bool {

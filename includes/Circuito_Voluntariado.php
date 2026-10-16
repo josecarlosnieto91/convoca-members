@@ -117,16 +117,13 @@ class Circuito_Voluntariado {
 			return;
 		}
 
-		$cuando = trim( $cita['fecha'] . ' ' . $cita['hora'] );
-
-		wp_mail(
-			$persona->user_email,
-			__( 'Tu entrevista de voluntariado', 'convoca-members' ),
-			sprintf(
-				/* translators: %s: interview date and time */
-				__( 'Hola: te esperamos para la entrevista inicial el %s. Si te viene mal, respóndenos y buscamos otro día.', 'convoca-members' ),
-				$cuando
-			)
+		// El texto vive en la plantilla editable (`voluntariado_cita`), no aquí.
+		\Convoca\Core\Utils::do_action(
+			'convoca_members_email_voluntariado_cita',
+			'',
+			$miembro_id,
+			$cita['fecha'],
+			$cita['hora']
 		);
 	}
 
@@ -142,15 +139,14 @@ class Circuito_Voluntariado {
 			return;
 		}
 
-		wp_mail(
-			$correo,
-			__( 'Un voluntariado ha pedido la baja', 'convoca-members' ),
-			sprintf(
-				/* translators: 1: member name, 2: reason */
-				__( "%1\$s ha pedido desvincularse del voluntariado.\n\nLo que cuenta: %2\$s\n\nSe confirma desde Miembros → Voluntarios.", 'convoca-members' ),
-				get_the_title( $miembro_id ),
-				'' !== $motivo ? $motivo : __( '(sin motivo)', 'convoca-members' )
-			)
+		// Plantilla editable (`voluntariado_baja_solicitada`); la dirección la decide el ajuste del
+		// correo del voluntariado (o, si está vacío, el de administración).
+		\Convoca\Core\Utils::do_action(
+			'convoca_members_email_voluntariado_baja_solicitada',
+			'',
+			$miembro_id,
+			$motivo,
+			$correo
 		);
 	}
 
@@ -167,14 +163,12 @@ class Circuito_Voluntariado {
 			return;
 		}
 
-		wp_mail(
-			$persona->user_email,
-			__( 'Tu voluntariado se ha dado de baja', 'convoca-members' ),
-			sprintf(
-				/* translators: %s: reason for leaving */
-				__( 'Hola: tu etapa como voluntario se ha cerrado (%s). Tus horas quedan registradas y puedes descargar tu certificado cuando lo necesites.', 'convoca-members' ),
-				self::causas()[ $causa ] ?? $causa
-			)
+		// Plantilla editable (`voluntariado_desvinculacion`).
+		\Convoca\Core\Utils::do_action(
+			'convoca_members_email_voluntariado_desvinculacion',
+			'',
+			$miembro_id,
+			self::causas()[ $causa ] ?? $causa
 		);
 	}
 

@@ -908,6 +908,11 @@ class Admin_Settings {
 			'renovacion_completada'            => __( 'Renovación completada 🎉', 'convoca-members' ),
 			'voluntariado_recordatorio'        => __( 'Recordatorio de horas de voluntariado', 'convoca-members' ),
 			'objetivo_voluntariado_completado' => __( 'Objetivo de voluntariado completado 🏅', 'convoca-members' ),
+			'voluntariado_cita'                => __( 'Voluntariado: cita para la entrevista', 'convoca-members' ),
+			'voluntariado_acuerdo'             => __( 'Voluntariado: acuerdo para firmar', 'convoca-members' ),
+			'voluntariado_baja_solicitada'     => __( 'Voluntariado: baja pedida (aviso a la junta)', 'convoca-members' ),
+			'voluntariado_desvinculacion'      => __( 'Voluntariado: desvinculación aplicada', 'convoca-members' ),
+			'voluntariado_horas_pendientes'    => __( 'Voluntariado: horas pendientes de aprobar (aviso a la junta)', 'convoca-members' ),
 		);
 
 		?>

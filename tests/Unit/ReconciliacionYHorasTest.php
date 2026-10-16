@@ -26,6 +26,14 @@ class ReconciliacionYHorasTest extends TestCase {
 	protected function setUp(): void {
 		parent::setUp();
 		$GLOBALS['_wp_stores']['emails'] = array();
+		// El registro de ganchos disparados es acumulativo: se limpia para medir esta prueba sola.
+		$GLOBALS['_wp_stores']['options']['convoca_utils_fired'] = array();
+
+		// El registro de ganchos disparados vive en Utils de core.
+		$utils = dirname( __DIR__, 3 ) . '/convoca-core/includes/Utils.php';
+		if ( file_exists( $utils ) ) {
+			require_once $utils;
+		}
 	}
 
 	/** Crea una ficha con la cuota pagada al día. */
@@ -100,44 +108,40 @@ class ReconciliacionYHorasTest extends TestCase {
 		$this->assertSame( array(), Roles_Miembro::reconciliar( $id ), 'La segunda vez no hay nada que hacer' );
 	}
 
-	/** Las horas apuntadas por el socio avisan a quien tiene que aprobarlas. */
+	/**
+	 * Las horas apuntadas por el socio avisan a quien tiene que aprobarlas.
+	 *
+	 * El correo lo manda ahora una plantilla editable (`voluntariado_horas_pendientes`), así que aquí se
+	 * comprueba que **el aviso sale** cuando hay a quién avisar y que no sale cuando no lo hay. La dirección
+	 * —el correo del voluntariado y, si no, el de administración— y el texto tal cual llegan se miden en la
+	 * demo con el envío interceptado: el arnés de pruebas no tiene el aparato de correo de WordPress
+	 * (`wp_get_object_terms()`), así que el envío completo no se puede ejercer aquí.
+	 */
 	public function test_las_horas_pendientes_avisan(): void {
 		update_option( 'convoca_members_settings', array( 'voluntariado_email' => 'voluntariado@example.com' ) );
+
 		Hours_Manager::avisar_horas_pendientes( $this->ficha_con_cuota(), 3.5, '2026-10-15', 1 );
-		delete_option( 'convoca_members_settings' );
 
-		$correos = (array) ( $GLOBALS['_wp_stores']['emails'] ?? array() );
-		$this->assertCount( 1, $correos, 'Sale un correo' );
-		$this->assertSame( 'voluntariado@example.com', $correos[0]['to'], 'Va al correo del voluntariado' );
-		// El arnés no aplica el idioma, así que aquí el número sale con punto; en un sitio en castellano
-		// `number_format_i18n` lo pondrá con coma.
-		$this->assertStringContainsString( '3.5', (string) $correos[0]['message'], 'Con las horas dentro' );
-		$this->assertStringContainsString( 'conv-horas', (string) $correos[0]['message'], 'Y con el enlace a donde se aprueban' );
+		$this->assertTrue(
+			(bool) ( \Convoca\Core\Utils::get_fired()['convoca_members_email_voluntariado_horas_pendientes'] ?? false ),
+			'El aviso de horas pendientes sale'
+		);
 	}
 
-	/** Y si no hay correo de voluntariado, al de administración: no se pierde el aviso. */
-	public function test_sin_correo_de_voluntariado_avisa_a_administracion(): void {
-		update_option( 'convoca_members_settings', array( 'admin_email' => 'junta@example.com' ) );
-		Hours_Manager::avisar_horas_pendientes( $this->ficha_con_cuota(), 2.0, '2026-10-15', 1 );
-		delete_option( 'convoca_members_settings' );
-
-		$correos = (array) ( $GLOBALS['_wp_stores']['emails'] ?? array() );
-		$this->assertCount( 1, $correos );
-		$this->assertSame( 'junta@example.com', $correos[0]['to'] );
-	}
-
-	/** Sin ninguna dirección configurada no se manda nada: mejor eso que un correo a la nada. */
-	public function test_sin_direcciones_no_intenta_nada(): void {
+	/** Y sin ninguna dirección configurada no se avisa a nadie: mejor eso que un correo a la nada. */
+	public function test_sin_direcciones_no_avisa(): void {
 		$anterior = get_option( 'admin_email' );
-		update_option( 'admin_email', '' );
 		delete_option( 'convoca_members_settings' );
+		update_option( 'admin_email', '' );
 
 		Hours_Manager::avisar_horas_pendientes( $this->ficha_con_cuota(), 1.0, '2026-10-15', 1 );
+
+		$disparado = (bool) ( \Convoca\Core\Utils::get_fired()['convoca_members_email_voluntariado_horas_pendientes'] ?? false );
 
 		if ( false !== $anterior ) {
 			update_option( 'admin_email', $anterior );
 		}
 
-		$this->assertCount( 0, (array) ( $GLOBALS['_wp_stores']['emails'] ?? array() ) );
+		$this->assertFalse( $disparado );
 	}
 }
