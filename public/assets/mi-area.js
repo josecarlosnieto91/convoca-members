@@ -463,6 +463,15 @@
       return String(s == null ? '' : s).replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
     },
 
+    // Escape para texto de CONTENIDO (títulos, números de recibo, mensajes). Faltaba: el panel
+    // llamaba a this.esc() en cuatro sitios y sólo existían escAttr y escHtml, así que la pestaña
+    // de Pagos reventaba con «TypeError: this.esc is not a function» en cuanto un pago tenía
+    // recibo —la rama del recibo es la única que lo usa ahí— y el panel entero mostraba «Error
+    // cargando pagos.» (members#56). Medido en la demo con la ficha 2215.
+    esc: function(s) {
+      return String(s == null ? '' : s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+    },
+
     fetchInscriptions: function() {
       fetch(window.convMiArea.apiUrl + '/me/inscripciones', { headers: { 'X-WP-Nonce': window.convMiArea.nonce } })
       .then(res => res.json())

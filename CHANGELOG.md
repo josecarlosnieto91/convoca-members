@@ -1,3 +1,25 @@
+## [2.9.9] — 2026-10-17
+
+### Arreglado
+- **«Error cargando pagos» en la pestaña de Pagos y Cuotas (issue #56).** El panel llamaba a
+  `this.esc()` desde cuatro sitios, pero en el objeto sólo existían `escAttr` y `escHtml`: `esc` **no
+  estaba**. La rama del recibo es la única que lo usa dentro de Pagos, por eso la pestaña cargaba bien
+  con un pago pendiente (sin recibo) y reventaba con un pago pagado y su recibo. Medido en la demo con
+  la ficha 2215, con la consola abierta:
+
+  ```
+  convoca-members: error cargando pagos TypeError: this.esc is not a function
+    at mi-area.js:665  (rama del recibo)
+  ```
+
+  Se añade `esc()` (escape de contenido). Los otros dos usos que estaban roto por lo mismo —la línea de
+  la política aceptada en «Mis datos y privacidad» y el mensaje de respuesta al renovar por horas—
+  quedan arreglados con el mismo cambio.
+
+### Pruebas
+- `AyudantesDelPanelTest`: comprueba que **todo** `this.X()` que usa el panel tiene su definición. Es la
+  comprobación que habría cazado esto el primer día. 410 tests, 1587 aserciones.
+
 ## [2.9.8] — 2026-10-16
 
 ### Arreglado
