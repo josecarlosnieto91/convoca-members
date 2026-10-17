@@ -1,3 +1,23 @@
+## [2.9.10] — 2026-10-17
+
+### Arreglado
+- **El panel ofrecía el área de horas del voluntariado a quien no es voluntario (issue #55).** Con una
+  cuenta sin voluntariado se veía todo: «Mis Horas de Voluntariado», los niveles, el formulario «Añadir
+  Nuevo Registro» con la lista de proyectos y «Progreso hacia el certificado». Ahora el panel lo sabe
+  porque `/me/horas` devuelve el estado del voluntariado, y a quien no lo es se le explica cómo pedirlo
+  en vez de ofrecerle un formulario que no le corresponde.
+
+  El detalle que costaba: `estado()` devuelve **«solicitud» por defecto**, también para quien no ha
+  pedido nada, así que «no es voluntario» no es «estado vacío». Lo que distingue es **haber pasado el
+  circuito** (`entrevista`, `activo`, `desvinculado`) **o** tener horas registradas — quien se desvinculó
+  sigue viendo lo suyo, que son sus datos y su certificado.
+- **El progreso del certificado imprimía `undefined / 15 horas (undefined%)` (issue #55).** El arreglo
+  anterior cubrió el porcentaje y dejó el numerador: ahora usa el total ya calculado.
+
+### Pruebas
+- `AreaDeHorasDelPanelTest`: el estado del voluntariado viaja en `/me/horas`, el panel lo comprueba antes
+  de ofrecer el área y el progreso no imprime `undefined`. 413 tests, 1592 aserciones.
+
 ## [2.9.9] — 2026-10-17
 
 ### Arreglado

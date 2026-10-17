@@ -976,6 +976,31 @@
           gamifyHtml += '</div>';
         }
 
+        // members#55: a quien no es voluntario no se le ofrece el área de horas. «No es voluntario» es
+        // no haber pasado el circuito (estado 'solicitud' es el de fábrica, también para quien no ha
+        // pedido nada) y no tener ninguna hora. Si tiene horas o estuvo en el circuito, se le muestra:
+        // son sus datos y su certificado.
+        const estadosDeVoluntario = ['entrevista', 'activo', 'desvinculado'];
+        const esVoluntario = estadosDeVoluntario.indexOf(data && data.voluntariado) !== -1
+          || (data && data.items ? data.items.length : 0) > 0
+          || (data && Number(data.total_horas) > 0);
+
+        if (!esVoluntario) {
+          this.$main.innerHTML = `
+            <div class="conv-hours-layout">
+              <div class="hours-header"><h2>⏳ Voluntariado</h2></div>
+              <section class="card-inner" style="background:#fff7e6;border:1px solid #ffd591;">
+                <p style="margin:0 0 8px;"><strong>Todavía no eres voluntario/a.</strong></p>
+                <p class="text-muted" style="margin:0;">El voluntariado entra por la junta: pide el alta y te
+                citarán para una entrevista. Cuando estés dentro, aquí podrás anotar tus horas y ver tu progreso
+                hacia el certificado.</p>
+                <p class="text-muted" style="margin:8px 0 0;">Para pedirlo, escribe a la asociación desde la
+                pestaña de <strong>Mis Datos</strong> o coméntalo en el centro.</p>
+              </section>
+            </div>`;
+          return;
+        }
+
         let html = `
           <div class="conv-hours-layout">
             <div class="hours-header">
@@ -1044,7 +1069,7 @@
               '<h3>📊 Progreso hacia el certificado</h3>' +
               '<div style="width: 100%; background: #e9ecef; height: 20px; border-radius: 10px; overflow: hidden; margin: 10px 0;">' +
               '<div style="width: ' + pct + '%; background: #28a745; height: 100%;"></div></div>' +
-              '<p>' + cert.progress.total + ' / ' + cert.progress.objetivo + ' horas (' + pct + '%)</p>' +
+              '<p>' + total + ' / ' + objetivo + ' horas (' + pct + '%)</p>' +
               '<p><small>Completa ' + cert.progress.objetivo + ' horas para obtener tu certificado</small></p>' +
               '</div>';
           }

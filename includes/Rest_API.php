@@ -952,6 +952,11 @@ class Rest_API {
 			array(
 				'items'       => $items,
 				'total_horas' => $total_horas,
+				// El estado del voluntariado viaja aquí para que el panel sepa si ofrecer el área de horas
+				// (members#55). Ojo: `estado()` devuelve «solicitud» por defecto incluso sin haber pedido
+				// nada, así que «no es voluntario» no es «estado vacío»: lo es no haber pasado el circuito
+				// (entrevista/activo/desvinculado) y no tener ninguna hora registrada.
+				'voluntariado' => \Convoca\Members\Circuito_Voluntariado::estado( $member_id ),
 			)
 		);
 	}
