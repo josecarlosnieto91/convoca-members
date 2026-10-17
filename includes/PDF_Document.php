@@ -90,8 +90,10 @@ class PDF_Document {
 			$wpdb->prepare(
 				"SELECT p.ID FROM {$wpdb->posts} p 
              INNER JOIN {$wpdb->postmeta} pm ON p.ID = pm.post_id 
+             INNER JOIN {$wpdb->postmeta} pm_acuerdo ON p.ID = pm_acuerdo.post_id 
              WHERE p.post_type = 'convoca_documento' 
              AND pm.meta_key = '_convoca_usuario_id' AND pm.meta_value = %d 
+             AND pm_acuerdo.meta_key = '_convoca_es_acuerdo_voluntariado' AND pm_acuerdo.meta_value = '1'
              AND p.post_status = 'publish' LIMIT 1",
 				$user_id
 			)
@@ -125,8 +127,10 @@ class PDF_Document {
 				$wpdb->prepare(
 					"SELECT p.ID FROM {$wpdb->posts} p 
                  INNER JOIN {$wpdb->postmeta} pm ON p.ID = pm.post_id 
+                 INNER JOIN {$wpdb->postmeta} pm_acuerdo ON p.ID = pm_acuerdo.post_id 
                  WHERE p.post_type = 'convoca_documento' 
                  AND pm.meta_key = '_convoca_usuario_id' AND pm.meta_value = %d 
+                 AND pm_acuerdo.meta_key = '_convoca_es_acuerdo_voluntariado' AND pm_acuerdo.meta_value = '1'
                  AND p.post_status = 'publish' 
                  FOR UPDATE",
 					$user_id
@@ -252,6 +256,10 @@ class PDF_Document {
 			$wpdb->update( $wpdb->posts, array( 'post_status' => 'publish' ), array( 'ID' => $temp_post_id ) );
 
 			update_post_meta( $temp_post_id, '_convoca_usuario_id', $user_id );
+			// Marca de tipo: sin ella, «¿ya existe?» encontraba CUALQUIER documento del socio y devolvía
+			// el que apareciera primero —un DNI caducado de otra prueba—, y el acuerdo no se generaba
+			// nunca (members#58).
+			update_post_meta( $temp_post_id, '_convoca_es_acuerdo_voluntariado', '1' );
 			update_post_meta( $temp_post_id, '_convoca_tipo_documento', 'acuerdo_voluntariado' );
 			update_post_meta( $temp_post_id, '_convoca_hash', $hash );
 			update_post_meta( $temp_post_id, '_convoca_documento_url', rest_url( 'convoca-members/v1/documentos/' . $temp_post_id ) );

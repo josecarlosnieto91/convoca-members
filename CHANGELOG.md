@@ -1,3 +1,18 @@
+## [2.9.8] — 2026-10-16
+
+### Arreglado
+- **Al aceptar el acuerdo no se generaba el documento: la ficha señalaba uno ajeno y caducado
+  (issue #58).** `PDF_Document::generate_volunteer_agreement()` comprobaba antes si el socio «ya tenía»
+  documento, pero esa comprobación filtraba **sólo por `_convoca_usuario_id`**: el primero que
+  apareciera valía. Con un DNI caducado de otra prueba en la ficha, devolvía **ese** documento
+  (2678, «QA DNI caducado», sin huella y con fecha de caducidad pasada) y no generaba nada. Ahora el
+  documento del acuerdo se marca con `_convoca_es_acuerdo_voluntariado` y las **dos** consultas (la
+  previa y la que va con bloqueo) exigen esa marca, así que un acuerdo nuevo se genera de verdad.
+
+### Pruebas
+- `AcuerdoDeVoluntariadoTest`: vigila que las dos consultas lleven su join con la marca y que al crear
+  el documento se ponga. 408 tests, 1584 aserciones.
+
 ## [2.9.7] — 2026-10-16
 
 ### Arreglado
