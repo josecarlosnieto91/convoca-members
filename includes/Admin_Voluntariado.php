@@ -275,7 +275,7 @@ class Admin_Voluntariado {
 
 		if ( in_array( $persona['estado'], array( \Convoca\Members\Circuito_Voluntariado::ESTADO_SOLICITUD, \Convoca\Members\Circuito_Voluntariado::ESTADO_ENTREVISTA ), true ) ) {
 			$hoy    = current_time( 'Y-m-d' );
-			$html[] = '<form method="get" action="' . esc_url( admin_url( 'admin.php' ) ) . '" style="display:inline-flex;gap:4px;align-items:center;">'
+			$html[] = '<form method="post" action="' . esc_url( admin_url( 'admin.php' ) ) . '" style="display:inline-flex;gap:4px;align-items:center;">'
 				. '<input type="hidden" name="page" value="' . esc_attr( self::SLUG ) . '">'
 				. '<input type="hidden" name="action" value="citar">'
 				. '<input type="hidden" name="ficha" value="' . esc_attr( (string) $ficha ) . '">'
@@ -284,15 +284,15 @@ class Admin_Voluntariado {
 				. '<input type="time" name="hora" value="">'
 				. '<button class="button">' . esc_html__( 'Citar entrevista', 'convoca-members' ) . '</button>'
 				. '</form> ';
-			$html[] = '<a class="button button-primary" href="' . esc_url( $nonce( 'entrevista_hecha' ) ) . '">' . esc_html__( 'Entrevista hecha', 'convoca-members' ) . '</a> ';
-			$html[] = '<a class="button" href="' . esc_url( $nonce( 'entrevista_monitor' ) ) . '">' . esc_html__( 'Entrevista hecha + monitor', 'convoca-members' ) . '</a>';
+			$html[] = self::boton_post( 'entrevista_hecha', __( 'Entrevista hecha', 'convoca-members' ), $ficha, 'button-primary' );
+			$html[] = self::boton_post( 'entrevista_monitor', __( 'Entrevista hecha + monitor', 'convoca-members' ), $ficha, 'button' );
 		}
 
 		if ( \Convoca\Members\Circuito_Voluntariado::ESTADO_ACTIVO === $persona['estado'] ) {
 			if ( \Convoca\Members\Circuito_Voluntariado::baja_solicitada( $ficha ) ) {
-				$html[] = '<a class="button button-primary" href="' . esc_url( $nonce( 'confirmar_baja' ) ) . '">' . esc_html__( '⚠ Confirmar la baja que pide', 'convoca-members' ) . '</a> ';
+				$html[] = self::boton_post( 'confirmar_baja', __( '⚠ Confirmar la baja que pide', 'convoca-members' ), $ficha, 'button-primary' );
 			}
-			$html[] = '<form method="get" action="' . esc_url( admin_url( 'admin.php' ) ) . '" style="display:inline-flex;gap:4px;align-items:center;">'
+			$html[] = '<form method="post" action="' . esc_url( admin_url( 'admin.php' ) ) . '" style="display:inline-flex;gap:4px;align-items:center;">'
 				. '<input type="hidden" name="page" value="' . esc_attr( self::SLUG ) . '">'
 				. '<input type="hidden" name="action" value="desvincular">'
 				. '<input type="hidden" name="ficha" value="' . esc_attr( (string) $ficha ) . '">'
@@ -309,11 +309,49 @@ class Admin_Voluntariado {
 	}
 
 	/**
-	 * Handle approve/revoke GET actions.
+	 * Un botón que manda una acción por POST, con su nonce.
+	 *
+	 * Antes eran enlaces `<a href>`: la acción viajaba en la URL y se ejecutaba con un GET (members#63).
+	 *
+	 * @param string $accion Acción del circuito.
+	 * @param string $texto  Rótulo del botón.
+	 * @param int    $ficha  Ficha del socio.
+	 * @param string $clase  Clase CSS del botón.
+	 * @return string HTML del formulario.
+	 */
+	private static function boton_post( string $accion, string $texto, int $ficha, string $clase ): string {
+		return '<form method="post" action="' . esc_url( admin_url( 'admin.php' ) ) . '" style="display:inline;">'
+			. '<input type="hidden" name="page" value="' . esc_attr( self::SLUG ) . '">'
+			. '<input type="hidden" name="action" value="' . esc_attr( $accion ) . '">'
+			. '<input type="hidden" name="ficha" value="' . esc_attr( (string) $ficha ) . '">'
+			. wp_nonce_field( 'convoca_circuito_' . $accion . '_' . $ficha, '_wpnonce', true, false )
+			. '<button class="button ' . esc_attr( $clase ) . '">' . esc_html( $texto ) . '</button>'
+			. '</form> ';
+	}
+
+	/**
+	 * Un parámetro de la petición: POST primero, GET como respaldo.
+	 *
+	 * La lectura se hace con respaldo para que un enlace antiguo no se rompa; lo que **no** se admite por
+	 * GET es la acción, que es la que cambia el estado (members#63).
+	 *
+	 * @param string $clave Nombre del parámetro.
+	 * @return string Valor sin escapar (lo sanean los llamadores).
+	 */
+	private static function param( string $clave ): string {
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- la acción ya se comprueba con check_admin_referer.
+		return (string) wp_unslash( $_POST[ $clave ] ?? $_GET[ $clave ] ?? '' );
+	}
+
+	/**
+	 * Handle approve/revoke actions.
 	 */
 	private static function handle_actions(): void {
-		$action = sanitize_key( wp_unslash( $_GET['action'] ?? '' ) );
-		$user   = (int) ( wp_unslash( $_GET['user'] ?? 0 ) );
+		// La acción se lee SOLO de POST: estas acciones desvinculan, confirman una baja o mueven el
+		// circuito, y con GET basta un prefetch del navegador, un escáner o un clic accidental en un
+		// enlace para dispararlas (members#63). GET para leer, POST para cambiar.
+		$action = sanitize_key( (string) wp_unslash( $_POST['action'] ?? '' ) );
+		$user   = (int) ( wp_unslash( $_POST['user'] ?? $_GET['user'] ?? 0 ) );
 
 		$circuito = array( 'citar', 'entrevista_hecha', 'entrevista_monitor', 'desvincular', 'confirmar_baja' );
 
@@ -341,7 +379,7 @@ class Admin_Voluntariado {
 	 * @param string $action Acción pedida.
 	 */
 	private static function handle_circuito( string $action ): void {
-		$ficha = (int) ( wp_unslash( $_GET['ficha'] ?? 0 ) );
+		$ficha = (int) self::param( 'ficha' );
 		if ( $ficha <= 0 ) {
 			return;
 		}
@@ -350,8 +388,8 @@ class Admin_Voluntariado {
 
 		switch ( $action ) {
 			case 'citar':
-				$fecha = sanitize_text_field( wp_unslash( $_GET['fecha'] ?? '' ) );
-				$hora  = sanitize_text_field( wp_unslash( $_GET['hora'] ?? '' ) );
+				$fecha = sanitize_text_field( self::param( 'fecha' ) );
+				$hora  = sanitize_text_field( self::param( 'hora' ) );
 				\Convoca\Members\Circuito_Voluntariado::citar_entrevista( $ficha, $fecha, $hora );
 				break;
 
@@ -370,8 +408,8 @@ class Admin_Voluntariado {
 				break;
 
 			case 'desvincular':
-				$causa  = sanitize_key( wp_unslash( $_GET['causa'] ?? '' ) );
-				$motivo = sanitize_text_field( wp_unslash( $_GET['motivo'] ?? '' ) );
+				$causa  = sanitize_key( self::param( 'causa' ) );
+				$motivo = sanitize_text_field( self::param( 'motivo' ) );
 				if ( ! isset( \Convoca\Members\Circuito_Voluntariado::causas()[ $causa ] ) ) {
 					$causa = \Convoca\Members\Circuito_Voluntariado::CAUSA_JUNTA;
 				}

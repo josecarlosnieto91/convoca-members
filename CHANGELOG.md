@@ -1,3 +1,19 @@
+## [2.9.7] — 2026-10-16
+
+### Arreglado
+- **El tablero de voluntariado cambiaba estado por GET (issue #63).** «Desvincular» y el formulario de
+  citar eran `method="get"`, y confirmar la baja o dar la entrevista por hecha eran enlaces `<a href>`:
+  la acción viajaba en la URL. Con el nonce delante no era un agujero, pero desvincular a alguien no se
+  debe disparar con un prefetch, un escáner o un clic accidental. Ahora:
+  - la **acción se lee sólo de `$_POST`** (un GET no cambia nada),
+  - los dos formularios van por `post`,
+  - los tres enlaces de acción pasan a formularios con botón (`boton_post()`), con su nonce dentro,
+  - los datos (ficha, fecha, hora, causa, motivo) se leen con POST primero y GET como respaldo, para que
+    un enlace antiguo no rompa la lectura.
+
+  Y de paso: un POST que antes devolvía 200 con el cuerpo vacío y no hacía nada ahora es el camino
+  normal de la acción.
+
 ## [2.9.6] — 2026-10-16
 
 ### Corregido
