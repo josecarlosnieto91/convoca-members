@@ -27,3 +27,29 @@ if (file_exists($core_bootstrap)) {
 if (file_exists(dirname(__DIR__) . '/vendor/autoload.php')) {
     require_once dirname(__DIR__) . '/vendor/autoload.php';
 }
+
+/*
+ * Idioma. El código real usa determine_locale()/switch_to_locale()/restore_previous_locale() para
+ * poner las plantillas de correo en el idioma del sitio (members#60), y el bootstrap del núcleo no
+ * los define: sin estos dobles, PHPUnit se cae con «Call to undefined function».
+ */
+if (!function_exists('determine_locale')) {
+    function determine_locale() {
+        return $GLOBALS['_wp_stores']['locale'] ?? 'es_ES';
+    }
+}
+if (!function_exists('switch_to_locale')) {
+    function switch_to_locale($locale) {
+        $GLOBALS['_wp_stores']['locale_prev'] = determine_locale();
+        $GLOBALS['_wp_stores']['locale'] = $locale;
+        return true;
+    }
+}
+if (!function_exists('restore_previous_locale')) {
+    function restore_previous_locale() {
+        if (isset($GLOBALS['_wp_stores']['locale_prev'])) {
+            $GLOBALS['_wp_stores']['locale'] = $GLOBALS['_wp_stores']['locale_prev'];
+        }
+        return true;
+    }
+}

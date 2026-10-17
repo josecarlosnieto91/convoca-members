@@ -1,3 +1,28 @@
+## [2.9.11] — 2026-10-17
+
+### Arreglado
+- **El correo del cambio de email llegaba entero en inglés (issue #60).** No era el catálogo: las
+  plantillas de correo de fábrica son texto **ya traducido** que se guarda en la opción
+  `convoca_email_templates`, así que quedan **congeladas** en el idioma en que se sembraron. En la demo
+  la siembra ocurrió con el catálogo en inglés y desde entonces los correos salían en inglés aunque el
+  sitio esté en castellano — y el pie en castellano, porque viene de otro sitio. Medido en un envío real
+  (capturado por el mailcatcher de la demo):
+
+  ```
+  Asunto: Confirm your new email — Convoca Demo
+  Cuerpo: Hi Mika QA Demo, You have requested to change your contact email to …
+  ```
+
+  El arreglo no es traducir al enviar (las plantillas las edita el admin): ahora se **anota el idioma de
+  siembra** y, si deja de coincidir con el del sitio, se re-siembran **solo las plantillas que siguen
+  siendo las de fábrica de su idioma de origen**. Lo que el admin haya escrito no coincide con ninguna
+  de fábrica y se respeta. Cubre también los sitios sembrados antes de existir esta marca.
+
+### Pruebas
+- `PlantillasDeCorreoEnElIdiomaDelSitioTest` (4 casos: sin marca, mismo idioma, personalizada respetada y
+  enganche) y dobles de `determine_locale`/`switch_to_locale`/`restore_previous_locale` en el bootstrap
+  unitario, que el del núcleo no trae. 418 tests, 1600 aserciones.
+
 ## [2.9.10] — 2026-10-17
 
 ### Arreglado

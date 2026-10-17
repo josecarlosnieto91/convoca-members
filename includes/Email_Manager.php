@@ -150,6 +150,7 @@ class Email_Manager {
 
 		// Corrección de plantillas guardadas por versiones anteriores.
 		add_action( 'admin_init', array( __CLASS__, 'maybe_migrate' ) );
+		add_action( 'admin_init', array( __CLASS__, 'maybe_relocalize' ), 5 );
 	}
 
 	/* ── Default templates (installed on activation) ───── */
@@ -479,6 +480,7 @@ class Email_Manager {
 		}
 
 		update_option( self::OPTION, self::default_templates() );
+		update_option( self::TEMPLATES_LOCALE_OPTION, determine_locale() );
 	}
 
 	/* ── Send methods ──────────────────────────────────── */
@@ -1199,6 +1201,14 @@ class Email_Manager {
 
 	const TEMPLATES_VERSION_OPTION = 'convoca_email_templates_version';
 	const TEMPLATES_VERSION        = '2026-10-16-1';
+	/**
+	 * Idioma con el que se sembraron las plantillas.
+	 *
+	 * Las plantillas son texto ya traducido guardado en una opción, así que quedan **congeladas** en el
+	 * idioma en que se sembraron. Medido el 17/10/2026 (members#60): el correo de cambio de email salía
+	 * entero en inglés en un sitio en castellano, porque la siembra ocurrió con el catálogo en inglés.
+	 */
+	const TEMPLATES_LOCALE_OPTION = 'convoca_email_templates_locale';
 
 	/**
 	 * Corrige las plantillas ya guardadas en sitios existentes: `install_defaults()`
@@ -1209,6 +1219,83 @@ class Email_Manager {
 	 * Las sustituciones son literales y acotadas: no reescribe las plantillas
 	 * personalizadas más allá de esos patrones.
 	 */
+	/**
+	 * Las plantillas de fábrica, calculadas en un idioma concreto.
+	 *
+	 * @param string $locale Idioma.
+	 * @return array<string,array{subject:string,body:string}>
+	 */
+	private static function defaults_in_locale( string $locale ): array {
+		switch_to_locale( $locale );
+		$defecto = self::default_templates();
+		restore_previous_locale();
+
+		return $defecto;
+	}
+
+	/**
+	 * Pone las plantillas en el idioma del sitio, sin pisar las que el admin haya cambiado.
+	 *
+	 * Las plantillas de fábrica son texto ya traducido (`__( ... )`) que se guarda en una opción: si la
+	 * siembra ocurre con el catálogo en otro idioma, los correos se quedan en ese idioma para siempre
+	 * aunque el sitio esté en castellano. Medido el 17/10/2026 (members#60): el correo de confirmación
+	 * del cambio de email salía entero en inglés, con el pie en castellano porque viene de otro sitio.
+	 *
+	 * Cómo reconoce lo que puede tocar: una plantilla se re-siembra **solo** si es idéntica a la de
+	 * fábrica **de otro idioma**. Lo que el admin haya escrito no coincide con ninguna de fábrica, así que
+	 * se queda como está. También cubre los sitios que se sembraron antes de que existiera esta marca.
+	 */
+	public static function maybe_relocalize(): void {
+		$templates = get_option( self::OPTION );
+		if ( ! is_array( $templates ) || empty( $templates ) ) {
+			return;
+		}
+
+		$actual   = determine_locale();
+		$guardado = (string) get_option( self::TEMPLATES_LOCALE_OPTION, '' );
+
+		if ( $guardado === $actual ) {
+			return;
+		}
+
+		// Idiomas contra los que comparar: el anotado, y los dos del producto si no hay marca.
+		$candidatos = '' !== $guardado ? array( $guardado ) : array( 'en_US', 'es_ES' );
+		$origenes   = array();
+		foreach ( array_unique( $candidatos ) as $locale ) {
+			if ( $locale === $actual ) {
+				continue;
+			}
+			$origenes[ $locale ] = self::defaults_in_locale( $locale );
+		}
+
+		$defecto     = self::default_templates();
+		$resembradas = 0;
+
+		foreach ( $defecto as $slug => $tpl ) {
+			if ( ! isset( $templates[ $slug ] ) || $templates[ $slug ] === $tpl ) {
+				continue;
+			}
+
+			foreach ( $origenes as $defecto_origen ) {
+				if ( isset( $defecto_origen[ $slug ] ) && $templates[ $slug ] === $defecto_origen[ $slug ] ) {
+					$templates[ $slug ] = $tpl;
+					++$resembradas;
+					break;
+				}
+			}
+		}
+
+		update_option( self::OPTION, $templates );
+		update_option( self::TEMPLATES_LOCALE_OPTION, $actual );
+
+		if ( $resembradas > 0 && class_exists( '\\Convoca\\Core\\Logger' ) ) {
+			\Convoca\Core\Logger::info(
+				sprintf( 'Plantillas de correo puestas en el idioma del sitio (%s): %d re-sembradas; el resto, personalizadas y respetadas.', $actual, $resembradas ),
+				'Members/Emails'
+			);
+		}
+	}
+
 	public static function maybe_migrate(): void {
 		if ( self::TEMPLATES_VERSION === get_option( self::TEMPLATES_VERSION_OPTION ) ) {
 			return;
