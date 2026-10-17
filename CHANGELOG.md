@@ -1,3 +1,29 @@
+## [2.9.5] — 2026-10-16
+
+### Arreglado
+- **El botón «Añadir» del registro de horas no hacía nada (issue #57).** El manejador llamaba a
+  `conv.form.validate()`, que **no existe** en el JS del panel: lanzaba un TypeError que se tragaba el
+  listener, así que no había ni mensaje ni error ni registro — y por el camino del producto
+  (`POST /me/horas`) sí funcionaba, que es lo que despistaba. Ahora valida con el navegador
+  (`checkValidity`).
+- **La baja pedida por el socio quedaba con autor 0 (issue #59).** `registrar()` tomaba
+  `get_current_user_id()`, que en el contexto de la petición del panel llega vacío: el historial decía
+  «baja_solicitada, autor 0» y no quién la pidió, justo en el paso donde el relevo tiene que quedar
+  claro. `registrar()` acepta ahora el autor explícito y la petición de baja resuelve el dueño de la
+  ficha cuando no hay sesión en el contexto.
+- **«Error cargando pagos» sin ninguna pista (issue #56, diagnóstico).** El `catch` se tragaba el error
+  real. Ahora queda en la consola con su traza, para poder medirlo en la demo.
+- **El progreso del certificado imprimía `undefined / 15 horas (undefined%)` (issue #55, parte).** Con
+  0 h la API no manda el porcentaje: se calcula, y si no hay objetivo, 0.
+- **Tres deprecaciones por `ReflectionMethod::setAccessible()` (issue #61).** No hace nada desde PHP 8.1
+  y está anunciada como deprecada para 8.5; las pruebas leen la propiedad reflejada sin ella. La suite
+  pasa de «3 deprecaciones» a **ninguna**.
+
+### Añadido
+- Contrato `FormularioDeHorasDelPanelTest`: vigila que el panel no vuelva a llamar a un validador
+  inexistente, que el formulario de horas se maneje por delegación y que el progreso no imprima
+  `undefined`. Lee el JS **sin comentarios** (el arreglo explica en un comentario qué se llamaba antes).
+
 ## [2.9.4] — 2026-10-16
 
 ### Arreglado

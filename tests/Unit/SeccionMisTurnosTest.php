@@ -49,7 +49,6 @@ class SeccionMisTurnosTest extends TestCase {
 		}
 
 		$metodo = new \ReflectionMethod( $clase, 'get_turnos' );
-		$metodo->setAccessible( true );
 
 		// En el arnés no hay ningún shortcode registrado: es exactamente el caso «sin plugin de turnos».
 		$this->assertFalse( shortcode_exists( 'convoca_proximos_turnos' ) );

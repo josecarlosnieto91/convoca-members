@@ -688,7 +688,12 @@
           btn.addEventListener('click', () => this.renewMembership(btn));
         }
       })
-      .catch(() => { this.$main.innerHTML = '<p>Error cargando pagos.</p>'; });
+      .catch((err) => {
+        // Antes se tragaba el error y sólo se veía «Error cargando pagos.» (members#56): ni pista para
+        // quien lo sufre ni para quien lo depura. Ahora queda en la consola con su traza.
+        console.error('convoca-members: error cargando pagos', err);
+        this.$main.innerHTML = '<p>Error cargando pagos.</p>';
+      });
     },
 
     /** Descarga los datos personales del socio como fichero (members#42). */
@@ -1020,7 +1025,12 @@
               '<a href="' + cert.download_url + '" class="btn btn-primary" target="_blank">📜 Descargar Certificado</a>' +
               '</div>';
           } else if (cert.progress) {
-            const pct = cert.progress.porcentaje;
+            // Con 0 h la API no manda `porcentaje` y salía «undefined / 15 horas (undefined%)».
+            const total = Number(cert.progress.total) || 0;
+            const objetivo = Number(cert.progress.objetivo) || 0;
+            const pct = (cert.progress.porcentaje === undefined || cert.progress.porcentaje === null)
+              ? (objetivo > 0 ? Math.min(100, Math.round((total / objetivo) * 100)) : 0)
+              : cert.progress.porcentaje;
             html += '<div class="conv-certificate-section" style="margin-top: 30px; text-align: center; padding: 20px; background: #fff3cd; border-radius: 8px;">' +
               '<h3>📊 Progreso hacia el certificado</h3>' +
               '<div style="width: 100%; background: #e9ecef; height: 20px; border-radius: 10px; overflow: hidden; margin: 10px 0;">' +
@@ -1036,8 +1046,11 @@
     },
 
     submitHours: function(form) {
-      if (!conv.form.validate(form)) {
-          alert('Revisa los campos obligatorios.');
+      // `conv.form.validate()` NO existe: lanzaba un TypeError que se tragaba el manejador, así que el
+      // botón «Añadir» no hacía nada —ni mensaje ni error— (members#57). Se usa la validación del
+      // navegador, que es la que ya llevan los campos con `required`.
+      if (form.checkValidity && !form.checkValidity()) {
+          form.reportValidity();
           return;
       }
 

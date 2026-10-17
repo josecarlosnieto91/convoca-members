@@ -610,6 +610,15 @@ class Circuito_Voluntariado {
 	 * @param string $motivo     Lo que cuente la persona (opcional).
 	 * @return bool
 	 */
+	public static function autor_de_la_ficha( int $miembro_id ): int {
+		$usuario = get_current_user_id();
+		if ( $usuario > 0 ) {
+			return $usuario;
+		}
+		// Sin sesión en el contexto (REST público del panel): el dueño de la ficha es quien pide.
+		return (int) get_post_meta( $miembro_id, '_convoca_usuario_id', true );
+	}
+
 	public static function solicitar_desvinculacion( int $miembro_id, string $motivo = '' ): bool {
 		if ( $miembro_id <= 0 || self::ESTADO_DESVINCULADO === self::estado( $miembro_id ) ) {
 			return false;
@@ -620,7 +629,7 @@ class Circuito_Voluntariado {
 			self::META_BAJA_SOLICITADA,
 			current_time( 'mysql' ) . '|' . get_current_user_id() . '|' . $motivo
 		);
-		self::registrar( $miembro_id, 'baja_solicitada', $motivo );
+		self::registrar( $miembro_id, 'baja_solicitada', $motivo, self::autor_de_la_ficha( $miembro_id ) );
 
 		do_action( 'convoca_voluntariado_baja_solicitada', $miembro_id, $motivo );
 
@@ -872,13 +881,16 @@ class Circuito_Voluntariado {
 	 * @param string $paso       Paso o acción.
 	 * @param string $nota       Nota corta.
 	 */
-	private static function registrar( int $miembro_id, string $paso, string $nota = '' ): void {
+	private static function registrar( int $miembro_id, string $paso, string $nota = '', int $autor = 0 ): void {
 		$historial = self::historial( $miembro_id );
 
 		$historial[] = array(
 			'paso'  => $paso,
 			'fecha' => current_time( 'mysql' ),
-			'autor' => get_current_user_id(),
+			// Quién movió el paso. Si no hay usuario en el contexto (una petición sin sesión), se
+			// recurre al dueño de la ficha en la petición de baja: así el historial no queda con un 0
+			// que no dice nada (members#59).
+			'autor' => $autor > 0 ? $autor : get_current_user_id(),
 			'nota'  => $nota,
 		);
 

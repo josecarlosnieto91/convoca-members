@@ -61,7 +61,6 @@ class ImportacionSinRutaDelClienteTest extends TestCase {
 		}
 
 		$resolver = new \ReflectionMethod( $clase, 'ruta_por_ficha' );
-		$resolver->setAccessible( true );
 		$token = str_repeat( 'a', 32 );
 
 		// 1 · Ficha con formato raro: fuera, sin tocar nada.
@@ -85,7 +84,6 @@ class ImportacionSinRutaDelClienteTest extends TestCase {
 
 		// 3 · Y un fichero dentro de la carpeta, con su ficha, sí se resuelve (control positivo).
 		$dir = new \ReflectionMethod( $clase, 'dir_importacion' );
-		$dir->setAccessible( true );
 		$carpeta = (string) $dir->invoke( null );
 		if ( '' === $carpeta || ! is_dir( $carpeta ) ) {
 			$this->markTestSkipped( 'No se ha podido preparar la carpeta de importaciones en el arnés.' );
