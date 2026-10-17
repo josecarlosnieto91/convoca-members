@@ -610,15 +610,6 @@ class Circuito_Voluntariado {
 	 * @param string $motivo     Lo que cuente la persona (opcional).
 	 * @return bool
 	 */
-	public static function autor_de_la_ficha( int $miembro_id ): int {
-		$usuario = get_current_user_id();
-		if ( $usuario > 0 ) {
-			return $usuario;
-		}
-		// Sin sesión en el contexto (REST público del panel): el dueño de la ficha es quien pide.
-		return (int) get_post_meta( $miembro_id, '_convoca_usuario_id', true );
-	}
-
 	public static function solicitar_desvinculacion( int $miembro_id, string $motivo = '' ): bool {
 		if ( $miembro_id <= 0 || self::ESTADO_DESVINCULADO === self::estado( $miembro_id ) ) {
 			return false;
@@ -629,7 +620,7 @@ class Circuito_Voluntariado {
 			self::META_BAJA_SOLICITADA,
 			current_time( 'mysql' ) . '|' . get_current_user_id() . '|' . $motivo
 		);
-		self::registrar( $miembro_id, 'baja_solicitada', $motivo, self::autor_de_la_ficha( $miembro_id ) );
+		self::registrar( $miembro_id, 'baja_solicitada', $motivo, self::usuario_de_ficha( $miembro_id ) );
 
 		do_action( 'convoca_voluntariado_baja_solicitada', $miembro_id, $motivo );
 

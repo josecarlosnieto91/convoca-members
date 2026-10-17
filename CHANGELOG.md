@@ -1,3 +1,11 @@
+## [2.9.6] — 2026-10-16
+
+### Corregido
+- **La baja pedida seguía quedando con autor 0 (issue #59, el arreglo de 2.9.5 no bastaba).** Se usaba
+  el `_convoca_usuario_id` en crudo, que en esa ficha está **vacío**; el ayudante que ya existía,
+  `usuario_de_ficha()`, lo resuelve y devuelve el 145. Medido en la demo: `usuario_de_ficha(2215)` = 145.
+  Sin duplicar código: se retira el ayudante que había añadido y se usa el de la casa.
+
 ## [2.9.5] — 2026-10-16
 
 ### Arreglado
