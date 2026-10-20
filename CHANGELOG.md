@@ -1,3 +1,10 @@
+## [2.9.12] — 2026-10-20
+
+### Arreglado
+- **El cron diario de renovaciones moría con Members sin Gateway** (issue #64): leía el token de cobro,
+  que vive en una clase de Convoca Gateway, antes de comprobar que Gateway estuviera activo. Ahora la
+  comprobación va primero.
+
 ## [2.9.11] — 2026-10-17
 
 ### Arreglado
