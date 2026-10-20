@@ -472,3 +472,11 @@ add_shortcode(
     </div>';
 	}
 );
+
+/*
+ * Diagnóstico compartido: este módulo aporta sus comprobaciones a la página Salud del núcleo.
+ *
+ * El núcleo ya no nombra clases de otros plugins (antes llegaba a `Admin_Settings::get_system_checks()`
+ * por reflexión); pregunta por el filtro y aquí se contesta.
+ */
+add_filter( 'convoca_system_checks', array( '\Convoca\Members\Admin_Settings', 'aportar_checks' ), 10, 2 );
