@@ -394,10 +394,9 @@ class Cron_Manager {
 				continue;
 			}
 
-			// Verify recurring token (Hardening Task).
-			$token              = \Convoca\Gateway\Payment_Handler::get_member_token( $member_id );
-			$needs_tokenization = empty( $token );
-
+			// Gateway primero: leer el token de cobro toca una clase de Convoca Gateway, y en un sitio
+			// con Members sin Gateway esa clase no existe. Antes esta línea iba antes de la
+			// comprobación y el cron diario moría con "Class not found" (issue convoca-members#N).
 			if ( ! \Convoca\Core\Features::is_gateway_active() ) {
 				\Convoca\Core\Logger::error(
 					"Gateway no disponible para renovación automática del miembro #$member_id.",
@@ -407,6 +406,10 @@ class Cron_Manager {
 				\Convoca\Core\Utils::release_lock( $lock_key );
 				continue;
 			}
+
+			// Verify recurring token (Hardening Task).
+			$token              = \Convoca\Gateway\Payment_Handler::get_member_token( $member_id );
+			$needs_tokenization = empty( $token );
 
 			$amount_cents     = (int) round( $plan_data['price'] * 100 );
 			$product_desc     = mb_substr( 'RENOVACIÓN ' . strtoupper( get_bloginfo( 'name' ) ) . ' - ' . strtoupper( $plan_data['label'] ), 0, 125 );
