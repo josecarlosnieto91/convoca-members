@@ -193,7 +193,7 @@ class Mi_Area {
 	 * heurístico sobre el contenido de la entrada no vería.
 	 */
 	public static function enqueue_front_assets(): void {
-		wp_enqueue_style( 'convoca-mi-area', CONVOCA_MEMBERS_URL . 'public/assets/mi-area.css', array(), CONVOCA_MEMBERS_VERSION );
+		wp_enqueue_style( 'convoca-mi-area', CONVOCA_MEMBERS_URL . 'public/assets/mi-area.css', array( 'convoca-core' ), CONVOCA_MEMBERS_VERSION );
 		wp_enqueue_script( 'convoca-mi-area', CONVOCA_MEMBERS_URL . 'public/assets/mi-area.js', array( 'convoca-common-js' ), CONVOCA_MEMBERS_VERSION, true );
 
 		$member_id = Member_Auth::get_current_member_id();

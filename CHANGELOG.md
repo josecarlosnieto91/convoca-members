@@ -1,3 +1,26 @@
+## [2.9.13] — 2026-10-20
+
+### Arreglado
+
+- **La página pública de verificación de certificados se llevaba el área privada.** Encolaba
+  `mi-area.css` (13 KB) y `mi-area.js` (61 KB) en un shortcode que abre cualquiera con el código, y
+  **sus 6 clases propias no existían en ninguna hoja** del ecosistema. Ahora carga la hoja pública y
+  las reglas de `conv-verify-*` / `conv-cert-*` están escritas.
+- **La hoja pública no declaraba dependencia de `convoca-common.css`** (el script sí): el JS llegaba
+  y las clases `convoca-*` salían sin estilo. Las cuatro hojas y el registro del bloque dependen ya
+  del handle `convoca-core`.
+- **El bloque de alta declaraba `style => convoca-mi-area`**, la hoja del área privada, cuando su
+  markup usa las clases de `convoca-members-public.css`.
+- **`<h3>` cerrados con `</h4>`** en los métodos de pago del alta y en el bloque de transferencia.
+- **La insignia de edad no tenía ninguna regla**: el JS la hace visible y salía como texto suelto.
+
+### Cambiado
+
+- «Convoca Common» → «Convoca Core» en los textos que ve el usuario y en los catálogos `.pot`/`.po`.
+- Los ejemplos con nombres de plan reales de una instalación (en el comentario de `PDF_Card` y en la
+  especificación de cuota) pasan a nombres genéricos. El nivel de gamificación «Deva» se queda: es
+  mitología asturiana, no una clave de plan.
+
 ## [2.9.12] — 2026-10-20
 
 ### Arreglado

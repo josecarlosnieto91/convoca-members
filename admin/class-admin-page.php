@@ -146,7 +146,7 @@ class Admin_Page extends \Convoca\Core\Admin\Pantalla_Admin {
 		wp_enqueue_style(
 			'conv-members-admin',
 			CONVOCA_MEMBERS_URL . 'assets/css/convoca-members-admin.css',
-			array(),
+			array( 'convoca-core' ),
 			CONVOCA_MEMBERS_VERSION
 		);
 		wp_enqueue_script(

@@ -39,7 +39,17 @@ class Block_Members {
 		wp_register_style(
 			'convoca-mi-area',
 			CONVOCA_MEMBERS_URL . 'public/assets/mi-area.css',
-			array(),
+			array( 'convoca-core' ),
+			CONVOCA_MEMBERS_VERSION
+		);
+
+		// La hoja del FORMULARIO, que es la que viste su markup. El bloque de alta
+		// declaraba `style => convoca-mi-area` (la del área privada): el formulario
+		// salía sin estilos en el front del bloque.
+		wp_register_style(
+			'conv-members-public',
+			CONVOCA_MEMBERS_URL . 'assets/css/convoca-members-public.css',
+			array( 'convoca-core' ),
 			CONVOCA_MEMBERS_VERSION
 		);
 
@@ -65,7 +75,7 @@ class Block_Members {
 				'keywords'        => array( 'alta', 'socio', 'registro', 'convoca-core' ),
 				'render_callback' => array( $this, 'render_alta' ),
 				'editor_script'   => 'conv-blocks-editor',
-				'style'           => 'convoca-mi-area', // Reusing the style handle from Mi_Area if registered.
+				'style'           => 'conv-members-public',
 			)
 		);
 

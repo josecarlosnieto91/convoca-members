@@ -65,7 +65,7 @@ class Form_Handler {
 		wp_enqueue_style(
 			'conv-members-public',
 			CONVOCA_MEMBERS_URL . 'assets/css/convoca-members-public.css',
-			array(),
+			array( 'convoca-core' ),
 			CONVOCA_MEMBERS_VERSION
 		);
 		wp_enqueue_script(

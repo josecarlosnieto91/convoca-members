@@ -382,3 +382,139 @@
 .dark-mode .conv-plan-option input:checked+.conv-plan-label {
     background: rgba(255, 135, 0, 0.12);
 }
+
+
+/* ── Verificación pública de certificados ─────── */
+/* Esta página la abre cualquiera con el código del certificado y no cargaba ninguna
+   hoja con sus clases: 0 de sus 6 clases propias existían en el ecosistema (se
+   estaba tirando del área privada, 13 KB de CSS + 61 KB de JS que no usa). */
+
+.conv-verify-container {
+    max-width: 44rem;
+    margin: 0 auto;
+}
+
+.conv-verify-card {
+    margin-top: 1.5rem;
+    padding: 1.75rem;
+}
+
+.conv-verify-card .subtitle {
+    color: var(--wp--preset--color--gris-texto, #5a5a5a);
+    margin-bottom: 1.25rem;
+}
+
+.conv-verify-form .form-group {
+    margin-bottom: 1.25rem;
+    text-align: left;
+}
+
+.conv-verify-form label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-size: 0.875rem;
+    font-weight: 600;
+}
+
+.conv-verify-form input[type="text"] {
+    width: 100%;
+    padding: 0.75rem 1rem;
+    border: 2px solid var(--wp--preset--color--gris-medio, #e0e0e0);
+    border-radius: var(--wp--custom--radius--small, 8px);
+    font-family: monospace;
+    letter-spacing: 1px;
+}
+
+.conv-verify-form input[type="text"]:focus-visible {
+    outline: 3px solid var(--wp--preset--color--amarillo, #ffab00);
+    outline-offset: 2px;
+    border-color: var(--wp--preset--color--naranja, #ff8700);
+}
+
+.conv-verify-form .form-actions {
+    margin-top: 1.25rem;
+}
+
+.conv-cert-result {
+    margin-bottom: 1.5rem;
+}
+
+.conv-cert-header {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 1rem;
+}
+
+.conv-cert-header h2 {
+    margin: 0;
+    font-size: 1.25rem;
+    line-height: 1.3;
+}
+
+.conv-cert-icon {
+    font-size: 1.75rem;
+    line-height: 1;
+}
+
+.conv-cert-details {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.conv-cert-details .detail-row {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 0.5rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid var(--wp--preset--color--gris-medio, #e0e0e0);
+}
+
+.conv-cert-details .detail-row:last-child {
+    border-bottom: 0;
+    padding-bottom: 0;
+}
+
+.conv-cert-details .detail-label {
+    font-weight: 600;
+    color: var(--wp--preset--color--gris-texto, #5a5a5a);
+}
+
+.conv-cert-details .detail-value {
+    text-align: right;
+    overflow-wrap: anywhere;
+}
+
+/* Palabra con degradado: el resto de páginas la recibe de mi-area.css. */
+.text-gradient {
+    background: linear-gradient(135deg, var(--wp--preset--color--verde, #2d5a27), var(--wp--preset--color--naranja, #ff8700));
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    font-weight: 800;
+}
+
+/* Insignia de edad del alta y del voluntariado: el JS la hace visible
+   (`display:inline-block`) y hasta ahora no tenía ninguna regla. */
+.conv-age-badge {
+    display: inline-block;
+    margin-top: 0.35rem;
+    padding: 0.15rem 0.6rem;
+    border-radius: 999px;
+    background: var(--wp--preset--color--gris-piedra, #f4f4f4);
+    color: var(--wp--preset--color--gris-texto, #5a5a5a);
+    font-size: 0.8125rem;
+    font-weight: 600;
+}
+
+.dark-mode .conv-age-badge {
+    background: rgba(255, 255, 255, 0.08);
+    color: #e8e8e8;
+}
+
+.dark-mode .conv-verify-form input[type="text"] {
+    background: rgba(255, 255, 255, 0.06);
+    color: #f4f4f4;
+}

@@ -35,7 +35,10 @@ class Verificar_Certificado {
 	}
 
 	public function render(): string {
-		Mi_Area::enqueue_front_assets();
+		// La hoja del formulario público, no el área privada: esta página la visita
+		// cualquiera con el código del certificado y hasta ahora se llevaba 13 KB de
+		// CSS + 61 KB de JS de la zona de socios, que no usa.
+		wp_enqueue_style( 'conv-members-public' );
 
 		$cert_id = isset( $_GET['id'] ) ? sanitize_text_field( $_GET['id'] ) : '';
 		$search  = isset( $_POST['certificado_id'] ) ? sanitize_text_field( $_POST['certificado_id'] ) : $cert_id;

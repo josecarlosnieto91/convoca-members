@@ -1265,7 +1265,7 @@ class Admin_Settings {
 		// 1. Plugins
 		$plugin_definitions = array(
 			'convoca-core'    => array(
-				'name'     => 'Convoca Common',
+				'name'     => 'Convoca Core',
 				'class'    => '\\Convoca\\Core\\Utils',
 				'severity' => 'error',
 			),

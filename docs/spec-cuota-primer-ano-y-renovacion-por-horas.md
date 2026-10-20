@@ -15,13 +15,13 @@
    - **Acreditar horas de voluntariado** del último año, **solo si alcanza el mínimo** que exige la asociación.
 
 El mínimo **no se inventa ni se duplica**: es el campo `hours` del **plan** de cada persona
-(`convoca_members_plans`). Verificado en producción:
+(`convoca_members_plans`). Valores de ejemplo (cada instalación pone los suyos):
 
 | Plan | Cuota | Mínimo de horas |
 |---|---|---|
-| Ejemplo (Colaborador) | 50 € | **25 h** |
-| Deva | 100 € | **50 h** |
-| Bronze (inactivo) | 30 € | 15 h |
+| Colaborador | 50 € | **25 h** |
+| Protector | 100 € | **50 h** |
+| Básico | 30 € | 15 h |
 | Familiar | 0 € | 0 h → sin vía de horas (solo cuota) |
 
 Un plan con `hours = 0` no ofrece vía de horas: se paga. Así la asociación puede regular el

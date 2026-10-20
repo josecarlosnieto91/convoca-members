@@ -320,21 +320,21 @@ endif;
 					<label class="conv-plan-option conv-radio-card" data-method="tarjeta">
 						<input type="radio" name="forma_pago" value="tarjeta">
 						<div class="conv-plan-label">
-							<h3><?php esc_html_e( '💳 Tarjeta', 'convoca-members' ); ?></h4>
+							<h3><?php esc_html_e( '💳 Tarjeta', 'convoca-members' ); ?></h3>
 						</div>
 					</label>
 					<!-- Bizum -->
 					<label class="conv-plan-option conv-radio-card" data-method="bizum">
 						<input type="radio" name="forma_pago" value="bizum">
 						<div class="conv-plan-label">
-							<h3><?php esc_html_e( '📱 Bizum', 'convoca-members' ); ?></h4>
+							<h3><?php esc_html_e( '📱 Bizum', 'convoca-members' ); ?></h3>
 						</div>
 					</label>
 					<!-- Transferencia -->
 					<label class="conv-plan-option conv-radio-card" data-method="transferencia">
 						<input type="radio" name="forma_pago" value="transferencia">
 						<div class="conv-plan-label">
-							<h3><?php esc_html_e( '🏦 Transf.', 'convoca-members' ); ?></h4>
+							<h3><?php esc_html_e( '🏦 Transf.', 'convoca-members' ); ?></h3>
 						</div>
 					</label>
 				</div>
@@ -353,7 +353,7 @@ endif;
 
 			<!-- Transfer Details (IBAN) -->
 			<div id="conv-transfer-details" class="convoca-box" style="display:none;">
-				<h3 style="margin-top:0"><?php esc_html_e( 'Pago por transferencia bancaria', 'convoca-members' ); ?></h4>
+				<h3 style="margin-top:0"><?php esc_html_e( 'Pago por transferencia bancaria', 'convoca-members' ); ?></h3>
 				<p><?php esc_html_e( 'Al confirmar tu alta te llevaremos a la pasarela de pago. Allí eliges el método (tarjeta, Bizum o transferencia); si eliges transferencia, verás el IBAN y el concepto que debes indicar.', 'convoca-members' ); ?></p>
 				<p><?php esc_html_e( 'Podrás adjuntar el justificante directamente en esa página para que validemos tu alta lo antes posible.', 'convoca-members' ); ?></p>
 			</div>

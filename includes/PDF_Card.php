@@ -72,8 +72,8 @@ class PDF_Card {
 			$plan = Texto_PDF::sin_emoji( (string) $plan );
 		}
 
-		// Uno mismo: una modalidad con el nombre largo (p. ej. «Modalidad Familiar Juvenil de
-		// Busgosu») se comía la cabecera y tapaba el nombre de la organización. A partir de 15
+		// Uno mismo: una modalidad con el nombre largo (p. ej. «Modalidad Familiar Juvenil del
+		// ejemplo») se comía la cabecera y tapaba el nombre de la organización. A partir de 15
 		// caracteres el distintivo se aprieta para que quepa al lado del logo junto a la insignia de
 		// antigüedad; medido: con 36 caracteres cabe en una línea.
 		$clase_plan = mb_strlen( (string) $plan ) > 15 ? 'plan-badge plan-badge--largo' : 'plan-badge';
@@ -289,7 +289,7 @@ class PDF_Card {
                 .footer .info { float: left; }
                 /* Cabecera del PDF. El navegador la reparte con flexbox, que dompdf no tiene, así que
                    aquí hay dos caminos según lo que ocupe la etiqueta de la modalidad:
-                     - corta (lo normal: «Ejemplo», «Deva»): el logo a la izquierda y las insignias a la
+                     - corta (lo normal: «Ejemplo», «Familiar»): el logo a la izquierda y las insignias a la
                        derecha con un flotante. Medido: queda a la derecha sin solaparse.
                      - larga: los flotantes se metían encima del logo (se comían el nombre de la
                        organización) y las tablas o los absolutos lo desplazaban a la línea de datos.
