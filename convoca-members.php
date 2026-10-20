@@ -480,3 +480,23 @@ add_shortcode(
  * por reflexión); pregunta por el filtro y aquí se contesta.
  */
 add_filter( 'convoca_system_checks', array( '\Convoca\Members\Admin_Settings', 'aportar_checks' ), 10, 2 );
+
+/*
+ * Planes y estados del socio: los aporta este módulo.
+ *
+ * El núcleo los pedía con `class_exists( 'CPT_Miembro' )` y `Estados::LABELS` —sabía el nombre de
+ * nuestras clases— y encima la constante no existía: la API real es `Estados::labels()`. Aquí se
+ * contesta a los dos filtros con los datos de verdad.
+ */
+add_filter(
+	'convoca_member_plans',
+	static function () {
+		return \Convoca\Members\CPT_Miembro::get_plans();
+	}
+);
+add_filter(
+	'convoca_member_states',
+	static function () {
+		return \Convoca\Members\Estados::labels();
+	}
+);
