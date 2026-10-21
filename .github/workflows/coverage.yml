@@ -1,6 +1,14 @@
 # Gate de cobertura (skill flujo-desarrollo, puerta P4).
 # Modo bootstrap: sin .coverage-floor, sólo informa del número y pasa.
 # Con .coverage-floor (porcentaje), falla si la cobertura baja del suelo.
+#
+# OJO (medido el 21-10-2026): este job no podía funcionar tal como estaba. El bootstrap unitario de
+# members carga el de convoca-core y, si no lo encuentra, recurre a `tests/stubs-wp.php`, un fichero
+# que NO está en el repositorio. En un equipo con los repos clonados al lado el fallback no se usa
+# nunca, así que el fallo solo se veía en el runner:
+#   PHP Warning: require_once(.../tests/stubs-wp.php): Failed to open stream
+#   Error in bootstrap script: Failed opening required '.../tests/stubs-wp.php'
+# Por eso el núcleo se clona al lado, igual que ya hace convoca-ext-gateway en su CI.
 name: Cobertura
 
 on:
@@ -18,8 +26,20 @@ permissions:
 jobs:
   cobertura:
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: convoca-members
     steps:
-      - uses: actions/checkout@v4
+      - name: Clonar el plugin
+        uses: actions/checkout@v4
+        with:
+          path: convoca-members
+
+      - name: Clonar el núcleo (lo carga el bootstrap de las pruebas)
+        uses: actions/checkout@v4
+        with:
+          repository: josecarlosnieto91/convoca-core
+          path: convoca-core
 
       - uses: shivammathur/setup-php@v2
         with:
@@ -33,9 +53,9 @@ jobs:
       - name: Instalar gettext (msgfmt, lo exige el contrato de traducciones)
         run: sudo apt-get update -qq && sudo apt-get install -y -qq gettext
 
-      - name: Tests unitarios con cobertura
-        # phpunit-unit.xml no declara <source>: se usa phpunit.xml.dist (misma suite unit,
-        # con el filtro de cobertura sobre ./includes).
+      - name: Tests con cobertura
+        # phpunit-unit.xml no declara el filtro: se usa phpunit.xml.dist (misma suite unit, con el
+        # filtro sobre ./includes). `defaultTestSuite` deja la integración fuera a propósito.
         run: |
           mkdir -p build
           vendor/bin/phpunit -c phpunit.xml.dist --testsuite unit \
