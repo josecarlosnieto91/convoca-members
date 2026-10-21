@@ -333,13 +333,8 @@ final class Roles_Miembro {
 			return;
 		}
 
-		if ( ! get_role( self::ROL_WP_SOCIO ) ) {
-			add_role(
-				self::ROL_WP_SOCIO,
-				__( 'Socio', 'convoca-members' ),
-				array( 'read' => true )
-			);
-		}
+		// El rol `socio` lo crea Convoca Core (`Capabilities::crear_roles()`): el vocabulario de personas es
+		// del producto y un solo dueño. Aquí sólo se le añaden las capacidades de las pantallas propias.
 
 		// Las capacidades derivadas de los tipos propios (issue #15), SOLO a administracion: las pantallas
 		// propias del plugin siguen gobernadas por `gestionar_miembros` y no cambian para nadie.

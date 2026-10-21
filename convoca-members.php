@@ -3,7 +3,7 @@
  * Plugin Name:       Convoca Members
  * Plugin URI:        https://getconvoca.app
  * Description:       Members, volunteers and communications management.
- * Version: 2.9.14
+ * Version: 2.9.15
  * Requires at least: 6.4
  * Requires PHP:      8.1
  * Tested up to:      7.1
@@ -142,16 +142,8 @@ register_activation_hook(
 			$role->add_cap( 'common_manage_backup' );
 		}
 
-		// Ensure monitor_actividad role exists (also created by convoca-enroll).
-		if ( ! get_role( 'monitor_actividad' ) ) {
-			add_role(
-				'monitor_actividad',
-				__( 'Monitor de Actividad', 'convoca-members' ),
-				array(
-					'read' => true,
-				)
-			);
-		}
+		// El rol `monitor_actividad` lo crea Convoca Core, que es el dueño del vocabulario de personas. Aquí
+		// sólo se le añaden las capacidades de las pantallas propias (más abajo).
 
 		// Add caps to other relevant roles if they exist.
 		foreach ( array( 'shop_manager', 'monitor_actividad' ) as $role_name ) {
@@ -188,22 +180,9 @@ register_activation_hook(
 			$monitor_role->add_cap( 'read_private_posts' );
 		}
 
-		// Register Volunteer Approved Role (Used by Turnos).
-		if ( ! get_role( 'voluntario_aprobado' ) ) {
-			add_role(
-				'voluntario_aprobado',
-				__( 'Voluntario Aprobado', 'convoca-members' ),
-				array(
-					'read'                 => true,
-					'gestionar_mis_turnos' => true,
-				)
-			);
-		} else {
-			$v_role = get_role( 'voluntario_aprobado' );
-			if ( ! $v_role->has_cap( 'gestionar_mis_turnos' ) ) {
-				$v_role->add_cap( 'gestionar_mis_turnos' );
-			}
-		}
+		// El rol `voluntario_aprobado` y su capacidad `gestionar_mis_turnos` los crea y los mantiene Convoca
+		// Core: el vocabulario de personas es del producto. Members administra QUIÉN lo tiene (sus fichas y
+		// sus aprobaciones), no el rol.
 
 		// Save initial DB version.
 		add_option( 'convoca_members_db_version', CONVOCA_MEMBERS_DB_VERSION, '', false );
@@ -298,6 +277,10 @@ add_action(
 // El rol de socio se asegura en cada carga, no solo al activar: si no, una instalación que se actualiza
 // (como la demo) se queda sin él hasta que alguien desactive y vuelva a activar el plugin (issue #30).
 add_action( 'init', array( \Convoca\Members\Roles_Miembro::class, 'crear_roles' ) );
+
+// Lo que Members aporta a los demás: las personas asignables y quién acredita horas. El vocabulario (roles
+// y capacidades) es del producto y lo mantiene Core; esto son fichas y aprobaciones, que sólo sabe Members.
+\Convoca\Members\Integracion_Contratos::init();
 
 add_action( 'init', array( \Convoca\Members\CPT_Miembro::class, 'register' ) );
 

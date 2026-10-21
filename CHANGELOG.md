@@ -1,3 +1,24 @@
+## [2.9.15] — 2026-10-21
+
+### Añadido
+
+- **Members contesta los contratos del ecosistema**: `convoca_can_credit_hours` (con su regla de siempre:
+  voluntariado aprobado, monitor o administración) y `convoca_shifts_personas_asignables` (voluntarios
+  aprobados y monitores, por contexto). Es lo que aporta Members al resto: **las personas**. Antes lo
+  averiguaba cada plugin leyendo roles por su cuenta.
+
+### Cambiado
+
+- **Members deja de crear roles.** `socio`, `voluntario_aprobado` y `monitor_actividad` los crea Convoca
+  Core, que es el dueño del vocabulario. Members sigue administrando **quién** los tiene —sus fichas y sus
+  aprobaciones— y les añade las capacidades de sus propias pantallas, pero ya no crea el vocabulario.
+
+### Pruebas
+
+- `IntegracionContratosTest` (4 casos): la puerta de horas es la de Members y no propaga lo que le pasan,
+  las listas salen bien formadas en los dos contextos, los contextos no comparten consulta, y no vuelve a
+  crearse un rol (probado en negativo).
+
 ## [2.9.14] — 2026-10-21
 
 ### Cambiado
