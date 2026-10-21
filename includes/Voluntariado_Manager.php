@@ -137,20 +137,20 @@ class Voluntariado_Manager {
 
 		$result = $wpdb->get_var(
 			$wpdb->prepare(
-				"SELECT SUM(CAST(meta_value AS DECIMAL(10,2))) 
-             FROM {$wpdb->postmeta} 
-             WHERE meta_key = '_convoca_horas' 
+				"SELECT SUM(CAST(meta_value AS DECIMAL(10,2)))
+             FROM {$wpdb->postmeta}
+             WHERE meta_key = '_convoca_horas'
              AND post_id IN (
-                 SELECT ID FROM {$wpdb->posts} 
-                 WHERE post_type = 'registro_hora' 
+                 SELECT ID FROM {$wpdb->posts}
+                 WHERE post_type = 'registro_hora'
                  AND post_status = 'publish'
              )
              AND post_id IN (
-                 SELECT post_id FROM {$wpdb->postmeta} 
+                 SELECT post_id FROM {$wpdb->postmeta}
                  WHERE meta_key = '_convoca_member_id' AND meta_value = %d
              )
              AND post_id IN (
-                 SELECT post_id FROM {$wpdb->postmeta} 
+                 SELECT post_id FROM {$wpdb->postmeta}
                  WHERE meta_key = '_convoca_estado' AND meta_value = 'aprobada'
              )",
 				$miembro_id
@@ -173,7 +173,7 @@ class Voluntariado_Manager {
 
 		$result = $wpdb->get_var(
 			$wpdb->prepare(
-				"SELECT SUM(CAST(pm_h.meta_value AS DECIMAL(10,2))) 
+				"SELECT SUM(CAST(pm_h.meta_value AS DECIMAL(10,2)))
              FROM {$wpdb->posts} p
              JOIN {$wpdb->postmeta} pm_h ON p.ID = pm_h.post_id AND pm_h.meta_key = '_convoca_horas'
              JOIN {$wpdb->postmeta} pm_m ON p.ID = pm_m.post_id AND pm_m.meta_key = '_convoca_member_id' AND pm_m.meta_value = %d

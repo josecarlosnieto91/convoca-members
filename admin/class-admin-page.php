@@ -332,9 +332,9 @@ class Admin_Page extends \Convoca\Core\Admin\Pantalla_Admin {
 				// que se sirve sin licencia. Estaba detrás de `pdf_memories`, que es la clave de las memorias
 				// PDF: la puerta equivocada (issue core#17).
 				?>
-				<a href="<?php echo esc_url( wp_nonce_url( admin_url( 'admin-post.php?action=convoca_pdf_card&member_id=' . $post_id ), 'convoca_pdf_card_' . $post_id ) ); ?>" 
+				<a href="<?php echo esc_url( wp_nonce_url( admin_url( 'admin-post.php?action=convoca_pdf_card&member_id=' . $post_id ), 'convoca_pdf_card_' . $post_id ) ); ?>"
 					class="convoca-btn convoca-btn-outline" target="_blank">🪪 <?php esc_html_e( 'Ver Tarjeta', 'convoca-members' ); ?></a>
-				<a href="<?php echo esc_url( admin_url( 'admin.php?page=' . Admin_Member_Editor::SLUG . '&id=' . $post_id ) ); ?>" 
+				<a href="<?php echo esc_url( admin_url( 'admin.php?page=' . Admin_Member_Editor::SLUG . '&id=' . $post_id ) ); ?>"
 					class="convoca-btn convoca-btn-primary"><?php esc_html_e( '✏️ Editar', 'convoca-members' ); ?></a>
 			</h1>
 			<hr class="wp-header-end">
@@ -499,7 +499,7 @@ class Admin_Page extends \Convoca\Core\Admin\Pantalla_Admin {
 								<tr>
 									<td><?php echo esc_html( $log->created_at ); ?></td>
 									<td>
-										<span style="padding: 2px 6px; border-radius: 3px; font-weight: bold; background: 
+										<span style="padding: 2px 6px; border-radius: 3px; font-weight: bold; background:
 										<?php
 											echo $log->level === 'error' ? '#d63638' : ( $log->level === 'warning' ? '#eba313' : '#72aee6' );
 										?>

@@ -70,9 +70,9 @@ class Admin_Logs {
 		$logs = $wpdb->get_results(
 			$wpdb->prepare(
 				"
-            SELECT * FROM $table_name 
+            SELECT * FROM $table_name
             WHERE context LIKE %s
-            ORDER BY created_at DESC 
+            ORDER BY created_at DESC
             LIMIT %d OFFSET %d
         ",
 				'%Members%',
@@ -86,7 +86,7 @@ class Admin_Logs {
 			<h1><?php esc_html_e( 'Registros de Auditoría', 'convoca-members' ); ?></h1>
 
 			<p>
-				<a href="<?php echo esc_url( wp_nonce_url( admin_url( 'admin.php?page=conv-members-logs&action=clear' ), 'convoca_clear_members_logs' ) ); ?>" 
+				<a href="<?php echo esc_url( wp_nonce_url( admin_url( 'admin.php?page=conv-members-logs&action=clear' ), 'convoca_clear_members_logs' ) ); ?>"
 					class="button button-secondary"
 					onclick="return confirm('<?php echo esc_js( __( '¿Estás seguro de que quieres borrar todos los logs de Members?', 'convoca-members' ) ); ?>');">
 					<?php esc_html_e( 'Borrar logs de Members', 'convoca-members' ); ?>

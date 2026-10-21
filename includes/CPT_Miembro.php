@@ -468,7 +468,7 @@ class CPT_Miembro {
 				// Atomic increment with row-level lock to prevent duplicates.
 				$wpdb->query( "SELECT option_value FROM {$wpdb->options} WHERE option_name = '{$option_name}' FOR UPDATE" );
 				$wpdb->query(
-					"UPDATE {$wpdb->options} SET option_value = CAST(option_value AS UNSIGNED) + 1 
+					"UPDATE {$wpdb->options} SET option_value = CAST(option_value AS UNSIGNED) + 1
                      WHERE option_name = '{$option_name}'"
 				);
 				$next = (int) $wpdb->get_var(
@@ -476,7 +476,7 @@ class CPT_Miembro {
 				);
 				if ( ! $next ) {
 					$wpdb->query(
-						"INSERT INTO {$wpdb->options} (option_name, option_value, autoload) 
+						"INSERT INTO {$wpdb->options} (option_name, option_value, autoload)
                          VALUES ('{$option_name}', '1', 'no')"
 					);
 					$next = 1;

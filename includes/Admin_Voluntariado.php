@@ -264,7 +264,7 @@ class Admin_Voluntariado {
 					__( '%1$s · %2$s', 'convoca-members' ),
 					substr( $motivo['fecha'], 0, 10 ),
 					$causas[ $motivo['causa'] ] ?? $motivo['causa']
-				) 
+				)
 			) . '</em>';
 		}
 

@@ -208,7 +208,7 @@ class Voluntariado_Gamification {
 			$args,
 			array(
 				'limite' => 10, 'desde' => ''
-			) 
+			)
 		);
 		$limite = max( 1, min( 100, (int) $args['limite'] ) );
 		$desde  = (string) $args['desde'];
@@ -284,7 +284,7 @@ class Voluntariado_Gamification {
 		$filas = self::top(
 			array(
 				'limite' => (int) $atts['limite'], 'desde' => (string) $atts['desde']
-			) 
+			)
 		);
 
 		ob_start();

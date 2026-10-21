@@ -572,7 +572,7 @@ class Rest_API {
 				array(
 					'success' => false, 'message' => __( 'No hemos podido identificarte como socio.', 'convoca-members' )
 				),
-				403 
+				403
 			);
 		}
 
@@ -892,7 +892,7 @@ class Rest_API {
 		return new \WP_REST_Response(
 			array(
 				'success' => true, 'html' => $html, 'turnos' => true
-			) 
+			)
 		);
 	}
 

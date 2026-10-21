@@ -9,7 +9,7 @@
   /* ══ ALTA DE SOCIOS — Multi-step form ══ */
   conv.observeDynamicForms('#convoca-form-alta', function(form) {
     if (form.id !== 'conv-alta-form') return;
-      
+
     // Load config from data attribute or fallback to global
     const wrapper = form.closest('#convoca-form-alta');
     const inlineConfig = wrapper && wrapper.dataset.config ? JSON.parse(wrapper.dataset.config) : null;
@@ -92,10 +92,10 @@
       var advEl = conv.$("#conv-advantages");
       var listEl = conv.$("#conv-advantages-list");
       if (!advEl || !listEl) return;
-      
+
       var plan = plansData[planKey];
       var advantages = (plan && plan.advantages) ? plan.advantages : [];
-      
+
       if (advantages.length > 0) {
         listEl.innerHTML = advantages.map(function(a) { return "<li>" + a + "</li>"; }).join("");
         advEl.style.display = "block";
@@ -227,7 +227,7 @@
       if (n === 3) {
         const pago = form.querySelector('input[name="forma_pago"]:checked');
         if (!pago) { conv.showAlert(alert, 'Selecciona una forma de pago.'); return false; }
-        
+
         const rgpd = conv.$('#conv-rgpd');
         if (!rgpd.checked) {
           // El aviso ya se pintaba, pero el campo no daba ninguna señal: ni se marcaba, ni se
@@ -399,7 +399,7 @@
     const wrapper = form.closest('#conv-vol-wrapper');
     const inlineConfig = wrapper && wrapper.dataset.config ? JSON.parse(wrapper.dataset.config) : null;
     const config = inlineConfig || window.convMembers || {};
-      
+
     const alert = conv.$('#conv-vol-alert');
 
     const fechaInput = conv.$('#conv-vol-fechanac');
@@ -464,7 +464,7 @@
       const fd = new FormData(form);
       const nonce = config.volNonce || '';
 
-      conv.ajaxPost('convoca_voluntariado_submit', fd, nonce, 
+      conv.ajaxPost('convoca_voluntariado_submit', fd, nonce,
           (res) => {
               // Al acertar hay que retirar el aviso del intento anterior: si no, se leen a la vez el
               // error viejo y el mensaje de éxito.

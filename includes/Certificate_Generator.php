@@ -170,7 +170,7 @@ class Certificate_Generator {
 
 		$results = $wpdb->get_results(
 			$wpdb->prepare(
-				"SELECT p.ID, p.post_title, p.post_content, 
+				"SELECT p.ID, p.post_title, p.post_content,
                     SUM(CAST(hm.meta_value AS DECIMAL(10,2))) as horas
              FROM {$wpdb->posts} p
              INNER JOIN {$wpdb->postmeta} ph ON ph.post_id = p.ID AND ph.meta_key = '_convoca_proyecto_id'

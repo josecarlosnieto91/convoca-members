@@ -233,11 +233,11 @@ class Cron_Manager {
 
 			// Use $wpdb for robust date comparison (ignoring time if present).
 			$query = "
-                SELECT p.ID 
+                SELECT p.ID
                 FROM {$wpdb->posts} p
                 JOIN {$wpdb->postmeta} pm_ren ON p.ID = pm_ren.post_id AND pm_ren.meta_key = '_convoca_fecha_renovacion' AND pm_ren.meta_value IS NOT NULL AND pm_ren.meta_value != ''
                 JOIN {$wpdb->postmeta} pm_est ON p.ID = pm_est.post_id AND pm_est.meta_key = '_convoca_estado_miembro' AND pm_est.meta_value = 'activo'
-                WHERE p.post_type = 'miembro' 
+                WHERE p.post_type = 'miembro'
                   AND p.post_status = 'publish'
                   AND CAST(pm_ren.meta_value AS DATE) = %s
                 LIMIT 50
@@ -354,12 +354,12 @@ class Cron_Manager {
 		$today = wp_date( 'Y-m-d' );
 
 		$query = "
-            SELECT p.ID 
+            SELECT p.ID
             FROM {$wpdb->posts} p
             JOIN {$wpdb->postmeta} pm_rec ON p.ID = pm_rec.post_id AND pm_rec.meta_key = '_convoca_pago_recurrente' AND pm_rec.meta_value = '1'
             JOIN {$wpdb->postmeta} pm_est ON p.ID = pm_est.post_id AND pm_est.meta_key = '_convoca_estado_miembro' AND pm_est.meta_value = 'activo'
             JOIN {$wpdb->postmeta} pm_ren ON p.ID = pm_ren.post_id AND pm_ren.meta_key = '_convoca_fecha_renovacion'
-            WHERE p.post_type = 'miembro' 
+            WHERE p.post_type = 'miembro'
               AND p.post_status = 'publish'
               AND CAST(pm_ren.meta_value AS DATE) <= %s
         ";
@@ -558,11 +558,11 @@ class Cron_Manager {
 		$today = wp_date( 'Y-m-d' );
 
 		$query = "
-            SELECT p.ID 
+            SELECT p.ID
             FROM {$wpdb->posts} p
             JOIN {$wpdb->postmeta} pm_est ON p.ID = pm_est.post_id AND pm_est.meta_key = '_convoca_estado_miembro' AND pm_est.meta_value = 'activo'
             JOIN {$wpdb->postmeta} pm_ren ON p.ID = pm_ren.post_id AND pm_ren.meta_key = '_convoca_fecha_renovacion' AND pm_ren.meta_value IS NOT NULL AND pm_ren.meta_value != ''
-            WHERE p.post_type = 'miembro' 
+            WHERE p.post_type = 'miembro'
               AND p.post_status = 'publish'
               AND CAST(pm_ren.meta_value AS DATE) < %s
         ";
@@ -658,9 +658,9 @@ class Cron_Manager {
 		// New members this week.
 		$new_members = (int) $wpdb->get_var(
 			$wpdb->prepare(
-				"SELECT COUNT(*) FROM {$wpdb->posts} 
-             WHERE post_type = 'miembro' 
-             AND post_status = 'publish' 
+				"SELECT COUNT(*) FROM {$wpdb->posts}
+             WHERE post_type = 'miembro'
+             AND post_status = 'publish'
              AND post_date >= %s",
 				$week_ago . ' 00:00:00'
 			)
@@ -714,8 +714,8 @@ class Cron_Manager {
 		// Recent errors from logs.
 		$recent_errors = (int) $wpdb->get_var(
 			$wpdb->prepare(
-				"SELECT COUNT(*) FROM {$wpdb->prefix}convoca_logs 
-             WHERE level = 'error' 
+				"SELECT COUNT(*) FROM {$wpdb->prefix}convoca_logs
+             WHERE level = 'error'
              AND created_at >= %s",
 				$week_ago . ' 00:00:00'
 			)

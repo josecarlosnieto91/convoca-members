@@ -459,11 +459,11 @@ class Admin_List extends \WP_List_Table {
 	 */
 	public function column_cb( $item ): string {
 		return '<input type="checkbox" name="miembros[]" value="' . esc_attr( (string) $item->ID ) . '" aria-label="' . esc_attr(
-			sprintf( 
+			sprintf(
 					/* translators: %s: member name */
 				__( 'Seleccionar %s', 'convoca-members' ),
-				get_the_title( $item->ID ) 
-			) 
+				get_the_title( $item->ID )
+			)
 		) . '">';
 	}
 
@@ -499,11 +499,11 @@ class Admin_List extends \WP_List_Table {
 		// Row actions.
 		$actions = array(
 			'edit' => '<a href="' . esc_url( $url ) . '" aria-label="' . esc_attr(
-				sprintf( 
+				sprintf(
 				/* translators: %s: member name */
 					__( 'Ver ficha de %s', 'convoca-members' ),
-					$item->post_title 
-				) 
+					$item->post_title
+				)
 			) . '">' . __( 'Ver ficha', 'convoca-members' ) . '</a>',
 		);
 
@@ -515,11 +515,11 @@ class Admin_List extends \WP_List_Table {
 				'convoca_approve_member_' . $item->ID
 			);
 			$actions['approve'] = '<a href="' . esc_url( $approve_url ) . '" style="color:#00a32a" aria-label="' . esc_attr(
-				sprintf( 
+				sprintf(
 				/* translators: %s: member name */
 					__( 'Aprobar alta de %s', 'convoca-members' ),
-					$item->post_title 
-				) 
+					$item->post_title
+				)
 			) . '">' . __( 'Aprobar alta', 'convoca-members' ) . '</a>';
 		}
 
@@ -542,11 +542,11 @@ class Admin_List extends \WP_List_Table {
 
 		// PDF Card action.
 		$actions['card'] = '<a href="' . esc_url( wp_nonce_url( admin_url( 'admin-post.php?action=convoca_pdf_card&member_id=' . $item->ID ), 'convoca_pdf_card_' . $item->ID ) ) . '" target="_blank" aria-label="' . esc_attr(
-			sprintf( 
+			sprintf(
 			/* translators: %s: member name */
 				__( 'Ver tarjeta de %s', 'convoca-members' ),
-				$item->post_title 
-			) 
+				$item->post_title
+			)
 		) . '">🪪 ' . __( 'Tarjeta', 'convoca-members' ) . '</a>';
 
 		// Dar de baja: la ficha se conserva, deja de contar como activo y se puede reactivar (issue #27).

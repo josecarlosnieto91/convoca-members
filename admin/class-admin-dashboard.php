@@ -194,7 +194,7 @@ class Admin_Dashboard {
 			// New members this month.
 			$new_month = (int) $wpdb->get_var(
 				$wpdb->prepare(
-					"SELECT COUNT(*) FROM {$wpdb->posts} 
+					"SELECT COUNT(*) FROM {$wpdb->posts}
                  WHERE post_type = 'miembro' AND post_status = 'publish'
                  AND post_date >= %s",
 					$month_ago . ' 00:00:00'
@@ -218,7 +218,7 @@ class Admin_Dashboard {
 			if ( $table_exists ) {
 				$recent_errors = (int) $wpdb->get_var(
 					$wpdb->prepare(
-						"SELECT COUNT(*) FROM $table_logs 
+						"SELECT COUNT(*) FROM $table_logs
                      WHERE level = 'error' AND created_at >= %s",
 						wp_date( 'Y-m-d H:i:s', strtotime( '-24 hours' ) )
 					)
@@ -347,7 +347,7 @@ class Admin_Dashboard {
 
 		echo '<style>
         .conv-dashboard-widget { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
-        
+
         .conv-dash-stats {
             display: grid;
             grid-template-columns: repeat(4, 1fr);
@@ -364,7 +364,7 @@ class Admin_Dashboard {
         .conv-dash-stat__icon { display: block; font-size: 20px; margin-bottom: 4px; }
         .conv-dash-stat__value { display: block; font-size: 22px; font-weight: 700; color: #2c5e3e; }
         .conv-dash-stat__label { display: block; font-size: 11px; color: #6c757d; margin-top: 2px; }
-        
+
         .conv-dash-alerts { margin-bottom: 15px; }
         .conv-dash-alerts h4 { margin: 0 0 8px; font-size: 14px; }
         .conv-dash-alerts ul { margin: 0; padding: 0; list-style: none; }
@@ -381,7 +381,7 @@ class Admin_Dashboard {
         .conv-alert--warning { background: #fff3cd; border: 1px solid #ffc107; }
         .conv-alert--error { background: #f8d7da; border: 1px solid #f5c6cb; }
         .conv-alert--info { background: #d1ecf1; border: 1px solid #bee5eb; }
-        
+
         .conv-dash-ok {
             text-align: center;
             padding: 15px;
@@ -390,14 +390,14 @@ class Admin_Dashboard {
             color: #155724;
             margin-bottom: 15px;
         }
-        
+
         .conv-dash-recent { margin-bottom: 15px; }
         .conv-dash-recent h4 { margin: 0 0 8px; font-size: 14px; }
         .conv-dash-table { width: 100%; border-collapse: collapse; font-size: 12px; }
         .conv-dash-table tr { border-bottom: 1px solid #f0f0f0; }
         .conv-dash-table td { padding: 5px 0; }
         .conv-dash-time { color: #6c757d; white-space: nowrap; width: 80px; }
-        
+
         .conv-dash-links { padding-top: 10px; border-top: 1px solid #e9ecef; }
         .conv-dash-links .button { font-size: 12px; }
         </style>';

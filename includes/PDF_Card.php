@@ -126,19 +126,19 @@ class PDF_Card {
                     body { margin: 0; padding: 0; }
                     .no-print { display: none; }
                 }
-                body { 
-                    font-family: "Segoe UI", Roboto, Helvetica, Arial, sans-serif; 
-                    background: #f4f7f6; 
-                    display: flex; 
-                    flex-direction: column; 
-                    align-items: center; 
-                    justify-content: center; 
+                body {
+                    font-family: "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+                    background: #f4f7f6;
+                    display: flex;
+                    flex-direction: column;
+                    align-items: center;
+                    justify-content: center;
                     min-height: 100vh;
                     margin: 0;
                     color: #333;
                 }
                 .card {
-                    width: 450px; 
+                    width: 450px;
                     height: 280px;
                     border-radius: 20px;
                     background: #320028;
@@ -204,11 +204,11 @@ class PDF_Card {
                     white-space: nowrap;
                 }
                 .body { margin-top: 20px; z-index: 1; }
-                .member-number { 
-                    font-family: "Courier New", monospace; 
-                    font-size: 26px; 
-                    letter-spacing: 5px; 
-                    margin-bottom: 8px; 
+                .member-number {
+                    font-family: "Courier New", monospace;
+                    font-size: 26px;
+                    letter-spacing: 5px;
+                    margin-bottom: 8px;
                     color: #ff8700;
                     font-weight: bold;
                 }
@@ -219,12 +219,12 @@ class PDF_Card {
                 .member-name--largo { font-size: 13px; letter-spacing: 0.2px; line-height: 1.05; }
                 .footer { display: flex; justify-content: space-between; align-items: flex-end; z-index: 1; }
                 .info { font-size: 11px; opacity: 0.9; line-height: 1.4; }
-                .qr-code { 
-                    width: 75px; 
-                    height: 75px; 
-                    background: #fff; 
-                    padding: 6px; 
-                    border-radius: 12px; 
+                .qr-code {
+                    width: 75px;
+                    height: 75px;
+                    background: #fff;
+                    padding: 6px;
+                    border-radius: 12px;
                     box-shadow: 0 8px 20px rgba(0,0,0,0.3);
                 }
                 .qr-code img { width: 100%; height: 100%; }
@@ -333,13 +333,13 @@ class PDF_Card {
                         <div class="' . esc_attr( $clase_plan ) . '">' . esc_html( $plan ) . '</div>
                     </div>
                 </div>
-                
+
                 <div class="body">
                     ' . self::foto( $post_id ) . '
                     <div class="member-number">' . esc_html__( 'NO.', 'convoca-members' ) . ' ' . esc_html( $num_socio_display ) . '</div>
                     <div class="' . esc_attr( $clase_nombre ) . '">' . esc_html( $nombre ) . '</div>
                 </div>
-                
+
                 <div class="footer">
                     <div class="info">
                         <div>' . esc_html__( 'FECHA DE ALTA:', 'convoca-members' ) . ' ' . esc_html( $fecha_fmt ) . '</div>

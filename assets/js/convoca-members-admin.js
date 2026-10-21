@@ -199,7 +199,7 @@
                     fd.append('action', 'convoca_log_whatsapp');
                     fd.append('post_id', postId);
                     fd.append('nonce', convAdmin.nonce);
-                    
+
                     fetch(ajaxurl, {
                         method: 'POST',
                         body: fd

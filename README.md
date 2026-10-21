@@ -118,4 +118,3 @@ composer install
 composer test          # phpcs + phpstan + phpunit
 vendor/bin/phpunit     # solo unit tests
 ```
-

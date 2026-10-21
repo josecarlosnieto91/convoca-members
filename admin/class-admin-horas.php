@@ -383,7 +383,7 @@ class Admin_Horas extends \WP_List_Table {
 			<form method="get">
 				<input type="hidden" name="post_type" value="miembro">
 				<input type="hidden" name="page" value="conv-horas">
-				
+
 				<div class="tablenav top">
 					<div class="alignleft actions">
 						<select name="filter_proyecto">
@@ -398,7 +398,7 @@ class Admin_Horas extends \WP_List_Table {
 					</div>
 					<?php $this->search_box( __( 'Buscar registros', 'convoca-members' ), 'horas' ); ?>
 				</div>
-				
+
 				<?php $this->display(); ?>
 			</form>
 		</div>

@@ -694,8 +694,8 @@ class Admin_Settings {
 			</div>
 
 			<!-- "Add New" Logic: We can generate a random unique ID for new plans in JS or PHP. -->
-			<!-- For now, we will add a hidden template or rely on the user to manually add via code? 
-				No, request says "Add from settings". 
+			<!-- For now, we will add a hidden template or rely on the user to manually add via code?
+				No, request says "Add from settings".
 				Strategy: A simple "Add Plan" button that reveals a new empty card with a key input. -->
 
 			<div class="conv-add-plan-wrapper"
@@ -744,11 +744,11 @@ class Admin_Settings {
 					var template = document.getElementById('conv-plan-card-template');
 					var clone = template.content.cloneNode(true);
 					var html = clone.firstElementChild.outerHTML.replace(/__KEY__/g, key);
-					
+
 					var tempDiv = document.createElement('div');
 					tempDiv.innerHTML = html;
 					container.appendChild(tempDiv.firstElementChild);
-					
+
 					document.getElementById('new_plan_key').value = '';
 				}
 			</script>
@@ -1023,13 +1023,13 @@ class Admin_Settings {
 					var tempDiv = document.createElement('div');
 					tempDiv.innerHTML = html;
 					var newCard = tempDiv.firstElementChild;
-					
+
 					// Update input names and values.
 					var inputs = newCard.querySelectorAll('[name*="__INDEX__"]');
 					inputs.forEach(input => {
 						input.name = input.name.replace('__INDEX__', name);
 					});
-					
+
 					var nameInput = newCard.querySelector('input.field-name-input');
 					if (nameInput) nameInput.value = name;
 
@@ -1061,7 +1061,7 @@ class Admin_Settings {
 			</div>
 			<div class="inside" style="padding: 10px;">
 				<input type="hidden" class="field-name-input" name="convoca_volunteer_fields[<?php echo esc_attr( $index ); ?>][name]" value="<?php echo esc_attr( $name ); ?>">
-				
+
 				<div style="display: flex; gap: 20px; align-items: flex-start;">
 					<div style="flex: 1;">
 						<p>

@@ -310,7 +310,7 @@ endif;
 			<label for="conv-vol-comunicaciones">Autorizo a <?php echo esc_html( \Convoca\Members\Identidad::nombre_entidad() ); ?> a enviarme comunicaciones sobre actividades,
 				proyectos y oportunidades de voluntariado.</label>
 		</div>
-		
+
 		<?php
 		$legal_text = get_option( 'convoca_volunteer_legal_text', '' );
 		if ( ! empty( $legal_text ) ) :

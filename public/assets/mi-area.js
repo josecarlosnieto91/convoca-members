@@ -152,10 +152,10 @@
 
     switchTab: function(tab) {
       this.$main.innerHTML = '<div class="conv-spinner"></div>';
-      
+
       // Refresh unread count on any tab switch
       this.fetchUnreadCount();
-      
+
       switch(tab) {
         case 'profile': this.fetchProfile(); break;
         case 'inscriptions': this.fetchInscriptions(); break;
@@ -1011,7 +1011,7 @@
             </div>
 
             ${gamifyHtml}
-            
+
             ${canSubmitHours ? `
             <section class="card-inner">
               <h3>Añadir Nuevo Registro</h3>
@@ -1048,7 +1048,7 @@
             </section>
           </div>
         `;
-        
+
         fetch(window.convMiArea.apiUrl + '/me/certificate', { headers: { 'X-WP-Nonce': window.convMiArea.nonce } })
         .then(res => res.json())
         .then(cert => {

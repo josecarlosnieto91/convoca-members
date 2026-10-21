@@ -88,11 +88,11 @@ class PDF_Document {
 		// ── 1. Check if already exists WITHOUT locking first to avoid unnecessary draft creation ──
 		$existing_id = $wpdb->get_var(
 			$wpdb->prepare(
-				"SELECT p.ID FROM {$wpdb->posts} p 
-             INNER JOIN {$wpdb->postmeta} pm ON p.ID = pm.post_id 
-             INNER JOIN {$wpdb->postmeta} pm_acuerdo ON p.ID = pm_acuerdo.post_id 
-             WHERE p.post_type = 'convoca_documento' 
-             AND pm.meta_key = '_convoca_usuario_id' AND pm.meta_value = %d 
+				"SELECT p.ID FROM {$wpdb->posts} p
+             INNER JOIN {$wpdb->postmeta} pm ON p.ID = pm.post_id
+             INNER JOIN {$wpdb->postmeta} pm_acuerdo ON p.ID = pm_acuerdo.post_id
+             WHERE p.post_type = 'convoca_documento'
+             AND pm.meta_key = '_convoca_usuario_id' AND pm.meta_value = %d
              AND pm_acuerdo.meta_key = '_convoca_es_acuerdo_voluntariado' AND pm_acuerdo.meta_value = '1'
              AND p.post_status = 'publish' LIMIT 1",
 				$user_id
@@ -125,13 +125,13 @@ class PDF_Document {
 			// ── 3. LOCK and check again for existence ──
 			$existing_id = $wpdb->get_var(
 				$wpdb->prepare(
-					"SELECT p.ID FROM {$wpdb->posts} p 
-                 INNER JOIN {$wpdb->postmeta} pm ON p.ID = pm.post_id 
-                 INNER JOIN {$wpdb->postmeta} pm_acuerdo ON p.ID = pm_acuerdo.post_id 
-                 WHERE p.post_type = 'convoca_documento' 
-                 AND pm.meta_key = '_convoca_usuario_id' AND pm.meta_value = %d 
+					"SELECT p.ID FROM {$wpdb->posts} p
+                 INNER JOIN {$wpdb->postmeta} pm ON p.ID = pm.post_id
+                 INNER JOIN {$wpdb->postmeta} pm_acuerdo ON p.ID = pm_acuerdo.post_id
+                 WHERE p.post_type = 'convoca_documento'
+                 AND pm.meta_key = '_convoca_usuario_id' AND pm.meta_value = %d
                  AND pm_acuerdo.meta_key = '_convoca_es_acuerdo_voluntariado' AND pm_acuerdo.meta_value = '1'
-                 AND p.post_status = 'publish' 
+                 AND p.post_status = 'publish'
                  FOR UPDATE",
 					$user_id
 				)

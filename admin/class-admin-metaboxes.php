@@ -168,7 +168,7 @@ class Admin_Metaboxes {
 			</button>
 
 			<div id="conv-ajax-response" style="margin-top:10px;"></div>
-			
+
 			<hr>
 
 			<h4 style="margin:15px 0 10px 0;"><?php esc_html_e( 'RGPD', 'convoca-members' ); ?></h4>
@@ -264,7 +264,7 @@ class Admin_Metaboxes {
 				if (btnExportData) {
 					btnExportData.addEventListener('click', function () {
 						if (!confirm('<?php echo esc_js( __( '¿Exportar todos los datos de este miembro en formato JSON?', 'convoca-members' ) ); ?>')) return;
-						
+
 						var fd = new FormData();
 						fd.append('action', 'convoca_export_member_data');
 						fd.append('post_id', postId);
@@ -297,7 +297,7 @@ class Admin_Metaboxes {
 					btnDeleteData.addEventListener('click', function () {
 						if (!confirm('<?php echo esc_js( __( '⚠️ ¿Estás seguro? Esta acción eliminará PERMANENTEMENTE todos los datos del miembro (incluyendo inscripciones, pagos y logs). Esta acción no se puede deshacer.', 'convoca-members' ) ); ?>')) return;
 						if (!confirm('<?php echo esc_js( __( '¿Confirmas definitivamente la eliminación de todos los datos?', 'convoca-members' ) ); ?>')) return;
-						
+
 						var fd = new FormData();
 						fd.append('action', 'convoca_delete_member_data');
 						fd.append('post_id', postId);
@@ -772,4 +772,3 @@ class Admin_Metaboxes {
 		exit;
 	}
 }
-

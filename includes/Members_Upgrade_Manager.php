@@ -142,8 +142,8 @@ class Members_Upgrade_Manager extends Upgrade_Manager {
 				// Sync with existing postmeta if option is missing.
 				$max_postmeta = (int) $wpdb->get_var(
 					"
-                    SELECT MAX(CAST(meta_value AS UNSIGNED)) 
-                    FROM {$wpdb->postmeta} 
+                    SELECT MAX(CAST(meta_value AS UNSIGNED))
+                    FROM {$wpdb->postmeta}
                     WHERE meta_key = '_convoca_numero_socio'
                 "
 				);

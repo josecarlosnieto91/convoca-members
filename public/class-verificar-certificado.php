@@ -102,12 +102,12 @@ class Verificar_Certificado {
 		<div class="convoca-card convoca-form conv-verify-card">
 			<h2 class="text-gradient">🔍 <?php esc_html_e( 'Verificar Certificado', 'convoca-members' ); ?></h2>
 			<p class="subtitle"><?php esc_html_e( 'Introduce el ID del certificado para verificar su autenticidad y validez oficial.', 'convoca-members' ); ?></p>
-			
+
 			<form method="post" class="conv-verify-form">
 				<div class="form-group">
 					<label for="certificado_id"><?php esc_html_e( 'ID del Certificado', 'convoca-members' ); ?></label>
-					<input type="text" id="certificado_id" name="certificado_id" 
-							placeholder="<?php esc_attr_e( 'Ej: VOL-2025-XXXXX', 'convoca-members' ); ?>" 
+					<input type="text" id="certificado_id" name="certificado_id"
+							placeholder="<?php esc_attr_e( 'Ej: VOL-2025-XXXXX', 'convoca-members' ); ?>"
 							value="<?php echo esc_attr( $search ); ?>" required>
 				</div>
 				<div class="form-actions">

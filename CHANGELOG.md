@@ -243,4 +243,3 @@ al contrato.
 - Cuatro pruebas nuevas: el circuito no se ofrece a quien no es voluntariado (y sí al desvinculado, para ver su
   cierre), el cuestionario en blanco no cierra la entrevista (y la junta sí puede darla por hecha), y la marca
   de monitor escrita a mano no vale. Total: 401 pruebas.
-

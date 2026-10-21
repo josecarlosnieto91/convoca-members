@@ -60,7 +60,7 @@ class ListadoHorasColumnasTest extends TestCase {
 			$this->assertStringContainsString(
 				'function column_' . $col . '(',
 				$codigo,
-				'La columna «' . $col . '» no tiene render: saldrá vacía' 
+				'La columna «' . $col . '» no tiene render: saldrá vacía'
 			);
 		}
 	}

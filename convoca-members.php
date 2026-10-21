@@ -208,7 +208,7 @@ add_action(
 	function () {
 		wp_set_script_translations( 'convoca-members-scripts', 'convoca-members', plugin_dir_path( __FILE__ ) . 'languages/' );
 	},
-	20 
+	20
 );
 
 add_action(

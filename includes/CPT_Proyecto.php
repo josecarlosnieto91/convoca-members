@@ -187,17 +187,17 @@ class CPT_Proyecto {
 			<?php wp_nonce_field( 'convoca_save_proyecto', 'convoca_proyecto_nonce' ); ?>
 			<p>
 				<label for="convoca_fecha_inicio"><?php esc_html_e( 'Fecha de inicio:', 'convoca-members' ); ?></label>
-				<input type="date" id="convoca_fecha_inicio" name="convoca_fecha_inicio" 
+				<input type="date" id="convoca_fecha_inicio" name="convoca_fecha_inicio"
 						value="<?php echo esc_attr( $meta['fecha_inicio'] ?? '' ); ?>" class="widefat">
 			</p>
 			<p>
 				<label for="convoca_fecha_fin"><?php esc_html_e( 'Fecha de fin:', 'convoca-members' ); ?></label>
-				<input type="date" id="convoca_fecha_fin" name="convoca_fecha_fin" 
+				<input type="date" id="convoca_fecha_fin" name="convoca_fecha_fin"
 						value="<?php echo esc_attr( $meta['fecha_fin'] ?? '' ); ?>" class="widefat">
 			</p>
 			<p>
 				<label for="convoca_fecha_baja"><?php esc_html_e( 'Fecha de baja (archivo):', 'convoca-members' ); ?></label>
-				<input type="date" id="convoca_fecha_baja" name="convoca_fecha_baja" 
+				<input type="date" id="convoca_fecha_baja" name="convoca_fecha_baja"
 						value="<?php echo esc_attr( $meta['fecha_baja'] ?? '' ); ?>" class="widefat">
 				<small><?php esc_html_e( 'Fecha en la que el proyecto se considera archivado definitivamente.', 'convoca-members' ); ?></small>
 			</p>
@@ -217,7 +217,7 @@ class CPT_Proyecto {
 			</p>
 			<p>
 				<label>
-					<input type="checkbox" name="convoca_activo" value="1" 
+					<input type="checkbox" name="convoca_activo" value="1"
 							<?php checked( $meta['activo'] ?? '', '1' ); ?>>
 					<?php esc_html_e( 'Proyecto activo (visible para voluntarios)', 'convoca-members' ); ?>
 				</label>
