@@ -1,3 +1,13 @@
+## [2.9.14] — 2026-10-21
+
+### Cambiado
+
+- **Aporta su diagnóstico, sus planes y sus estados al núcleo por filtro** (`convoca_system_checks`,
+  `convoca_member_plans`, `convoca_member_states`), en vez de que el núcleo llegue a sus clases por
+  reflexión y `class_exists`.
+- **Los estados se registran con `Estados::labels()`, que es la API real** (la constante `LABELS` que
+  esperaba el núcleo no existía: el `foreach` habría lanzado `Error: Undefined constant`).
+
 ## [2.9.13] — 2026-10-20
 
 ### Arreglado
