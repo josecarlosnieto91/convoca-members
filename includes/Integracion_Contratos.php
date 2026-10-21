@@ -34,6 +34,87 @@ class Integracion_Contratos {
 	public static function init(): void {
 		add_filter( 'convoca_can_credit_hours', array( __CLASS__, 'filtrar_puede_acreditar_horas' ), 10, 2 );
 		add_filter( 'convoca_shifts_personas_asignables', array( __CLASS__, 'filtrar_personas_asignables' ), 10, 2 );
+		add_filter( 'convoca_member_identity', array( __CLASS__, 'filtrar_identidad' ) );
+		add_filter( 'convoca_member_priority', array( __CLASS__, 'filtrar_prioridad_de_socio' ), 10, 2 );
+	}
+
+	/**
+	 * Quién es el socio con la sesión abierta.
+	 *
+	 * Hasta ahora cada plugin que lo necesitaba llamaba a `Member_Auth` con un `class_exists` delante y su
+	 * propio código de reserva detrás. Ahora lo pregunta el núcleo y contesta Members, que es quien tiene la
+	 * sesión.
+	 *
+	 * @param array $identidad Respuesta por defecto (nadie).
+	 * @return array{autenticado: bool, member_id: int, datos: array}
+	 */
+	public static function filtrar_identidad( $identidad ): array {
+		if ( ! Member_Auth::is_authenticated() ) {
+			// Se devuelve lo que venga: si no hay sesión, el valor por defecto del núcleo ya es «nadie».
+			return $identidad;
+		}
+
+		return array(
+			'autenticado' => true,
+			'member_id'   => Member_Auth::get_current_member_id(),
+			'datos'       => (array) Member_Auth::get_current_member_data(),
+		);
+	}
+
+	/**
+	 * ¿Esta inscripción tiene prioridad por ser de un socio al día?
+	 *
+	 * Es el código que vivía dentro de Convoca Enroll, con su `class_exists` delante: se resuelve la ficha
+	 * —por el vínculo guardado en la inscripción o, si falta, por el correo— y se mira si la cuota está
+	 * activa. Un socio sin ficha vinculada no tiene prioridad: no hay cuota que verificar.
+	 *
+	 * @param bool $prioridad      Prioridad por defecto (sí).
+	 * @param int  $inscripcion_id Inscripción.
+	 * @return bool
+	 */
+	public static function filtrar_prioridad_de_socio( $prioridad, $inscripcion_id ): bool {
+		$inscripcion_id = (int) $inscripcion_id;
+		if ( $inscripcion_id <= 0 ) {
+			return (bool) $prioridad;
+		}
+
+		// La inscripción se marcó como de socio: es el primer filtro y es de Enroll, no se discute aquí.
+		if ( '1' !== (string) get_post_meta( $inscripcion_id, '_convoca_es_socio', true ) ) {
+			return false;
+		}
+
+		$member_id = (int) get_post_meta( $inscripcion_id, '_convoca_member_id', true );
+
+		if ( ! $member_id ) {
+			$email = (string) get_post_meta( $inscripcion_id, '_convoca_email', true );
+
+			if ( '' !== $email ) {
+				$fichas = get_posts(
+					array(
+						'post_type'      => 'miembro',
+						'posts_per_page' => 1,
+						'post_status'    => 'any',
+						'fields'         => 'ids',
+						'meta_query'     => array( // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_query
+							array(
+								'key'   => '_convoca_email',
+								'value' => $email,
+							),
+						),
+					)
+				);
+
+				if ( ! empty( $fichas ) ) {
+					$member_id = (int) $fichas[0];
+				}
+			}
+		}
+
+		if ( $member_id ) {
+			return 'activa' === get_post_meta( $member_id, '_convoca_estado_cuota', true );
+		}
+
+		return false;
 	}
 
 	/**

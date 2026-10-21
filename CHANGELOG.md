@@ -1,3 +1,20 @@
+## [2.9.17] — 2026-10-21
+
+### Añadido
+
+- **Members contesta también la identidad del socio.** Dos filtros nuevos del núcleo:
+  `convoca_member_identity` (quién tiene la sesión abierta, con su ficha) y `convoca_member_priority` (si
+  una inscripción tiene prioridad por ser de un socio al día). El segundo es el código que vivía dentro de
+  Convoca Enroll, con su `class_exists( 'Process_Member' )` delante: se resuelve la ficha por el vínculo de
+  la inscripción o por el correo, y se mira el estado de la cuota.
+
+De paso, Enroll deja de nombrar `Member_Auth` y `Process_Member`: los cuatro sitios que los usaban preguntan
+al contrato.
+
+### Pruebas
+
+- `IntegracionContratosTest` cubre los dos filtros nuevos además de los dos anteriores.
+
 ## [2.9.16] — 2026-10-21
 
 ### Corregido
