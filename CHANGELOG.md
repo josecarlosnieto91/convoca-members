@@ -1,3 +1,14 @@
+## [2.9.16] — 2026-10-21
+
+### Corregido
+
+- **Los administradores vuelven a salir entre las personas asignables.** El contrato devolvía sólo
+  voluntarios aprobados y monitores, pero los selectores de Shifts usaban
+  `role__in => administrator|voluntario_aprobado`: hasta hoy el administrador aparecía en el desplegable de
+  responsable. Medido en producción antes de desplegar: **5 usuarios, 0 con rol de voluntario o monitor**,
+  así que sin esta corrección el desplegable se quedaba vacío en una instalación que funcionaba. Se suman en
+  los dos contextos (responsable y monitor), sin duplicar.
+
 ## [2.9.15] — 2026-10-21
 
 ### Añadido

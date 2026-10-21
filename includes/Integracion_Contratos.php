@@ -86,6 +86,21 @@ class Integracion_Contratos {
 			$usuarios = array_merge( (array) $usuarios, (array) $aprobados );
 		}
 
+		// Los administradores del sitio también se pueden asignar, y no es un capricho: los selectores de
+		// Shifts usaban `role__in => administrator|voluntario_aprobado`, así que hasta hoy el
+		// administrador aparecía en el desplegable. Medido en el sitio de producción: 5 usuarios, 0 con rol
+		// de voluntario o monitor → sin esta línea el desplegable se queda vacío y se rompe el trabajo
+		// diario en una instalación que hasta ahora funcionaba. Se suman en los dos contextos.
+		$usuarios = array_merge(
+			(array) $usuarios,
+			(array) get_users(
+				array(
+					'role'    => 'administrator',
+					'orderby' => 'display_name',
+				)
+			)
+		);
+
 		foreach ( (array) $usuarios as $usuario ) {
 			if ( ! is_object( $usuario ) || empty( $usuario->ID ) ) {
 				continue;
