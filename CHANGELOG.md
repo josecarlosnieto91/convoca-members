@@ -1,3 +1,15 @@
+## [2.9.18] — 2026-10-22
+
+### Añadido
+
+- **Members contesta quién es socio activo.** Filtro `convoca_es_socio_activo` (`$es_socio, $user_id`), que
+  necesita Convoca Courses para aplicar el precio de socio. La respuesta no se queda en «tiene el rol»:
+  resuelve la ficha con `Roles_Miembro::ficha_de_usuario()`, comprueba `es_socio()` y exige estado
+  `activo`, así que **un socio de baja no sigue pagando precio de socio**. Las fichas anteriores al
+  circuito de estados (sin metadato) se consideran activas: cobrarles el precio general por un campo que
+  no existía sería un error caro. Sin este contrato, Courses cobra el precio general a todo el mundo y no
+  hay fatal.
+
 ## [2.9.17] — 2026-10-21
 
 ### Añadido

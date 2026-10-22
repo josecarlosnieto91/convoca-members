@@ -36,6 +36,42 @@ class Integracion_Contratos {
 		add_filter( 'convoca_shifts_personas_asignables', array( __CLASS__, 'filtrar_personas_asignables' ), 10, 2 );
 		add_filter( 'convoca_member_identity', array( __CLASS__, 'filtrar_identidad' ) );
 		add_filter( 'convoca_member_priority', array( __CLASS__, 'filtrar_prioridad_de_socio' ), 10, 2 );
+		add_filter( 'convoca_es_socio_activo', array( __CLASS__, 'filtrar_es_socio_activo' ), 10, 2 );
+	}
+
+	/**
+	 * ¿Esta persona es socio con la cuota al día?
+	 *
+	 * Lo pregunta Convoca Courses para aplicar el precio de socio. La respuesta no es «tiene el rol de
+	 * socio» sino «tiene ficha de socio **y** su estado es activo»: un socio de baja conserva el rol y
+	 * no debe seguir pagando precio de socio, que es justo el defecto que este contrato evita.
+	 *
+	 * @since 2.9.18
+	 *
+	 * @param bool $es_socio Respuesta por defecto (falso: sin contrato nadie es socio).
+	 * @param int  $user_id  Usuario de WordPress.
+	 * @return bool
+	 */
+	public static function filtrar_es_socio_activo( $es_socio, $user_id ): bool {
+		if ( $es_socio ) {
+			return true;
+		}
+
+		$user_id = (int) $user_id;
+		if ( $user_id <= 0 ) {
+			return false;
+		}
+
+		$ficha = Roles_Miembro::ficha_de_usuario( $user_id );
+		if ( $ficha <= 0 || ! Roles_Miembro::es_socio( $ficha ) ) {
+			return false;
+		}
+
+		$estado = (string) get_post_meta( $ficha, '_convoca_estado_miembro', true );
+
+		// Sin estado guardado se considera activo: son fichas anteriores al circuito de estados, y
+		// cobrarles el precio general por un metadato que no existía sería un error caro.
+		return '' === $estado || 'activo' === $estado;
 	}
 
 	/**
