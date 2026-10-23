@@ -21,6 +21,11 @@ if (file_exists($core_bootstrap)) {
     require_once __DIR__ . '/stubs-wp.php';
 }
 
+// 1 bis. Autenticación de WordPress y captura de cookies: `Member_Auth` no se podía probar sin ellas
+// (el bootstrap del núcleo no trae `wp_authenticate` ni deja ver una cookie). No va en el bootstrap de
+// integración: allí las cookies son las de verdad.
+require_once __DIR__ . '/stubs-auth.php';
+
 // 2. Autoloader propio (las clases del core ya quedaron registradas por el
 //    require del bootstrap de core, pero cargamos también el nuestro para
 //    resolver las clases de members).
