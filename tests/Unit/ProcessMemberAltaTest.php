@@ -125,6 +125,12 @@ final class ProcessMemberAltaTest extends TestCase {
 		$this->assertNotSame( '', (string) get_post_meta( $id, '_convoca_access_code', true ), 'con su código de acceso' );
 		$this->assertSame( '0', (string) get_post_meta( $id, '_convoca_menor_edad', true ) );
 		$this->assertNotSame( '', (string) get_post_meta( $id, '_convoca_rgpd_timestamp', true ), 'con el consentimiento fechado' );
+
+		// Los datos de contacto y de sitio: sin ellos no se puede avisar al socio ni agruparlo por municipio.
+		$this->assertSame( '600000000', (string) get_post_meta( $id, '_convoca_telefono', true ) );
+		$this->assertSame( 'Oviedo', (string) get_post_meta( $id, '_convoca_municipio', true ) );
+		// Y el alias heredado del plan, que todavía leen trozos antiguos del plugin.
+		$this->assertSame( 'bronze', (string) get_post_meta( $id, '_convoca_cuota', true ), 'alias heredado de la cuota' );
 	}
 
 	/**
