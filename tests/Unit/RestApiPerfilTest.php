@@ -154,7 +154,16 @@ final class RestApiPerfilTest extends TestCase {
 
 		$inventado = $this->api->update_profile( new \WP_REST_Request( array( 'cumpleanos' => 'no-es-una-fecha' ) ) );
 		$this->assertSame( 400, $inventado->get_status() );
-		$this->assertSame( '', (string) get_post_meta( 55, '_convoca_cumpleanos', true ) );
+
+		// Y lo que `createFromFormat` **sí** sabe interpretar pero no es una fecha `Y-m-d`: `1990-5-17` sin
+		// relleno y `1990-13-01` (que salta a 1991). Sin la comprobación estricta se colarían tal cual.
+		foreach ( array( '1990-5-17', '1990-13-01' ) as $colado ) {
+			$respuesta = $this->api->update_profile( new \WP_REST_Request( array( 'cumpleanos' => $colado ) ) );
+
+			$this->assertSame( 400, $respuesta->get_status(), 'no se acepta «' . $colado . '»' );
+		}
+
+		$this->assertSame( '', (string) get_post_meta( 55, '_convoca_cumpleanos', true ), 'y no se guardó ninguna' );
 	}
 
 	/**
