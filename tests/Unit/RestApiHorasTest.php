@@ -141,6 +141,12 @@ final class RestApiHorasTest extends TestCase {
 		$this->assertSame( 4.5, (float) get_post_meta( $registro, '_convoca_horas', true ) );
 		$this->assertSame( 400, (int) get_post_meta( $registro, '_convoca_proyecto_id', true ) );
 		$this->assertSame( 'Siembra y riego', (string) get_post_meta( $registro, '_convoca_tareas', true ) );
+		$this->assertSame( 700, (int) get_post_meta( $registro, '_convoca_actividad_id', true ), 'la actividad a la que se imputan' );
+		$this->assertSame(
+			'Mañana en el vivero',
+			(string) ( get_post( $registro )->post_content ?? '' ),
+			'la descripción se guarda en el cuerpo del registro'
+		);
 		$this->assertSame( 'pendiente', (string) get_post_meta( $registro, '_convoca_estado', true ), 'nace pendiente de aprobación' );
 
 		$hooks = array_column( $GLOBALS['_wp_actions'] ?? array(), 'hook' );
