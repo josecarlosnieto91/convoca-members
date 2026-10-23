@@ -298,6 +298,12 @@ class Mi_Area {
 	 */
 	private function render_dashboard( int $member_id ): void {
 		$post = get_post( $member_id );
+		// Una ficha borrada (o un `_convoca_member_id` que apunta al vacío) deja `get_post()` en `null`, y aquí
+		// se leía `->post_title` a ciegas: en producción eso es un warning de PHP y un saludo sin nombre. Y el
+		// panel no puede caerse por eso: quien entra sigue siendo socio aunque su ficha se haya ido.
+		if ( ! $post instanceof \WP_Post ) {
+			$post = (object) array( 'post_title' => '' );
+		}
 		?>
 		<div class="conv-dashboard-container">
 			<header class="conv-panel-header">

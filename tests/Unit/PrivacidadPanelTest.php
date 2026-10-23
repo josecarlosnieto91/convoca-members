@@ -33,6 +33,19 @@ class PrivacidadPanelTest extends TestCase {
 			}
 		}
 		$GLOBALS['_wp_stores']['post_meta'] = array();
+
+		// La ficha tiene que **existir**: `get_post()` ya no inventa un post para un id desconocido (WordPress
+		// devuelve `null`), y una solicitud de supresión sobre una ficha inexistente no es una solicitud.
+		$ficha                              = (object) array(
+			'ID'           => self::FICHA,
+			'post_type'    => 'miembro',
+			'post_status'  => 'publish',
+			'post_title'   => 'Ada Lovelace',
+			'post_date'    => '2026-01-01 10:00:00',
+			'post_content' => '',
+		);
+		$GLOBALS['_test_posts'][ self::FICHA ]             = $ficha;
+		$GLOBALS['_wp_stores']['posts'][ self::FICHA ]     = $ficha;
 	}
 
 	/** Pedir la supresión anota la solicitud con su fecha y avisa: no borra nada. */
