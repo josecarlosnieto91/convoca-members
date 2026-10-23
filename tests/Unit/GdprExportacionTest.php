@@ -236,9 +236,10 @@ final class GdprExportacionTest extends TestCase {
 	public function test_el_correo_se_sanea(): void {
 		$this->registro( 55, 'miembro', array( '_convoca_email' => 'ada@example.test', '_convoca_nombre' => 'Ada Lovelace' ) );
 
-		$this->assertNotEmpty(
-			GDPR_Tools::export_personal_data( '  ADA@EXAMPLE.TEST  ' ),
-			'un correo con espacios sigue siendo el mismo'
-		);
+		// Se afirma **el grupo**, no «no está vacío»: el exportador devuelve siempre `data` y `done`, así que
+		// `assertNotEmpty` pasaba aunque no encontrara a nadie (lo destapó una sonda, no la prueba).
+		$grupos = $this->grupos( GDPR_Tools::export_personal_data( '  ADA@EXAMPLE.TEST  ' ) );
+
+		$this->assertArrayHasKey( 'convoca-member-profile', $grupos, 'un correo con espacios y mayúsculas es el mismo' );
 	}
 }
