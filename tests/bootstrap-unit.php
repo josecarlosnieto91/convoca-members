@@ -53,3 +53,20 @@ if (!function_exists('restore_previous_locale')) {
         return true;
     }
 }
+
+/*
+ * Bloques de Gutenberg: el bootstrap del núcleo no trae doble de register_block_type ni de
+ * wp_register_style, y sin ellos el registro de bloques de members no se puede ni mirar.
+ */
+if (!function_exists('register_block_type')) {
+    function register_block_type($name, $args = []) {
+        $GLOBALS['_cm_bloques'][$name] = $args;
+        return true;
+    }
+}
+if (!function_exists('wp_register_style')) {
+    function wp_register_style($handle, $src = '', $deps = [], $ver = false) {
+        $GLOBALS['_cm_estilos'][$handle] = compact('src', 'deps', 'ver');
+        return true;
+    }
+}
