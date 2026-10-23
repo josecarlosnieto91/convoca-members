@@ -26,6 +26,17 @@ if (file_exists($core_bootstrap)) {
 // integración: allí las cookies son las de verdad.
 require_once __DIR__ . '/stubs-auth.php';
 
+// 1 ter. El `Logger` limita los avisos por proceso (50 en 60 s) y la suite entera comparte proceso: un fichero
+// que registra mucho agota la cuota y las pruebas siguientes dejan de ver **sus** avisos (una de ellas, la del
+// inicio de sesión, comprueba que el aviso existe). Se sube el tope para medir; el límite de producción sigue en
+// 50 y el filtro es la vía prevista para cambiarlo.
+add_filter(
+	'convoca_logger_rate_limit_max',
+	static function () {
+		return PHP_INT_MAX;
+	}
+);
+
 // 2. Autoloader propio (las clases del core ya quedaron registradas por el
 //    require del bootstrap de core, pero cargamos también el nuestro para
 //    resolver las clases de members).
