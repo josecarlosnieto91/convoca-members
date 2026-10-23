@@ -138,6 +138,36 @@ final class ProcessMemberAltaTest extends TestCase {
 	}
 
 	/**
+	 * Los consentimientos quedan **con su versión**: son la prueba de qué aceptó el socio y con qué texto.
+	 *
+	 * Y el canal de contacto: por dónde se le puede escribir. Si se pierde, el alta existe pero nadie sabe cómo
+	 * localizar a esa persona.
+	 */
+	public function test_los_consentimientos_quedan_fechados(): void {
+		update_option( 'convoca_members_settings', array( 'rgpd_version' => '2026-1' ) );
+
+		$resultado = Process_Member::register(
+			$this->alta(
+				array(
+					'canal_contacto'        => 'telefono',
+					'comunicaciones'        => '1',
+					'acuerdo_voluntariado'  => '1',
+				)
+			)
+		);
+		$id        = (int) $resultado['id'];
+
+		$this->assertSame( 'telefono', (string) get_post_meta( $id, '_convoca_canal_contacto', true ), 'por dónde se le escribe' );
+		$this->assertSame( '1', (string) get_post_meta( $id, '_convoca_comunicaciones_ok', true ), 'acepta comunicaciones' );
+		$this->assertSame( '1', (string) get_post_meta( $id, '_convoca_es_voluntario', true ), 'quiere ser voluntariado' );
+		$this->assertSame(
+			'2026-1',
+			(string) get_post_meta( $id, '_convoca_rgpd_version', true ),
+			'la versión de la política que aceptó: eso es la prueba'
+		);
+	}
+
+	/**
 	 * Y avisa de que hay un alta y de que hay que mandar la solicitud.
 	 */
 	public function test_el_alta_avisa(): void {
