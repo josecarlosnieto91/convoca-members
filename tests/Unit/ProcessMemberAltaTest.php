@@ -110,6 +110,9 @@ final class ProcessMemberAltaTest extends TestCase {
 		$this->assertGreaterThan( 0, $id );
 		$this->assertSame( 'miembro', (string) get_post( $id )->post_type, 'se crea una ficha de socio' );
 		$this->assertSame( 'Ada Lovelace', (string) get_post( $id )->post_title );
+		// Publicada, no en borrador: el deduplicador busca fichas `publish` (un borrador no se encontraría y
+		// dejaría pasar un duplicado) y en el panel no se vería.
+		$this->assertSame( 'publish', (string) get_post( $id )->post_status );
 
 		// El DNI se normaliza: en mayúsculas y sin espacios ni guiones (si no, no casa en las búsquedas).
 		$this->assertSame( '00000000T', (string) get_post_meta( $id, '_convoca_dni', true ) );
@@ -129,6 +132,7 @@ final class ProcessMemberAltaTest extends TestCase {
 		// Los datos de contacto y de sitio: sin ellos no se puede avisar al socio ni agruparlo por municipio.
 		$this->assertSame( '600000000', (string) get_post_meta( $id, '_convoca_telefono', true ) );
 		$this->assertSame( 'Oviedo', (string) get_post_meta( $id, '_convoca_municipio', true ) );
+		$this->assertSame( 'Calle de prueba 1', (string) get_post_meta( $id, '_convoca_direccion', true ) );
 		// Y el alias heredado del plan, que todavía leen trozos antiguos del plugin.
 		$this->assertSame( 'bronze', (string) get_post_meta( $id, '_convoca_cuota', true ), 'alias heredado de la cuota' );
 	}
