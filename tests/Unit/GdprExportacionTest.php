@@ -217,6 +217,7 @@ final class GdprExportacionTest extends TestCase {
 		$this->assertSame( '3', $horas['Horas'] );
 		$this->assertSame( 'Vivero', $horas['Proyecto'] );
 		$this->assertSame( 'Reparto de carteles', $horas['Descripción'], 'lo que escribió el socio' );
+		$this->assertSame( 'aprobada', $horas['Estado'], 'y si esas horas están aprobadas o no' );
 	}
 
 	/**
