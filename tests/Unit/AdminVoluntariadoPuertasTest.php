@@ -192,11 +192,17 @@ final class AdminVoluntariadoPuertasTest extends TestCase {
 	 */
 	public function test_revocar(): void {
 		$this->usuario( 40, array( 'socio', 'voluntario_aprobado' ) );
+		// Un socio normal no administra el sitio (el arnés da `manage_options` por cierto si no se fija).
+		$GLOBALS['_test_user_caps'][40]['manage_options'] = false;
 
 		Admin_Voluntariado::revoke_volunteer( 40 );
 
 		$this->assertNotContains( 'voluntario_aprobado', (array) $GLOBALS['_wp_stores']['usuarios'][40]->roles, 'se le quita' );
 		$this->assertContains( 'socio', (array) $GLOBALS['_wp_stores']['usuarios'][40]->roles, 'y se le deja lo demás' );
+		// La marca es la que lee `puede_acreditar_horas()`: sin ponerla a -1, un revocado con el rol puesto
+		// seguiría acreditando horas.
+		$this->assertSame( '-1', (string) get_user_meta( 40, Admin_Voluntariado::META_APROBADO, true ), 'queda revocado' );
+		$this->assertFalse( Admin_Voluntariado::puede_acreditar_horas( 40 ), 'y ya no acredita horas' );
 
 		// A uno mismo no: `get_current_user_id()` del arnés devuelve 1.
 		$this->usuario( 1, array( 'administrator', 'voluntario_aprobado' ) );
