@@ -127,10 +127,21 @@ final class RestApiListadosTest extends TestCase {
 		$this->registro( 102, 'inscripcion', array( '_convoca_dni' => '00000000T' ), 'Inscripción por DNI' );
 		$this->registro( 103, 'inscripcion', array( '_convoca_email' => 'otra@example.test', '_convoca_dni' => '11111111H' ), 'De otra persona' );
 
+		// Una inscripción sin confirmar vive en borrador: el socio tiene que verla igual.
+		$GLOBALS['_wp_stores']['posts'][104]     = (object) array(
+			'ID'           => 104,
+			'post_type'    => 'inscripcion',
+			'post_status'  => 'draft',
+			'post_title'   => 'Sin confirmar',
+			'post_date'    => '2026-10-02 10:00:00',
+			'post_content' => '',
+		);
+		$GLOBALS['_wp_stores']['post_meta'][104] = array( '_convoca_email' => 'ada@example.test' );
+
 		$datos = $this->api->get_inscriptions( new \WP_REST_Request() )->get_data();
 		$items = $datos['items'] ?? $datos;
 
-		$this->assertCount( 2, $items, 'las dos de la ficha, y no la de otra persona' );
+		$this->assertCount( 3, $items, 'las tres de la ficha (una en borrador), y no la de otra persona' );
 	}
 
 	/**
@@ -206,8 +217,13 @@ final class RestApiListadosTest extends TestCase {
 	public function test_los_proyectos(): void {
 		$this->registro( 401, 'proyecto', array( '_convoca_activo' => '1' ), 'Vivero' );
 
+		// La caché se sirve por clave: se siembra la entrada y tiene que devolverse eso, sin tocar el origen.
+		$GLOBALS['_wp_stores']['transients'][ 'convoca_rest_' . md5( 'proyectos' ) ] = array(
+			array( 'id' => 999, 'title' => 'De la caché' ),
+		);
+
 		$datos = $this->api->get_proyectos()->get_data();
-		$this->assertIsArray( $datos, 'contesta una lista' );
+		$this->assertSame( 'De la caché', $datos[0]['title'] ?? '', 'se sirve la entrada cacheada' );
 
 		// El limitador del núcleo: con el atajo de caché a 0, la acción queda bloqueada.
 		$GLOBALS['_wp_cache']['convoca_rate_limits'][ 'convoca_rl_convoca_get_proyectos_ip_' . md5( (string) ( $_SERVER['REMOTE_ADDR'] ?? 'unknown' ) ) ] = 0;
