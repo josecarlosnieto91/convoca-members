@@ -1577,11 +1577,15 @@ class Rest_API {
 				);
 			}
 			// Validate YYYY-MM-DD and not in the future.
-			$ts = strtotime( $cumpleanos );
-			if ( $ts === false || $ts > strtotime( 'today' ) ) {
+			//
+			// La fecha se guarda **tal cual se escribió**. Antes se pasaba por `strtotime()` + `gmdate()`: en
+			// Europe/Madrid (UTC+2) las 00:00 del día 17 son las 22:00 del 16 en UTC, así que **todos** los
+			// cumpleaños se guardaban un día antes y el saludo llegaría el día equivocado.
+			$fecha = \DateTime::createFromFormat( '!Y-m-d', $cumpleanos );
+			if ( ! $fecha || $fecha->format( 'Y-m-d' ) !== $cumpleanos || $fecha > new \DateTime( 'today' ) ) {
 				return new \WP_REST_Response( array( 'error' => __( 'Fecha de cumpleaños no válida.', 'convoca-members' ) ), 400 );
 			}
-			update_post_meta( $member_id, '_convoca_cumpleanos', gmdate( 'Y-m-d', $ts ) );
+			update_post_meta( $member_id, '_convoca_cumpleanos', $fecha->format( 'Y-m-d' ) );
 			$changes[] = 'cumpleanos';
 		}
 
