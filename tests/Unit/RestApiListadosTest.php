@@ -217,13 +217,21 @@ final class RestApiListadosTest extends TestCase {
 	public function test_los_proyectos(): void {
 		$this->registro( 401, 'proyecto', array( '_convoca_activo' => '1' ), 'Vivero' );
 
-		// La caché se sirve por clave: se siembra la entrada y tiene que devolverse eso, sin tocar el origen.
-		$GLOBALS['_wp_stores']['transients'][ 'convoca_rest_' . md5( 'proyectos' ) ] = array(
-			array( 'id' => 999, 'title' => 'De la caché' ),
+		// Primera llamada: va al origen y deja la caché puesta.
+		$primera = $this->api->get_proyectos()->get_data();
+		$this->assertIsArray( $primera, 'contesta una lista' );
+		$this->assertArrayHasKey(
+			'convoca_rest_' . md5( 'proyectos' ),
+			$GLOBALS['_wp_stores']['transients'] ?? array(),
+			'la respuesta queda cacheada bajo su clave'
 		);
 
-		$datos = $this->api->get_proyectos()->get_data();
-		$this->assertSame( 'De la caché', $datos[0]['title'] ?? '', 'se sirve la entrada cacheada' );
+		// Segunda llamada **con el origen cambiado**: si sirve la caché, la lista no cambia. Así se prueba la
+		// clave sin dejar de ejecutar el camino que la rellena.
+		$this->registro( 402, 'proyecto', array( '_convoca_activo' => '1' ), 'Añadido después' );
+		$segunda = $this->api->get_proyectos()->get_data();
+
+		$this->assertSame( $primera, $segunda, 'se sirve la caché, no el origen' );
 
 		// El limitador del núcleo: con el atajo de caché a 0, la acción queda bloqueada.
 		$GLOBALS['_wp_cache']['convoca_rate_limits'][ 'convoca_rl_convoca_get_proyectos_ip_' . md5( (string) ( $_SERVER['REMOTE_ADDR'] ?? 'unknown' ) ) ] = 0;
