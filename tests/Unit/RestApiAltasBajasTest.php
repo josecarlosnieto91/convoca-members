@@ -154,6 +154,7 @@ final class RestApiAltasBajasTest extends TestCase {
 		$this->assertSame( 'nueva@example.test', get_post_meta( 55, '_convoca_email', true ), 'el correo nuevo está puesto' );
 		$this->assertSame( '', (string) get_post_meta( 55, '_convoca_email_token', true ), 'el testigo no se queda' );
 		$this->assertSame( '', (string) get_post_meta( 55, '_convoca_email_pendiente', true ) );
+		$this->assertSame( '', (string) get_post_meta( 55, '_convoca_email_token_exp', true ), 'y su caducidad tampoco se queda' );
 
 		$hooks = array_column( $GLOBALS['_wp_actions'] ?? array(), 'hook' );
 		$this->assertContains( 'convoca_members_email_cambiado', $hooks, 'el resto del ecosistema se entera' );
@@ -212,6 +213,16 @@ final class RestApiAltasBajasTest extends TestCase {
 			'ada@example.test',
 			(string) get_post_meta( 55, '_convoca_email', true ),
 			'pero los datos personales siguen ahí: eso es la supresión'
+		);
+
+		$historial = get_post_meta( 55, '_convoca_historial', true );
+		$this->assertIsArray( $historial, 'el cambio de estado deja rastro' );
+		$ultimo = end( $historial );
+		$this->assertSame( 'baja_solicitada', $ultimo['a'] ?? '', 'con el estado nuevo' );
+		$this->assertSame(
+			'Solicitud de baja desde el panel de socio.',
+			$ultimo['nota'] ?? '',
+			'y el motivo: es lo que lee quien la revisa'
 		);
 
 		$hooks = array_column( $GLOBALS['_wp_actions'] ?? array(), 'hook' );
