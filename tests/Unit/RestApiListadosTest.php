@@ -143,6 +143,17 @@ final class RestApiListadosTest extends TestCase {
 		$this->registro( 202, 'pago', array( '_convoca_origin' => 'members', '_convoca_origin_id' => 56 ), 'De otra persona' );
 		$this->registro( 203, 'pago', array( '_convoca_origin' => 'enroll', '_convoca_origin_id' => 55 ), 'De otro módulo' );
 
+		// Un pago en borrador no es un pago: vive en el almacén pero no debe salir en el área de socio.
+		$GLOBALS['_wp_stores']['posts'][204]              = (object) array(
+			'ID'           => 204,
+			'post_type'    => 'pago',
+			'post_status'  => 'draft',
+			'post_title'   => 'Borrador',
+			'post_date'    => '2026-10-01 10:00:00',
+			'post_content' => '',
+		);
+		$GLOBALS['_wp_stores']['post_meta'][204]          = array( '_convoca_origin' => 'members', '_convoca_origin_id' => 55 );
+
 		$datos = $this->api->get_payments( new \WP_REST_Request() )->get_data();
 		$items = $datos['items'] ?? $datos;
 
