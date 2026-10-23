@@ -113,6 +113,10 @@ class AdminStatusTest extends TestCase
 
         $this->assertSame('cron', $r['id']);
         $this->assertNotSame(Admin_Status::SEVERITY_OK, $r['severity'], 'sin cron no se envían recordatorios ni renovaciones');
+        // Y tiene que decir CUÁLES faltan: «faltan eventos» no sirve para arreglarlo (lo destapó la
+        // verificación en negativo, que cambió el mensaje y la prueba siguió verde).
+        $this->assertStringContainsString('convoca_daily_event', $r['message']);
+        $this->assertStringContainsString('convoca_weekly_event', $r['message']);
     }
 
     public function test_el_cron_programado_esta_en_verde(): void
