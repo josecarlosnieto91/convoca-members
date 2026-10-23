@@ -186,41 +186,22 @@ class Member_Auth {
 	public static function logout_member_sessions( int $member_id ): void {
 		global $wpdb;
 
-		// Production: transients live in the options table. Try a direct LIKE scan.
-		// Guard on $wpdb's esc_like() method: the unit-test bootstrap uses a
-		// minimal $wpdb mock without it, so those runs fall through to the store
-		// branch below. The standalone esc_like() function may be missing in some
-		// CLI contexts, but the wpdb method is always present.
-		if ( $wpdb && isset( $wpdb->options ) && method_exists( $wpdb, 'esc_like' ) && function_exists( 'maybe_unserialize' ) ) {
-			$like = $wpdb->esc_like( '_transient_' . self::TRANSIENT_PREFIX ) . '%';
-			// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
-			$rows = $wpdb->get_results(
-				$wpdb->prepare(
-					"SELECT option_name, option_value FROM {$wpdb->options} WHERE option_name LIKE %s",
-					$like
-				)
-			);
-			foreach ( $rows as $row ) {
-				$data = maybe_unserialize( $row->option_value );
-				if ( is_array( $data ) && (int) ( $data['id'] ?? 0 ) === $member_id ) {
-					delete_transient( substr( $row->option_name, strlen( '_transient_' ) ) );
-				}
-			}
-			return;
-		}
-
-		// Unit-test fallback: mocked transient store keyed by token.
-		$store = $GLOBALS['_wp_stores']['transients'] ?? array();
-		foreach ( array_keys( $store ) as $key ) {
-			$prefix_len = strlen( self::TRANSIENT_PREFIX );
-			if ( 0 === strpos( $key, self::TRANSIENT_PREFIX ) ) {
-				$data = $store[ $key ];
-				$data = is_array( $data ) ? $data : maybe_unserialize( $data );
-				if ( is_array( $data ) && (int) ( $data['id'] ?? 0 ) === $member_id ) {
-					// delete_transient expects the FULL store key in this mock
-					// (transients are stored keyed by their complete name).
-					delete_transient( $key );
-				}
+		// Los transients viven en la tabla de opciones con el prefijo `_transient_`: se barren por LIKE y se
+		// cierran sólo los de este socio. (`esc_like()` es método de `$wpdb` en WordPress desde siempre; la
+		// guarda que había aquí existía porque el arnés de pruebas no lo tenía, y detrás llevaba una rama que
+		// leía `$GLOBALS['_wp_stores']`: código de prueba viviendo dentro del plugin.)
+		$like = $wpdb->esc_like( '_transient_' . self::TRANSIENT_PREFIX ) . '%';
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
+		$rows = $wpdb->get_results(
+			$wpdb->prepare(
+				"SELECT option_name, option_value FROM {$wpdb->options} WHERE option_name LIKE %s",
+				$like
+			)
+		);
+		foreach ( $rows as $row ) {
+			$data = maybe_unserialize( $row->option_value );
+			if ( is_array( $data ) && (int) ( $data['id'] ?? 0 ) === $member_id ) {
+				delete_transient( substr( $row->option_name, strlen( '_transient_' ) ) );
 			}
 		}
 	}
