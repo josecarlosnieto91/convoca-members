@@ -55,6 +55,17 @@ final class CronSociosTest extends TestCase {
 	private function limpiar(): void {
 		unset( $GLOBALS['_wp_stores'], $GLOBALS['_test_posts'], $GLOBALS['_wp_actions'] );
 
+		// El registro guarda estado **estático** entre pruebas (profundidad de anidado y marcas de tiempo). Si
+		// se queda a medias, las pruebas siguientes creen estar dentro de un grupo y dejan de apuntar sus
+		// avisos: es exactamente lo que pasaba con las de inicio de sesión. Se devuelve a cero.
+		$reflejo = new \ReflectionClass( \Convoca\Core\Logger::class );
+		foreach ( array( 'log_depth' => 0, 'log_timestamps' => array() ) as $propiedad => $valor ) {
+			if ( $reflejo->hasProperty( $propiedad ) ) {
+				$p = $reflejo->getProperty( $propiedad );
+				$p->setValue( null, $valor );
+			}
+		}
+
 		$GLOBALS['_wp_stores'] = array(
 			'options'    => array(),
 			'post_meta'  => array(),
