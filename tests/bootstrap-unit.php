@@ -13,6 +13,22 @@ define('ABSPATH', dirname(__DIR__) . '/');
 //    que la clase real funciona y no hay que mantener un doble que se queda atras.
 
 // 1. Mocks de WordPress (stubs) del core — deben cargarse ANTES del autoloader.
+/*
+ * Los dobles de `register_block_type` tienen que ser UNO SOLO. El bootstrap de core se carga primero y
+ * define el suyo escribiendo en `_wp_stores['blocks']`; el de members lo declara más abajo con
+ * `function_exists()`, así que nunca entraba y los tests de bloques leían `_cm_bloques` vacío: 12 fallos
+ * que en el CI no aparecían porque allí no hay clon de core al lado.
+ *
+ * Se declara aquí, antes del bootstrap de core, y escribe en los dos almacenes.
+ */
+if ( ! function_exists( 'register_block_type' ) ) {
+    function register_block_type( $name, $args = array() ) {
+        $GLOBALS['_wp_stores']['blocks'][ (string) $name ] = $args;
+        $GLOBALS['_cm_bloques'][ (string) $name ]          = $args;
+        return true;
+    }
+}
+
 $core_bootstrap = dirname(__DIR__, 2) . '/convoca-core/tests/bootstrap-unit.php';
 if (file_exists($core_bootstrap)) {
     require_once $core_bootstrap;
@@ -74,12 +90,7 @@ if (!function_exists('restore_previous_locale')) {
  * Bloques de Gutenberg: el bootstrap del núcleo no trae doble de register_block_type ni de
  * wp_register_style, y sin ellos el registro de bloques de members no se puede ni mirar.
  */
-if (!function_exists('register_block_type')) {
-    function register_block_type($name, $args = []) {
-        $GLOBALS['_cm_bloques'][$name] = $args;
-        return true;
-    }
-}
+// (el doble de `register_block_type` vive arriba, antes del bootstrap de core: uno solo)
 if (!function_exists('wp_register_style')) {
     function wp_register_style($handle, $src = '', $deps = [], $ver = false) {
         $GLOBALS['_cm_estilos'][$handle] = compact('src', 'deps', 'ver');

@@ -69,6 +69,14 @@ class EmailCircuitoVoluntariadoTest extends TestCase {
 		update_option( 'convoca_email_templates', Email_Manager::default_templates() );
 
 		// La ficha, con su persona: los avisos a la persona salen por ahí (sin a quién avisar, no hay aviso).
+		// Usuario sembrado: `get_userdata()` fiel devuelve `false` para un id inexistente y el aviso no saldría.
+		$GLOBALS['_wp_stores']['usuarios'][99] = (object) array(
+			'ID'           => 99,
+			'display_name' => 'Voluntaria',
+			'user_email'   => 'voluntaria@example.test',
+			'user_login'   => 'voluntaria',
+			'roles'        => array( 'socio' ),
+		);
 		update_post_meta( self::ID, '_convoca_user_id', '99' );
 		update_post_meta( self::ID, '_convoca_email', 'socia@example.com' );
 	}

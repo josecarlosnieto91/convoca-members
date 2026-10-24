@@ -51,6 +51,15 @@ class CircuitoVoluntariadoTest extends TestCase {
 	 * @param string $aprobado '0' = pendiente, '1' = aprobada.
 	 */
 	private function ficha( string $aprobado = '0' ): int {
+		// El usuario tiene que existir en el almacén: `get_userdata()` fiel devuelve `false` para un id que
+		// no está, y `approve_volunteer()` sale sin escribir nada. En el CI se colaba porque usaba otro arnés.
+		$GLOBALS['_wp_stores']['usuarios'][ self::USER ] = (object) array(
+			'ID'           => self::USER,
+			'display_name' => 'Voluntaria',
+			'user_email'   => 'voluntaria@example.test',
+			'user_login'   => 'voluntaria',
+			'roles'        => array( 'socio' ),
+		);
 		update_post_meta( self::ID, '_convoca_user_id', (string) self::USER );
 		update_post_meta( self::ID, Roles_Miembro::META_VOLUNTARIO, '1' );
 		update_user_meta( self::USER, Admin_Voluntariado::META_APROBADO, $aprobado );
