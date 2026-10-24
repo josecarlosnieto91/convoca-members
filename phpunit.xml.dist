@@ -12,9 +12,13 @@
       <directory suffix="Test.php">./tests/Integration</directory>
     </testsuite>
   </testsuites>
+  <!-- `admin/` (12 ficheros) y `public/` son lógica del plugin; antes quedaban fuera del clover y el suelo se
+       cumplía ignorándolos. `templates/` queda fuera por ser presentación. -->
   <source>
     <include>
       <directory suffix=".php">./includes</directory>
+      <directory suffix=".php">./admin</directory>
+      <directory suffix=".php">./public</directory>
     </include>
   </source>
 </phpunit>
