@@ -741,13 +741,12 @@ class Admin_Import_CSV {
 			}
 		}
 
-		// Sin ficha, un usuario de WordPress con ese correo no es una ficha duplicada (el comentario
-		// original): se deja crear la ficha.
-		$user = get_user_by( 'email', $email );
-		if ( $user ) {
-			return null;
-		}
-
+		// Sin ficha, un usuario de WordPress con ese correo NO es una ficha duplicada: se deja crear la ficha.
+		//
+		// Aquí había un `get_user_by( 'email', $email )` cuyo resultado se descartaba —las dos ramas devolvían
+		// `null`—, así que era una consulta a `wp_users` por CADA fila del CSV: mil consultas inútiles en una
+		// importación de mil socios (members#72). La decisión se expresa con este comentario, no ejecutando la
+		// consulta y tirando el valor.
 		return null;
 	}
 }
