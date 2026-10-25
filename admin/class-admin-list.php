@@ -158,9 +158,15 @@ class Admin_List extends \WP_List_Table {
 		);
 
 		// Search by name, email, DNI, phone, member number or access code.
+		// La búsqueda y los filtros van por separado y se combinan con AND al final. Antes cada filtro se añadía
+		// con `array_merge` al array de la búsqueda, que lleva `relation => OR`: el filtro quedaba **dentro** del
+		// OR y dejaba de filtrar (members#82).
+		$mq_busqueda = null;
+		$mq_filtros  = array();
+
 		if ( $search ) {
-			$cleaned_search     = strtoupper( str_replace( array( ' ', '-' ), '', $search ) );
-			$args['meta_query'] = array(
+			$cleaned_search = strtoupper( str_replace( array( ' ', '-' ), '', $search ) );
+			$mq_busqueda    = array(
 				'relation' => 'OR',
 				array(
 					'key'     => '_convoca_email',
@@ -198,21 +204,21 @@ class Admin_List extends \WP_List_Table {
 					'compare' => 'LIKE',
 				),
 			);
-			$args['s']          = $search; // Also search post title + content.
+			// **No se pasa `s`**: WordPress lo combina con el `meta_query` con AND, así que exigía que el texto
+			// estuviera también en el título o el contenido, y buscar un correo, un DNI o un teléfono —que viven
+			// en metas— no devolvía **nada** (members#83). El nombre se cubre con `_convoca_nombre`, que ya está
+			// en la lista de arriba.
 		}
 
 		// Filter by estado.
 		$get_data      = wp_unslash( $_GET );
 		$estado_filter = sanitize_text_field( $get_data['estado_filter'] ?? '' );
 		if ( $estado_filter ) {
-			$args['meta_query'] = array_merge(
-				$args['meta_query'] ?? array(),
+			$mq_filtros[] = array(
 				array(
-					array(
-						'key'   => '_convoca_estado_miembro',
-						'value' => $estado_filter,
-					),
-				)
+					'key'   => '_convoca_estado_miembro',
+					'value' => $estado_filter,
+				),
 			);
 		}
 
@@ -230,76 +236,74 @@ class Admin_List extends \WP_List_Table {
 
 		// Filter by volunteer status (from custom submenu).
 		if ( ! empty( $get_data['voluntarios'] ) || ( isset( $get_data['page'] ) && $get_data['page'] === 'conv-members-voluntarios' ) ) {
-			$args['meta_query'] = array_merge(
-				$args['meta_query'] ?? array(),
+			$mq_filtros[] = array(
 				array(
-					array(
-						'key'   => '_convoca_es_voluntario',
-						'value' => '1',
-					),
-				)
+					'key'   => '_convoca_es_voluntario',
+					'value' => '1',
+				),
 			);
 		}
 
 		// Filter by plan.
 		$plan_filter = sanitize_text_field( $get_data['plan_filter'] ?? '' );
 		if ( $plan_filter ) {
-			$args['meta_query'] = array_merge(
-				$args['meta_query'] ?? array(),
+			$mq_filtros[] = array(
 				array(
-					array(
-						'key'   => '_convoca_plan',
-						'value' => $plan_filter,
-					),
-				)
+					'key'   => '_convoca_plan',
+					'value' => $plan_filter,
+				),
 			);
 		}
 
 		// Filter by estado_cuota.
 		$cuota_filter = sanitize_text_field( $get_data['cuota_filter'] ?? '' );
 		if ( $cuota_filter ) {
-			$args['meta_query'] = array_merge(
-				$args['meta_query'] ?? array(),
+			$mq_filtros[] = array(
 				array(
-					array(
-						'key'   => '_convoca_estado_cuota',
-						'value' => $cuota_filter,
-					),
-				)
+					'key'   => '_convoca_estado_cuota',
+					'value' => $cuota_filter,
+				),
 			);
 		}
 
 		// Filter by privacidad (members#42): las solicitudes de supresión sin resolver.
 		$privacidad_filter = sanitize_text_field( $get_data['privacidad_filter'] ?? '' );
 		if ( 'supresion' === $privacidad_filter ) {
-			$args['meta_query'] = array_merge(
-				$args['meta_query'] ?? array(),
+			$mq_filtros[] = array(
+				'relation' => 'AND',
 				array(
-					'relation' => 'AND',
-					array(
-						'key'     => '_convoca_supresion_solicitada',
-						'compare' => 'EXISTS',
-					),
-					array(
-						'key'     => '_convoca_supresion_resuelta',
-						'compare' => 'NOT EXISTS',
-					),
-				)
+					'key'     => '_convoca_supresion_solicitada',
+					'compare' => 'EXISTS',
+				),
+				array(
+					'key'     => '_convoca_supresion_resuelta',
+					'compare' => 'NOT EXISTS',
+				),
 			);
 		}
 
 		// Filter by consentimiento (members#41).
 		$consentimiento_filter = sanitize_text_field( $get_data['consentimiento_filter'] ?? '' );
 		if ( 'con' === $consentimiento_filter || 'sin' === $consentimiento_filter ) {
-			$args['meta_query'] = array_merge(
-				$args['meta_query'] ?? array(),
+			$mq_filtros[] = array(
 				array(
-					array(
-						'key'     => '_convoca_consent_timestamp',
-						'compare' => ( 'con' === $consentimiento_filter ) ? 'EXISTS' : 'NOT EXISTS',
-					),
-				)
+					'key'     => '_convoca_consent_timestamp',
+					'compare' => ( 'con' === $consentimiento_filter ) ? 'EXISTS' : 'NOT EXISTS',
+				),
 			);
+		}
+
+		// AND entre la búsqueda (que por dentro es un OR) y cada filtro. Sin esto los filtros se perdían dentro
+		// del OR de la búsqueda (members#82).
+		$mq = array( 'relation' => 'AND' );
+		if ( is_array( $mq_busqueda ) ) {
+			$mq[] = $mq_busqueda;
+		}
+		foreach ( $mq_filtros as $clausula_filtro ) {
+			$mq[] = $clausula_filtro;
+		}
+		if ( count( $mq ) > 1 ) {
+			$args['meta_query'] = $mq;
 		}
 
 		$query = new \WP_Query( $args );
