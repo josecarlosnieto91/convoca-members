@@ -593,9 +593,20 @@ class Admin_Import_CSV {
 				'Members/Admin'
 			);
 
-			$message = sprintf( /* translators: %d: number of members */ __( '🎉 Importación completada. %d socios importados.', 'convoca-members' ), $imported );
+			// `_n()` y no `__()`: el camino largo se quedó atrás cuando se corrigió el plural del corto (#26) y
+			// decía «🎉 Importación completada. 1 socios importados» / «1 errores». Es lo único que ve quien da de
+			// alta a una persona a mano (members#74).
+			$message = sprintf(
+				/* translators: %d: number of members */
+				_n( '🎉 Importación completada. %d socio importado.', '🎉 Importación completada. %d socios importados.', $imported, 'convoca-members' ),
+				$imported
+			);
 			if ( ! empty( $errors ) ) {
-				$message .= ' ' . sprintf( /* translators: %d: error count */ __( '%d errores:', 'convoca-members' ), count( $errors ) ) . ' ' . implode( ' | ', array_slice( $errors, 0, 10 ) );
+				$message .= ' ' . sprintf(
+					/* translators: %d: error count */
+					_n( '%d error:', '%d errores:', count( $errors ), 'convoca-members' ),
+					count( $errors )
+				) . ' ' . implode( ' | ', array_slice( $errors, 0, 10 ) );
 			}
 
 			// Store result message and redirect.
