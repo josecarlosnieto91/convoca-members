@@ -47,6 +47,10 @@ final class AdminHorasTest extends TestCase {
 		$GLOBALS['_wp_stores']['posts']     = array();
 		$GLOBALS['_wp_stores']['post_meta'] = array();
 		$GLOBALS['_test_caps']              = array( 'gestionar_miembros' => true );
+		// Como en producción: una guarda que falla CORTA. Sin esto el arnés sigue adelante y una prueba de permisos
+		// acaba midiendo la redirección en vez del permiso (members#70). Misma convención que AdminProyectosTest,
+		// MemberEditorTest, AdminPageAccionesTest y otros cuatro ficheros.
+		$GLOBALS['_wp_die_lanza']           = true;
 		$_GET                               = array();
 		$_REQUEST                           = array();
 		$this->listado                      = new Admin_Horas();
@@ -60,6 +64,7 @@ final class AdminHorasTest extends TestCase {
 		$GLOBALS['_wp_stores']['post_meta'] = $this->previo['post_meta'];
 		$_GET                               = array();
 		$_REQUEST                           = array();
+		unset( $GLOBALS['_wp_die_lanza'] );
 	}
 
 	/**
@@ -240,7 +245,13 @@ final class AdminHorasTest extends TestCase {
 		$GLOBALS['_test_caps']['gestionar_miembros'] = false;
 		$_GET = array( 'record_id' => '70', 'new_status' => 'aprobada' );
 
-		$this->expectException( \RuntimeException::class );
-		$this->listado->process_action();
+		// El corte está activo (ver `setUp`) y se exige el MENSAJE: antes esta prueba pasaba porque el doble de
+		// `wp_safe_redirect` también lanza RuntimeException, así que medía la redirección y no el permiso.
+		try {
+			$this->listado->process_action();
+			$this->fail( 'sin capacidad no puede seguir: no cortó' );
+		} catch ( \RuntimeException $e ) {
+			$this->assertStringContainsString( 'permisos', strtolower( $e->getMessage() ), 'el corte es por permisos' );
+		}
 	}
 }
