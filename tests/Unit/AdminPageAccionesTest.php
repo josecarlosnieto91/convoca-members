@@ -151,12 +151,44 @@ final class AdminPageAccionesTest extends TestCase {
 	 * Registrar el contacto por WhatsApp sin ficha corta.
 	 */
 	public function test_whatsapp_sin_ficha(): void {
-		// Se manda `post_id` a 0 y no se omite: omitirlo dispara el aviso de `class-admin-page.php:592`
-		// (issue abierto), y aquí lo que se prueba es el corte por ficha inválida, no el aviso.
 		$_POST = array( 'nonce' => 'bueno', 'post_id' => '0' );
 
 		$this->expectException( \RuntimeException::class );
 		$this->pagina->ajax_log_whatsapp();
+	}
+
+	/**
+	 * Sin `post_id` en el POST tampoco hay aviso de PHP.
+	 *
+	 * `(int) ( wp_unslash( $_POST['post_id'] ) ?? 0 )` leía la clave **antes** del `??`, así que si no venía emitía
+	 * `Undefined array key "post_id"` en cada petición (members#68). El `??` iba detrás del `wp_unslash`, donde ya
+	 * no protege de nada.
+	 */
+	public function test_whatsapp_sin_post_id_no_avisa(): void {
+		$_POST = array( 'nonce' => 'bueno' );
+
+		$avisos   = array();
+		$cortado  = null;
+		set_error_handler(
+			static function ( int $errno, string $errstr ) use ( &$avisos ): bool {
+				$avisos[] = $errstr;
+				return true;
+			}
+		);
+
+		// **Sin `expectException`**: esa llamada corta el método y la aserción de después no se ejecuta nunca.
+		// La primera versión de esta prueba pasaba con el defecto puesto por eso mismo.
+		try {
+			$this->pagina->ajax_log_whatsapp();
+		} catch ( \RuntimeException $e ) {
+			$cortado = $e;
+		} finally {
+			restore_error_handler();
+		}
+
+		$this->assertNotNull( $cortado, 'sin ficha, el endpoint corta' );
+		$indefinidas = array_filter( $avisos, static fn( $a ) => false !== strpos( $a, 'Undefined array key' ) );
+		$this->assertSame( array(), array_values( $indefinidas ), 'sin avisos de clave indefinida: ' . implode( ' | ', $avisos ) );
 	}
 
 	/**

@@ -589,7 +589,10 @@ class Admin_Page extends \Convoca\Core\Admin\Pantalla_Admin {
 
 	public function ajax_log_whatsapp(): void {
 		check_ajax_referer( 'convoca_admin_nonce', 'nonce' );
-		$post_id = (int) ( wp_unslash( $_POST['post_id'] ) ?? 0 );
+		// `?? 0` aquí no protege de nada: se evalúa **después** de leer la clave. Si no existe, PHP 8 emite
+		// `Undefined array key "post_id"` y sigue con `null`. En producción es un warning por petición
+		// (members#68).
+		$post_id = isset( $_POST['post_id'] ) ? (int) wp_unslash( $_POST['post_id'] ) : 0;
 		if ( ! $post_id || ! current_user_can( 'edit_post', $post_id ) ) {
 			wp_die( esc_html__( 'No tienes permisos.', 'convoca-members' ) );
 		}

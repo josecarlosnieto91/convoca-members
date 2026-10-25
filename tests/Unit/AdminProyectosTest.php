@@ -133,8 +133,8 @@ final class AdminProyectosTest extends TestCase {
 		$this->assertStringNotContainsString( 'd63638', $this->listado->column_default( $futuro, 'fecha_fin' ) );
 		$this->assertSame( '—', $this->listado->column_default( $sin, 'fecha_fin' ) );
 		$this->assertSame( '2020-01-01', $this->listado->column_default( $vencido, 'fecha_inicio' ) );
-		// Defecto anotado (members#69): sin fecha, «Inicio» devuelve cadena vacía mientras «Fin» pinta raya.
-		$this->assertSame( '', $this->listado->column_default( $sin, 'fecha_inicio' ), 'celda vacía, no raya (defecto anotado)' );
+		// Las dos fechas se pintan igual: sin dato, raya (members#69). Antes «Inicio» devolvía cadena vacía.
+		$this->assertSame( '—', $this->listado->column_default( $sin, 'fecha_inicio' ), 'sin fecha, raya' );
 	}
 
 	/**

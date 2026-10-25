@@ -419,12 +419,16 @@ class Rest_API {
 		if ( function_exists( 'nocache_headers' ) ) {
 			nocache_headers();
 		}
-		if ( ! Member_Auth::is_authenticated() ) {
+		// **Con `$permitir_baja`**, si no, el socio de baja es indistinguible de uno sin sesión: `get_current_member_id()`
+		// devolvía 0 para él, `is_authenticated()` false, y esta función salía por arriba sin llegar nunca a la rama
+		// `member_baja`. El socio dado de baja recibía «no estás autenticado» en vez de «vuelve a darte de alta»
+		// (members#66).
+		$member_id = Member_Auth::get_current_member_id( true );
+		if ( ! $member_id ) {
 			return false;
 		}
 
-		$member_id = Member_Auth::get_current_member_id();
-		$status    = get_post_meta( $member_id, '_convoca_estado_miembro', true );
+		$status = get_post_meta( $member_id, '_convoca_estado_miembro', true );
 
 		if ( in_array( $status, array( 'activo', 'suspendido' ), true ) ) {
 			return true;

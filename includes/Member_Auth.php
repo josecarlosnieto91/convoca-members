@@ -211,7 +211,7 @@ class Member_Auth {
 	 *
 	 * @return int Member ID or 0 if not logged in.
 	 */
-	public static function get_current_member_id(): int {
+	public static function get_current_member_id( bool $permitir_baja = false ): int {
 		$token = self::get_current_token();
 		if ( ! $token ) {
 			return 0;
@@ -233,6 +233,12 @@ class Member_Auth {
 		// A member marked as 'baja' has no valid session, even if a stale
 		// transient survives. Destroy it and report logged out.
 		if ( get_post_meta( $member_id, '_convoca_estado_miembro', true ) === 'baja' ) {
+			// Un socio de baja no tiene sesión válida: se destruye y se sale. Pero con `$permitir_baja` se devuelve su
+			// id **sin** reabrir la sesión, para que quien pregunta pueda explicarle por qué no entra en vez de
+			// decirle «no estás autenticado» (members#66).
+			if ( $permitir_baja ) {
+				return $member_id;
+			}
 			delete_transient( self::TRANSIENT_PREFIX . $token );
 			return 0;
 		}

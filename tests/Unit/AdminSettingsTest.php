@@ -172,10 +172,32 @@ final class AdminSettingsTest extends TestCase {
 		// Comportamiento actual, anotado en members#67: `array_filter` sin `array_values` deja los huecos, así que
 		// la lista sale con claves 0 y 2. Al serializar a JSON eso deja de ser un array y pasa a ser un objeto.
 		$this->assertSame( array( 0 => 'Acceso al local', 2 => 'Clases' ), $salida['numerario']['advantages'], 'las líneas vacías se caen, pero los huecos se quedan' );
-		// `(float) '25,50'` da 25.0: la coma decimal se pierde al convertir. Anotado en members#67.
-		$this->assertSame( 25.0, $salida['numerario']['price'], 'la coma decimal se descarta (defecto anotado)' );
+		// La coma decimal se respeta: «25,50» son 25,50 €, no 25 (members#67).
+		$this->assertSame( 25.5, $salida['numerario']['price'], 'la coma decimal se conserva' );
+		$this->assertSame( 12.0, $salida['juvenil']['price'], 'un entero sigue siendo entero' );
 		$this->assertTrue( $salida['numerario']['active'] );
 		$this->assertFalse( $salida['juvenil']['active'], 'sin `active` no está activo' );
+	}
+
+	/**
+	 * Las dos formas de escribir un decimal valen: la coma española y el punto.
+	 */
+	public function test_las_dos_formas_de_decimal(): void {
+		$salida = $this->ajustes->sanitize_plans(
+			array(
+				'Coma'   => array( 'label' => 'Coma', 'price' => '25,50', 'hours' => '7,5' ),
+				'Punto'  => array( 'label' => 'Punto', 'price' => '25.50', 'hours' => '7.5' ),
+				'Entero' => array( 'label' => 'Entero', 'price' => '30', 'hours' => '8' ),
+				'Basura' => array( 'label' => 'Basura', 'price' => 'doce', 'hours' => '' ),
+			)
+		);
+
+		$this->assertSame( 25.5, $salida['coma']['price'] );
+		$this->assertSame( 25.5, $salida['punto']['price'] );
+		$this->assertSame( 30.0, $salida['entero']['price'] );
+		$this->assertSame( 0.0, $salida['basura']['price'], 'lo que no es número cae a cero, no revienta' );
+		$this->assertSame( 7.5, $salida['coma']['hours'] );
+		$this->assertSame( 7.5, $salida['punto']['hours'] );
 	}
 
 	/**

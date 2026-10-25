@@ -293,7 +293,10 @@ class Admin_Proyectos extends \WP_List_Table {
 				);
 
 			case 'fecha_inicio':
-				return $meta['fecha_inicio'] ?? '—';
+				// `?? '—'` solo cubre la clave ausente: si existe **vacía** devuelve `''` y la celda sale en blanco
+				// mientras «Fin» pinta raya. Las dos fechas se pintan igual (members#69).
+				$inicio = $meta['fecha_inicio'] ?? '';
+				return $inicio ? esc_html( $inicio ) : '—';
 
 			case 'fecha_fin':
 				$fin = $meta['fecha_fin'] ?? '';

@@ -157,6 +157,19 @@ class Admin_Settings {
 		);
 	}
 
+		/**
+	 * Convierte un número escrito por una persona a `float`.
+	 *
+	 * `(float) '25,50'` da **25**: PHP corta en la coma. En España la coma es el separador decimal y así lo manda el
+	 * formulario, así que un precio de 25,50 € se guardaba como 25 € (members#67). Se aceptan las dos formas.
+	 *
+	 * @param mixed $valor Valor del formulario.
+	 * @return float
+	 */
+	private static function a_decimal( $valor ): float {
+		return (float) str_replace( ',', '.', trim( (string) $valor ) );
+	}
+
 	public function sanitize_plans( $input ): array {
 		delete_option( self::CACHE_KEY );
 		if ( ! is_array( $input ) ) {
@@ -182,8 +195,8 @@ class Admin_Settings {
 			// ajustes a medias (members#77).
 			$sanitized[ $key ] = array(
 				'label'           => sanitize_text_field( $plan['label'] ?? '' ),
-				'price'           => max( 0.0, (float) ( $plan['price'] ?? 0 ) ),
-				'hours'           => max( 0.0, (float) ( $plan['hours'] ?? 0 ) ),
+				'price'           => max( 0.0, self::a_decimal( $plan['price'] ?? 0 ) ),
+				'hours'           => max( 0.0, self::a_decimal( $plan['hours'] ?? 0 ) ),
 				'modalidad'       => sanitize_text_field( $plan['modalidad'] ?? 'Numerario' ),
 				'payment_methods' => array_map( 'sanitize_text_field', (array) ( $plan['payment_methods'] ?? array() ) ),
 				'url_bizum'       => sanitize_url( $plan['url_bizum'] ?? '' ),
@@ -257,7 +270,7 @@ class Admin_Settings {
 					$sanitized[ $tk ]['levels'][ $idx ] = array(
 						'name'  => sanitize_text_field( $level['name'] ?? '' ),
 						'emoji' => sanitize_text_field( $level['emoji'] ?? '' ),
-						'hours' => (float) ( $level['hours'] ?? 0 ),
+						'hours' => self::a_decimal( $level['hours'] ?? 0 ),
 						'color' => sanitize_hex_color( $level['color'] ?? '' ) ?: '#000000',
 						'desc'  => sanitize_textarea_field( $level['desc'] ?? '' ),
 					);

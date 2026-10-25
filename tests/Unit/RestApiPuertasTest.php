@@ -212,10 +212,14 @@ final class RestApiPuertasTest extends TestCase {
 			$this->assertTrue( Rest_API::check_renewable_member(), 'con estado ' . $estado . ' se puede renovar' );
 		}
 
-		// De baja no se llega: `get_current_member_id()` tira la sesión antes. La rama `member_baja` de esta
-		// puerta es, por tanto, inalcanzable desde una petición real (ver members#<issue>).
+		// De baja **sí se llega** y tiene su propio mensaje: `check_renewable_member()` lee el id con
+		// `$permitir_baja = true`, así que distingue «estás de baja» de «no hay sesión» (members#66). Antes esta
+		// prueba afirmaba `false`, que es lo que devolvía por no poder distinguirlos.
 		$this->con_sesion( 55, 'baja' );
-		$this->assertFalse( Rest_API::check_renewable_member(), 'de baja la sesión ya no existe' );
+		$error = Rest_API::check_renewable_member();
+		$this->assertInstanceOf( \WP_Error::class, $error, 'de baja no renueva' );
+		$this->assertSame( 'member_baja', $error->get_error_code() );
+		$this->assertStringContainsString( 'Vuelve a darte de alta', $error->get_error_message() );
 
 		$this->con_sesion( 55, 'pendiente' );
 		$error = Rest_API::check_renewable_member();
