@@ -115,6 +115,30 @@ class EmailCtaTest extends TestCase
         }
     }
 
+    /**
+     * **Las veinte** tienen CTA de respaldo, traiga botón su cuerpo o no.
+     *
+     * La comprobación de arriba solo puede mirar las que no traen botón en el cuerpo por defecto, así que las que sí
+     * lo traen quedan fuera de su alcance **por diseño**: si alguien edita ese cuerpo desde el panel y quita el
+     * botón, el correo llega sin ninguna acción y nada lo avisa (members#76). Esta prueba cierra ese hueco mirando
+     * la tabla de CTA, no el cuerpo.
+     */
+    public function test_las_veinte_tienen_cta_de_respaldo(): void
+    {
+        $ctas = $this->ctas();
+
+        $this->assertCount( 20, $ctas, 'hay veinte plantillas' );
+
+        $sin_cta = array();
+        foreach ( $ctas as $slug => $cta ) {
+            if ( empty( $cta ) || empty( $cta[0] ) || empty( $cta[1] ) ) {
+                $sin_cta[] = $slug;
+            }
+        }
+
+        $this->assertSame( array(), $sin_cta, 'plantillas sin CTA de respaldo: ' . implode( ', ', $sin_cta ) );
+    }
+
     public function test_el_cta_de_respaldo_usa_una_variable_soportada(): void
     {
         foreach ( $this->ctas() as $slug => $cta ) {

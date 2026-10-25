@@ -1093,6 +1093,19 @@ class Email_Manager {
 			'renovacion_automatica'     => array( '{login_url}', __( 'Ver mi membresía', 'convoca-members' ) ),
 			'renovacion_completada'     => array( '{login_url}', __( 'Ver mi carnet', 'convoca-members' ) ),
 			'voluntariado_recordatorio' => array( '{login_url}', __( 'Registrar mis horas', 'convoca-members' ) ),
+
+			// Las nueve que faltaban (members#76). Su red era el cuerpo editable: si alguien quitaba el botón
+			// desde el panel, el correo llegaba sin ninguna acción y nada lo avisaba. Este CTA **solo se usa
+			// cuando el cuerpo no trae botón**, así que no cambia ningún correo actual.
+			'credenciales_acceso'               => array( '{login_url}', __( 'Acceder a Mi Área', 'convoca-members' ) ),
+			'objetivo_voluntariado_completado'  => array( '{login_url}', __( 'Ver mi voluntariado', 'convoca-members' ) ),
+			'voluntariado_cita'                 => array( '{login_url}', __( 'Ver la cita', 'convoca-members' ) ),
+			'voluntariado_acuerdo'              => array( '{login_url}', __( 'Ver el acuerdo', 'convoca-members' ) ),
+			'voluntariado_baja_solicitada'      => array( '{login_url}', __( 'Ver mi voluntariado', 'convoca-members' ) ),
+			'voluntariado_desvinculacion'       => array( '{login_url}', __( 'Ver mi voluntariado', 'convoca-members' ) ),
+			'voluntariado_horas_pendientes'     => array( '{login_url}', __( 'Registrar mis horas', 'convoca-members' ) ),
+			'confirm_email'                     => array( '{link_confirmacion}', __( 'Confirmar mi correo', 'convoca-members' ) ),
+			'verify_phone'                      => array( '{login_url}', __( 'Verificar mi teléfono', 'convoca-members' ) ),
 		);
 
 		return $ctas[ $slug ] ?? array();
