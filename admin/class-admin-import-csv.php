@@ -412,7 +412,14 @@ class Admin_Import_CSV {
 
 		$rows = array();
 		while ( ( $data = fgetcsv( $handle, 0, ',', '"', '' ) ) !== false ) {
-			if ( empty( array_filter( $data ) ) ) {
+			// Una fila con celdas vacías **o con solo espacios** no se importa ni cuenta como error.
+			//
+			// `array_filter()` sin callback no descarta `'   '` (el espacio es verdadero), así que una fila de
+			// relleno de una hoja de cálculo se procesaba y salía en el resumen como «1 fila con errores: nombre
+			// y email obligatorios» sobre una fila que no existe, con el cartel en aviso en vez de en verde
+			// (members#73). Y comparando contra `''` se respeta un `'0'` legítimo, que `array_filter()` a secas
+			// se comía (un DNI o un teléfono `0` no hacen vacía la fila).
+			if ( empty( array_filter( array_map( 'trim', $data ), static fn( $celda ) => '' !== $celda ) ) ) {
 				continue;
 			}
 			$row = array();
