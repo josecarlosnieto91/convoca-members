@@ -710,14 +710,21 @@ class Admin_Metaboxes {
 
 		$email = get_post_meta( $member_id, '_convoca_email', true );
 
-		$inscriptions = get_posts(
-			array(
-				'post_type'      => 'inscripcion',
-				'posts_per_page' => -1,
-				'meta_key'       => '_convoca_email',
-				'meta_value'     => $email,
-			)
-		);
+		// **Sin correo no se buscan inscripciones.** Se buscan por `_convoca_email`, así que con la cadena vacía lo que
+		// casa son las inscripciones sin correo — que son de otras personas. Medido: una ficha sin correo se llevaba
+		// por delante la inscripción de un tercero (members#80). Sin correo no se puede afirmar que sean suyas, así
+		// que no se tocan. Sus horas sí se borran: esas van por `_convoca_member_id`, que es inequívoco.
+		$inscriptions = array();
+		if ( '' !== (string) $email ) {
+			$inscriptions = get_posts(
+				array(
+					'post_type'      => 'inscripcion',
+					'posts_per_page' => -1,
+					'meta_key'       => '_convoca_email',
+					'meta_value'     => $email,
+				)
+			);
+		}
 		foreach ( $inscriptions as $insc ) {
 			wp_delete_post( $insc->ID, true );
 		}
@@ -759,7 +766,15 @@ class Admin_Metaboxes {
 		check_admin_referer( 'convoca_guardar_caducidad_' . $doc );
 
 		$fecha = isset( $_POST['fecha_caducidad'] ) ? sanitize_text_field( wp_unslash( $_POST['fecha_caducidad'] ) ) : '';
-		$fecha = preg_match( '/^\d{4}-\d{2}-\d{2}$/', $fecha ) ? $fecha : '';
+
+		// El patrón solo no basta: `2026-13-45` lo cumple (trece meses, cuarenta y cinco días) y dejaba el documento con
+		// una vigencia que no existe, dejando a quien compara contra hoy sin saber qué hacer con ella (members#80).
+		// `checkdate()` es quien dice si el día existe de verdad.
+		if ( preg_match( '/^(\d{4})-(\d{2})-(\d{2})$/', $fecha, $partes ) && checkdate( (int) $partes[2], (int) $partes[3], (int) $partes[1] ) ) {
+			$fecha = sprintf( '%04d-%02d-%02d', (int) $partes[1], (int) $partes[2], (int) $partes[3] );
+		} else {
+			$fecha = '';
+		}
 
 		if ( '' === $fecha ) {
 			delete_post_meta( $doc, '_convoca_fecha_caducidad' );
