@@ -173,12 +173,19 @@ class Admin_Settings {
 				continue;
 			}
 
+			// `max( 0.0, ... )`: un precio o unas horas negativas no significan nada y se guardaban tal cual. Un plan a
+			// -50 € deja el cobro roto y el socio sin poder renovar; el contraste está en `sanitize_settings()`, que
+			// acota sus números con `max`/`min` y aquí no había ninguna cota (members#77).
+			//
+			// `(array)`: `$plan['payment_methods'] ?? array()` protege del campo ausente pero NO de que llegue una
+			// cadena, y entonces `array_map()` revienta con `TypeError` en PHP 8 — durante el guardado, dejando los
+			// ajustes a medias (members#77).
 			$sanitized[ $key ] = array(
 				'label'           => sanitize_text_field( $plan['label'] ?? '' ),
-				'price'           => (float) ( $plan['price'] ?? 0 ),
-				'hours'           => (float) ( $plan['hours'] ?? 0 ),
+				'price'           => max( 0.0, (float) ( $plan['price'] ?? 0 ) ),
+				'hours'           => max( 0.0, (float) ( $plan['hours'] ?? 0 ) ),
 				'modalidad'       => sanitize_text_field( $plan['modalidad'] ?? 'Numerario' ),
-				'payment_methods' => array_map( 'sanitize_text_field', $plan['payment_methods'] ?? array() ),
+				'payment_methods' => array_map( 'sanitize_text_field', (array) ( $plan['payment_methods'] ?? array() ) ),
 				'url_bizum'       => sanitize_url( $plan['url_bizum'] ?? '' ),
 				'url_tarjeta'     => sanitize_url( $plan['url_tarjeta'] ?? '' ),
 				'advantages'      => array_filter( array_map( 'trim', explode( "\n", $plan['advantages_raw'] ?? '' ) ) ),

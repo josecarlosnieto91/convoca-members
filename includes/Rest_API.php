@@ -1590,12 +1590,25 @@ class Rest_API {
 		}
 
 		// ── Email (solo tras confirmación) ──
-		$nuevo_email  = sanitize_email( $request->get_param( 'email' ) ?? '' );
+		//
+		// Se mira el correo **pedido**, no el saneado. `sanitize_email()` de WordPress ya devuelve '' cuando el correo
+		// no es válido, así que la guarda de antes —`! empty( $nuevo_email )`— era falsa justo en el caso del correo
+		// malo: el `is_email()` de dentro nunca se ejecutaba, mandar `email: 'no-es-correo'` respondía **200** y el
+		// socio veía «guardado» sin que su correo cambiara. Ni error, ni aviso (members#78).
+		$email_pedido = $request->get_param( 'email' );
 		$email_actual = get_post_meta( $member_id, '_convoca_email', true );
-		if ( $request->get_param( 'email' ) !== null && ! empty( $nuevo_email ) && $nuevo_email !== $email_actual ) {
+
+		if ( null !== $email_pedido && '' !== trim( (string) $email_pedido ) ) {
+			$nuevo_email = sanitize_email( (string) $email_pedido );
+
 			if ( ! is_email( $nuevo_email ) ) {
 				return new \WP_REST_Response( array( 'error' => __( 'Email no válido.', 'convoca-members' ) ), 400 );
 			}
+		} else {
+			$nuevo_email = '';
+		}
+
+		if ( '' !== $nuevo_email && $nuevo_email !== $email_actual ) {
 
 			// Check not used by another member.
 			$duplicate = get_posts(

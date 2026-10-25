@@ -211,6 +211,35 @@ final class RestApiPerfilTest extends TestCase {
 	}
 
 	/**
+	 * Un correo mal escrito se rechaza **con su motivo**, no en silencio (members#78).
+	 *
+	 * Antes respondía 200: el socio veía «guardado» y su correo no cambiaba. La causa era que
+	 * `sanitize_email()` ya devuelve '' para un correo inválido, así que la guarda de fuera se
+	 * cortaba antes de llegar a la comprobación de dentro.
+	 */
+	public function test_un_correo_invalido_se_rechaza_con_motivo(): void {
+		$this->con_sesion();
+
+		$respuesta = $this->api->update_profile( new \WP_REST_Request( array( 'email' => 'no-es-correo' ) ) );
+
+		$this->assertSame( 400, $respuesta->get_status(), 'no se puede responder 200 y no hacer nada' );
+		$this->assertStringContainsString( 'no válido', (string) ( $respuesta->get_data()['error'] ?? '' ), 'y hay que decir por qué' );
+		$this->assertSame( '', (string) get_post_meta( 55, '_convoca_email_pendiente', true ), 'no queda nada pendiente' );
+	}
+
+	/**
+	 * Un correo **vacío** no intenta cambiar nada: no es un error, es que no se ha pedido el cambio.
+	 */
+	public function test_un_correo_vacio_no_intenta_cambiarlo(): void {
+		$this->con_sesion();
+
+		$respuesta = $this->api->update_profile( new \WP_REST_Request( array( 'email' => '' ) ) );
+
+		$this->assertSame( 200, $respuesta->get_status(), 'un correo vacío no es un error' );
+		$this->assertSame( '', (string) get_post_meta( 55, '_convoca_email_pendiente', true ) );
+	}
+
+	/**
 	 * Mandar el mismo correo que ya tiene no genera un pendiente absurdo.
 	 */
 	public function test_el_mismo_correo_no_hace_nada(): void {
