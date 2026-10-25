@@ -36,6 +36,15 @@ class EmailCtaTest extends TestCase
                 require_once $file;
             }
         }
+
+        // `install_defaults()` sale sin hacer nada si la opción ya existe, y `get_templates()` lee de ella. Si otra
+        // prueba dejó la opción puesta con las plantillas ya borradas (o el orden aleatorio pone esta prueba antes de
+        // que se instalen), los cuerpos salían VACÍOS y la comprobación de abajo pasaba por vacío: sin botón en
+        // ningún cuerpo, el `if` no se cumplía nunca y la prueba no medía nada. Se borra para que la instalación sea
+        // determinista.
+        if (class_exists('\\Convoca\\Members\\Email_Manager')) {
+            delete_option('convoca_email_templates');
+        }
     }
 
     /**
@@ -83,8 +92,20 @@ class EmailCtaTest extends TestCase
         }
 
         $ctas = $this->ctas();
+        $bodies = $this->bodies();
 
-        foreach ( $this->bodies() as $slug => $body ) {
+        // Sin esta aserción la prueba es **vacua**: con los cuerpos vacíos ninguna plantilla «trae botón», pero
+        // tampoco se puede exigir CTA a quien no tiene cuerpo que enviar. Medido: 9 de las 20 plantillas
+        // (`credenciales_acceso`, `objetivo_voluntariado_completado`, `voluntariado_cita`, `voluntariado_acuerdo`,
+        // `voluntariado_baja_solicitada`, `voluntariado_desvinculacion`, `voluntariado_horas_pendientes`,
+        // `confirm_email`, `verify_phone`) NO tienen CTA de respaldo: su red es el botón de su cuerpo por defecto.
+        // Si alguien edita ese cuerpo y quita el botón, el correo llega sin acción y nada lo avisa.
+        $this->assertNotEmpty(
+            array_filter($bodies),
+            'Los cuerpos por defecto tienen que existir: sin ellos esta comprobación no mide nada.'
+        );
+
+        foreach ( $bodies as $slug => $body ) {
             if ( false === strpos( $body, 'email-btn' ) ) {
                 $this->assertNotEmpty(
                     $ctas[ $slug ],

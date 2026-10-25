@@ -646,7 +646,9 @@ class Admin_Horas extends \WP_List_Table {
 	}
 
 	public function column_horas( $item ) {
-		return get_post_meta( $item->ID, '_convoca_horas', true ) . 'h';
+		// Numérica por origen (`(float) $_POST['horas']`), pero toda salida se escapa: es la única columna del
+		// fichero que devolvía texto sin pasar por `esc_html()`.
+		return esc_html( get_post_meta( $item->ID, '_convoca_horas', true ) . 'h' );
 	}
 
 	public function column_descripcion( $item ) {
@@ -654,11 +656,24 @@ class Admin_Horas extends \WP_List_Table {
 	}
 
 	public function column_estado( $item ) {
-		$estado = get_post_meta( $item->ID, '_convoca_estado', true ) ?: 'pendiente';
-		$class  = 'status-' . $estado;
-		$label  = ucfirst( $estado );
+		$estado = (string) get_post_meta( $item->ID, '_convoca_estado', true );
 
-		return sprintf( '<span class="%s">%s</span>', $class, $label );
+		// Lista blanca **y** escape. El estado llega de un campo de texto: `sanitize_text_field()` quita etiquetas
+		// pero NO comillas, así que guardado como `x" onclick="alert(1)` salía
+		// `<span class="status-x" onclick="alert(1)">` — un atributo de verdad, no texto (members#75). Es XSS
+		// almacenado de quien tiene permiso de gestión contra quien administra el sitio.
+		//
+		// Y de paso: un estado que no existe producía una clase CSS inventada que no tiene estilo, así que la fila
+		// salía sin color y nadie sabía por qué. Se pinta como pendiente, que es el estado por defecto.
+		if ( ! in_array( $estado, array( 'pendiente', 'aprobada', 'rechazada' ), true ) ) {
+			$estado = 'pendiente';
+		}
+
+		return sprintf(
+			'<span class="%s">%s</span>',
+			esc_attr( 'status-' . $estado ),
+			esc_html( ucfirst( $estado ) )
+		);
 	}
 
 	public function column_acciones( $item ) {
