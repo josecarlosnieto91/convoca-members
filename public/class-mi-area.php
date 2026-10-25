@@ -51,7 +51,11 @@ class Mi_Area {
 		$exp       = (int) get_post_meta( $member_id, '_convoca_email_token_exp', true );
 		$pendiente = get_post_meta( $member_id, '_convoca_email_pendiente', true );
 
-		if ( empty( $token ) || empty( $stored ) || ! hash_equals( $stored, $token ) ) {
+		// `empty( $pendiente )` va en la misma guarda que el token: sin cambio pendiente **no hay nada que aplicar**, y
+		// escribir el pendiente vacío dejaba al socio **sin correo** — sin avisos, sin recuperar la contraseña y sin que
+		// le llegue el enlace siguiente (members#79). Pasa de verdad: el pendiente y el token se borran en sitios
+		// distintos, así que cualquier camino que borre uno y no el otro abría esta puerta.
+		if ( empty( $token ) || empty( $stored ) || ! hash_equals( $stored, $token ) || empty( $pendiente ) ) {
 			wp_safe_redirect( add_query_arg( 'convoca_confirm_error', 'token', home_url( '/mi-cuenta/' ) ) );
 			exit;
 		}
