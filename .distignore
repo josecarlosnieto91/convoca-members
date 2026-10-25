@@ -51,3 +51,11 @@ wpml-config.xml
 bin/
 # Política del proyecto: los .htaccess no viajan (el empaquetador ya los quita).
 .htaccess
+# Herramientas de desarrollo que no pintan nada en la instalación de un cliente
+cliff.toml
+.commitlintrc.json
+.coverage-floor
+.hermes/
+.pre-commit-config.yaml
+.specify/
+phpstan-bootstrap.php
