@@ -201,7 +201,11 @@ class Admin_Settings {
 				'payment_methods' => array_map( 'sanitize_text_field', (array) ( $plan['payment_methods'] ?? array() ) ),
 				'url_bizum'       => sanitize_url( $plan['url_bizum'] ?? '' ),
 				'url_tarjeta'     => sanitize_url( $plan['url_tarjeta'] ?? '' ),
-				'advantages'      => array_filter( array_map( 'trim', explode( "\n", $plan['advantages_raw'] ?? '' ) ) ),
+				// `array_values` **no** es cosmético: `array_filter` conserva las claves originales, así
+				// que «A\n\nB» quedaba como `[0 => 'A', 2 => 'B']`. Al serializar a JSON eso deja de ser
+				// una lista y pasa a ser un objeto `{"0":…,"2":…}`, y el front lo recorre mal. Además
+				// `array_filter` sin callback tira el `'0'`, que es una ventaja legítima (members#67).
+				'advantages'      => array_values( array_filter( array_map( 'trim', explode( "\n", (string) ( $plan['advantages_raw'] ?? '' ) ) ), static fn( $v ) => '' !== (string) $v ) ),
 				'active'          => isset( $plan['active'] ) ? (bool) $plan['active'] : false,
 				'order'           => (int) ( $plan['order'] ?? 0 ),
 				'emoji'           => sanitize_text_field( $plan['emoji'] ?? '' ),

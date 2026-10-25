@@ -169,9 +169,9 @@ final class AdminSettingsTest extends TestCase {
 
 		$this->assertArrayNotHasKey( '', $salida, 'sin clave no hay plan' );
 		$this->assertSame( array( 'juvenil', 'numerario' ), array_keys( $salida ), 'claves en minúscula y ordenadas por `order`' );
-		// Comportamiento actual, anotado en members#67: `array_filter` sin `array_values` deja los huecos, así que
-		// la lista sale con claves 0 y 2. Al serializar a JSON eso deja de ser un array y pasa a ser un objeto.
-		$this->assertSame( array( 0 => 'Acceso al local', 2 => 'Clases' ), $salida['numerario']['advantages'], 'las líneas vacías se caen, pero los huecos se quedan' );
+		// Las líneas vacías se caen **y la lista queda indexada de cero**: `[0, 2]` al serializar a JSON deja de
+		// ser una lista y pasa a ser un objeto `{"0":…,"2":…}` (members#67).
+		$this->assertSame( array( 'Acceso al local', 'Clases' ), $salida['numerario']['advantages'], 'sin huecos' );
 		// La coma decimal se respeta: «25,50» son 25,50 €, no 25 (members#67).
 		$this->assertSame( 25.5, $salida['numerario']['price'], 'la coma decimal se conserva' );
 		$this->assertSame( 12.0, $salida['juvenil']['price'], 'un entero sigue siendo entero' );
@@ -198,6 +198,33 @@ final class AdminSettingsTest extends TestCase {
 		$this->assertSame( 0.0, $salida['basura']['price'], 'lo que no es número cae a cero, no revienta' );
 		$this->assertSame( 7.5, $salida['coma']['hours'] );
 		$this->assertSame( 7.5, $salida['punto']['hours'] );
+	}
+
+	/**
+	 * Las ventajas quedan como lista de verdad, no como objeto.
+	 *
+	 * `array_filter` conserva las claves: «A\n\nB» daba `[0, 2]`, y al serializar eso deja de ser un array y pasa
+	 * a ser `{"0":"A","2":"B"}`. Y sin callback tiraba el `'0'`, que es una ventaja legítima (members#67).
+	 */
+	public function test_las_ventajas_son_una_lista(): void {
+		$salida = $this->ajustes->sanitize_plans(
+			array(
+				'Socio' => array(
+					'label'          => 'Socio',
+					'advantages_raw' => "Acceso al local\n\nClases\n\nTerraza",
+				),
+				'Cero'  => array(
+					'label'          => 'Cero',
+					'advantages_raw' => "0\nUno",
+				),
+			)
+		);
+
+		$ventajas = $salida['socio']['advantages'];
+		$this->assertSame( array( 'Acceso al local', 'Clases', 'Terraza' ), $ventajas );
+		$this->assertSame( array( 0, 1, 2 ), array_keys( $ventajas ), 'indexada de cero, sin huecos' );
+		$this->assertSame( '["Acceso al local","Clases","Terraza"]', \wp_json_encode( $ventajas ), 'se serializa como lista, no como objeto' );
+		$this->assertContains( '0', $salida['cero']['advantages'], 'el «0» es una ventaja, no un vacío' );
 	}
 
 	/**
