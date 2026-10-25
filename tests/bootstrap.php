@@ -209,8 +209,22 @@ namespace {
         }
     }
 
-    if (!\function_exists('add_action')) { function add_action($h, $c, $p = 10, $a = 1) { return true; } }
-    if (!\function_exists('add_shortcode')) { function add_shortcode($t, $c) { return true; } }
+    // Los enganches se APUNTAN (con un no-op no se podía afirmar qué queda enganchado; el arranque del
+    // plugin entero era incomprobable).
+    if (!\function_exists('add_action')) {
+        function add_action($h, $c, $p = 10, $a = 1) {
+            $GLOBALS['_wp_stores']['acciones'][$h][] = $c;
+            return true;
+        }
+    }
+    // Los shortcodes se APUNTAN: con un no-op, ninguna prueba podía afirmar que un shortcode existe
+    // (y un shortcode registrado dos veces o no registrado pasaba igual).
+    if (!\function_exists('add_shortcode')) {
+        function add_shortcode($t, $c) {
+            $GLOBALS['_wp_stores']['shortcodes'][$t] = $c;
+            return true;
+        }
+    }
     // Hooks con registro REAL. Con un `apply_filters` que devolvía el valor tal cual y un
     // `add_filter` que no hacía nada, cualquier contrato basado en filtros pasaba sin
     // comprobar nada: un check que no puede fallar no es un check.
@@ -334,9 +348,36 @@ namespace {
     if (!\class_exists('WP_REST_Request')) {
         class WP_REST_Request {
             private $params = [];
-            public function __construct($m = 'GET', $r = '') {}
+            private $json = [];
+            private $headers = [];
+
+            public function __construct($m = 'GET', $r = '') {
+                unset($m, $r);
+            }
+
             public function get_param($k) { return $this->params[$k] ?? null; }
             public function set_param($k, $v) { $this->params[$k] = $v; }
+
+            /** Parámetros de la petición, como WordPress (los de la query y el cuerpo). */
+            public function get_params() { return $this->params; }
+
+            /**
+             * Cuerpo JSON ya decodificado. La prueba lo fija con `set_json_params()`.
+             *
+             * @param array $datos Datos.
+             * @return void
+             */
+            public function set_json_params($datos) { $this->json = (array) $datos; }
+            public function get_json_params() { return $this->json; }
+
+            /**
+             * Cabecera de la petición (null si no viene, como WordPress).
+             *
+             * @param string $nombre Nombre de la cabecera.
+             * @return string|null
+             */
+            public function set_header($nombre, $valor) { $this->headers[strtolower((string) $nombre)] = $valor; }
+            public function get_header($nombre) { return $this->headers[strtolower((string) $nombre)] ?? null; }
         }
     }
 
@@ -353,6 +394,11 @@ namespace {
 
             public function get_var($q = null, $x = 0, $y = 0) {
                 $qs = (string)$q;
+                // Contador del limitador de intentos del núcleo: la prueba fija el valor crudo
+                // (bits altos = caducidad, bajos = intentos) para poder medir el camino «bloqueado».
+                if (isset($GLOBALS['_cm_contador']) && false !== strpos($qs, 'SELECT option_value FROM')) {
+                    return (string) $GLOBALS['_cm_contador'];
+                }
                 if (\strpos($qs, 'SHOW TABLES') !== false) return 'wp_convoca_member_sequence';
                 if (\strpos($qs, 'SELECT MAX(member_number)') !== false) return '0';
                 if (\strpos($qs, 'SELECT CAST(option_value AS UNSIGNED)') !== false) return '42';
@@ -407,4 +453,53 @@ namespace {
 			require_once $convoca_core_ruta;
 		}
 	}
+
+    // ─── Respuestas JSON de AJAX ─────────────────────────
+    // En WordPress `wp_send_json_*()` termina la petición (`wp_die`). Aquí se apunta la respuesta y se
+    // lanza una excepción para que el manejador NO siga ejecutando lo que venía detrás: con un no-op,
+    // una guarda de permisos parecía no proteger nada.
+
+    if (!\function_exists('wp_send_json_success')) {
+        function wp_send_json_success($datos = null, $estado = null) {
+            $GLOBALS['_cm_json'][] = array('tipo' => 'success', 'datos' => $datos, 'estado' => $estado);
+            throw new \RuntimeException('wp_send_json_success');
+        }
+    }
+    if (!\function_exists('wp_send_json_error')) {
+        function wp_send_json_error($datos = null, $estado = null) {
+            $GLOBALS['_cm_json'][] = array('tipo' => 'error', 'datos' => $datos, 'estado' => $estado);
+            throw new \RuntimeException('wp_send_json_error');
+        }
+    }
+    if (!\function_exists('check_ajax_referer')) {
+        /** La prueba decide con `_cm_nonce_ok` (por defecto, válido). */
+        function check_ajax_referer($accion = -1, $campo = '_ajax_nonce', $die = true) {
+            unset($die);
+            $GLOBALS['_cm_nonces_comprobados'][] = $accion;
+            if (empty($GLOBALS['_cm_nonce_ok']) && array_key_exists('_cm_nonce_ok', $GLOBALS)) {
+                throw new \RuntimeException('check_ajax_referer');
+            }
+            return true;
+        }
+    }
+    if (!\function_exists('rest_url')) { function rest_url($ruta = '') { return 'https://example.test/wp-json/' . ltrim((string) $ruta, '/'); } }
+    if (!\function_exists('do_blocks')) { function do_blocks($contenido) { return (string) $contenido; } }
+    if (!\function_exists('is_email')) { function is_email($email) { return false !== filter_var((string) $email, FILTER_VALIDATE_EMAIL); } }
+    if (!\function_exists('sanitize_email')) { function sanitize_email($email) { return (string) filter_var((string) $email, FILTER_SANITIZE_EMAIL); } }
+    if (!\function_exists('wp_create_nonce')) { function wp_create_nonce($accion = -1) { return 'nonce-' . md5((string) $accion); } }
+
+    // ─── Caché de objetos ────────────────────────────────
+    // El limitador de intentos del núcleo consulta la caché antes de tocar la base: con un no-op no se
+    // podía probar el camino «bloqueado» sin montar toda la tabla de opciones.
+    if (!\function_exists('wp_cache_get')) {
+        function wp_cache_get($key, $grupo = '') {
+            return $GLOBALS['_cm_cache'][$grupo . '|' . $key] ?? false;
+        }
+    }
+    if (!\function_exists('wp_cache_set')) {
+        function wp_cache_set($key, $valor, $grupo = '', $ttl = 0) {
+            $GLOBALS['_cm_cache'][$grupo . '|' . $key] = $valor;
+            return true;
+        }
+    }
 }
