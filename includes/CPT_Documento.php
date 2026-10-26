@@ -126,8 +126,14 @@ class CPT_Documento {
 			return $vacio;
 		}
 
-		$hoy   = current_time( 'Y-m-d' );
-		$dias  = (int) floor( ( strtotime( $fecha . ' 00:00:00' ) - strtotime( $hoy . ' 00:00:00' ) ) / DAY_IN_SECONDS );
+		$hoy = current_time( 'Y-m-d' );
+		// **Días de calendario, no diferencia de instantes.** Con `strtotime()` y `floor()` sobre segundos, dos
+		// fechas a distinto lado de un cambio de hora no distan un número entero de días: medido en Madrid del 23
+		// al 26 de octubre de 2026, la resta da -3,0417 días y `floor()` lo convierte en **-4** (members#84).
+		// `diff()` sobre fechas sin hora cuenta días de calendario y no mira desfases.
+		$dias  = (int) ( new \DateTimeImmutable( $hoy, new \DateTimeZone( 'UTC' ) ) )
+			->diff( new \DateTimeImmutable( $fecha, new \DateTimeZone( 'UTC' ) ) )
+			->format( '%r%a' );
 		$aviso = (int) apply_filters( 'convoca_members_dias_aviso_caducidad', 30, $documento_id );
 
 		if ( $dias < 0 ) {

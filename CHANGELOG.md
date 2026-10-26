@@ -1,3 +1,14 @@
+## [2.9.19] — 2026-10-26
+
+### Cambiado
+
+- **cierre de los 18 issues del repositorio**
+- El guardado de una ficha sin correo ya no borra inscripciones ajenas (RGPD).
+- La coma decimal de un plan se respeta: 25,50 son 25,50 EUR, no 25.
+- La puerta de renovacion distingue un socio de baja de uno sin sesion.
+- Las ventajas de un plan se guardan como lista y no pierden el cero.
+- Las nueve plantillas de correo que faltaban tienen CTA de respaldo.
+
 ## [2.9.18] — 2026-10-22
 
 ### Añadido
