@@ -86,8 +86,9 @@ class PDF_Card {
 		// cualquier etiqueta.
 		$clase_tarjeta = ( $para_pdf && mb_strlen( (string) $plan ) > 15 ) ? 'card card--plan-largo' : 'card';
 
-		$fecha     = get_post_meta( $post_id, '_convoca_fecha_alta', true );
-		$fecha_fmt = $fecha ? wp_date( 'd/m/Y', strtotime( $fecha ) ) : wp_date( 'd/m/Y', strtotime( get_the_date( 'Y-m-d', $post_id ) ) );
+		$fecha      = get_post_meta( $post_id, '_convoca_fecha_alta', true );
+		$fecha_base = $fecha ? (string) $fecha : (string) get_the_date( 'Y-m-d', $post_id );
+		$fecha_fmt  = wp_date( 'd/m/Y', (int) strtotime( $fecha_base ) );
 
 		// Seniority badge (D3): whole years since registration (fecha_alta,
 		// preserved on reactivation). Hidden for members with < 1 year.
@@ -343,7 +344,7 @@ class PDF_Card {
                 <div class="footer">
                     <div class="info">
                         <div>' . esc_html__( 'FECHA DE ALTA:', 'convoca-members' ) . ' ' . esc_html( $fecha_fmt ) . '</div>
-                        <div style="margin-top:4px;">WWW.' . esc_html( $site_domain ) . '</div>
+                        <div style="margin-top:4px;">WWW.' . esc_html( (string) $site_domain ) . '</div>
                     </div>
                     <div class="qr-code">
                         ' . $qr_img . '
@@ -476,6 +477,11 @@ class PDF_Card {
 
 		$pdf_content = file_get_contents( $result );
 		wp_delete_file( $result );
+
+		if ( false === $pdf_content ) {
+			throw new \RuntimeException( 'No se pudo leer el PDF generado.' );
+		}
+
 		return $pdf_content;
 	}
 

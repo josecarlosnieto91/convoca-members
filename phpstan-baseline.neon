@@ -355,12 +355,6 @@ parameters:
 			path: admin/class-admin-member-editor.php
 
 		-
-			message: '#^Parameter \#1 \$text of function esc_html expects string, int\|string\|false given\.$#'
-			identifier: argument.type
-			count: 1
-			path: admin/class-admin-metaboxes.php
-
-		-
 			message: '#^Argument of an invalid type array\<int\|WP_Post\>\|null supplied for foreach, only iterables are supported\.$#'
 			identifier: foreach.nonIterable
 			count: 1
@@ -555,12 +549,6 @@ parameters:
 		-
 			message: '#^Method Convoca\\Members\\Admin_Settings\:\:sanitize_volunteer_fields\(\) return type has no value type specified in iterable type array\.$#'
 			identifier: missingType.iterableValue
-			count: 1
-			path: admin/class-admin-settings.php
-
-		-
-			message: '#^Parameter \#1 \$text of function esc_html expects string, string\|false given\.$#'
-			identifier: argument.type
 			count: 1
 			path: admin/class-admin-settings.php
 
@@ -1021,18 +1009,6 @@ parameters:
 			path: includes/Members_Upgrade_Manager.php
 
 		-
-			message: '#^Method Convoca\\Members\\PDF_Card\:\:generate_pdf\(\) should return string but returns string\|false\.$#'
-			identifier: return.type
-			count: 1
-			path: includes/PDF_Card.php
-
-		-
-			message: '#^Parameter \#1 \$datetime of function strtotime expects string, int\|string\|false given\.$#'
-			identifier: argument.type
-			count: 1
-			path: includes/PDF_Card.php
-
-		-
 			message: '#^Parameter \#1 \$string of function strtoupper expects string, string\|null given\.$#'
 			identifier: argument.type
 			count: 1
@@ -1040,12 +1016,6 @@ parameters:
 
 		-
 			message: '#^Parameter \#1 \$text of function esc_html expects string, string\|false given\.$#'
-			identifier: argument.type
-			count: 1
-			path: includes/PDF_Card.php
-
-		-
-			message: '#^Parameter \#2 \$timestamp of function wp_date expects int\|null, int\|false given\.$#'
 			identifier: argument.type
 			count: 1
 			path: includes/PDF_Card.php

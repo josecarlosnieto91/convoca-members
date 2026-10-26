@@ -100,7 +100,7 @@ class Admin_Metaboxes {
 										- <a href="<?php echo esc_url( $url ); ?>" target="_blank" class="button button-small"><?php esc_html_e( 'Ver PDF', 'convoca-members' ); ?></a>
 									<?php endif; ?>
 									<span style="color: #666; font-size: 0.9em; margin-left: 10px;">
-										(Generado el <?php echo esc_html( get_the_date( 'd/m/Y H:i', $doc ) ); ?>)
+										(Generado el <?php echo esc_html( (string) get_the_date( 'd/m/Y H:i', $doc ) ); ?>)
 									</span>
 									<?php
 									// Vigencia del documento (issue #31). La web prometía «control de vigencia» y el tipo

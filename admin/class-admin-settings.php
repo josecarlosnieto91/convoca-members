@@ -360,7 +360,8 @@ class Admin_Settings {
 			echo '<td>' . esc_html( (string) $conv_b['quien'] ) . '<br><small>' . esc_html( $conv_b['es_persona'] ? __( 'una persona', 'convoca-members' ) : __( 'una conexión (puede afectar a varias personas)', 'convoca-members' ) ) . '</small></td>';
 			echo '<td><code>' . esc_html( (string) $conv_b['accion'] ) . '</code></td>';
 			echo '<td>' . (int) $conv_b['intentos'] . '</td>';
-			echo '<td>' . esc_html( wp_date( 'd/m/Y H:i', (int) $conv_b['bloqueado_hasta'] ) ) . '</td>';
+			$fecha_bloqueo = wp_date( 'd/m/Y H:i', (int) $conv_b['bloqueado_hasta'] );
+			echo '<td>' . esc_html( false === $fecha_bloqueo ? '—' : $fecha_bloqueo ) . '</td>';
 			echo '<td><a class="button button-primary" href="' . esc_url( $conv_url ) . '">' . esc_html__( 'Desbloquear', 'convoca-members' ) . '</a></td>';
 			echo '</tr>';
 		}
