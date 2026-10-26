@@ -159,6 +159,7 @@ class Xlsx_Reader {
 	 */
 	private static function col_index( string $ref ): int {
 		$col = preg_replace( '/[0-9]/', '', $ref );
+		$col = null === $col ? '' : $col;
 		$idx = 0;
 		$len = strlen( $col );
 		for ( $i = 0; $i < $len; $i++ ) {

@@ -99,7 +99,7 @@ class Form_Voluntariado {
 		// Inject data-config into the wrapper.
 		$html = str_replace(
 			'id="conv-vol-wrapper"',
-			'id="conv-vol-wrapper" data-config=\'' . esc_attr( wp_json_encode( $config ) ) . '\'',
+			'id="conv-vol-wrapper" data-config=\'' . esc_attr( (string) wp_json_encode( $config ) ) . '\'',
 			$html
 		);
 

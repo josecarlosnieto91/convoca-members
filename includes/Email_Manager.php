@@ -1372,7 +1372,7 @@ class Email_Manager {
 							)
 						);
 
-						$text = (string) preg_replace( '#https?://(' . $nombres . ')(?=["\'])#i', '{$1}', $text );
+						$text = (string) preg_replace( '#https?://(' . $nombres . ')(?=["\'])#i', '{$1}', (string) $text );
 
 						$templates[ $slug ][ $field ] = $text;
 					}

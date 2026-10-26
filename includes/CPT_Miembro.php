@@ -410,9 +410,9 @@ class CPT_Miembro {
 	 * («Bronce») y el carnet seguía sin distinguir la modalidad.
 	 */
 	private static function normalizar_plan( string $texto ): string {
-		$texto = preg_replace( '/[^\p{L}\p{N}\s]/u', '', $texto );
-		$texto = function_exists( 'remove_accents' ) ? \remove_accents( (string) $texto ) : (string) $texto;
-		return strtolower( trim( preg_replace( '/\s+/', ' ', $texto ) ) );
+		$texto = (string) preg_replace( '/[^\p{L}\p{N}\s]/u', '', $texto );
+		$texto = function_exists( 'remove_accents' ) ? \remove_accents( $texto ) : $texto;
+		return strtolower( trim( (string) preg_replace( '/\s+/', ' ', $texto ) ) );
 	}
 
 	/**

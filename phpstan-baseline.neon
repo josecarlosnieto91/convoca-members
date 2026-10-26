@@ -547,12 +547,6 @@ parameters:
 			path: admin/class-admin-settings.php
 
 		-
-			message: '#^Parameter \#1 \$text of function esc_attr expects string, string\|null given\.$#'
-			identifier: argument.type
-			count: 1
-			path: admin/class-admin-webhooks.php
-
-		-
 			message: '#^Argument of an invalid type array\<int\|WP_Post\>\|null supplied for foreach, only iterables are supported\.$#'
 			identifier: foreach.nonIterable
 			count: 1
@@ -563,18 +557,6 @@ parameters:
 			identifier: argument.type
 			count: 1
 			path: admin/class-csv-exporter.php
-
-		-
-			message: '#^Offset int\<0, max\> might not exist on string\|null\.$#'
-			identifier: offsetAccess.notFound
-			count: 1
-			path: includes/Admin/class-xlsx-reader.php
-
-		-
-			message: '#^Parameter \#1 \$string of function strlen expects string, string\|null given\.$#'
-			identifier: argument.type
-			count: 1
-			path: includes/Admin/class-xlsx-reader.php
 
 		-
 			message: '#^Method Convoca\\Members\\Admin_Status\:\:check_cron\(\) return type has no value type specified in iterable type array\.$#'
@@ -687,12 +669,6 @@ parameters:
 		-
 			message: '#^Method Convoca\\Members\\CPT_Miembro\:\:get_plans\(\) return type has no value type specified in iterable type array\.$#'
 			identifier: missingType.iterableValue
-			count: 1
-			path: includes/CPT_Miembro.php
-
-		-
-			message: '#^Parameter \#1 \$string of function trim expects string, string\|null given\.$#'
-			identifier: argument.type
 			count: 1
 			path: includes/CPT_Miembro.php
 
@@ -877,12 +853,6 @@ parameters:
 			path: includes/Email_Manager.php
 
 		-
-			message: '#^Parameter \#3 \$subject of function preg_replace expects array\<float\|int\|string\>\|string, string\|null given\.$#'
-			identifier: argument.type
-			count: 1
-			path: includes/Email_Manager.php
-
-		-
 			message: '#^Method Convoca\\Members\\Email_Verifier\:\:get_providers\(\) should return array\<Convoca\\Members\\Providers\\Email_Verifier_Provider\> but returns array\|null\.$#'
 			identifier: return.type
 			count: 1
@@ -1001,18 +971,6 @@ parameters:
 			identifier: missingType.iterableValue
 			count: 1
 			path: includes/Members_Upgrade_Manager.php
-
-		-
-			message: '#^Parameter \#1 \$string of function strtoupper expects string, string\|null given\.$#'
-			identifier: argument.type
-			count: 1
-			path: includes/PDF_Card.php
-
-		-
-			message: '#^Parameter \#1 \$text of function esc_html expects string, string\|false given\.$#'
-			identifier: argument.type
-			count: 1
-			path: includes/PDF_Card.php
 
 		-
 			message: '#^Method Convoca\\Members\\PDF_Document\:\:add_pdf_to_email\(\) has parameter \$attachments with no value type specified in iterable type array\.$#'
@@ -1211,18 +1169,6 @@ parameters:
 			identifier: missingType.iterableValue
 			count: 1
 			path: includes/Voluntariado_Manager.php
-
-		-
-			message: '#^Parameter \#1 \$text of function esc_attr expects string, string\|false given\.$#'
-			identifier: argument.type
-			count: 1
-			path: public/class-form-handler.php
-
-		-
-			message: '#^Parameter \#1 \$text of function esc_attr expects string, string\|false given\.$#'
-			identifier: argument.type
-			count: 1
-			path: public/class-form-voluntariado.php
 
 		-
 			message: '#^Cannot access property \$post_title on WP_Post\|null\.$#'

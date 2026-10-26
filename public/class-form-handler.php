@@ -96,7 +96,7 @@ class Form_Handler {
 		// Inject data-config into the wrapper.
 		$html = str_replace(
 			'id="convoca-form-alta"',
-			'id="convoca-form-alta" data-config=\'' . esc_attr( wp_json_encode( $config ) ) . '\'',
+			'id="convoca-form-alta" data-config=\'' . esc_attr( (string) wp_json_encode( $config ) ) . '\'',
 			$html
 		);
 

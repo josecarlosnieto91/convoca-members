@@ -293,7 +293,7 @@ class Admin_Webhooks {
 		echo '<input type="hidden" name="convoca_webhook_action" value="' . esc_attr( $action ) . '">';
 
 		if ( $is_edit ) {
-			echo '<input type="hidden" name="webhook_id" value="' . esc_attr( $edit_id ) . '">';
+			echo '<input type="hidden" name="webhook_id" value="' . esc_attr( (string) $edit_id ) . '">';
 		}
 
 		echo '<table class="form-table">';

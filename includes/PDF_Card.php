@@ -88,7 +88,7 @@ class PDF_Card {
 
 		$fecha      = get_post_meta( $post_id, '_convoca_fecha_alta', true );
 		$fecha_base = $fecha ? (string) $fecha : (string) get_the_date( 'Y-m-d', $post_id );
-		$fecha_fmt  = wp_date( 'd/m/Y', (int) strtotime( $fecha_base ) );
+		$fecha_fmt  = (string) wp_date( 'd/m/Y', (int) strtotime( $fecha_base ) );
 
 		// Seniority badge (D3): whole years since registration (fecha_alta,
 		// preserved on reactivation). Hidden for members with < 1 year.
@@ -109,7 +109,7 @@ class PDF_Card {
 		$logo_html  = \Convoca\Core\Utils::get_branding_html( 'members', '', $logo_style );
 
 		$verification_hash = hash_hmac( 'sha256', 'member_' . $post_id, \Convoca\Core\Utils::get_persistent_salt() );
-		$site_domain       = strtoupper( wp_parse_url( home_url(), PHP_URL_HOST ) );
+		$site_domain       = strtoupper( (string) wp_parse_url( home_url(), PHP_URL_HOST ) );
 		$verify_url        = home_url( '/verificar-socio/?id=' . $post_id . '&token=' . $verification_hash );
 
 		// QR local (E2E-7): generar con chillerlan como Certificate_Generator,
