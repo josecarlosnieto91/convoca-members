@@ -255,7 +255,7 @@ class Admin_Import_CSV {
 		if ( ! $headers ) {
 			fclose( $handle ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_fclose
 			wp_die( esc_html__( 'CSV vacío o sin cabeceras.', 'convoca-members' ) ); }
-		$headers = array_map( 'trim', $headers );
+		$headers = array_map( static fn( $valor ): string => trim( (string) $valor ), $headers );
 
 		$rows  = array();
 		$total = 0;
@@ -405,7 +405,10 @@ class Admin_Import_CSV {
 
 		// Read all rows into memory.
 		// phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_fopen -- CSV parsing requires direct file access.
-		$handle  = fopen( $filepath, 'r' );
+		$handle = fopen( $filepath, 'r' );
+		if ( false === $handle ) {
+			wp_die( esc_html__( 'No se pudo abrir el archivo para importar.', 'convoca-members' ) );
+		}
 		$headers = fgetcsv( $handle, 0, ',', '"', '' );
 		if ( ! $headers ) {
 			fclose( $handle ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_fclose
@@ -420,7 +423,7 @@ class Admin_Import_CSV {
 			// y email obligatorios» sobre una fila que no existe, con el cartel en aviso en vez de en verde
 			// (members#73). Y comparando contra `''` se respeta un `'0'` legítimo, que `array_filter()` a secas
 			// se comía (un DNI o un teléfono `0` no hacen vacía la fila).
-			if ( empty( array_filter( array_map( 'trim', $data ), static fn( $celda ) => '' !== $celda ) ) ) {
+			if ( empty( array_filter( array_map( static fn( $celda ): string => trim( (string) $celda ), $data ), static fn( $celda ) => '' !== $celda ) ) ) {
 				continue;
 			}
 			$row = array();
@@ -429,7 +432,7 @@ class Admin_Import_CSV {
 					continue;
 				}
 				$idx           = array_search( $header, $headers, true );
-				$row[ $field ] = $idx !== false ? trim( $data[ $idx ] ?? '' ) : '';
+				$row[ $field ] = $idx !== false ? trim( (string) ( $data[ $idx ] ?? '' ) ) : '';
 			}
 			$rows[] = $row;
 		}
