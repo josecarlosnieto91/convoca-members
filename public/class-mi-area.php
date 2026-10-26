@@ -419,7 +419,7 @@ class Mi_Area {
 			return sprintf(
 				'<div class="conv-profile-login">%s <a href="%s" class="button">%s</a></div>',
 				__( 'Inicia sesión para ver tu perfil.', 'convoca-members' ),
-				wp_login_url( get_permalink() ),
+				wp_login_url( (string) get_permalink() ),
 				__( 'Iniciar sesión', 'convoca-members' )
 			);
 		}

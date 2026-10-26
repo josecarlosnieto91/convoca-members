@@ -1065,7 +1065,9 @@ class Email_Manager {
 		if ( '' === $dominios ) {
 			// Por defecto, el dominio del propio sitio (el del email configurado arriba): así cada
 			// instalación reconoce los suyos y el código no lleva el nombre de ninguna asociación.
-			$propio   = (string) substr( strrchr( (string) ( $settings['admin_email'] ?? get_option( 'admin_email' ) ), '@' ), 1 );
+			$correo   = (string) ( $settings['admin_email'] ?? get_option( 'admin_email' ) );
+			$arroba   = strrchr( $correo, '@' );
+			$propio   = false === $arroba ? '' : substr( $arroba, 1 );
 			$dominios = 'getconvoca.app' . ( '' !== $propio ? '|' . $propio : '' );
 		}
 

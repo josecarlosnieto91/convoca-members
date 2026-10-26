@@ -288,7 +288,7 @@ class Cron_Manager {
 	 * Runs daily but checks if we're in a new quarter.
 	 */
 	private function process_volunteer_reminders(): void {
-		$current_quarter = 'Q' . ceil( wp_date( 'n' ) / 3 ) . '-' . wp_date( 'Y' );
+		$current_quarter = 'Q' . ceil( (int) wp_date( 'n' ) / 3 ) . '-' . wp_date( 'Y' );
 
 		$args = array(
 			'post_type'      => 'miembro',
