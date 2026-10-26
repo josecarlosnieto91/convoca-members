@@ -53,7 +53,11 @@ class Certificate_Generator {
 	 * Fecha de caducidad (emisión + validez) en formato MySQL.
 	 */
 	private static function validity_expiry_mysql(): string {
-		return wp_date( 'Y-m-d H:i:s', time() + ( self::validity_years() * YEAR_IN_SECONDS ) );
+		$caduca = time() + ( self::validity_years() * YEAR_IN_SECONDS );
+		$fecha  = wp_date( 'Y-m-d H:i:s', $caduca );
+
+		// Si wp_date() no puede formatear, la fecha no se guarda vacía en silencio.
+		return false === $fecha ? gmdate( 'Y-m-d H:i:s', $caduca ) : $fecha;
 	}
 
 	/**

@@ -229,18 +229,6 @@ parameters:
 			path: admin/class-admin-import-csv.php
 
 		-
-			message: '#^Parameter \#1 \$filename of function filemtime expects string, string\|false given\.$#'
-			identifier: argument.type
-			count: 1
-			path: admin/class-admin-import-csv.php
-
-		-
-			message: '#^Parameter \#1 \$filename of function unlink expects string, string\|false given\.$#'
-			identifier: argument.type
-			count: 1
-			path: admin/class-admin-import-csv.php
-
-		-
 			message: '#^Parameter \#1 \$stream of function fclose expects resource, resource\|false given\.$#'
 			identifier: argument.type
 			count: 2
@@ -345,12 +333,6 @@ parameters:
 		-
 			message: '#^Method Convoca\\Members\\Admin_List\:\:sin_papelera_bulk\(\) return type has no value type specified in iterable type array\.$#'
 			identifier: missingType.iterableValue
-			count: 1
-			path: admin/class-admin-list.php
-
-		-
-			message: '#^Parameter \#1 \$string of function md5 expects string, string\|false given\.$#'
-			identifier: argument.type
 			count: 1
 			path: admin/class-admin-list.php
 
@@ -771,12 +753,6 @@ parameters:
 		-
 			message: '#^Method Convoca\\Members\\Certificate_Generator\:\:get_proyectos_con_horas\(\) return type has no value type specified in iterable type array\.$#'
 			identifier: missingType.iterableValue
-			count: 1
-			path: includes/Certificate_Generator.php
-
-		-
-			message: '#^Method Convoca\\Members\\Certificate_Generator\:\:validity_expiry_mysql\(\) should return string but returns string\|false\.$#'
-			identifier: return.type
 			count: 1
 			path: includes/Certificate_Generator.php
 

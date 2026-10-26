@@ -345,7 +345,8 @@ class Admin_Import_CSV {
 
 		// Los restos de una importación abandonada en el primer paso se limpian aquí (viven dos horas).
 		// phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_glob, WordPress.WP.AlternativeFunctions.file_system_operations_filemtime -- Directorio propio del sitio.
-		foreach ( (array) glob( $dir . '/*.csv' ) as $viejo ) {
+		$restos = glob( $dir . '/*.csv' );
+		foreach ( is_array( $restos ) ? $restos : array() as $viejo ) {
 			if ( filemtime( $viejo ) < time() - 2 * HOUR_IN_SECONDS ) {
 				unlink( $viejo ); // phpcs:ignore WordPress.WP.AlternativeFunctions.unlink_unlink -- Limpieza de restos.
 			}
