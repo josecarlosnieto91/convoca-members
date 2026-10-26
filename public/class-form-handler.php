@@ -89,7 +89,9 @@ class Form_Handler {
 
 		ob_start();
 		include CONVOCA_MEMBERS_DIR . 'templates/form-alta.php';
-		$html = ob_get_clean();
+		// ob_get_clean() devuelve false si no había búfer: sin el cast, str_replace()
+		// recibiría false y el HTML saldría vacío en silencio.
+		$html = (string) ob_get_clean();
 
 		// Inject data-config into the wrapper.
 		$html = str_replace(

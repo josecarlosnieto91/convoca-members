@@ -1291,19 +1291,7 @@ parameters:
 			path: public/class-form-handler.php
 
 		-
-			message: '#^Parameter \#3 \$subject of function str_replace expects array\<string\>\|string, string\|false given\.$#'
-			identifier: argument.type
-			count: 1
-			path: public/class-form-handler.php
-
-		-
 			message: '#^Parameter \#1 \$text of function esc_attr expects string, string\|false given\.$#'
-			identifier: argument.type
-			count: 1
-			path: public/class-form-voluntariado.php
-
-		-
-			message: '#^Parameter \#3 \$subject of function str_replace expects array\<string\>\|string, string\|false given\.$#'
 			identifier: argument.type
 			count: 1
 			path: public/class-form-voluntariado.php
