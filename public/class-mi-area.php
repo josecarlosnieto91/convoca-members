@@ -122,7 +122,7 @@ class Mi_Area {
 			echo esc_html__( 'Para renovar tu membresía, inicia sesión con tu email y código.', 'convoca-members' );
 			echo ' <a href="' . esc_url( home_url( '/mi-cuenta/' ) ) . '">' . esc_html__( 'Acceder a Mi Cuenta', 'convoca-members' ) . '</a>';
 			echo '</div>';
-			return ob_get_clean();
+			return (string) ob_get_clean();
 		}
 
 		$miembro    = get_post( $member_id );
@@ -184,7 +184,7 @@ class Mi_Area {
 		});
 		</script>
 		<?php
-		return ob_get_clean();
+		return (string) ob_get_clean();
 	}
 
 	/**
@@ -237,7 +237,7 @@ class Mi_Area {
 
 		echo '</div>';
 
-		return ob_get_clean();
+		return (string) ob_get_clean();
 	}
 
 	/**

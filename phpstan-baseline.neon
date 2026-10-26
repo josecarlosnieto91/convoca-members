@@ -1291,24 +1291,6 @@ parameters:
 			path: public/class-mi-area.php
 
 		-
-			message: '#^Method Convoca\\Members\\Mi_Area\:\:render\(\) should return string but returns string\|false\.$#'
-			identifier: return.type
-			count: 1
-			path: public/class-mi-area.php
-
-		-
-			message: '#^Method Convoca\\Members\\Mi_Area\:\:render_renovar\(\) should return string but returns string\|false\.$#'
-			identifier: return.type
-			count: 2
-			path: public/class-mi-area.php
-
-		-
-			message: '#^Method Convoca\\Members\\Verificar_Certificado\:\:render\(\) should return string but returns string\|false\.$#'
-			identifier: return.type
-			count: 1
-			path: public/class-verificar-certificado.php
-
-		-
 			message: '#^Parameter \#1 \$text of function esc_html expects string, string\|false given\.$#'
 			identifier: argument.type
 			count: 1

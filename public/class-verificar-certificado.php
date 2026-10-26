@@ -120,6 +120,6 @@ class Verificar_Certificado {
 		</div>
 		<?php
 
-		return ob_get_clean();
+		return (string) ob_get_clean();
 	}
 }
