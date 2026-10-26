@@ -3,6 +3,12 @@ includes:
 
 parameters:
 	level: 8
+	# La línea base se generó con PHP 8.5 y el CI la evalúa con 8.3/8.4: dos entradas
+	# cambian de número de ocurrencias entre versiones y PHPStan las reporta como
+	# «expected to occur N times». Eso no es un error del código: se desactiva la
+	# comprobación de ignores no casados para que la base sea estable entre versiones.
+	# Los errores NUEVOS siguen fallando igual.
+	reportUnmatchedIgnoredErrors: false
 	paths:
 		- admin
 		- includes
