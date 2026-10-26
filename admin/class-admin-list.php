@@ -760,7 +760,9 @@ class Admin_List extends \WP_List_Table {
 	}
 
 	public function column_fecha( $item ): string {
-		return get_the_date( 'd/m/Y', $item );
+		$fecha = get_the_date( 'd/m/Y', $item );
+
+		return false === $fecha ? '' : (string) $fecha;
 	}
 
 	/**

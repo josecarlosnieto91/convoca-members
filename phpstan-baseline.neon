@@ -271,12 +271,6 @@ parameters:
 			path: admin/class-admin-list.php
 
 		-
-			message: '#^Method Convoca\\Members\\Admin_List\:\:column_fecha\(\) should return string but returns int\|string\|false\.$#'
-			identifier: return.type
-			count: 1
-			path: admin/class-admin-list.php
-
-		-
 			message: '#^Method Convoca\\Members\\Admin_List\:\:column_nombre\(\) has parameter \$item with no type specified\.$#'
 			identifier: missingType.parameter
 			count: 1
