@@ -379,6 +379,12 @@ parameters:
 			path: admin/class-admin-proyectos.php
 
 		-
+			message: '#^Cannot cast int\<min, \-1\>\|int\<1, max\>\|WP_Error to int\.$#'
+			identifier: cast.int
+			count: 1
+			path: admin/class-admin-proyectos.php
+
+		-
 			message: '#^Method Convoca\\Members\\Admin_Proyectos\:\:add_menu\(\) has no return type specified\.$#'
 			identifier: missingType.return
 			count: 1
@@ -436,12 +442,6 @@ parameters:
 			message: '#^Method Convoca\\Members\\Admin_Proyectos\:\:render_page\(\) has no return type specified\.$#'
 			identifier: missingType.return
 			count: 1
-			path: admin/class-admin-proyectos.php
-
-		-
-			message: '#^Parameter \#1 \$post_id of function update_post_meta expects int, int\<min, \-1\>\|int\<1, max\>\|WP_Error given\.$#'
-			identifier: argument.type
-			count: 4
 			path: admin/class-admin-proyectos.php
 
 		-
@@ -531,12 +531,6 @@ parameters:
 		-
 			message: '#^Argument of an invalid type array\<int\|WP_Post\>\|null supplied for foreach, only iterables are supported\.$#'
 			identifier: foreach.nonIterable
-			count: 1
-			path: admin/class-csv-exporter.php
-
-		-
-			message: '#^Parameter \#1 \$post of method Convoca\\Members\\CSV_Exporter\:\:build_row\(\) expects WP_Post, int\|WP_Post given\.$#'
-			identifier: argument.type
 			count: 1
 			path: admin/class-csv-exporter.php
 
@@ -913,8 +907,8 @@ parameters:
 			path: includes/Hours_Manager.php
 
 		-
-			message: '#^Access to an undefined property object\:\:\$display_name\.$#'
-			identifier: property.notFound
+			message: '#^Call to function is_array\(\) with array will always evaluate to true\.$#'
+			identifier: function.alreadyNarrowedType
 			count: 1
 			path: includes/Integracion_Contratos.php
 
@@ -927,12 +921,6 @@ parameters:
 		-
 			message: '#^Method Convoca\\Members\\Integracion_Contratos\:\:filtrar_identidad\(\) return type has no value type specified in iterable type array\.$#'
 			identifier: missingType.iterableValue
-			count: 1
-			path: includes/Integracion_Contratos.php
-
-		-
-			message: '#^Method Convoca\\Members\\Integracion_Contratos\:\:filtrar_identidad\(\) should return array\{autenticado\: bool, member_id\: int, datos\: array\} but returns array\.$#'
-			identifier: return.type
 			count: 1
 			path: includes/Integracion_Contratos.php
 

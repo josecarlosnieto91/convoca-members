@@ -189,6 +189,10 @@ class CSV_Exporter {
 			$header_labels,
 			( function () use ( $query, $columns ) {
 				foreach ( $query->posts as $post ) {
+					if ( ! $post instanceof \WP_Post ) {
+						continue;
+					}
+
 					yield $this->build_row( $post, $columns );
 				}
 			} )()

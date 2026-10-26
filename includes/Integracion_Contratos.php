@@ -85,8 +85,17 @@ class Integracion_Contratos {
 	 * @return array{autenticado: bool, member_id: int, datos: array}
 	 */
 	public static function filtrar_identidad( $identidad ): array {
+		// El contrato del núcleo son tres claves: si llega otra cosa, se completa aquí y no se propaga.
+		$identidad = array_merge(
+			array(
+				'autenticado' => false,
+				'member_id'   => 0,
+				'datos'       => array(),
+			),
+			is_array( $identidad ) ? $identidad : array()
+		);
+
 		if ( ! Member_Auth::is_authenticated() ) {
-			// Se devuelve lo que venga: si no hay sesión, el valor por defecto del núcleo ya es «nadie».
 			return $identidad;
 		}
 
@@ -228,7 +237,7 @@ class Integracion_Contratos {
 			// Sin duplicados: quien tiene rol y meta a la vez entra una sola vez.
 			$salida[ $id ] = array(
 				'id'     => $id,
-				'nombre' => (string) $usuario->display_name,
+				'nombre' => isset( $usuario->display_name ) ? (string) $usuario->display_name : '',
 			);
 		}
 
