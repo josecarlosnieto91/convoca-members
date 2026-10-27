@@ -449,7 +449,7 @@ class Admin_Proyectos extends \WP_List_Table {
 			wp_die( esc_html( $result->get_error_message() ) );
 		}
 
-		$post_id = (int) $post_id;
+		$post_id = (int) $result;
 
 		// Save Meta.
 		update_post_meta( $post_id, '_convoca_fecha_inicio', sanitize_text_field( wp_unslash( $_POST['fecha_inicio'] ) ) );

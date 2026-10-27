@@ -80,3 +80,9 @@ parameters:
 			message: '#Parameter \#2 \$user_id of function get_the_author_meta#'
 			identifier: argument.type
 			path: includes/Email_Manager.php
+		# WP_Query::$posts lo declara el stub oficial como WP_Post[]|int[]|null. En este
+		# código solo se recorre después de ejecutar la consulta, donde siempre es WP_Post[].
+		# No es deuda del plugin: es el stub oficial el que no puede demostrarlo.
+		-
+			message: '#Cannot access property \$\w+ on int\|WP_Post#'
+			identifier: property.nonObject

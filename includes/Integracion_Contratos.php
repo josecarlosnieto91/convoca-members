@@ -81,7 +81,7 @@ class Integracion_Contratos {
 	 * propio código de reserva detrás. Ahora lo pregunta el núcleo y contesta Members, que es quien tiene la
 	 * sesión.
 	 *
-	 * @param array $identidad Respuesta por defecto (nadie).
+	 * @param mixed $identidad Respuesta por defecto (nadie).
 	 * @return array{autenticado: bool, member_id: int, datos: array}
 	 */
 	public static function filtrar_identidad( $identidad ): array {

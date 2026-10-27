@@ -37,18 +37,6 @@ parameters:
 			path: admin/class-admin-horas.php
 
 		-
-			message: '#^Cannot access property \$ID on int\|WP_Post\.$#'
-			identifier: property.nonObject
-			count: 8
-			path: admin/class-admin-horas.php
-
-		-
-			message: '#^Cannot access property \$post_content on int\|WP_Post\.$#'
-			identifier: property.nonObject
-			count: 1
-			path: admin/class-admin-horas.php
-
-		-
 			message: '#^Method Convoca\\Members\\Admin_Horas\:\:column_acciones\(\) has no return type specified\.$#'
 			identifier: missingType.return
 			count: 1
@@ -337,50 +325,14 @@ parameters:
 			path: admin/class-admin-page.php
 
 		-
-			message: '#^Cannot access property \$ID on int\|WP_Post\.$#'
-			identifier: property.nonObject
-			count: 5
-			path: admin/class-admin-page.php
-
-		-
-			message: '#^Cannot access property \$post_title on int\|WP_Post\.$#'
-			identifier: property.nonObject
-			count: 1
-			path: admin/class-admin-page.php
-
-		-
 			message: '#^Argument of an invalid type array\<int\|WP_Post\>\|null supplied for foreach, only iterables are supported\.$#'
 			identifier: foreach.nonIterable
 			count: 1
 			path: admin/class-admin-proyectos.php
 
 		-
-			message: '#^Cannot access property \$ID on int\|WP_Post\.$#'
-			identifier: property.nonObject
-			count: 4
-			path: admin/class-admin-proyectos.php
-
-		-
 			message: '#^Cannot access property \$display_name on WP_User\|false\.$#'
 			identifier: property.nonObject
-			count: 1
-			path: admin/class-admin-proyectos.php
-
-		-
-			message: '#^Cannot access property \$post_content on int\|WP_Post\.$#'
-			identifier: property.nonObject
-			count: 1
-			path: admin/class-admin-proyectos.php
-
-		-
-			message: '#^Cannot access property \$post_title on int\|WP_Post\.$#'
-			identifier: property.nonObject
-			count: 1
-			path: admin/class-admin-proyectos.php
-
-		-
-			message: '#^Cannot cast int\<min, \-1\>\|int\<1, max\>\|WP_Error to int\.$#'
-			identifier: cast.int
 			count: 1
 			path: admin/class-admin-proyectos.php
 
@@ -531,6 +483,12 @@ parameters:
 		-
 			message: '#^Argument of an invalid type array\<int\|WP_Post\>\|null supplied for foreach, only iterables are supported\.$#'
 			identifier: foreach.nonIterable
+			count: 1
+			path: admin/class-csv-exporter.php
+
+		-
+			message: '#^Parameter \#1 \$post of method Convoca\\Members\\CSV_Exporter\:\:build_row\(\) expects WP_Post, int\|WP_Post given\.$#'
+			identifier: argument.type
 			count: 1
 			path: admin/class-csv-exporter.php
 
@@ -907,18 +865,6 @@ parameters:
 			path: includes/Hours_Manager.php
 
 		-
-			message: '#^Call to function is_array\(\) with array will always evaluate to true\.$#'
-			identifier: function.alreadyNarrowedType
-			count: 1
-			path: includes/Integracion_Contratos.php
-
-		-
-			message: '#^Method Convoca\\Members\\Integracion_Contratos\:\:filtrar_identidad\(\) has parameter \$identidad with no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: includes/Integracion_Contratos.php
-
-		-
 			message: '#^Method Convoca\\Members\\Integracion_Contratos\:\:filtrar_identidad\(\) return type has no value type specified in iterable type array\.$#'
 			identifier: missingType.iterableValue
 			count: 1
@@ -1060,24 +1006,6 @@ parameters:
 			message: '#^Argument of an invalid type array\<int\|WP_Post\>\|null supplied for foreach, only iterables are supported\.$#'
 			identifier: foreach.nonIterable
 			count: 6
-			path: includes/Rest_API.php
-
-		-
-			message: '#^Cannot access property \$ID on int\|WP_Post\.$#'
-			identifier: property.nonObject
-			count: 28
-			path: includes/Rest_API.php
-
-		-
-			message: '#^Cannot access property \$post_content on int\|WP_Post\.$#'
-			identifier: property.nonObject
-			count: 1
-			path: includes/Rest_API.php
-
-		-
-			message: '#^Cannot access property \$post_title on int\|WP_Post\.$#'
-			identifier: property.nonObject
-			count: 3
 			path: includes/Rest_API.php
 
 		-
