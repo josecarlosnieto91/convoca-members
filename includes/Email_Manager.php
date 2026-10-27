@@ -498,15 +498,26 @@ class Email_Manager {
 	 *
 	 * @param int   $post_id Member ID.
 	 * @param array $args Optional args (link_pago).
+	 * @param array<string, mixed> $args
 	 */
 	public function send_recordatorio_pago( int $post_id, array $args = array() ): void {
 		$this->send( 'recordatorio_pago', $post_id, $args );
 	}
 
+	/**
+	 * Documentación del método.
+	 *
+	 * @param array<string, mixed> $args
+	 */
 	public function send_renovacion( int $post_id, array $args = array() ): void {
 		$this->send( 'renovacion', $post_id, $args );
 	}
 
+	/**
+	 * Documentación del método.
+	 *
+	 * @param array<string, mixed> $args
+	 */
 	public function send_renovacion_automatica( int $post_id, array $args = array() ): void {
 		$this->send( 'renovacion_automatica', $post_id, $args );
 	}
@@ -605,6 +616,8 @@ class Email_Manager {
 	/**
 	 * Send credentials email (username + password) after approval.
 	 * The extra vars are provided by Process_Member.
+	 *
+	 * @param array<string, mixed> $extra_vars
 	 */
 	public function send_credenciales( int $post_id, array $extra_vars = array() ): void {
 		$this->send( 'credenciales_acceso', $post_id, $extra_vars );
@@ -691,6 +704,15 @@ class Email_Manager {
 
 	/* ── Core send logic ───────────────────────────────── */
 
+	/**
+	 * Envía un correo de plantilla.
+	 *
+	 * @param string               $template_slug Plantilla.
+	 * @param int                  $post_id       Entrada asociada.
+	 * @param array<string, mixed> $extra_vars    Variables extra.
+	 * @param string               $to_email      Destinatario.
+	 * @param array<int, string>   $attachments   Rutas de adjuntos.
+	 */
 	private function send( string $template_slug, int $post_id, array $extra_vars = array(), string $to_email = '', array $attachments = array() ): void {
 		$templates = get_option( self::OPTION, array() );
 		$tpl       = $templates[ $template_slug ] ?? null;
@@ -821,6 +843,8 @@ class Email_Manager {
 	 *
 	 * @param int   $post_id    Member post ID.
 	 * @param array $extra_vars Vars inyectadas por el caller (credenciales, etc.).
+	 * @param array<string, mixed> $extra_vars
+	 * @return array<string, mixed>
 	 */
 	private function build_variables( int $post_id, array $extra_vars = array() ): array {
 		$meta = fn( string $key ) => get_post_meta( $post_id, '_convoca_' . $key, true );
@@ -1035,6 +1059,8 @@ class Email_Manager {
 
 	/**
 	 * Replace template variables.
+	 *
+	 * @param array<string, mixed> $vars
 	 */
 	private function replace_vars( string $text, array $vars ): string {
 		return str_replace( array_keys( $vars ), array_values( $vars ), $text );
@@ -1082,6 +1108,11 @@ class Email_Manager {
 		return str_replace( '.', '\.', $dominios );
 	}
 
+	/**
+	 * Documentación del método.
+	 *
+	 * @return array{}|array{0: string, 1: string}
+	 */
 	private static function default_cta( string $slug ): array {
 		$ctas = array(
 			'solicitud_recibida'        => array( '{login_url}', __( 'Acceder a Mi Área', 'convoca-members' ) ),
@@ -1204,10 +1235,20 @@ class Email_Manager {
 
 	/* ── Getters / Setters for admin ───────────────────── */
 
+	/**
+	 * Plantillas de correo guardadas.
+	 *
+	 * @return array<string, mixed>
+	 */
 	public static function get_templates(): array {
 		return get_option( self::OPTION, array() );
 	}
 
+	/**
+	 * Documentación del método.
+	 *
+	 * @param array<string, mixed> $templates
+	 */
 	public static function save_templates( array $templates ): void {
 		update_option( self::OPTION, $templates );
 	}

@@ -85,7 +85,7 @@ class Admin_Proyectos extends \WP_List_Table {
 	/**
 	 * Enqueue assets for the custom editor.
 	 */
-	public function enqueue_assets( $hook ) {
+	public function enqueue_assets( mixed $hook ): void {
 		if ( strpos( $hook, 'conv-proyecto-editor' ) !== false ) {
 			$this->encolar_estilo_comun();
 		}
@@ -104,7 +104,7 @@ class Admin_Proyectos extends \WP_List_Table {
 		);
 	}
 
-	public function add_menu() {
+	public function add_menu(): void {
 		$this->registrar_subpagina(
 			'conv-members',
 			__( 'Proyectos', 'convoca-members' ),
@@ -124,7 +124,7 @@ class Admin_Proyectos extends \WP_List_Table {
 		);
 	}
 
-	public function render_page() {
+	public function render_page(): void {
 		$this->init_table();
 		$this->prepare_items();
 		?>
@@ -192,9 +192,10 @@ class Admin_Proyectos extends \WP_List_Table {
 				__( 'Descripción', 'convoca-members' ),
 			),
 			( static function () use ( $query ) {
-				foreach ( $query->posts as $post ) {
-					$responsable_id = (int) get_post_meta( $post->ID, '_convoca_responsable', true );
-					$responsable    = $responsable_id ? ( get_userdata( $responsable_id )?->display_name ?? '' ) : '';
+				foreach ( (array) $query->posts as $post ) {
+					$responsable_id   = (int) get_post_meta( $post->ID, '_convoca_responsable', true );
+					$responsable_user = $responsable_id ? get_userdata( $responsable_id ) : false;
+					$responsable      = $responsable_user instanceof \WP_User ? $responsable_user->display_name : '';
 
 					yield array(
 						$post->post_title,
@@ -230,7 +231,7 @@ class Admin_Proyectos extends \WP_List_Table {
 		);
 	}
 
-	public function prepare_items() {
+	public function prepare_items(): void {
 		$per_page     = 20;
 		$current_page = $this->get_pagenum();
 		$search       = isset( $_REQUEST['s'] ) ? sanitize_text_field( wp_unslash( $_REQUEST['s'] ) ) : '';
@@ -249,7 +250,7 @@ class Admin_Proyectos extends \WP_List_Table {
 		}
 
 		$query       = new \WP_Query( $args );
-		$this->items = $query->posts;
+		$this->items = (array) $query->posts;
 
 		$this->set_pagination_args(
 			array(
@@ -270,6 +271,7 @@ class Admin_Proyectos extends \WP_List_Table {
 	 * Render a table column.
 	 *
 	 * @param \WP_Post $item Row item.
+	 * @return mixed
 	 */
 	public function column_cb( $item ) {
 		return sprintf( '<input type="checkbox" name="bulk-delete[]" value="%s" />', $item->ID );
@@ -279,6 +281,7 @@ class Admin_Proyectos extends \WP_List_Table {
 	 * Render a table column.
 	 *
 	 * @param \WP_Post $item Row item.
+	 * @return mixed
 	 */
 	public function column_default( $item, $column_name ) {
 		$meta = CPT_Proyecto::get_meta( $item->ID );
@@ -324,14 +327,14 @@ class Admin_Proyectos extends \WP_List_Table {
 		}
 	}
 
-	public function no_items() {
+	public function no_items(): void {
 		esc_html_e( 'No se encontraron proyectos.', 'convoca-members' );
 	}
 
 	/**
 	 * Render the custom editor page.
 	 */
-	public function render_editor() {
+	public function render_editor(): void {
 		$post_id  = isset( $_GET['id'] ) ? (int) $_GET['id'] : 0;
 		$proyecto = $post_id ? get_post( $post_id ) : null;
 		$meta     = $post_id ? CPT_Proyecto::get_meta( $post_id ) : array(
@@ -419,7 +422,7 @@ class Admin_Proyectos extends \WP_List_Table {
 	/**
 	 * Handle save from admin form.
 	 */
-	public function handle_save_admin() {
+	public function handle_save_admin(): void {
 		check_admin_referer( 'convoca_save_proyecto_nonce' );
 
 		if ( ! current_user_can( 'gestionar_miembros' ) ) {

@@ -288,6 +288,7 @@ class Member_Auth {
 	 * Get the data of the currently logged-in member securely.
 	 *
 	 * @return array|null Array or null if not logged in.
+	 * @return array<string, mixed>
 	 */
 	public static function get_current_member_data(): ?array {
 		$member_id = self::get_current_member_id();

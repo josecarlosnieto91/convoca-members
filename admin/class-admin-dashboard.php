@@ -121,7 +121,7 @@ class Admin_Dashboard {
 	/**
 	 * Render a single stat box.
 	 */
-	private function render_stat( string $icon, $value, string $label ): void {
+	private function render_stat( string $icon, mixed $value, string $label ): void {
 		printf(
 			'<div class="conv-dash-stat"><span class="conv-dash-stat__icon">%s</span><span class="conv-dash-stat__value">%s</span><span class="conv-dash-stat__label">%s</span></div>',
 			esc_html( $icon ),
@@ -132,6 +132,8 @@ class Admin_Dashboard {
 
 	/**
 	 * Get current statistics.
+	 *
+	 * @return array<string, mixed>
 	 */
 	private function get_stats(): array {
 		global $wpdb;
@@ -242,6 +244,9 @@ class Admin_Dashboard {
 
 	/**
 	 * Generate actionable alerts from stats.
+	 *
+	 * @param array<string, mixed> $stats
+	 * @return array<int, array<string, mixed>>
 	 */
 	private function get_alerts( array $stats ): array {
 		$alerts = array();
@@ -311,6 +316,8 @@ class Admin_Dashboard {
 
 	/**
 	 * Get recent system events for the dashboard.
+	 *
+	 * @return array<int, array<string, mixed>>
 	 */
 	private function get_recent_events(): array {
 		$logs = \Convoca\Core\Logger::get_logs(

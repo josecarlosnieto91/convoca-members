@@ -37,7 +37,7 @@ class Email_Verifier {
 	/**
 	 * Get all registered providers.
 	 *
-	 * @return Email_Verifier_Provider[]
+	 * @return array<int, Email_Verifier_Provider>
 	 */
 	public static function get_providers(): array {
 		if ( null === self::$providers ) {
@@ -45,7 +45,13 @@ class Email_Verifier {
 				new WPMail_Provider(),
 				new Mailgun_Provider(),
 			);
-			self::$providers = apply_filters( 'convoca_email_providers', self::$providers );
+			/**
+			 * Proveedores tras el filtro.
+			 *
+			 * @var array<int, Email_Verifier_Provider> $filtrados
+			 */
+			$filtrados       = (array) apply_filters( 'convoca_email_providers', self::$providers );
+			self::$providers = $filtrados;
 		}
 		return self::$providers;
 	}
@@ -84,6 +90,8 @@ class Email_Verifier {
 	 * @param array  $headers     Headers (associative).
 	 * @param array  $attachments Absolute file paths to attach.
 	 * @return bool
+	 * @param array<int, string> $attachments
+	 * @param array<int|string, string> $headers
 	 */
 	public static function send( string $to, string $subject, string $body, array $headers = array(), array $attachments = array() ): bool {
 		return self::get_active_provider()->send( $to, $subject, $body, $headers, $attachments );

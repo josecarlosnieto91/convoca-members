@@ -308,7 +308,7 @@ class Admin_List extends \WP_List_Table {
 
 		$query = new \WP_Query( $args );
 
-		$this->items = $query->posts;
+		$this->items = (array) $query->posts;
 
 		$this->set_pagination_args(
 			array(
@@ -329,7 +329,7 @@ class Admin_List extends \WP_List_Table {
 		}
 
 		$query       = new \WP_Query( $args );
-		$this->items = $query->posts;
+		$this->items = (array) $query->posts;
 		$pagination  = array(
 			'total_items' => $query->found_posts,
 			'per_page'    => $per_page,
@@ -496,7 +496,7 @@ class Admin_List extends \WP_List_Table {
 		return $html;
 	}
 
-	public function column_nombre( $item ): string {
+	public function column_nombre( mixed $item ): string {
 		$url       = admin_url( 'admin.php?page=conv-members&member_id=' . $item->ID );
 		$name_link = '<a href="' . esc_url( $url ) . '"><strong>' . esc_html( $item->post_title ) . '</strong></a>';
 
@@ -582,7 +582,7 @@ class Admin_List extends \WP_List_Table {
 		return $name_link . $this->row_actions( $actions );
 	}
 
-	public function column_email( $item ): string {
+	public function column_email( mixed $item ): string {
 		$email = get_post_meta( $item->ID, '_convoca_email', true );
 		if ( ! $email ) {
 			return '—';
@@ -590,7 +590,7 @@ class Admin_List extends \WP_List_Table {
 		return '<a href="mailto:' . esc_attr( $email ) . '">' . esc_html( $email ) . '</a>';
 	}
 
-	public function column_telefono( $item ): string {
+	public function column_telefono( mixed $item ): string {
 		$tel = get_post_meta( $item->ID, '_convoca_telefono', true );
 		if ( ! $tel ) {
 			return '—';
@@ -598,7 +598,7 @@ class Admin_List extends \WP_List_Table {
 		return '<a href="tel:' . esc_attr( $tel ) . '">' . esc_html( $tel ) . '</a>';
 	}
 
-	public function column_whatsapp( $item ): string {
+	public function column_whatsapp( mixed $item ): string {
 		$has_wa = get_post_meta( $item->ID, '_convoca_whatsapp', true );
 		if ( $has_wa === 'no' ) {
 			return '<span style="color:#999">' . esc_html__( 'No', 'convoca-members' ) . '</span>';
@@ -655,7 +655,7 @@ class Admin_List extends \WP_List_Table {
 		return Roles_Miembro::etiqueta( (string) $rol );
 	}
 
-	public function column_estado( $item ): string {
+	public function column_estado( mixed $item ): string {
 		$estado = get_post_meta( $item->ID, '_convoca_estado_miembro', true ) ?: 'pendiente_documentacion';
 		$salida = Estados::badge_html( $estado );
 
@@ -707,7 +707,7 @@ class Admin_List extends \WP_List_Table {
 			. $texto . ' <small>(' . esc_html( sprintf( /* translators: %s: hours still missing. */ __( 'faltan %s h', 'convoca-members' ), $ciclo['faltan'] ) ) . ')</small></span>';
 	}
 
-	public function column_consentimiento( $item ): string {
+	public function column_consentimiento( mixed $item ): string {
 		$consentimiento = GDPR_Tools::etiqueta_consentimiento( (int) $item->ID );
 
 		if ( ! $consentimiento['registrado'] ) {
@@ -724,7 +724,7 @@ class Admin_List extends \WP_List_Table {
 		return $texto . $this->enlace_consentimiento( (int) $item->ID );
 	}
 
-	public function column_plan( $item ): string {
+	public function column_plan( mixed $item ): string {
 		$plan = get_post_meta( $item->ID, '_convoca_plan', true );
 		$sub  = get_post_meta( $item->ID, '_convoca_sub_plan', true );
 		$key  = $sub ?: $plan;
@@ -732,7 +732,7 @@ class Admin_List extends \WP_List_Table {
 		return esc_html( ( $data && isset( $data['label'] ) ) ? $data['label'] : ucfirst( $key ?: '—' ) );
 	}
 
-	public function column_cuota( $item ): string {
+	public function column_cuota( mixed $item ): string {
 		$importe = get_post_meta( $item->ID, '_convoca_importe_cuota', true );
 		$estado  = get_post_meta( $item->ID, '_convoca_estado_cuota', true );
 		$label   = CPT_Miembro::ESTADO_CUOTA[ $estado ] ?? '—';
@@ -751,7 +751,7 @@ class Admin_List extends \WP_List_Table {
 		return $amount . ' ' . $badge;
 	}
 
-	public function column_recurrente( $item ): string {
+	public function column_recurrente( mixed $item ): string {
 		$recurrente = get_post_meta( $item->ID, '_convoca_pago_recurrente', true );
 		if ( $recurrente === '1' ) {
 			return '<span class="dashicons dashicons-yes" style="color:#2271b1"></span> ' . __( 'Sí', 'convoca-members' );
@@ -759,7 +759,7 @@ class Admin_List extends \WP_List_Table {
 		return '<span class="dashicons dashicons-no-alt" style="color:#666"></span> ' . __( 'No', 'convoca-members' );
 	}
 
-	public function column_fecha( $item ): string {
+	public function column_fecha( mixed $item ): string {
 		$fecha = get_the_date( 'd/m/Y', $item );
 
 		return false === $fecha ? '' : (string) $fecha;
@@ -835,7 +835,12 @@ class Admin_List extends \WP_List_Table {
 		exit;
 	}
 
-	public function sin_papelera( $acciones, $post ) {
+	/**
+	 * Documentación del método.
+	 *
+	 * @return mixed
+	 */
+	public function sin_papelera( mixed $acciones, mixed $post ) {
 		if ( 'miembro' === $post->post_type ) {
 			unset( $acciones['trash'] );
 		}
@@ -847,6 +852,8 @@ class Admin_List extends \WP_List_Table {
 	 *
 	 * @param array $acciones Acciones de lote.
 	 * @return array
+	 * @param array<string, mixed> $acciones
+	 * @return array<string, mixed>
 	 */
 	public function sin_papelera_bulk( $acciones ) {
 		unset( $acciones['trash'] );

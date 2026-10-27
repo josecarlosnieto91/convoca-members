@@ -275,6 +275,8 @@ class Voluntariado_Manager {
 
 	/**
 	 * Get progress percentage for a member.
+	 *
+	 * @return array<string, mixed>
 	 */
 	public static function get_progreso( int $miembro_id ): array {
 		$total    = self::get_horas_aprobadas( $miembro_id );

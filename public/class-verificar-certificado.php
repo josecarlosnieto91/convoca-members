@@ -70,7 +70,7 @@ class Verificar_Certificado {
 						</div>
 						<div class="detail-row">
 							<span class="detail-label"><?php esc_html_e( 'Emisión:', 'convoca-members' ); ?></span>
-							<span class="detail-value"><?php echo esc_html( $result['emitido'] ? wp_date( 'd/m/Y', strtotime( $result['emitido'] ) ) : '—' ); ?></span>
+							<span class="detail-value"><?php echo esc_html( $result['emitido'] ? (string) wp_date( 'd/m/Y', (int) strtotime( (string) $result['emitido'] ) ) : '—' ); ?></span>
 						</div>
 						<?php if ( $valido_hasta ) : ?>
 						<div class="detail-row">

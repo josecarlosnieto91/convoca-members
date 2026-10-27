@@ -129,6 +129,7 @@ class Circuito_Voluntariado {
 	 *
 	 * @param int   $miembro_id Ficha del socio.
 	 * @param array $cita       La cita (fecha, hora…).
+	 * @param array<string, mixed> $cita
 	 */
 	public static function avisar_cita( int $miembro_id, array $cita ): void {
 		$usuario = self::usuario_de_ficha( $miembro_id );
@@ -426,7 +427,7 @@ class Circuito_Voluntariado {
 		}
 
 		$preguntas = array();
-		foreach ( preg_split( '/\r\n|\r|\n/', $texto ) as $linea ) {
+		foreach ( (array) preg_split( '/\r\n|\r|\n/', $texto ) as $linea ) {
 			$linea = trim( (string) $linea );
 			if ( '' !== $linea ) {
 				$preguntas[] = $linea;

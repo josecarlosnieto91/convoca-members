@@ -105,7 +105,7 @@ class Process_Member {
 
 			return array(
 				'user_id'  => $email_user_id,
-				'username' => (string) get_userdata( $email_user_id )->user_login,
+				'username' => ( $u1 = get_userdata( $email_user_id ) ) instanceof \WP_User ? $u1->user_login : '',
 				'password' => '',
 				'is_new'   => false,
 			);
@@ -117,7 +117,7 @@ class Process_Member {
 			wp_set_password( $new_password, $existing_user_id );
 			return array(
 				'user_id'  => $existing_user_id,
-				'username' => get_userdata( $existing_user_id )->user_login,
+				'username' => ( $u2 = get_userdata( $existing_user_id ) ) instanceof \WP_User ? $u2->user_login : '',
 				'password' => $new_password,
 				'is_new'   => false,
 			);
@@ -237,6 +237,13 @@ class Process_Member {
 		}
 	}
 
+	/**
+	 * Documentación del método.
+	 *
+	 * @param array<string, mixed> $data
+	 * @param array<string, mixed> $files
+	 * @return array<string, mixed>
+	 */
 	public static function register( array $data, array $files = array() ): array|\WP_Error {
 		// 1. Validate
 		$validation = self::validate( $data, $files );
@@ -509,7 +516,11 @@ class Process_Member {
 	 * @param string $sub_plan    Sub-plan key.
 	 * @param bool   $menor       Whether the member is a minor.
 	 * @param array  $settings    Members settings.
-	 * @return array|\WP_Error
+	 * @return array<string, mixed>|\WP_Error
+	 * @param array<string, mixed> $data
+	 * @param array<string, mixed> $plan_data
+	 * @param array<string, mixed> $settings
+	 * @return array<string, mixed>|\WP_Error
 	 */
 	private static function reactivar_ficha(
 		int $existing_id,
@@ -665,6 +676,9 @@ class Process_Member {
 
 	/**
 	 * Validate registration data.
+	 *
+	 * @param array<string, mixed> $data
+	 * @param array<string, mixed> $files
 	 */
 	public static function validate( array $data, array $files = array() ): bool|\WP_Error {
 		// Vaciar de espacios ANTES de comprobar nada.

@@ -35,6 +35,7 @@ class Hours_Manager {
 	 *
 	 * @param array $data Data to validate.
 	 * @return bool|\WP_Error True if valid, WP_Error otherwise.
+	 * @param array<string, mixed> $data
 	 */
 	public static function validate_hours_data( array $data, bool $proyecto_opcional = false ): bool|\WP_Error {
 		if ( empty( $data['miembro_id'] ) ) {
@@ -78,6 +79,7 @@ class Hours_Manager {
 	 * @param array $data     Data to save.
 	 * @param bool  $is_admin Whether the save is from admin context.
 	 * @return int|\WP_Error  Post ID on success, WP_Error on failure.
+	 * @param array<string, mixed> $data
 	 */
 	public static function save_hours_record( array $data, bool $is_admin = false ): int|\WP_Error {
 		// El socio puede apuntar horas sin proyecto; la JD no (members#37).

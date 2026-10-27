@@ -188,8 +188,10 @@ class CPT_Documento {
 
 	/**
 	 * Map capabilities to 'gestionar_documentos_voluntariado'
+	 *
+	 * @return mixed
 	 */
-	public function map_documento_caps( $caps, $cap, $user_id, $args ) {
+	public function map_documento_caps( mixed $caps, mixed $cap, mixed $user_id, mixed $args ) {
 		$documento_caps = array(
 			'edit_convoca_documento',
 			'read_convoca_documento',

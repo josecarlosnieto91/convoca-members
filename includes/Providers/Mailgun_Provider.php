@@ -68,6 +68,9 @@ class Mailgun_Provider implements Email_Verifier_Provider {
 
 	/**
 	 * {@inheritDoc}
+	 *
+	 * @param array<int, string> $attachments
+	 * @param array<int|string, string> $headers
 	 */
 	public function send( string $to, string $subject, string $body, array $headers = array(), array $attachments = array() ): bool {
 		$settings = get_option( 'convoca_members_settings', array() );
@@ -82,7 +85,7 @@ class Mailgun_Provider implements Email_Verifier_Provider {
 
 		$from = '';
 		foreach ( $headers as $key => $value ) {
-			if ( is_string( $key ) && strtolower( $key ) === 'from' ) {
+			if ( strtolower( (string) $key ) === 'from' ) {
 				$from = $value;
 			}
 		}
@@ -100,7 +103,7 @@ class Mailgun_Provider implements Email_Verifier_Provider {
 
 		// Attachments: Mailgun expects multipart/form-data with file[] fields.
 		foreach ( $attachments as $file_path ) {
-			if ( is_string( $file_path ) && file_exists( $file_path ) ) {
+			if ( file_exists( $file_path ) ) {
 				$attachment_key                 = 'attachment[' . basename( $file_path ) . ']';
 				$body_params[ $attachment_key ] = new \CURLFile( $file_path );
 			}

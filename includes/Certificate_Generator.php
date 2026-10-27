@@ -76,6 +76,11 @@ class Certificate_Generator {
 		}
 	}
 
+	/**
+	 * Documentación del método.
+	 *
+	 * @return array<string, mixed>
+	 */
 	public static function generate( int $miembro_id, string $theme = '' ): array|\WP_Error {
 		$miembro = get_post( $miembro_id );
 		if ( ! $miembro || $miembro->post_type !== 'miembro' ) {
@@ -169,6 +174,11 @@ class Certificate_Generator {
 		}
 	}
 
+	/**
+	 * Proyectos en los que el socio tiene horas.
+	 *
+	 * @return array<int, array<string, mixed>>
+	 */
 	private static function get_proyectos_con_horas( int $miembro_id ): array {
 		global $wpdb;
 
@@ -250,6 +260,11 @@ class Certificate_Generator {
 		return '<div style="width:100%;height:100%;background:#fff;color:#320028;font-size:9px;padding:4px;text-align:center;word-break:break-all;box-sizing:border-box;display:table-cell;vertical-align:middle;border-radius:6px;">' . esc_html( $data ) . '</div>';
 	}
 
+	/**
+	 * Documentación del método.
+	 *
+	 * @param array<int, array<string, mixed>> $proyectos
+	 */
 	private static function build_html( string $nombre, float $horas, string $plan, array $proyectos, string $cert_id, string $qr_data, string $verify_url, string $valido_hasta = '', string $theme = '' ): string {
 		$theme          = in_array( $theme, array( 'light', 'dark' ), true ) ? $theme : \Convoca\Core\Utils::get_document_theme( 'certificate' );
 		$light          = 'light' === $theme;
@@ -264,7 +279,7 @@ class Certificate_Generator {
 		/* translators: %d: número de años. */
 		$validez_label = sprintf( _n( '%d año', '%d años', $validez_anios, 'convoca-members' ), $validez_anios );
 		$validez_html  = $valido_hasta
-			? '<div>Válido hasta: <strong>' . esc_html( wp_date( 'd/m/Y', strtotime( $valido_hasta ) ) ) . '</strong> <span style="color:#999">(' . esc_html( $validez_label ) . ')</span></div>'
+			? '<div>Válido hasta: <strong>' . esc_html( (string) wp_date( 'd/m/Y', (int) strtotime( (string) $valido_hasta ) ) ) . '</strong> <span style="color:#999">(' . esc_html( $validez_label ) . ')</span></div>'
 			: '';
 
 		return '<!DOCTYPE html>
@@ -398,6 +413,11 @@ class Certificate_Generator {
 		exit;
 	}
 
+	/**
+	 * Documentación del método.
+	 *
+	 * @return array<string, mixed>
+	 */
 	public static function verify( string $cert_id ): ?array {
 		global $wpdb;
 
@@ -423,7 +443,7 @@ class Certificate_Generator {
 		$caducado = ! empty( $valido_hasta ) && strtotime( $valido_hasta ) < time();
 
 		return array(
-			'nombre'         => $miembro->post_title,
+			'nombre'         => isset( $miembro->post_title ) ? (string) $miembro->post_title : '',
 			'horas'          => Voluntariado_Manager::get_horas_aprobadas( $miembro_id ),
 			'certificado_id' => $cert_id,
 			'emitido'        => $emitido,

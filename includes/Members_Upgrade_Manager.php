@@ -54,6 +54,11 @@ class Members_Upgrade_Manager extends Upgrade_Manager {
 		return 'convoca_members';
 	}
 
+	/**
+	 * Documentación del método.
+	 *
+	 * @return array<string, mixed>
+	 */
 	protected function get_upgrade_callbacks(): array {
 		return array(
 			'1.0.2' => array( $this, 'upgrade_to_1_0_2' ),

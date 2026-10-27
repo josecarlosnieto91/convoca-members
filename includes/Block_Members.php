@@ -133,21 +133,41 @@ class Block_Members {
 		// Handled by register_assets and block registration.
 	}
 
+	/**
+	 * Documentación del método.
+	 *
+	 * @param array<string, mixed> $attrs
+	 */
 	public function render_alta( array $attrs ): string {
 		$handler = new Form_Handler();
 		return $handler->render();
 	}
 
+	/**
+	 * Documentación del método.
+	 *
+	 * @param array<string, mixed> $attrs
+	 */
 	public function render_mi_area( array $attrs ): string {
 		$area = new Mi_Area();
 		return $area->render();
 	}
 
+	/**
+	 * Documentación del método.
+	 *
+	 * @param array<string, mixed> $attrs
+	 */
 	public function render_voluntariado( array $attrs ): string {
 		$form = new Form_Voluntariado();
 		return $form->render();
 	}
 
+	/**
+	 * Documentación del método.
+	 *
+	 * @param array<string, mixed> $attrs
+	 */
 	public function render_verificar_certificado( array $attrs ): string {
 		$verifier = new Verificar_Certificado();
 		return $verifier->render();

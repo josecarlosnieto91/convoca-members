@@ -51,7 +51,11 @@ class Estados {
 		'baja'                    => array( 'pendiente_documentacion', 'pendiente_pago', 'activo' ),
 	);
 
-	/** Human-readable labels. */
+	/**
+	 * Human-readable labels.
+	 *
+	 * @return array<string, string>
+	 */
 	public static function labels(): array {
 		return array(
 			'pendiente_documentacion' => __( 'Pendiente documentación', 'convoca-members' ),

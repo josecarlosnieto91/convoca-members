@@ -697,7 +697,7 @@ class Rest_API {
 		$items = array();
 
 		if ( $query->have_posts() ) {
-			foreach ( $query->posts as $post ) {
+			foreach ( (array) $query->posts as $post ) {
 				$actividad_id = get_post_meta( $post->ID, '_convoca_actividad_id', true );
 				$actividad    = get_the_title( $actividad_id );
 
@@ -821,7 +821,7 @@ class Rest_API {
 		$items = array();
 
 		if ( $query->have_posts() ) {
-			foreach ( $query->posts as $post ) {
+			foreach ( (array) $query->posts as $post ) {
 				$status = get_post_meta( $post->ID, '_convoca_status', true );
 				$amount = (int) get_post_meta( $post->ID, '_convoca_amount_cents', true );
 
@@ -925,7 +925,7 @@ class Rest_API {
 		$total_horas = 0;
 
 		if ( $query->have_posts() ) {
-			foreach ( $query->posts as $post ) {
+			foreach ( (array) $query->posts as $post ) {
 				$horas        = (float) get_post_meta( $post->ID, '_convoca_horas', true );
 				$estado       = get_post_meta( $post->ID, '_convoca_estado', true ) ?: 'pendiente';
 				$actividad_id = get_post_meta( $post->ID, '_convoca_actividad_id', true );
@@ -1107,7 +1107,7 @@ class Rest_API {
 				),
 			);
 			$member_query = new \WP_Query( $member_args );
-			foreach ( $member_query->posts as $p ) {
+			foreach ( (array) $member_query->posts as $p ) {
 				$results[] = array(
 					'type'  => 'member',
 					'id'    => $p->ID,
@@ -1129,7 +1129,7 @@ class Rest_API {
 				'order'          => 'DESC',
 			);
 			$act_query = new \WP_Query( $act_args );
-			foreach ( $act_query->posts as $p ) {
+			foreach ( (array) $act_query->posts as $p ) {
 				$fecha     = get_post_meta( $p->ID, '_convoca_fecha_inicio', true );
 				$results[] = array(
 					'type'      => 'activity',
@@ -1182,7 +1182,7 @@ class Rest_API {
 		);
 		$query   = new \WP_Query( $args );
 		$results = array();
-		foreach ( $query->posts as $p ) {
+		foreach ( (array) $query->posts as $p ) {
 			$results[] = array(
 				'id'    => $p->ID,
 				'title' => $p->post_title,

@@ -98,7 +98,7 @@ class Admin_Horas extends \WP_List_Table {
 	/**
 	 * Enqueue assets for the custom editor.
 	 */
-	public function enqueue_assets( $hook ) {
+	public function enqueue_assets( mixed $hook ): void {
 		if ( strpos( $hook, 'conv-horas-editor' ) !== false ) {
 			$this->encolar_estilo_comun();
 		}
@@ -107,7 +107,7 @@ class Admin_Horas extends \WP_List_Table {
 	/**
 	 * Redirect standard post editor to custom editor.
 	 */
-	public function redirect_to_custom_editor() {
+	public function redirect_to_custom_editor(): void {
 		$screen = get_current_screen();
 		if ( $screen && $screen->id === 'registro_hora' ) {
 			if ( $screen->action === 'add' ) {
@@ -126,7 +126,7 @@ class Admin_Horas extends \WP_List_Table {
 	/**
 	 * Handle save from admin form.
 	 */
-	public function handle_save_admin() {
+	public function handle_save_admin(): void {
 		check_admin_referer( 'convoca_save_hours_nonce' );
 
 		if ( ! current_user_can( 'gestionar_miembros' ) ) {
@@ -197,7 +197,7 @@ class Admin_Horas extends \WP_List_Table {
 		exit;
 	}
 
-	public function render_editor_page() {
+	public function render_editor_page(): void {
 		$record_id = isset( $_GET['id'] ) ? (int) $_GET['id'] : 0;
 		$record    = $record_id ? get_post( $record_id ) : null;
 
@@ -350,7 +350,7 @@ class Admin_Horas extends \WP_List_Table {
 		<?php
 	}
 
-	public function render_page() {
+	public function render_page(): void {
 		$this->init_table();
 		$this->prepare_items();
 
@@ -389,7 +389,7 @@ class Admin_Horas extends \WP_List_Table {
 						<select name="filter_proyecto">
 							<option value="0"><?php esc_html_e( 'Todos los proyectos', 'convoca-members' ); ?></option>
 							<?php foreach ( $proyectos as $id => $title ) : ?>
-								<option value="<?php echo esc_attr( $id ); ?>" <?php selected( $filter_proyecto, $id ); ?>>
+								<option value="<?php echo esc_attr( (string) $id ); ?>" <?php selected( $filter_proyecto, $id ); ?>>
 									<?php echo esc_html( $title ); ?>
 								</option>
 							<?php endforeach; ?>
@@ -463,7 +463,7 @@ class Admin_Horas extends \WP_List_Table {
 				__( 'Estado', 'convoca-members' ),
 			),
 			( static function () use ( $query ) {
-				foreach ( $query->posts as $post ) {
+				foreach ( (array) $query->posts as $post ) {
 					$socio_id = get_post_meta( $post->ID, '_convoca_member_id', true );
 					$socio    = $socio_id ? ( get_post( $socio_id )?->post_title ?? '' ) : '';
 
@@ -513,7 +513,7 @@ class Admin_Horas extends \WP_List_Table {
 		);
 	}
 
-	public function prepare_items() {
+	public function prepare_items(): void {
 		// Las cabeceras de columna son obligatorias para `WP_List_Table`: sin esto, `get_column_info()`
 		// devuelve el array vacío del constructor y la tabla sale con las filas VACÍAS —sin una sola
 		// celda, ni siquiera en la cabecera— aunque la consulta encuentre registros (issue #32). Es el
@@ -548,7 +548,7 @@ class Admin_Horas extends \WP_List_Table {
 		}
 
 		$query       = new \WP_Query( $args );
-		$this->items = $query->posts;
+		$this->items = (array) $query->posts;
 
 		$this->set_pagination_args(
 			array(
@@ -563,6 +563,7 @@ class Admin_Horas extends \WP_List_Table {
 	 * Render a table column.
 	 *
 	 * @param \WP_Post $item Row item.
+	 * @return mixed
 	 */
 	public function column_cb( $item ) {
 		return sprintf( '<input type="checkbox" name="bulk-delete[]" value="%s" />', $item->ID );
@@ -572,12 +573,18 @@ class Admin_Horas extends \WP_List_Table {
 	 * Render a table column.
 	 *
 	 * @param \WP_Post $item Row item.
+	 * @return mixed
 	 */
 	public function column_fecha( $item ) {
 		$fecha = get_post_meta( $item->ID, '_convoca_fecha', true );
 		return $fecha ?: get_the_date( '', $item->ID );
 	}
-	public function column_socio( $item ) {
+	/**
+	 * Documentación del método.
+	 *
+	 * @return mixed
+	 */
+	public function column_socio( mixed $item ) {
 		$socio_id = get_post_meta( $item->ID, '_convoca_member_id', true );
 		if ( ! $socio_id ) {
 			return '—';
@@ -601,7 +608,12 @@ class Admin_Horas extends \WP_List_Table {
 		);
 	}
 
-	public function column_actividad( $item ) {
+	/**
+	 * Documentación del método.
+	 *
+	 * @return mixed
+	 */
+	public function column_actividad( mixed $item ) {
 		$act_id = get_post_meta( $item->ID, '_convoca_actividad_id', true );
 		if ( ! $act_id ) {
 			return 'General/Otros';
@@ -624,7 +636,12 @@ class Admin_Horas extends \WP_List_Table {
 		);
 	}
 
-	public function column_proyecto( $item ) {
+	/**
+	 * Documentación del método.
+	 *
+	 * @return mixed
+	 */
+	public function column_proyecto( mixed $item ) {
 		$proyecto_id = get_post_meta( $item->ID, '_convoca_proyecto_id', true );
 		if ( ! $proyecto_id ) {
 			return '—';
@@ -637,7 +654,12 @@ class Admin_Horas extends \WP_List_Table {
 		return esc_html( $proyecto->post_title );
 	}
 
-	public function column_tareas( $item ) {
+	/**
+	 * Documentación del método.
+	 *
+	 * @return mixed
+	 */
+	public function column_tareas( mixed $item ) {
 		$tareas = get_post_meta( $item->ID, '_convoca_tareas', true );
 		if ( ! $tareas ) {
 			return '—';
@@ -645,17 +667,32 @@ class Admin_Horas extends \WP_List_Table {
 		return esc_html( mb_substr( $tareas, 0, 60 ) ) . ( mb_strlen( $tareas ) > 60 ? '...' : '' );
 	}
 
-	public function column_horas( $item ) {
+	/**
+	 * Documentación del método.
+	 *
+	 * @return mixed
+	 */
+	public function column_horas( mixed $item ) {
 		// Numérica por origen (`(float) $_POST['horas']`), pero toda salida se escapa: es la única columna del
 		// fichero que devolvía texto sin pasar por `esc_html()`.
 		return esc_html( get_post_meta( $item->ID, '_convoca_horas', true ) . 'h' );
 	}
 
-	public function column_descripcion( $item ) {
+	/**
+	 * Documentación del método.
+	 *
+	 * @return mixed
+	 */
+	public function column_descripcion( mixed $item ) {
 		return esc_html( $item->post_content );
 	}
 
-	public function column_estado( $item ) {
+	/**
+	 * Documentación del método.
+	 *
+	 * @return mixed
+	 */
+	public function column_estado( mixed $item ) {
 		$estado = (string) get_post_meta( $item->ID, '_convoca_estado', true );
 
 		// Lista blanca **y** escape. El estado llega de un campo de texto: `sanitize_text_field()` quita etiquetas
@@ -676,7 +713,12 @@ class Admin_Horas extends \WP_List_Table {
 		);
 	}
 
-	public function column_acciones( $item ) {
+	/**
+	 * Documentación del método.
+	 *
+	 * @return mixed
+	 */
+	public function column_acciones( mixed $item ) {
 		$estado  = get_post_meta( $item->ID, '_convoca_estado', true ) ?: 'pendiente';
 		$actions = array();
 
@@ -695,7 +737,7 @@ class Admin_Horas extends \WP_List_Table {
 		return implode( ' | ', $actions );
 	}
 
-	public function process_action() {
+	public function process_action(): void {
 		if ( ! current_user_can( 'gestionar_miembros' ) ) {
 			wp_die( esc_html__( 'No tienes permisos.', 'convoca-members' ) );
 		}

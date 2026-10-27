@@ -80,7 +80,7 @@ class Audit_Logger {
 	 * Log specific meta changes like WhatsApp usage.
 	 * Protects sensitive data by redacting values or ignoring fields.
 	 */
-	public function log_meta_change( int $meta_id, int $post_id, string $meta_key, $meta_value ): void {
+	public function log_meta_change( int $meta_id, int $post_id, string $meta_key, mixed $meta_value ): void {
 		if ( get_post_type( $post_id ) !== 'miembro' ) {
 			return;
 		}

@@ -107,7 +107,7 @@ class Admin_Member_Editor {
 					<!-- Full Name -->
 					<div class="convoca-field" style="grid-column:1/-1;">
 						<label for="convoca_nombre"><?php esc_html_e( 'Nombre completo *', 'convoca-members' ); ?></label>
-						<input type="text" id="convoca_nombre" name="convoca_nombre" value="<?php echo $is_edit ? esc_attr( $post->post_title ) : ''; ?>" required>
+						<input type="text" id="convoca_nombre" name="convoca_nombre" value="<?php echo $is_edit && $post instanceof \WP_Post ? esc_attr( $post->post_title ) : ''; ?>" required>
 					</div>
 
 					<?php
@@ -168,7 +168,7 @@ class Admin_Member_Editor {
 						<div class="convoca-field" style="grid-column:1/-1;">
 							<input type="hidden" name="convoca_monitor_control" value="1">
 							<label style="display:flex;align-items:center;gap:.5rem;font-weight:600;">
-								<input type="checkbox" id="convoca_es_monitor" name="convoca_es_monitor" value="1" <?php checked( $is_edit && Roles_Miembro::es_monitor( $post->ID ) ); ?>>
+								<input type="checkbox" id="convoca_es_monitor" name="convoca_es_monitor" value="1" <?php checked( $is_edit && $post instanceof \WP_Post && Roles_Miembro::es_monitor( $post->ID ) ); ?>>
 								<?php esc_html_e( 'Monitor de actividad', 'convoca-members' ); ?>
 							</label>
 							<p class="description">

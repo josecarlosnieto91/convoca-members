@@ -77,6 +77,8 @@ class GDPR_Tools {
 	 *
 	 * @param array $exporters
 	 * @return array
+	 * @param array<string, mixed> $exporters
+	 * @return array<string, mixed>
 	 */
 	public static function register_exporter( array $exporters ): array {
 		$exporters['convoca-members'] = array(
@@ -92,6 +94,7 @@ class GDPR_Tools {
 	 * @param string $email_address
 	 * @param int    $page
 	 * @return array
+	 * @return array<string, mixed>
 	 */
 	public static function export_personal_data( string $email_address, int $page = 1 ): array {
 		$export_items = array();
@@ -328,6 +331,8 @@ class GDPR_Tools {
 	 *
 	 * @param array $erasers
 	 * @return array
+	 * @param array<string, mixed> $erasers
+	 * @return array<string, mixed>
 	 */
 	public static function register_eraser( array $erasers ): array {
 		$erasers['convoca-members'] = array(
@@ -576,6 +581,7 @@ class GDPR_Tools {
 	 *
 	 * @param int $member_id Ficha del socio.
 	 * @return array
+	 * @return array<string, mixed>
 	 */
 	public static function datos_para_descargar( int $member_id ): array {
 		$email      = (string) get_post_meta( $member_id, '_convoca_email', true );
@@ -669,6 +675,11 @@ class GDPR_Tools {
 		return $borrados;
 	}
 
+	/**
+	 * Documentación del método.
+	 *
+	 * @return array<string, mixed>
+	 */
 	public static function erase_personal_data( string $email_address, int $page = 1 ): array {
 		$items_removed  = 0;
 		$items_retained = 0;

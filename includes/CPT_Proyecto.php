@@ -100,6 +100,8 @@ class CPT_Proyecto {
 
 	/**
 	 * Get meta data for a proyecto.
+	 *
+	 * @return array<string, mixed>
 	 */
 	public static function get_meta( int $post_id ): array {
 		$data = array();
@@ -111,6 +113,8 @@ class CPT_Proyecto {
 
 	/**
 	 * Get all active proyectos for dropdown select.
+	 *
+	 * @return array<int, string>
 	 */
 	public static function get_active_proyectos( bool $include_all = false ): array {
 		$args = array(
@@ -142,6 +146,8 @@ class CPT_Proyecto {
 
 	/**
 	 * Get proyectos where a member has participated.
+	 *
+	 * @return array<int, array<string, mixed>>
 	 */
 	public static function get_proyectos_by_member( int $miembro_id ): array {
 		global $wpdb;

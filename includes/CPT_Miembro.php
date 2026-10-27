@@ -329,6 +329,7 @@ class CPT_Miembro {
 	 * Get default plan definitions.
 	 *
 	 * @return array Default plan data.
+	 * @return array<string, mixed>
 	 */
 	public static function get_default_plans(): array {
 		return self::DEFAULT_PLANS;
@@ -338,6 +339,8 @@ class CPT_Miembro {
 
 	/**
 	 * Get all membership plans (merged with DB settings).
+	 *
+	 * @return array<string, mixed>
 	 */
 	public static function get_plans(): array {
 		$db_plans = get_option( 'convoca_members_plans', array() );
@@ -378,6 +381,8 @@ class CPT_Miembro {
 	 * donde debería ir «bronze»), y entonces el carnet, el acuerdo y el certificado caían al texto
 	 * genérico —«SOCIO/A»— y **no distinguían la modalidad**. Buscar por etiqueta solo se intenta si
 	 * la clave exacta no existe, así que no cambia nada de lo que ya funcionaba.
+	 *
+	 * @return array<string, mixed>
 	 */
 	public static function get_plan( string $key ): ?array {
 		$plans = self::get_plans();

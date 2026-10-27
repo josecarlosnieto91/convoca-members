@@ -53,6 +53,9 @@ class WPMail_Provider implements Email_Verifier_Provider {
 
 	/**
 	 * {@inheritDoc}
+	 *
+	 * @param array<int, string> $attachments
+	 * @param array<int|string, string> $headers
 	 */
 	public function send( string $to, string $subject, string $body, array $headers = array(), array $attachments = array() ): bool {
 		// wp_mail expects string[] headers; our contract receives associative.

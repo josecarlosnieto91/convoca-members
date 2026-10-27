@@ -114,7 +114,12 @@ class Admin_Settings {
 		);
 	}
 
-	public function sanitize_settings( $input ): array {
+	/**
+	 * Documentación del método.
+	 *
+	 * @return array<string, mixed>
+	 */
+	public function sanitize_settings( mixed $input ): array {
 		delete_option( self::CACHE_KEY );
 		if ( ! is_array( $input ) ) {
 			return array();
@@ -170,7 +175,12 @@ class Admin_Settings {
 		return (float) str_replace( ',', '.', trim( (string) $valor ) );
 	}
 
-	public function sanitize_plans( $input ): array {
+	/**
+	 * Documentación del método.
+	 *
+	 * @return array<string, mixed>
+	 */
+	public function sanitize_plans( mixed $input ): array {
 		delete_option( self::CACHE_KEY );
 		if ( ! is_array( $input ) ) {
 			return array();
@@ -224,7 +234,12 @@ class Admin_Settings {
 		return $sanitized;
 	}
 
-	public function sanitize_volunteer_fields( $input ): array {
+	/**
+	 * Documentación del método.
+	 *
+	 * @return array<int, array<string, mixed>>
+	 */
+	public function sanitize_volunteer_fields( mixed $input ): array {
 		delete_option( self::CACHE_KEY );
 		if ( ! is_array( $input ) ) {
 			return array();
@@ -252,6 +267,7 @@ class Admin_Settings {
 	 *
 	 * @param  mixed $input Raw POST data.
 	 * @return array Sanitized track config.
+	 * @return array<string, mixed>
 	 */
 	public function sanitize_gamification_tracks( $input ): array {
 		if ( ! is_array( $input ) ) {
@@ -783,7 +799,7 @@ class Admin_Settings {
 		<?php
 	}
 
-	private function render_single_plan_card( $key, $plan ): void {
+	private function render_single_plan_card( mixed $key, mixed $plan ): void {
 		$active = isset( $plan['active'] ) ? (bool) $plan['active'] : true; // Default active if not set.
 		?>
 		<div class="conv-plan-card postbox" style="margin-bottom: 20px;">
@@ -1070,7 +1086,7 @@ class Admin_Settings {
 		<?php
 	}
 
-	private function render_single_field_card( $index, $field ): void {
+	private function render_single_field_card( mixed $index, mixed $field ): void {
 		$name = esc_attr( $field['name'] ?? $index );
 		?>
 		<div class="conv-field-card postbox" style="margin-bottom: 15px;">
@@ -1293,6 +1309,11 @@ class Admin_Settings {
 		return $bloques;
 	}
 
+	/**
+	 * Comprobaciones del sistema de este plugin.
+	 *
+	 * @return array<int, array<string, string>>
+	 */
 	private function get_system_checks( bool $force = false ): array {
 		if ( ! $force ) {
 			$cached = get_option( self::CACHE_KEY );
@@ -1397,6 +1418,11 @@ class Admin_Settings {
 		return $checks;
 	}
 
+	/**
+	 * Documentación del método.
+	 *
+	 * @return mixed
+	 */
 	private function find_page_by_shortcode( string $shortcode ) {
 		global $wpdb;
 		$query = $wpdb->prepare( "SELECT ID FROM $wpdb->posts WHERE post_content LIKE %s AND post_status = 'publish' AND post_type = 'page' LIMIT 1", '%' . $wpdb->esc_like( $shortcode ) . '%' );

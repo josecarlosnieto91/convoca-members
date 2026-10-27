@@ -57,6 +57,12 @@ class PDF_Document {
 		self::generate_volunteer_agreement( $user_id );
 	}
 
+	/**
+	 * Documentación del método.
+	 *
+	 * @param array<string, mixed> $attachments
+	 * @return array<int, string>
+	 */
 	public static function add_pdf_to_email( array $attachments, int $user_id ): array {
 		$existing = get_posts(
 			array(
@@ -74,7 +80,7 @@ class PDF_Document {
 			}
 		}
 
-		return $attachments;
+		return array_values( array_filter( $attachments, 'is_string' ) );
 	}
 
 	public static function generate_volunteer_agreement( int $user_id ): ?int {

@@ -135,7 +135,7 @@ class Mi_Area {
 		?>
 		<div class="convoca-renovar card glass">
 			<h2><?php esc_html_e( 'Renovación de membresía', 'convoca-members' ); ?></h2>
-			<p><strong><?php esc_html_e( 'Socio/a:', 'convoca-members' ); ?></strong> <?php echo esc_html( $miembro->post_title ); ?></p>
+			<p><strong><?php esc_html_e( 'Socio/a:', 'convoca-members' ); ?></strong> <?php echo esc_html( isset( $miembro->post_title ) ? (string) $miembro->post_title : '' ); ?></p>
 			<p><strong><?php esc_html_e( 'Plan:', 'convoca-members' ); ?></strong> <?php echo esc_html( ucfirst( $plan_key ) ); ?></p>
 			<p><strong><?php esc_html_e( 'Estado:', 'convoca-members' ); ?></strong> <span class="badge state-<?php echo esc_attr( $estado ); ?>"><?php echo esc_html( ucfirst( $estado ) ); ?></span></p>
 			<?php if ( $renovacion ) : ?>

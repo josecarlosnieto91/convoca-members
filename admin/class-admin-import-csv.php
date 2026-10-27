@@ -629,6 +629,8 @@ class Admin_Import_CSV {
 	 * @param bool  $send_welcome  Whether to trigger welcome email.
 	 * @param bool  $update_existing Whether to update existing members.
 	 * @return int|false|\WP_Error Post ID on success, false on skip (error logged), WP_Error on failure.
+	 * @param array<int, string> $errors
+	 * @param array<string, mixed> $row
 	 */
 	private function import_single_row( array $row, array &$errors, int $line, bool $send_welcome, bool $update_existing ) {
 		$nombre = $row['nombre'] ?? '';

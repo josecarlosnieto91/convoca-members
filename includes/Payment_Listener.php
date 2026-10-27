@@ -46,6 +46,7 @@ class Payment_Listener {
 	 * @param string $origin     Origin plugin key.
 	 * @param int    $origin_id  Post ID of the miembro.
 	 * @param array  $meta       Payment metadata.
+	 * @param array<string, mixed> $meta
 	 */
 	public function on_payment_completed( $pago_id, $origin, $origin_id, $meta ): void {
 		// Deduplication: use atomic lock.

@@ -83,6 +83,7 @@ class Integracion_Contratos {
 	 *
 	 * @param mixed $identidad Respuesta por defecto (nadie).
 	 * @return array{autenticado: bool, member_id: int, datos: array}
+	 * @return array<string, mixed>
 	 */
 	public static function filtrar_identidad( $identidad ): array {
 		// El contrato del núcleo son tres claves: si llega otra cosa, se completa aquí y no se propaga.
@@ -179,6 +180,7 @@ class Integracion_Contratos {
 	 * @param array  $personas Lo que haya aportado otro (por defecto, nada).
 	 * @param string $contexto 'voluntario' o 'monitor'.
 	 * @return array<int, array{id:int, nombre:string}>
+	 * @param array<string, mixed> $personas
 	 */
 	public static function filtrar_personas_asignables( $personas, $contexto ): array {
 		$salida = array();

@@ -48,6 +48,8 @@ interface Email_Verifier_Provider {
 	 * @param array  $headers     Headers (associative).
 	 * @param array  $attachments Array of absolute file paths to attach.
 	 * @return bool True on success.
+	 * @param array<int, string> $attachments
+	 * @param array<int|string, string> $headers
 	 */
 	public function send( string $to, string $subject, string $body, array $headers = array(), array $attachments = array() ): bool;
 

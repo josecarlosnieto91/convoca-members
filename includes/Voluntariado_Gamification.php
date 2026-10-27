@@ -32,6 +32,8 @@ class Voluntariado_Gamification {
 
 	/**
 	 * Default track definitions. Saved options merge over these.
+	 *
+	 * @return array<string, mixed>
 	 */
 	public static function default_tracks(): array {
 		return array(
@@ -166,6 +168,7 @@ class Voluntariado_Gamification {
 	 * Get default track definitions.
 	 *
 	 * @return array Default track data.
+	 * @return array<string, mixed>
 	 */
 	public static function get_default_tracks(): array {
 		return self::default_tracks();
@@ -175,6 +178,7 @@ class Voluntariado_Gamification {
 	 * Get tracks with filter applied.
 	 *
 	 * @return array Filtered track configuration.
+	 * @return array<string, mixed>
 	 */
 	public static function get_tracks(): array {
 		return apply_filters( 'convoca_gamification_tracks', self::get_default_tracks() );
@@ -202,6 +206,7 @@ class Voluntariado_Gamification {
 	 *     @type string $desde  Y-m-d desde cuándo se cuentan las horas. Vacío = todo el histórico.
 	 * }
 	 * @return array<int, array{miembro: int, nombre: string, horas: float, nivel: string}>
+	 * @param array<string, mixed> $args
 	 */
 	public static function top( array $args = array() ): array {
 		$args   = wp_parse_args(
@@ -262,6 +267,7 @@ class Voluntariado_Gamification {
 	 *
 	 * @param array $atts Atributos del shortcode.
 	 * @return string
+	 * @param array<string, mixed> $atts
 	 */
 	public static function shortcode_top( $atts = array() ): string {
 		$atts = shortcode_atts(
@@ -366,6 +372,7 @@ class Voluntariado_Gamification {
 	 * Get the merged track configuration (defaults overlaid with saved options).
 	 *
 	 * @return array Full TRACKS config with saved overrides merged in.
+	 * @return array<string, mixed>
 	 */
 	public static function get_tracks_config(): array {
 		$defaults = self::default_tracks();
@@ -398,6 +405,7 @@ class Voluntariado_Gamification {
 	 * @param  float  $hours Total approved volunteer hours.
 	 * @param  string $track Track key.
 	 * @return array  Current level with name, emoji, color, desc, index.
+	 * @return array<string, mixed>
 	 */
 	public static function get_level( float $hours, string $track = '' ): array {
 		if ( ! $track || ! isset( self::default_tracks()[ $track ] ) ) {
@@ -426,6 +434,7 @@ class Voluntariado_Gamification {
 	 * @param  float  $hours Total approved volunteer hours.
 	 * @param  string $track Track key.
 	 * @return array|null Next level data or null.
+	 * @return array<string, mixed>
 	 */
 	public static function get_next_level( float $hours, string $track = '' ): ?array {
 		if ( ! $track || ! isset( self::default_tracks()[ $track ] ) ) {
@@ -451,6 +460,7 @@ class Voluntariado_Gamification {
 	 * @param  float  $hours Total approved volunteer hours.
 	 * @param  string $track Track key.
 	 * @return array{current: array, next: array|null, progress_percent: float, hours_to_next: float}
+	 * @return array<string, mixed>
 	 */
 	public static function get_progress( float $hours, string $track = '' ): array {
 		if ( ! $track || ! isset( self::default_tracks()[ $track ] ) ) {

@@ -626,7 +626,15 @@ class Cron_Manager {
 		$recipients   = array( $admin_email );
 		if ( ! empty( $extra_emails ) ) {
 			$extras     = array_map( 'trim', explode( ',', $extra_emails ) );
-			$recipients = array_merge( $recipients, array_filter( $extras, 'is_email' ) );
+			$recipients = array_merge(
+				$recipients,
+				array_filter(
+					$extras,
+					static function ( $email ) {
+						return (bool) is_email( (string) $email );
+					}
+				)
+			);
 		}
 
 		foreach ( $recipients as $recipient ) {
@@ -647,6 +655,8 @@ class Cron_Manager {
 
 	/**
 	 * Gather weekly statistics for the digest.
+	 *
+	 * @return array<string, mixed>
 	 */
 	private function gather_weekly_stats(): array {
 		global $wpdb;
@@ -734,6 +744,8 @@ class Cron_Manager {
 
 	/**
 	 * Build the HTML body for the admin weekly digest.
+	 *
+	 * @param array<string, mixed> $stats
 	 */
 	private function build_digest_body( array $stats ): string {
 		$admin_url  = admin_url( 'admin.php?page=conv-members' );
@@ -809,7 +821,7 @@ class Cron_Manager {
 	/**
 	 * Build a single metric cell for the digest email.
 	 */
-	private function digest_metric_cell( string $label, $value, string $color ): string {
+	private function digest_metric_cell( string $label, mixed $value, string $color ): string {
 		return '<td style="text-align:center;padding:10px;background:#fff;border-radius:6px;border:1px solid #dee2e6;margin:5px;">'
 			. '<div style="font-size:28px;font-weight:bold;color:' . $color . ';">' . esc_html( $value ) . '</div>'
 			. '<div style="font-size:12px;color:#6c757d;margin-top:4px;">' . esc_html( $label ) . '</div>'
@@ -992,6 +1004,8 @@ class Cron_Manager {
 
 	/**
 	 * Get volunteer hours summary for a member.
+	 *
+	 * @return array<string, mixed>
 	 */
 	private function get_volunteer_hours_summary( int $post_id ): array {
 		global $wpdb;
@@ -1031,6 +1045,8 @@ class Cron_Manager {
 	/**
 	 * Generic template email sender (uses reflection to access private send method).
 	 * This serves templates that don't have a dedicated public method.
+	 *
+	 * @param array<string, mixed> $extra_vars
 	 */
 	private function send_template_email( Email_Manager $email_manager, string $template, int $post_id, array $extra_vars = array() ): void {
 		// Try dedicated method first.

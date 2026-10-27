@@ -669,7 +669,7 @@ class Admin_Page extends \Convoca\Core\Admin\Pantalla_Admin {
 
 		$headers = array( __( 'Nombre', 'convoca-members' ), __( 'Email', 'convoca-members' ), __( 'DNI', 'convoca-members' ), __( 'Plan', 'convoca-members' ), __( 'Estado', 'convoca-members' ), __( 'Teléfono', 'convoca-members' ) );
 		$rows    = array();
-		foreach ( $query->posts as $post ) {
+		foreach ( (array) $query->posts as $post ) {
 			$rows[] = array(
 				$post->post_title,
 				get_post_meta( $post->ID, '_convoca_email', true ),
