@@ -253,7 +253,12 @@ class Justificante {
 		update_post_meta( $member_id, '_convoca_justificante_fecha', current_time( 'mysql' ) );
 
 		// Subir el justificante es declarar el pago: la ficha pasa a activa.
-		Estados::change( $member_id, 'activo', 'Justificante de pago subido por el socio' );
+		$cambio = Estados::change( $member_id, 'activo', 'Justificante de pago subido por el socio' );
+
+		if ( is_wp_error( $cambio ) ) {
+			// El fichero está guardado: no se pierde trabajo, pero queda para revisión manual.
+			update_post_meta( $member_id, '_convoca_justificante_revision', $cambio->get_error_message() );
+		}
 
 		$destino = remove_query_arg( array( self::PARAM, 'id' ) );
 		$destino = add_query_arg( 'subido', '1', $destino );

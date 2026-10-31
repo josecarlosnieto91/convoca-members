@@ -1,3 +1,9 @@
+## [2.10.1] — 2026-10-31
+
+### Cambiado
+
+- **no perder la subida si el cambio de estado falla**
+
 ## [2.10.0] — 2026-10-31
 
 ### Cambiado
