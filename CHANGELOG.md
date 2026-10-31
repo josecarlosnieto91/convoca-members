@@ -1,3 +1,9 @@
+## [2.11.1] — 2026-10-31
+
+### Cambiado
+
+- **respaldo por correo cuando falta el vinculo con el usuario**
+
 ## [2.11.0] — 2026-10-31
 
 ### Cambiado

@@ -119,6 +119,31 @@ class Datos_Socio {
 			)
 		);
 
-		return isset( $fichas[0] ) ? (int) $fichas[0] : 0;
+		if ( isset( $fichas[0] ) ) {
+			return (int) $fichas[0];
+		}
+
+		// Hay sitios donde el vínculo no llegó a escribirse (fichas importadas o anteriores al alta
+		// con cuenta). El correo es la clave de la identidad en todo el ecosistema, así que se usa
+		// como respaldo: mismo socio, sin duplicar nada y sin escribir en la ficha desde una lectura.
+		$usuario = get_userdata( $user_id );
+
+		if ( ! is_object( $usuario ) || empty( $usuario->user_email ) ) {
+			return 0;
+		}
+
+		$por_correo = get_posts(
+			array(
+				'post_type'      => 'miembro',
+				'post_status'    => 'publish',
+				'posts_per_page' => 1,
+				'fields'         => 'ids',
+				'no_found_rows'  => true,
+				'meta_key'       => '_convoca_email',
+				'meta_value'     => (string) $usuario->user_email,
+			)
+		);
+
+		return isset( $por_correo[0] ) ? (int) $por_correo[0] : 0;
 	}
 }

@@ -23,6 +23,8 @@ final class DatosSocioTest extends TestCase {
 	 */
 	protected function setUp(): void {
 		$GLOBALS['_wp_stores']['post_meta'] = array();
+		$GLOBALS['_test_users']             = array();
+		unset( $GLOBALS['_wp_posts_prueba'] );
 	}
 
 	/**
