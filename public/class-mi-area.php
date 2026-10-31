@@ -400,6 +400,96 @@ class Mi_Area {
 	}
 
 	/**
+	 * Cabecera del panel: saludo, condiciones de la ficha y botón de salir.
+	 *
+	 * @param int   $member_id Ficha.
+	 * @param mixed $post      Ficha (objeto con `post_title`).
+	 * @return void
+	 */
+	private function render_cabecera_panel( int $member_id, $post ): void {
+		?>
+		<header class="conv-panel-header">
+			<div>
+				<h1><?php /* translators: %s es el nombre de la persona socia. */ printf( esc_html__( '¡Hola, %s!', 'convoca-members' ), '<span>' . esc_html( (string) $post->post_title ) . '</span>' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- el nombre va escapado y el span es literal. ?></h1>
+				<p class="subtitle"><?php esc_html_e( 'Bienvenido a tu panel de socio de Convoca.', 'convoca-members' ); ?></p>
+				<?php $this->render_condiciones( $member_id ); ?>
+			</div>
+			<button id="conv-logout-btn" type="button" class="btn-link"><?php esc_html_e( 'Cerrar sesión', 'convoca-members' ); ?></button>
+		</header>
+		<?php
+	}
+
+	/**
+	 * Navegación del panel: pestañas y enlaces que cada sitio añade por filtro.
+	 *
+	 * @return void
+	 */
+	private function render_navegacion_panel(): void {
+		?>
+		<nav class="conv-panel-nav card-glass">
+			<ul>
+				<li class="active" data-tab="profile">👤 <?php esc_html_e( 'Mis Datos', 'convoca-members' ); ?></li>
+				<li data-tab="membership">🪪 <?php esc_html_e( 'Carnet Digital', 'convoca-members' ); ?></li>
+				<li data-tab="inscriptions">📝 <?php esc_html_e( 'Inscripciones', 'convoca-members' ); ?></li>
+				<li data-tab="hours">⏳ <?php esc_html_e( 'Voluntariado', 'convoca-members' ); ?></li>
+				<li data-tab="payments">💳 <?php esc_html_e( 'Pagos y Cuotas', 'convoca-members' ); ?></li>
+				<?php
+				// Mis turnos (shifts#19): solo si el plugin de turnos está puesto. El contenido lo pone él
+				// (sus shortcodes), aquí no se reescribe nada suyo.
+				if ( shortcode_exists( 'convoca_proximos_turnos' ) ) :
+					?>
+					<li data-tab="turnos">📅 <?php esc_html_e( 'Mis turnos', 'convoca-members' ); ?></li>
+				<?php endif; ?>
+				<li data-tab="privacy">🔒 <?php esc_html_e( 'Mis datos y privacidad', 'convoca-members' ); ?></li>
+				<li data-tab="search">🔍 <?php esc_html_e( 'Buscar', 'convoca-members' ); ?></li>
+				<li data-tab="notifications" class="conv-notif-tab">🔔 <?php esc_html_e( 'Notificaciones', 'convoca-members' ); ?> <span class="conv-notif-badge" id="conv-notif-count" style="display:none">0</span></li>
+			</ul>
+			<?php $this->render_enlaces_panel(); ?>
+		</nav>
+		<?php
+	}
+
+	/**
+	 * Enlaces que cada sitio añade al panel con `convoca_mi_area_links`.
+	 *
+	 * @return void
+	 */
+	private function render_enlaces_panel(): void {
+		/**
+		 * Enlaces a páginas del sitio que conviene tener a mano desde el panel
+		 * (turnos, perfil público, renovación…).
+		 *
+		 * El plugin no lleva a mano las páginas de un sitio concreto —no existen en
+		 * otro—, así que las pone quien las tiene: cada sitio añade las suyas con
+		 * este filtro. Cada enlace es array( 'url' => …, 'label' => … ).
+		 *
+		 * @param array $enlaces Enlaces a pintar.
+		 */
+		$enlaces = (array) apply_filters( 'convoca_mi_area_links', array() );
+		$enlaces = array_filter(
+			$enlaces,
+			static function ( $e ) {
+				return is_array( $e ) && ! empty( $e['url'] ) && ! empty( $e['label'] );
+			}
+		);
+
+		if ( ! $enlaces ) {
+			return;
+		}
+		?>
+		<ul class="conv-panel-links">
+			<?php foreach ( $enlaces as $enlace ) : ?>
+				<li>
+					<a href="<?php echo esc_url( $enlace['url'] ); ?>">
+						<?php echo isset( $enlace['icon'] ) ? esc_html( $enlace['icon'] ) . ' ' : ''; ?><?php echo esc_html( $enlace['label'] ); ?>
+					</a>
+				</li>
+			<?php endforeach; ?>
+		</ul>
+		<?php
+	}
+
+	/**
 	 * Render Dashboard (React-like Skeleton).
 	 */
 	private function render_dashboard( int $member_id ): void {
@@ -412,70 +502,10 @@ class Mi_Area {
 		}
 		?>
 		<div class="conv-dashboard-container">
-			<header class="conv-panel-header">
-				<div>
-					<h1><?php /* translators: %s es el nombre de la persona socia. */ printf( esc_html__( '¡Hola, %s!', 'convoca-members' ), '<span>' . esc_html( $post->post_title ) . '</span>' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- el nombre va escapado y el span es literal. ?></h1>
-					<p class="subtitle"><?php esc_html_e( 'Bienvenido a tu panel de socio de Convoca.', 'convoca-members' ); ?></p>
-					<?php $this->render_condiciones( $member_id ); ?>
-				</div>
-				<button id="conv-logout-btn" type="button" class="btn-link"><?php esc_html_e( 'Cerrar sesión', 'convoca-members' ); ?></button>
-			</header>
+			<?php $this->render_cabecera_panel( $member_id, $post ); ?>
 
 			<div class="conv-panel-grid">
-				<!-- Navigation -->
-				<nav class="conv-panel-nav card-glass">
-					<ul>
-						<li class="active" data-tab="profile">👤 <?php esc_html_e( 'Mis Datos', 'convoca-members' ); ?></li>
-						<li data-tab="membership">🪪 <?php esc_html_e( 'Carnet Digital', 'convoca-members' ); ?></li>
-						<li data-tab="inscriptions">📝 <?php esc_html_e( 'Inscripciones', 'convoca-members' ); ?></li>
-						<li data-tab="hours">⏳ <?php esc_html_e( 'Voluntariado', 'convoca-members' ); ?></li>
-						<li data-tab="payments">💳 <?php esc_html_e( 'Pagos y Cuotas', 'convoca-members' ); ?></li>
-						<?php
-						// Mis turnos (shifts#19): solo si el plugin de turnos está puesto. El contenido lo pone él
-						// (sus shortcodes), aquí no se reescribe nada suyo.
-						if ( shortcode_exists( 'convoca_proximos_turnos' ) ) :
-							?>
-						<li data-tab="turnos">📅 <?php esc_html_e( 'Mis turnos', 'convoca-members' ); ?></li>
-						<?php endif; ?>
-						<li data-tab="privacy">🔒 <?php esc_html_e( 'Mis datos y privacidad', 'convoca-members' ); ?></li>
-						<li data-tab="search">🔍 <?php esc_html_e( 'Buscar', 'convoca-members' ); ?></li>
-						<li data-tab="notifications" class="conv-notif-tab">🔔 <?php esc_html_e( 'Notificaciones', 'convoca-members' ); ?> <span class="conv-notif-badge" id="conv-notif-count" style="display:none">0</span></li>
-					</ul>
-
-					<?php
-					/**
-					 * Enlaces a páginas del sitio que conviene tener a mano desde el panel
-					 * (turnos, perfil público, renovación…).
-					 *
-					 * El plugin no lleva a mano las páginas de un sitio concreto —no existen en
-					 * otro—, así que las pone quien las tiene: cada sitio añade las suyas con
-					 * este filtro. Cada enlace es array( 'url' => …, 'label' => … ).
-					 *
-					 * @param array $enlaces Enlaces a pintar.
-					 */
-					$conv_enlaces = (array) apply_filters( 'convoca_mi_area_links', array() );
-					$conv_enlaces = array_filter(
-						$conv_enlaces,
-						static function ( $e ) {
-							return is_array( $e ) && ! empty( $e['url'] ) && ! empty( $e['label'] );
-						}
-					);
-
-					if ( $conv_enlaces ) :
-						?>
-						<ul class="conv-panel-links">
-							<?php foreach ( $conv_enlaces as $conv_enlace ) : ?>
-								<li>
-									<a href="<?php echo esc_url( $conv_enlace['url'] ); ?>">
-										<?php echo isset( $conv_enlace['icon'] ) ? esc_html( $conv_enlace['icon'] ) . ' ' : ''; ?><?php echo esc_html( $conv_enlace['label'] ); ?>
-									</a>
-								</li>
-							<?php endforeach; ?>
-						</ul>
-						<?php
-					endif;
-					?>
-				</nav>
+				<?php $this->render_navegacion_panel(); ?>
 
 				<!-- Content -->
 				<main class="conv-panel-content card-glass" id="conv-main-content">
