@@ -1,3 +1,9 @@
+## [2.11.0] — 2026-10-31
+
+### Cambiado
+
+- **datos del socio para la matricula y cursos en su area**
+
 ## [2.10.1] — 2026-10-31
 
 ### Cambiado

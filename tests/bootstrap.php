@@ -267,6 +267,8 @@ namespace {
 
     if (!\function_exists('get_posts')) {
         function get_posts($args) {
+            // La prueba puede fijar la respuesta: sin esto no hay forma de simular una ficha de socio.
+            if (array_key_exists('_wp_posts_prueba', $GLOBALS)) return $GLOBALS['_wp_posts_prueba'];
             if (isset($args['meta_value']) && $args['meta_value'] === 'exists@example.com') return [ (object)['ID' => 42] ];
             return [];
         }

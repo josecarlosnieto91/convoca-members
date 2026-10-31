@@ -3,7 +3,7 @@
  * Plugin Name:       Convoca Members
  * Plugin URI:        https://getconvoca.app
  * Description:       Members, volunteers and communications management.
- * Version: 2.10.1
+ * Version: 2.11.0
  * Requires at least: 6.4
  * Requires PHP:      8.1
  * Tested up to:      7.1.3
@@ -271,6 +271,7 @@ add_action(
 		// Public.
 		new \Convoca\Members\Form_Handler();
 		\Convoca\Members\Justificante::init();
+		\Convoca\Members\Datos_Socio::init();
 		new \Convoca\Members\Form_Voluntariado();
 		new \Convoca\Members\Mi_Area();
 		new \Convoca\Members\Verificar_Certificado();

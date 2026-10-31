@@ -222,6 +222,58 @@ class Mi_Area {
 	/**
 	 * Render the panel.
 	 */
+	/**
+	 * Cursos en los que el socio puede matricularse, si `courses` contesta al filtro.
+	 *
+	 * `members` no sabe qué cursos hay: pregunta y, si nadie contesta (courses no instalado), no
+	 * pinta nada. Cada curso llega con su enlace de matrícula; al abrirlo, el formulario reconoce
+	 * al socio por la sesión y no le pide otra vez sus datos.
+	 *
+	 * @param int $member_id Ficha del socio.
+	 * @return void
+	 */
+	private function render_cursos( int $member_id ): void {
+		$user_id = (int) get_post_meta( $member_id, '_convoca_user_id', true );
+
+		/**
+		 * Cursos disponibles para un socio.
+		 *
+		 * @param array<int,array{titulo:string,url:string,precio:string}> $cursos    Vacío.
+		 * @param int                                                       $user_id   Usuario.
+		 * @param int                                                       $member_id Ficha.
+		 */
+		$cursos = apply_filters( 'convoca_cursos_para_socio', array(), $user_id, $member_id );
+
+		if ( ! is_array( $cursos ) || array() === $cursos ) {
+			return;
+		}
+
+		echo '<section class="conv-mi-area__cursos">';
+		echo '<h2 class="conv-mi-area__titulo">' . esc_html__( 'Cursos', 'convoca-members' ) . '</h2>';
+		echo '<ul class="conv-mi-area__lista">';
+
+		foreach ( $cursos as $curso ) {
+			$titulo = isset( $curso['titulo'] ) ? (string) $curso['titulo'] : '';
+			$url    = isset( $curso['url'] ) ? (string) $curso['url'] : '';
+			$precio = isset( $curso['precio'] ) ? (string) $curso['precio'] : '';
+
+			if ( '' === $titulo || '' === $url ) {
+				continue;
+			}
+
+			echo '<li><a href="' . esc_url( $url ) . '">' . esc_html( $titulo ) . '</a>';
+			echo $precio !== '' ? ' <span class="conv-mi-area__precio">' . esc_html( $precio ) . '</span>' : '';
+			echo '</li>';
+		}
+
+		echo '</ul></section>';
+	}
+
+	/**
+	 * Panel del socio.
+	 *
+	 * @return string
+	 */
 	public function render(): string {
 		self::enqueue_front_assets();
 		ob_start();
@@ -231,6 +283,7 @@ class Mi_Area {
 
 		if ( $member_id > 0 ) {
 			$this->render_dashboard( $member_id );
+			$this->render_cursos( $member_id );
 		} else {
 			$this->render_login_form();
 		}
