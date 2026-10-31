@@ -99,28 +99,40 @@ class Datos_Socio {
 	/**
 	 * Ficha de socio ligada a un usuario.
 	 *
-	 * @param int $user_id Usuario de WordPress.
+	 * El buscador se puede sustituir para probar el respaldo sin depender de `get_posts`: el arnés
+	 * del ecosistema define `get_posts` en el bootstrap de core y no se puede reemplazar por prueba.
+	 *
+	 * @param int           $user_id Usuario de WordPress.
+	 * @param callable|null $buscar  Recibe (meta_key, meta_value) y devuelve el ID de la ficha o 0.
 	 * @return int ID de la ficha, o 0.
 	 */
-	public static function ficha_de_usuario( int $user_id ): int {
+	public static function ficha_de_usuario( int $user_id, ?callable $buscar = null ): int {
 		if ( $user_id <= 0 ) {
 			return 0;
 		}
 
-		$fichas = get_posts(
-			array(
-				'post_type'      => 'miembro',
-				'post_status'    => 'publish',
-				'posts_per_page' => 1,
-				'fields'         => 'ids',
-				'no_found_rows'  => true,
-				'meta_key'       => '_convoca_user_id',
-				'meta_value'     => (string) $user_id,
-			)
-		);
+		if ( null === $buscar ) {
+			$buscar = static function ( string $meta_key, string $meta_value ): int {
+				$fichas = get_posts(
+					array(
+						'post_type'      => 'miembro',
+						'post_status'    => 'publish',
+						'posts_per_page' => 1,
+						'fields'         => 'ids',
+						'no_found_rows'  => true,
+						'meta_key'       => $meta_key,
+						'meta_value'     => $meta_value,
+					)
+				);
 
-		if ( isset( $fichas[0] ) ) {
-			return (int) $fichas[0];
+				return isset( $fichas[0] ) ? (int) $fichas[0] : 0;
+			};
+		}
+
+		$vinculada = (int) $buscar( '_convoca_user_id', (string) $user_id );
+
+		if ( $vinculada > 0 ) {
+			return $vinculada;
 		}
 
 		// Hay sitios donde el vínculo no llegó a escribirse (fichas importadas o anteriores al alta
@@ -132,18 +144,6 @@ class Datos_Socio {
 			return 0;
 		}
 
-		$por_correo = get_posts(
-			array(
-				'post_type'      => 'miembro',
-				'post_status'    => 'publish',
-				'posts_per_page' => 1,
-				'fields'         => 'ids',
-				'no_found_rows'  => true,
-				'meta_key'       => '_convoca_email',
-				'meta_value'     => (string) $usuario->user_email,
-			)
-		);
-
-		return isset( $por_correo[0] ) ? (int) $por_correo[0] : 0;
+		return (int) $buscar( '_convoca_email', (string) $usuario->user_email );
 	}
 }

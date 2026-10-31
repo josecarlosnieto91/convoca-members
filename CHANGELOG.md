@@ -1,3 +1,9 @@
+## [2.11.2] — 2026-10-31
+
+### Cambiado
+
+- **pruebas del respaldo por correo**
+
 ## [2.11.1] — 2026-10-31
 
 ### Cambiado

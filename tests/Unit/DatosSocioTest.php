@@ -88,6 +88,78 @@ final class DatosSocioTest extends TestCase {
 	}
 
 	/**
+	 * Si el vínculo está escrito, no se molesta en buscar por correo.
+	 */
+	public function test_con_vinculo_no_busca_por_correo(): void {
+		$consultas = array();
+
+		$buscar = static function ( $meta, $valor ) use ( &$consultas ) {
+			$consultas[] = $meta;
+			return '_convoca_user_id' === $meta ? 55 : 0;
+		};
+
+		$this->assertSame( 55, Datos_Socio::ficha_de_usuario( 5, $buscar ) );
+		$this->assertSame( array( '_convoca_user_id' ), $consultas );
+	}
+
+	/**
+	 * Si falta el vínculo, se encuentra la ficha por el correo del usuario.
+	 */
+	public function test_sin_vinculo_usa_el_correo(): void {
+		$GLOBALS['_test_users'][5] = (object) array(
+			'ID'         => 5,
+			'user_email' => 'socia@example.com',
+			'roles'      => array( 'subscriber' ),
+		);
+
+		$consultas = array();
+
+		$buscar = static function ( $meta, $valor ) use ( &$consultas ) {
+			$consultas[] = $meta . '=' . $valor;
+			return ( '_convoca_email' === $meta && 'socia@example.com' === $valor ) ? 88 : 0;
+		};
+
+		$this->assertSame( 88, Datos_Socio::ficha_de_usuario( 5, $buscar ) );
+		$this->assertSame(
+			array( '_convoca_user_id=5', '_convoca_email=socia@example.com' ),
+			$consultas
+		);
+	}
+
+	/**
+	 * Si el correo del usuario no está en ninguna ficha, no hay socio.
+	 */
+	public function test_correo_sin_ficha_no_devuelve_socio(): void {
+		$GLOBALS['_test_users'][5] = (object) array(
+			'ID'         => 5,
+			'user_email' => 'nadie@example.com',
+			'roles'      => array( 'subscriber' ),
+		);
+
+		$buscar = static function () {
+			return 0;
+		};
+
+		$this->assertSame( 0, Datos_Socio::ficha_de_usuario( 5, $buscar ) );
+	}
+
+	/**
+	 * Sin usuario de WordPress no se consulta nada.
+	 */
+	public function test_usuario_inexistente_no_consulta(): void {
+		$consultas = array();
+
+		$buscar = static function ( $meta ) use ( &$consultas ) {
+			$consultas[] = $meta;
+			return 0;
+		};
+
+		$this->assertSame( 0, Datos_Socio::ficha_de_usuario( 5, $buscar ) );
+		// Se mira el vínculo (que es barato), pero sin usuario no se busca por correo.
+		$this->assertSame( array( '_convoca_user_id' ), $consultas );
+	}
+
+	/**
 	 * Siembra una ficha con sus metadatos.
 	 *
 	 * @param int    $ficha  ID.
