@@ -97,7 +97,16 @@ endif;
 		</div>
 	</noscript>
 
-	<form id="conv-alta-form" method="post" action="" novalidate>
+	<?php
+	// Sin JavaScript el formulario tiene que poder enviarse: los pasos se muestran todos y el POST
+	// va a admin-post (members#86).
+	?>
+	<noscript>
+		<style>.conv-form-step{display:block !important}.conv-step-nav{display:none !important}</style>
+	</noscript>
+	<form id="conv-alta-form" method="post" action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>" enctype="multipart/form-data" novalidate>
+		<input type="hidden" name="action" value="<?php echo esc_attr( \Convoca\Members\Form_Handler::ACCION_SIN_JS ); ?>" />
+		<?php wp_nonce_field( \Convoca\Members\Form_Handler::NONCE_SIN_JS, '_convoca_nonce' ); ?>
 		<?php // Marcador del envío sin JavaScript: lo lee el aviso de arriba. ?>
 		<input type="hidden" name="convoca_sin_js_alta" value="1" />
 

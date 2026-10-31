@@ -203,6 +203,9 @@ class Email_Manager {
 						)
 					)
 					. '{datos_transferencia}'
+					// Enlace firmado de 3 días: sin él, quien paga por transferencia no tiene dónde
+					// subir el justificante (members#86).
+					. __( '<p>Cuando hayas hecho la transferencia, <a href="{justificante_url}">sube el justificante aquí</a>. El enlace caduca en 3 días.</p>', 'convoca-members' )
 					. __( '<p>Un miembro del equipo revisará tu solicitud y te contactaremos pronto.</p>', 'convoca-members' )
 					. sprintf( /* translators: %s: site name */ __( '<p>¡Gracias por unirte a la familia %s!</p>', 'convoca-members' ), esc_html( get_bloginfo( 'name' ) ) ),
 			),
@@ -971,6 +974,8 @@ class Email_Manager {
 			// que necesita quien acaba de apuntarse para poder ingresar sin preguntar. Vacío si no
 			// procede, para que el correo no deje un hueco.
 			'{datos_transferencia}'          => self::datos_transferencia( $post_id ),
+			// Enlace firmado para subir el justificante; dura 3 días (members#86).
+			'{justificante_url}'             => Justificante::url( $post_id ),
 		);
 	}
 

@@ -85,6 +85,18 @@ namespace {
 		}
 	}
 
+	if ( ! \function_exists( 'wp_salt' ) ) {
+		/**
+		 * Sal de firma (doble).
+		 *
+		 * @param string $scheme Esquema.
+		 * @return string
+		 */
+		function wp_salt( $scheme = 'auth' ) {
+			return 'sal-de-pruebas-' . $scheme;
+		}
+	}
+
 	if ( ! \function_exists( 'wp_cache_delete' ) ) {
 		/**
 		 * Borra de la caché.

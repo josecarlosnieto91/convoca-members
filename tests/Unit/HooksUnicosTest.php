@@ -49,9 +49,11 @@ class HooksUnicosTest extends TestCase {
 			if ( false === $codigo ) {
 				continue;
 			}
-			if ( preg_match_all( "/add_action\(\s*'admin_post_([a-z0-9_]+)'/", $codigo, $m ) ) {
-				foreach ( $m[1] as $accion ) {
-					$registros[ $accion ][] = basename( $fichero );
+			// La misma acción puede colgar de admin_post_ y de admin_post_nopriv_ en el mismo
+			// fichero (hace falta para el alumnado sin sesión); lo que no puede es vivir en dos.
+			if ( preg_match_all( "/add_action\(\s*'admin_post_(nopriv_)?([a-z0-9_]+)'/", $codigo, $m, PREG_SET_ORDER ) ) {
+				foreach ( $m as $coincidencia ) {
+					$registros[ $coincidencia[2] ][ basename( $fichero ) ] = true;
 				}
 			}
 		}
@@ -61,7 +63,7 @@ class HooksUnicosTest extends TestCase {
 		foreach ( $registros as $accion => $donde ) {
 			$this->assertCount(
 				1,
-				$donde,
+				array_keys( $donde ),
 				"admin_post_$accion está registrado " . count( $donde ) . ' veces (' . implode( ', ', $donde )
 					. '): el que corra primero se lleva la acción y el otro queda muerto'
 			);

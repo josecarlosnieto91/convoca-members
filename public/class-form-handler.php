@@ -30,8 +30,22 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Form_Handler {
 
 
+	/**
+	 * Acción del formulario sin JavaScript.
+	 */
+	public const ACCION_SIN_JS = 'convoca_alta_sin_js';
+
+	/**
+	 * Nonce del formulario sin JavaScript.
+	 */
+	public const NONCE_SIN_JS = 'convoca_alta_sin_js_nonce';
+
 	public function __construct() {
 		add_shortcode( 'convoca_alta_socio', array( $this, 'render' ) );
+
+		// Camino sin JavaScript: el POST llega a admin-post y se procesa aquí (members#86).
+		add_action( 'admin_post_convoca_alta_sin_js', array( $this, 'handle_sin_js' ) );
+		add_action( 'admin_post_nopriv_convoca_alta_sin_js', array( $this, 'handle_sin_js' ) );
 		add_action( 'wp_ajax_convoca_alta_submit', array( $this, 'handle_submit' ) );
 		add_action( 'wp_ajax_nopriv_convoca_alta_submit', array( $this, 'handle_submit' ) );
 
@@ -58,6 +72,62 @@ class Form_Handler {
 
 	/**
 	 * Render the multi-step form via template.
+	 */
+	/**
+	 * Procesa el alta enviada sin JavaScript.
+	 *
+	 * @return void
+	 */
+	public function handle_sin_js(): void {
+		$nonce = isset( $_POST['_convoca_nonce'] ) ? sanitize_text_field( wp_unslash( (string) $_POST['_convoca_nonce'] ) ) : '';
+
+		if ( ! wp_verify_nonce( $nonce, self::NONCE_SIN_JS ) ) {
+			wp_die(
+				esc_html__( 'La petición ha caducado. Vuelve a intentarlo.', 'convoca-members' ),
+				'',
+				array( 'response' => 403 )
+			);
+		}
+
+		$datos = wp_unslash( $_POST );
+		unset( $datos['_convoca_nonce'], $datos['action'] );
+
+		// El checkbox viaja como «on» o «1»: se normaliza para la validación.
+		foreach ( array( 'rgpd', 'acepta_estatutos', 'acepta_reglamento' ) as $clave ) {
+			if ( isset( $datos[ $clave ] ) ) {
+				$datos[ $clave ] = '1';
+			}
+		}
+
+		$resultado = Process_Member::register( $datos, $_FILES );
+
+		$destino = wp_get_referer();
+
+		if ( ! $destino ) {
+			$destino = home_url( '/' );
+		}
+
+		if ( is_wp_error( $resultado ) ) {
+			$destino = add_query_arg(
+				array(
+					'convoca_alta' => 'error',
+					'motivo'       => rawurlencode( $resultado->get_error_message() ),
+				),
+				remove_query_arg( array( 'convoca_alta', 'motivo' ), $destino )
+			);
+
+			wp_safe_redirect( $destino );
+			exit;
+		}
+
+		wp_safe_redirect( add_query_arg( 'convoca_alta', 'ok', remove_query_arg( 'convoca_alta', $destino ) ) );
+		exit;
+	}
+
+	/**
+	 * Pinta el formulario de alta.
+	 *
+	 * @return string
 	 */
 	public function render(): string {
 		Mi_Area::enqueue_front_assets();

@@ -502,4 +502,9 @@ namespace {
             return true;
         }
     }
+    if (!\function_exists('wp_salt')) {
+        function wp_salt($scheme = 'auth') {
+            return 'sal-de-pruebas-' . $scheme;
+        }
+    }
 }

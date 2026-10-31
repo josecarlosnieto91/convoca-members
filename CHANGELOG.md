@@ -1,3 +1,9 @@
+## [2.10.0] — 2026-10-31
+
+### Cambiado
+
+- **alta sin JavaScript y justificante con enlace de 3 dias**
+
 ## [2.9.19] — 2026-10-26
 
 ### Cambiado

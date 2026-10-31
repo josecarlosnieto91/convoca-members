@@ -3,7 +3,7 @@
  * Plugin Name:       Convoca Members
  * Plugin URI:        https://getconvoca.app
  * Description:       Members, volunteers and communications management.
- * Version: 2.9.19
+ * Version: 2.10.0
  * Requires at least: 6.4
  * Requires PHP:      8.1
  * Tested up to:      7.1.3
@@ -91,6 +91,9 @@ register_activation_hook(
 		// Autoloader is already registered, no need to require these manually.
 		\Convoca\Members\CPT_Miembro::register();
 		\Convoca\Core\Installer::db_init();
+
+		// Página para subir el justificante; sin ella el enlace del correo no lleva a ninguna parte.
+		\Convoca\Members\Justificante::asegurar_pagina();
 
 		// Schedule Daily Cron.
 		if ( ! wp_next_scheduled( 'convoca_daily_event' ) ) {
@@ -267,6 +270,7 @@ add_action(
 
 		// Public.
 		new \Convoca\Members\Form_Handler();
+		\Convoca\Members\Justificante::init();
 		new \Convoca\Members\Form_Voluntariado();
 		new \Convoca\Members\Mi_Area();
 		new \Convoca\Members\Verificar_Certificado();
