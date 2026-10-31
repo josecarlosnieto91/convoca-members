@@ -223,6 +223,41 @@ class Mi_Area {
 	 * Render the panel.
 	 */
 	/**
+	 * Qué es esta persona y qué le supone, dentro de su panel.
+	 *
+	 * Va en servidor: es lo primero que ve al entrar y no depende de que el JS cargue.
+	 *
+	 * @param int $member_id Ficha del socio.
+	 * @return void
+	 */
+	private function render_condiciones( int $member_id ): void {
+		$condiciones = Roles_Miembro::roles( $member_id );
+
+		if ( ! $condiciones ) {
+			return;
+		}
+
+		$etiquetas = array();
+
+		foreach ( $condiciones as $rol ) {
+			$etiquetas[] = Roles_Miembro::etiqueta( $rol );
+		}
+
+		echo '<p class="conv-condiciones">';
+		printf(
+			/* translators: %s: condiciones de la ficha (Socio, Voluntario, Monitor). */
+			esc_html__( 'Tu ficha: %s', 'convoca-members' ),
+			esc_html( implode( ' · ', $etiquetas ) )
+		);
+
+		if ( in_array( Roles_Miembro::SOCIO, $condiciones, true ) ) {
+			echo ' — ' . esc_html__( 'tus inscripciones van con tarifa de socio.', 'convoca-members' );
+		}
+
+		echo '</p>';
+	}
+
+	/**
 	 * Cursos en los que el socio puede matricularse, si `courses` contesta al filtro.
 	 *
 	 * `members` no sabe qué cursos hay: pregunta y, si nadie contesta (courses no instalado), no
@@ -296,6 +331,33 @@ class Mi_Area {
 	/**
 	 * Render Login Form.
 	 */
+	/**
+	 * Aviso para quien intenta entrar sin JavaScript.
+	 *
+	 * @return void
+	 */
+	private function aviso_sin_js_panel(): void {
+		$convoca_email = (string) apply_filters( 'convoca_panel_socio_sin_js_email', (string) get_bloginfo( 'admin_email' ) );
+		?>
+		<div class="conv-login-container card-glass">
+			<div class="convoca-alert convoca-alert--warning" role="status">
+				<p><?php esc_html_e( 'No se ha podido iniciar la sesión: este formulario necesita JavaScript en el navegador.', 'convoca-members' ); ?></p>
+				<p><?php esc_html_e( 'Actívalo y vuelve a intentarlo.', 'convoca-members' ); ?>
+				<?php if ( $convoca_email ) : ?>
+					<?php esc_html_e( 'Si no puedes, escríbenos:', 'convoca-members' ); ?>
+					<a href="<?php echo esc_url( 'mailto:' . $convoca_email ); ?>"><?php echo esc_html( $convoca_email ); ?></a>
+				<?php endif; ?>
+				</p>
+			</div>
+		</div>
+		<?php
+	}
+
+	/**
+	 * Formulario de acceso al área privada.
+	 *
+	 * @return void
+	 */
 	private function render_login_form(): void {
 		?>
 		<?php
@@ -305,20 +367,7 @@ class Mi_Area {
 		 * sin procesarse y sin decir nada).
 		 */
 		if ( ! empty( $_POST['convoca_sin_js_panel_socio'] ) ) {
-			$convoca_email = (string) apply_filters( 'convoca_panel_socio_sin_js_email', (string) get_bloginfo( 'admin_email' ) );
-			?>
-			<div class="conv-login-container card-glass">
-				<div class="convoca-alert convoca-alert--warning" role="status">
-					<p><?php esc_html_e( 'No se ha podido iniciar la sesión: este formulario necesita JavaScript en el navegador.', 'convoca-members' ); ?></p>
-					<p><?php esc_html_e( 'Actívalo y vuelve a intentarlo.', 'convoca-members' ); ?>
-					<?php if ( $convoca_email ) : ?>
-						<?php esc_html_e( 'Si no puedes, escríbenos:', 'convoca-members' ); ?>
-						<a href="<?php echo esc_url( 'mailto:' . $convoca_email ); ?>"><?php echo esc_html( $convoca_email ); ?></a>
-					<?php endif; ?>
-					</p>
-				</div>
-			</div>
-			<?php
+			$this->aviso_sin_js_panel();
 			return;
 		}
 		?>
@@ -367,31 +416,7 @@ class Mi_Area {
 				<div>
 					<h1><?php /* translators: %s es el nombre de la persona socia. */ printf( esc_html__( '¡Hola, %s!', 'convoca-members' ), '<span>' . esc_html( $post->post_title ) . '</span>' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- el nombre va escapado y el span es literal. ?></h1>
 					<p class="subtitle"><?php esc_html_e( 'Bienvenido a tu panel de socio de Convoca.', 'convoca-members' ); ?></p>
-					<?php
-					// Qué es esta persona y qué le supone (issue #30). Va en servidor: es lo primero que ve
-					// al entrar y no depende de que el JS del panel cargue.
-					$conv_condiciones = Roles_Miembro::roles( $member_id );
-					if ( $conv_condiciones ) :
-						$conv_etiquetas = array();
-						foreach ( $conv_condiciones as $conv_rol ) {
-							$conv_etiquetas[] = Roles_Miembro::etiqueta( $conv_rol );
-						}
-						?>
-						<p class="conv-condiciones">
-							<?php
-							printf(
-								/* translators: %s: condiciones de la ficha (Socio, Voluntario, Monitor). */
-								esc_html__( 'Tu ficha: %s', 'convoca-members' ),
-								esc_html( implode( ' · ', $conv_etiquetas ) )
-							);
-							if ( in_array( Roles_Miembro::SOCIO, $conv_condiciones, true ) ) {
-								echo ' — ' . esc_html__( 'tus inscripciones van con tarifa de socio.', 'convoca-members' );
-							}
-							?>
-						</p>
-						<?php
-					endif;
-					?>
+					<?php $this->render_condiciones( $member_id ); ?>
 				</div>
 				<button id="conv-logout-btn" type="button" class="btn-link"><?php esc_html_e( 'Cerrar sesión', 'convoca-members' ); ?></button>
 			</header>
