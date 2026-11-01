@@ -139,27 +139,6 @@ class Admin_List extends \WP_List_Table {
 	}
 
 	/**
-	 * Versión de la caché del listado.
-	 *
-	 * @return string
-	 */
-	private static function version_de_cache(): string {
-		return (string) get_option( 'convoca_members_list_version', '1' );
-	}
-
-	/**
-	 * Tira la caché del listado subiendo su versión.
-	 *
-	 * Se llama en cada cambio que altere qué fichas hay: alta, edición, cambio de estado, borrado e
-	 * importación. Subir la versión invalida todas las claves a la vez sin recorrer transients.
-	 *
-	 * @return void
-	 */
-	public static function invalidar_cache(): void {
-		update_option( 'convoca_members_list_version', (string) ( time() . wp_rand( 100, 999 ) ), false );
-	}
-
-	/**
 	 * Los estados de post que salen en el listado.
 	 *
 	 * Es la fuente única: la tabla y los contadores de arriba tienen que mirar los mismos, o pasa lo
@@ -353,7 +332,7 @@ class Admin_List extends \WP_List_Table {
 		// La clave lleva una VERSIÓN que se sube al crear, editar o borrar: sin ella, la ficha
 		// eliminada seguía en el listado cinco minutos y los contadores —que van en vivo— decían 0
 		// mientras la tabla mostraba la fila.
-		$cache_key = 'convoca_list_members_' . self::version_de_cache() . '_' . md5( (string) wp_json_encode( $args ) );
+		$cache_key = 'convoca_list_members_' . Listado_Cache::version() . '_' . md5( (string) wp_json_encode( $args ) );
 		$cached    = ! $search && ! $estado_filter && ! $tipo_filter && ! $plan_filter && ! $cuota_filter ? get_transient( $cache_key ) : false;
 
 		if ( $cached ) {

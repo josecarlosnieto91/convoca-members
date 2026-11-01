@@ -1,3 +1,9 @@
+## [2.11.7] — 2026-11-01
+
+### Cambiado
+
+- **la cache del listado, a su clase**
+
 ## [2.11.6] — 2026-11-01
 
 ### Cambiado
