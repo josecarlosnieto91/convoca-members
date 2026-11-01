@@ -1,3 +1,11 @@
+## [2.11.9] — 2026-11-01
+
+### Corregido
+
+- **requisito real de PHP**: la ficha declaraba 8.1 pero `chillerlan/php-qrcode 6.0.1` exige `^8.2`.
+  Se declara el suelo real (8.2) en cabecera, readme y composer. Comprobado
+  con `composer why-not php 8.1`.
+
 ## [2.11.8] — 2026-11-01
 
 ### Cambiado
