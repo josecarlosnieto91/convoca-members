@@ -282,6 +282,50 @@ final class RestApiBusquedaTest extends TestCase {
 	}
 
 	/**
+	 * Un socio se encuentra por su **nombre** aunque no tenga metadatos.
+	 *
+	 * Es el caso real medido en la demo: 14 socios, `_convoca_nombre` vacío en todos. La consulta de antes
+	 * exigía que el término estuviera en el título **y** en alguno de los seis metadatos, así que buscar a
+	 * un socio por su nombre devolvía cero.
+	 */
+	public function test_el_socio_se_encuentra_por_su_nombre_sin_metadatos(): void {
+		$this->con_sesion( 55 );
+		$this->ficha( 55, 'miembro', 'Ada Lovelace', array( '_convoca_email' => 'ada@example.test' ) );
+
+		$datos = $this->buscar( array( 'q' => 'Lovelace', 'type' => 'members' ) );
+
+		$this->assertCount( 1, $datos['results'], 'el título basta para encontrar al socio' );
+		$this->assertSame( 55, $datos['results'][0]['id'] );
+	}
+
+	/**
+	 * Y también se encuentra por un **dato suyo** aunque el título no lo lleve.
+	 *
+	 * Antes, buscar un DNI no encontraba nada: el `s` y el `meta_query` iban en AND.
+	 */
+	public function test_el_socio_se_encuentra_por_su_dni(): void {
+		$this->con_sesion( 55 );
+		$this->ficha( 55, 'miembro', 'Ficha sin el dato en el título', array( '_convoca_dni' => '12345678Z' ) );
+
+		$datos = $this->buscar( array( 'q' => '12345678Z', 'type' => 'members' ) );
+
+		$this->assertCount( 1, $datos['results'], 'el DNI encuentra al socio' );
+		$this->assertSame( 55, $datos['results'][0]['id'] );
+	}
+
+	/**
+	 * Un socio que casa por título **y** por dato sale una sola vez.
+	 */
+	public function test_un_socio_que_casa_por_los_dos_lados_sale_una_vez(): void {
+		$this->con_sesion( 55 );
+		$this->ficha( 55, 'miembro', 'Ada Lovelace', array( '_convoca_email' => 'ada@example.test' ) );
+
+		$datos = $this->buscar( array( 'q' => 'Ada', 'type' => 'members' ) );
+
+		$this->assertCount( 1, $datos['results'], 'la unión de las dos consultas no duplica' );
+	}
+
+	/**
 	 * El límite se respeta y no pasa de 50 aunque se pidan más.
 	 */
 	public function test_el_limite(): void {

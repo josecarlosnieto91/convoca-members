@@ -1,3 +1,15 @@
+## [2.11.16] — 2026-11-02
+
+### Corregido
+
+- **la búsqueda de socios no encontraba por nombre ni por dato** (members#88).
+  WordPress junta `s` y `meta_query` con AND, así que el término tenía que estar en el título
+  **y** en alguno de los seis metadatos. Medido en la demo con 14 socios: por título 1 resultado,
+  por metadato 0, y el endpoint devolvía 0 —incluso buscando por el nombre, porque
+  `_convoca_nombre` está vacío en los datos reales.
+  Ahora son dos consultas (texto y datos) unidas por ID, sin duplicados: el resultado es un
+  superconjunto de lo que devolvía antes, así que no se pierde ninguna búsqueda que funcionara.
+
 ## [2.11.15] — 2026-11-02
 
 ### Cambiado

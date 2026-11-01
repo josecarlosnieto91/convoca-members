@@ -1031,16 +1031,27 @@ class Rest_API {
 				);
 			}
 
-			$member_args  = array(
+			$member_args = array(
 				'post_type'      => 'miembro',
 				'post_status'    => 'any',
 				'posts_per_page' => $limit,
-				's'              => $q,
-				'meta_query'     => $meta_query,
 			);
-			$member_query = new \WP_Query( $member_args );
-			foreach ( (array) $member_query->posts as $p ) {
-				$results[] = array(
+
+			// Dos consultas, no una (members#88). WordPress junta `s` y `meta_query` con AND: en una sola
+			// consulta el término tenía que estar en el título **y** en alguno de los seis datos, así que
+			// buscar por DNI no encontraba nada y buscar por nombre fallaba en cuanto `_convoca_nombre`
+			// estaba vacío. Medido en la demo: 14 socios, nombre por título 1 resultado, por metadato 0,
+			// y el endpoint devolvía 0.
+			$por_texto = new \WP_Query( $member_args + array( 's' => $q ) );
+			$por_dato  = new \WP_Query( $member_args + array( 'meta_query' => $meta_query ) );
+
+			$vistos = array();
+			foreach ( array_merge( (array) $por_texto->posts, (array) $por_dato->posts ) as $p ) {
+				if ( isset( $vistos[ $p->ID ] ) ) {
+					continue; // Casa por los dos lados: sale una vez.
+				}
+				$vistos[ $p->ID ] = true;
+				$results[]        = array(
 					'type'  => 'member',
 					'id'    => $p->ID,
 					'title' => $p->post_title,
