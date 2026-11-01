@@ -45,19 +45,6 @@ class Rest_API {
 	 * Register routes.
 	 */
 	public function register_routes(): void {
-		$this->rutas_de_acceso();
-		$this->rutas_de_horas();
-		$this->rutas_de_certificados();
-		$this->rutas_de_renovacion();
-		$this->rutas_de_privacidad();
-		$this->rutas_de_perfil();
-		$this->rutas_de_notificaciones();
-	}
-
-	/**
-	 * Sesión, perfil, inscripciones y pagos del socio.
-	 */
-	private function rutas_de_acceso(): void {
 		// Login.
 		register_rest_route(
 			self::NAMESPACE,
@@ -102,12 +89,7 @@ class Rest_API {
 				'permission_callback' => array( $this, 'check_member_auth' ),
 			)
 		);
-	}
 
-	/**
-	 * Horas de voluntariado y actividades del selector.
-	 */
-	private function rutas_de_horas(): void {
 		// Volunteering hours: read-only for authenticated members (including
 		// grace/suspendido); submitting new hours requires an active member.
 		register_rest_route(
@@ -137,12 +119,7 @@ class Rest_API {
 				'permission_callback' => array( $this, 'check_member_auth' ),
 			)
 		);
-	}
 
-	/**
-	 * Carné, proyectos, búsqueda de socios y certificados.
-	 */
-	private function rutas_de_certificados(): void {
 		// Card download/view.
 		register_rest_route(
 			self::NAMESPACE,
@@ -197,12 +174,7 @@ class Rest_API {
 				'permission_callback' => array( $this, 'check_active_member' ),
 			)
 		);
-	}
 
-	/**
-	 * Renovación sin pago, turnos, voluntariado y baja.
-	 */
-	private function rutas_de_renovacion(): void {
 		// Renovar sin pago por horas (members#45): el socio que ya ha hecho las horas de su plan no tiene que
 		// esperar al vencimiento ni pasar por caja. La puerta la guarda el propio método, que vuelve a
 		// comprobar las horas en el servidor: el panel solo enseña lo que hay.
@@ -269,12 +241,7 @@ class Rest_API {
 				'permission_callback' => array( $this, 'check_renewable_member' ),
 			)
 		);
-	}
 
-	/**
-	 * Privacidad del socio: estado, descarga y supresión.
-	 */
-	private function rutas_de_privacidad(): void {
 		// Privacidad del socio (members#42): ver su estado, descargar sus datos y pedir la supresión.
 		// El estado lo ve cualquier socio con sesión; las dos que tocan datos piden la sesión de socio
 		// (la de supresión, además, solo para quien está activo o en gracia).
@@ -305,12 +272,7 @@ class Rest_API {
 				'permission_callback' => array( $this, 'check_member_auth' ),
 			)
 		);
-	}
 
-	/**
-	 * Perfil, cambio de correo y verificación de teléfono.
-	 */
-	private function rutas_de_perfil(): void {
 		// Update profile fields (address, phone, email with confirmation, birthday once).
 		// Profile update is an action: only active members may change their data.
 		// Members in grace (suspendido) can view but not edit.
@@ -345,12 +307,7 @@ class Rest_API {
 				'permission_callback' => array( $this, 'check_member_auth' ),
 			)
 		);
-	}
 
-	/**
-	 * Notificaciones del socio y búsqueda unificada.
-	 */
-	private function rutas_de_notificaciones(): void {
 		// Member notifications.
 		register_rest_route(
 			self::NAMESPACE,

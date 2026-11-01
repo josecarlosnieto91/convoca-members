@@ -1,13 +1,3 @@
-## [2.11.9] — 2026-11-01
-
-### Cambiado
-
-- **`register_routes()` partido por recurso**: eran 337 líneas seguidas declarando las 27
-  rutas. Ahora la función pública solo llama a siete métodos privados (acceso, horas,
-  certificados, renovación, privacidad, perfil y notificaciones). Los bloques se han movido
-  verbatim, en el mismo orden: las 27 rutas se capturan idénticas antes y después, con su
-  espacio de nombres, su ruta y su método HTTP.
-
 ## [2.11.8] — 2026-11-01
 
 ### Cambiado
