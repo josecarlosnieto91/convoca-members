@@ -243,6 +243,45 @@ final class RestApiBusquedaTest extends TestCase {
 	}
 
 	/**
+	 * Cada una de las seis claves de metadatos encuentra a su socio.
+	 *
+	 * La consulta mira correo, DNI, teléfono, número de socio, código de acceso y nombre. Ninguna prueba
+	 * cubría las seis: se buscaba siempre por el título, así que quitar una clave del `meta_query` no
+	 * rompía nada y la búsqueda dejaba de encontrar por ese dato sin que nadie se enterara.
+	 *
+	 * Cada ficha casa por el título (`zzz`) y por **una sola** clave: si esa clave desaparece de la
+	 * consulta, su ficha desaparece del resultado y la cuenta baja de seis.
+	 */
+	public function test_cada_clave_de_metadatos_encuentra_al_socio(): void {
+		$this->con_sesion( 55 );
+
+		$claves = array(
+			'_convoca_email',
+			'_convoca_dni',
+			'_convoca_telefono',
+			'_convoca_numero_socio',
+			'_convoca_access_code',
+			'_convoca_nombre',
+		);
+
+		$id = 100;
+		foreach ( $claves as $clave ) {
+			$this->ficha( $id, 'miembro', 'Ficha zzz', array( $clave => 'zzz' ) );
+			++$id;
+		}
+
+		$datos = $this->buscar(
+			array(
+				'q'     => 'zzz',
+				'type'  => 'members',
+				'limit' => 50,
+			)
+		);
+
+		$this->assertCount( count( $claves ), $datos['results'], 'las seis claves buscan, cada una por su dato' );
+	}
+
+	/**
 	 * El límite se respeta y no pasa de 50 aunque se pidan más.
 	 */
 	public function test_el_limite(): void {

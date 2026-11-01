@@ -1020,44 +1020,23 @@ class Rest_API {
 
 		// ── Search members (requires member/admin session) ─────────────
 		if ( ( ! $type || $type === 'members' ) && $is_member_auth ) {
+			// Las seis claves se buscan igual (subcadena, sin distinguir mayúsculas): una lista y un
+			// bucle en vez de seis bloques idénticos, para que añadir o quitar un dato sea una línea.
+			$meta_query = array( 'relation' => 'OR' );
+			foreach ( array( '_convoca_email', '_convoca_dni', '_convoca_telefono', '_convoca_numero_socio', '_convoca_access_code', '_convoca_nombre' ) as $clave ) {
+				$meta_query[] = array(
+					'key'     => $clave,
+					'value'   => $q,
+					'compare' => 'LIKE',
+				);
+			}
+
 			$member_args  = array(
 				'post_type'      => 'miembro',
 				'post_status'    => 'any',
 				'posts_per_page' => $limit,
 				's'              => $q,
-				'meta_query'     => array(
-					'relation' => 'OR',
-					array(
-						'key'     => '_convoca_email',
-						'value'   => $q,
-						'compare' => 'LIKE',
-					),
-					array(
-						'key'     => '_convoca_dni',
-						'value'   => $q,
-						'compare' => 'LIKE',
-					),
-					array(
-						'key'     => '_convoca_telefono',
-						'value'   => $q,
-						'compare' => 'LIKE',
-					),
-					array(
-						'key'     => '_convoca_numero_socio',
-						'value'   => $q,
-						'compare' => 'LIKE',
-					),
-					array(
-						'key'     => '_convoca_access_code',
-						'value'   => $q,
-						'compare' => 'LIKE',
-					),
-					array(
-						'key'     => '_convoca_nombre',
-						'value'   => $q,
-						'compare' => 'LIKE',
-					),
-				),
+				'meta_query'     => $meta_query,
 			);
 			$member_query = new \WP_Query( $member_args );
 			foreach ( (array) $member_query->posts as $p ) {

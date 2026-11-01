@@ -1,3 +1,20 @@
+## [2.11.14] — 2026-11-02
+
+### Cambiado
+
+- **la búsqueda global deja de repetir seis veces la misma cláusula**: 45 líneas de `meta_query`
+  idénticas pasan a una lista y un bucle. Misma consulta, mismos resultados.
+- **prueba de regresión nueva**: una ficha por cada una de las seis claves (correo, DNI, teléfono,
+  número de socio, código de acceso y nombre). Comprobada en negativo: al quitar una clave del
+  bucle, la prueba falla y dice cuántas fichas faltan.
+
+### Detectado, no corregido
+
+- La consulta junta `s` y `meta_query` en AND, así que **buscar por DNI, correo, teléfono o número
+  de socio no encuentra nada** salvo que el término esté también en el título. Medido con un socio
+  real en la demo: 0 resultados con la consulta actual, 1 sin `s`. Se deja como está y se documenta
+  porque corregirlo cambia lo que devuelve la búsqueda pública.
+
 ## [2.11.13] — 2026-11-01
 
 ### Cambiado
