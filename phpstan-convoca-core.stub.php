@@ -231,7 +231,8 @@ namespace Convoca\Core\Admin {
         public static function php( string $minimo = '8.0' ): array { return array(); }
         public static function tablas( array $tablas, string $arreglo = '' ): array { return array(); }
         public static function cron( array $eventos, string $arreglo = '' ): array { return array(); }
-        public static function resultado( string $id, string $label, string $message, string $severity, string $fix = '' ): array { return array(); }
+        public static function resultado( string $id, string $label, string $message, string $severity ): array { return array(); }
+        public static function con_arreglo( array $resultado, string $fix ): array { return array(); }
         public static function pintar( array $resultados, string $titulo ): void {}
     }
 
