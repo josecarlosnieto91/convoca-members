@@ -2,8 +2,8 @@
 /**
  * Toda clase, trait o interfaz del plugin tiene que estar en el autoload.
  *
- * El 01/11/2026 un trait nuevo quedó fuera del classmap y tumbó biodevas con
- * «Trait not found». Sin un test, el fallo solo aparece en producción.
+ * El 01/11/2026 un trait nuevo quedó fuera del classmap y tumbó un sitio en producción
+ * con «Trait not found». Sin un test, el fallo solo aparece cuando ya hay usuarios.
  *
  * Se pregunta al propio cargador de Composer (`findFile`), no a un regex sobre el mapa:
  * así el resultado es el mismo que tendrá el sitio.

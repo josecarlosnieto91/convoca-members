@@ -1,8 +1,0 @@
-# Exenciones de higiene: son datos sintéticos de pruebas, no personas reales.
-tests/Unit/BusquedaYFiltrosListadoTest.php        # DNI/NIE ficticios en aserciones de búsqueda
-tests/Unit/DuplicadosDeImportacionTest.php        # DNI/NIE ficticios en el escenario de duplicados
-tests/Unit/FlujoDeImportacionTest.php             # DNI/NIE ficticios en el CSV de prueba
-tests/Unit/FormVoluntariadoTest.php               # DNI/NIE ficticios en el formulario
-tests/Unit/ProcessMemberAltaTest.php              # DNI/NIE ficticios en el alta
-tests/Unit/RestApiListadosTest.php                # DNI/NIE ficticios en el listado
-tests/Unit/DocumentoTest.php                      # NIE ficticios en el documento
