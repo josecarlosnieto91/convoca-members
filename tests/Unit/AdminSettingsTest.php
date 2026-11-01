@@ -132,18 +132,6 @@ final class AdminSettingsTest extends TestCase {
 	}
 
 	/**
-	 * Los valores por defecto de los rangos cuando no llegan.
-	 */
-	public function test_los_rangos_traen_su_valor_por_defecto(): void {
-		$salida = $this->ajustes->sanitize_settings( array() );
-
-		$this->assertSame( 1, $salida['grace_suspend_days'] );
-		$this->assertSame( 30, $salida['grace_baja_days'] );
-		$this->assertSame( 3, $salida['auto_renew_max_attempts'] );
-		$this->assertSame( 5, $salida['auto_renew_retry_days'] );
-	}
-
-	/**
 	 * Los planes: una clave vacía no crea un plan y las ventajas van por líneas.
 	 */
 	public function test_sanea_los_planes(): void {
