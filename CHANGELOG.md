@@ -1,3 +1,9 @@
+## [2.11.6] — 2026-11-01
+
+### Cambiado
+
+- **contadores y widget con la misma lista de estados**
+
 ## [2.11.5] — 2026-11-01
 
 ### Cambiado

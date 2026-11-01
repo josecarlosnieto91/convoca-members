@@ -277,20 +277,29 @@ class Admin_Page extends \Convoca\Core\Admin\Pantalla_Admin {
 		}
 
 		// Members without any estado meta are treated as "pendiente_documentacion".
-		$sin_estado                         = (int) $wpdb->get_var(
-			"SELECT COUNT(*) FROM {$wpdb->posts} p
-			 WHERE p.post_type = 'miembro' AND p.post_status IN ( {$estados_sql} )
-			   AND NOT EXISTS (
-				   SELECT 1 FROM {$wpdb->postmeta} pm
-				    WHERE pm.post_id = p.ID AND pm.meta_key = '_convoca_estado_miembro'
-			   )"
+		// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- placeholders generados, no datos.
+		$sin_estado = (int) $wpdb->get_var(
+			$wpdb->prepare(
+				// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- placeholders generados, no datos.
+				"SELECT COUNT(*) FROM {$wpdb->posts} p
+				 WHERE p.post_type = 'miembro' AND p.post_status IN ( {$estados_sql} )
+				   AND NOT EXISTS (
+					   SELECT 1 FROM {$wpdb->postmeta} pm
+					    WHERE pm.post_id = p.ID AND pm.meta_key = '_convoca_estado_miembro'
+				   )",
+				Admin_List::ESTADOS_LISTADOS
+			)
 		);
 		$counts['pendiente_documentacion'] += $sin_estado;
 
 		// Total = all published members.
 		$total = (int) $wpdb->get_var(
-			"SELECT COUNT(*) FROM {$wpdb->posts}
-			 WHERE post_type = 'miembro' AND post_status IN ( {$estados_sql} )"
+			$wpdb->prepare(
+				// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- placeholders generados, no datos.
+				"SELECT COUNT(*) FROM {$wpdb->posts}
+				 WHERE post_type = 'miembro' AND post_status IN ( {$estados_sql} )",
+				Admin_List::ESTADOS_LISTADOS
+			)
 		);
 		?>
 		<div class="conv-stats-bar">
@@ -545,13 +554,25 @@ class Admin_Page extends \Convoca\Core\Admin\Pantalla_Admin {
 			__( '🍁 Miembros Convoca', 'convoca-members' ),
 			function () {
 				global $wpdb;
+
+				// Mismos estados que la tabla y la barra de arriba: este widget también decía «0 de 0»
+				// con fichas que sí salían en el listado.
+				$estados = implode( ', ', array_fill( 0, count( Admin_List::ESTADOS_LISTADOS ), '%s' ) );
 				$total   = (int) $wpdb->get_var(
-					"SELECT COUNT(*) FROM {$wpdb->posts} WHERE post_type = 'miembro' AND post_status = 'publish'"
+					$wpdb->prepare(
+						// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- placeholders generados, no datos.
+						"SELECT COUNT(*) FROM {$wpdb->posts} WHERE post_type = 'miembro' AND post_status IN ( {$estados} )",
+						Admin_List::ESTADOS_LISTADOS
+					)
 				);
 				$activos = (int) $wpdb->get_var(
-					"SELECT COUNT(*) FROM {$wpdb->postmeta} pm JOIN {$wpdb->posts} p ON p.ID = pm.post_id
-					 WHERE pm.meta_key = '_convoca_estado_miembro' AND pm.meta_value = 'activo'
-					   AND p.post_type = 'miembro' AND p.post_status = 'publish'"
+					$wpdb->prepare(
+						// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- placeholders generados, no datos.
+						"SELECT COUNT(*) FROM {$wpdb->postmeta} pm JOIN {$wpdb->posts} p ON p.ID = pm.post_id
+						 WHERE pm.meta_key = '_convoca_estado_miembro' AND pm.meta_value = 'activo'
+						   AND p.post_type = 'miembro' AND p.post_status IN ( {$estados} )",
+						Admin_List::ESTADOS_LISTADOS
+					)
 				);
 				echo '<p>' . wp_kses(
 					/* translators: 1: active count, 2: total count */
