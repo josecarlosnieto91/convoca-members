@@ -1,3 +1,11 @@
+## [2.11.12] — 2026-11-01
+
+### Cambiado
+
+- **la privacidad del socio sale de `Rest_API`**: 1.702 → 1.653 líneas y tres métodos menos.
+  Ver el estado, descargar los datos y pedir la supresión viven en `Rest\Privacidad`.
+  Las 27 rutas se capturan idénticas y la batería sigue en 1.101 pruebas.
+
 ## [2.11.11] — 2026-11-01
 
 ### Cambiado

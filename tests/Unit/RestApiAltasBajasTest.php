@@ -19,11 +19,20 @@ require_once dirname( __DIR__, 2 ) . '/includes/Estados.php';
 require_once dirname( __DIR__, 2 ) . '/includes/Member_Auth.php';
 require_once dirname( __DIR__, 2 ) . '/includes/GDPR_Tools.php';
 require_once dirname( __DIR__, 2 ) . '/includes/Rest_API.php';
+require_once dirname( __DIR__, 2 ) . '/includes/Rest/Privacidad.php';
 
 /**
  * Confirmaciones y solicitudes.
  */
 final class RestApiAltasBajasTest extends TestCase {
+
+	/**
+	 * Los manejadores de privacidad viven en Rest\Privacidad desde 2.11.12.
+	 */
+	private function privacidad(): \Convoca\Members\Rest\Privacidad {
+		return new \Convoca\Members\Rest\Privacidad();
+	}
+
 
 	/**
 	 * API.
@@ -235,12 +244,12 @@ final class RestApiAltasBajasTest extends TestCase {
 	public function test_solicitar_la_supresion_desde_el_panel(): void {
 		$GLOBALS['_wp_stores']['options']['admin_email'] = 'junta@example.test';
 
-		$sin_sesion = $this->api->solicitar_supresion( new \WP_REST_Request() );
+		$sin_sesion = $this->privacidad()->solicitar( new \WP_REST_Request() );
 		$this->assertSame( 500, $sin_sesion->get_status(), 'sin socio no se puede registrar' );
 		$this->assertFalse( $sin_sesion->get_data()['ok'] );
 
 		$this->con_sesion( 55 );
-		$buena = $this->api->solicitar_supresion( new \WP_REST_Request() );
+		$buena = $this->privacidad()->solicitar( new \WP_REST_Request() );
 
 		$this->assertTrue( $buena->get_data()['ok'] );
 		$this->assertNotSame( '', $buena->get_data()['fecha'], 'con su fecha' );

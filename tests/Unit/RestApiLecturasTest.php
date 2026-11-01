@@ -17,12 +17,21 @@ use PHPUnit\Framework\TestCase;
 require_once dirname( __DIR__, 2 ) . '/includes/Member_Auth.php';
 require_once dirname( __DIR__, 2 ) . '/includes/GDPR_Tools.php';
 require_once dirname( __DIR__, 2 ) . '/includes/Rest_API.php';
+require_once dirname( __DIR__, 2 ) . '/includes/Rest/Privacidad.php';
 require_once dirname( __DIR__, 2 ) . '/includes/Rest/Notificaciones.php';
 
 /**
  * Lecturas del área de socio.
  */
 final class RestApiLecturasTest extends TestCase {
+
+	/**
+	 * Los manejadores de privacidad viven en Rest\Privacidad desde 2.11.12.
+	 */
+	private function privacidad(): \Convoca\Members\Rest\Privacidad {
+		return new \Convoca\Members\Rest\Privacidad();
+	}
+
 
 	/**
 	 * Los manejadores de avisos viven en su propia clase desde 2.11.11.
@@ -208,7 +217,7 @@ final class RestApiLecturasTest extends TestCase {
 		$this->con_sesion( 55 );
 		$GLOBALS['_wp_site']['name'] = 'Centro de pruebas';
 
-		$datos = $this->api->get_mis_datos( new \WP_REST_Request() )->get_data();
+		$datos = $this->privacidad()->datos( new \WP_REST_Request() )->get_data();
 
 		$this->assertArrayHasKey( 'generado', $datos );
 		$this->assertSame( 'Centro de pruebas', $datos['sitio'] );

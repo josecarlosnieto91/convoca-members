@@ -245,12 +245,13 @@ class Rest_API {
 		// Privacidad del socio (members#42): ver su estado, descargar sus datos y pedir la supresión.
 		// El estado lo ve cualquier socio con sesión; las dos que tocan datos piden la sesión de socio
 		// (la de supresión, además, solo para quien está activo o en gracia).
+		$privacidad = new Rest\Privacidad();
 		register_rest_route(
 			self::NAMESPACE,
 			'/me/privacidad',
 			array(
 				'methods'             => 'GET',
-				'callback'            => array( $this, 'get_privacidad' ),
+				'callback'            => array( $privacidad, 'estado' ),
 				'permission_callback' => array( $this, 'check_member_auth' ),
 			)
 		);
@@ -259,7 +260,7 @@ class Rest_API {
 			'/me/datos',
 			array(
 				'methods'             => 'GET',
-				'callback'            => array( $this, 'get_mis_datos' ),
+				'callback'            => array( $privacidad, 'datos' ),
 				'permission_callback' => array( $this, 'check_member_auth' ),
 			)
 		);
@@ -268,7 +269,7 @@ class Rest_API {
 			'/me/supresion',
 			array(
 				'methods'             => 'POST',
-				'callback'            => array( $this, 'solicitar_supresion' ),
+				'callback'            => array( $privacidad, 'solicitar' ),
 				'permission_callback' => array( $this, 'check_member_auth' ),
 			)
 		);
@@ -744,56 +745,6 @@ class Rest_API {
 		}
 
 		return (string) \Convoca\Gateway\Receipt_Generator::receipt_url( $pago_id );
-	}
-
-	/**
-	 * El estado de privacidad del socio para su panel (members#42).
-	 */
-	public function get_privacidad( \WP_REST_Request $request ): \WP_REST_Response {
-		$member_id = Member_Auth::get_current_member_id();
-
-		return new \WP_REST_Response( \Convoca\Members\GDPR_Tools::estado_privacidad( $member_id ) );
-	}
-
-	/**
-	 * Los datos del socio, para que se los descargue (members#42).
-	 *
-	 * Se sirve el MISMO exportador que usa Herramientas → Exportar datos personales: así el socio recibe
-	 * exactamente lo que la asociación guarda, sin una segunda lista de campos que se quede atrás.
-	 */
-	public function get_mis_datos( \WP_REST_Request $request ): \WP_REST_Response {
-		$member_id = Member_Auth::get_current_member_id();
-
-		return new \WP_REST_Response( \Convoca\Members\GDPR_Tools::datos_para_descargar( $member_id ) );
-	}
-
-	/**
-	 * Registra la solicitud de supresión del socio (members#42).
-	 *
-	 * No borra nada: deja la solicitud anotada en su ficha, avisa a la junta por correo y responde con el
-	 * estado nuevo. La supresión la resuelve una persona con el borrador que ya existe.
-	 */
-	public function solicitar_supresion( \WP_REST_Request $request ): \WP_REST_Response {
-		$member_id = Member_Auth::get_current_member_id();
-		$fecha     = \Convoca\Members\GDPR_Tools::solicitar_supresion( $member_id );
-
-		if ( '' === $fecha ) {
-			return new \WP_REST_Response(
-				array(
-					'ok'      => false,
-					'mensaje' => __( 'No se ha podido registrar la solicitud. Escríbenos y lo arreglamos.', 'convoca-members' ),
-				),
-				500
-			);
-		}
-
-		return new \WP_REST_Response(
-			array(
-				'ok'      => true,
-				'fecha'   => $fecha,
-				'mensaje' => __( 'Solicitud registrada. La junta la revisará y borrará tus datos personales; recibirás aviso cuando esté.', 'convoca-members' ),
-			)
-		);
 	}
 
 	/**

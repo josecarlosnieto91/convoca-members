@@ -18,11 +18,20 @@ require_once dirname( __DIR__, 2 ) . '/includes/Member_Auth.php';
 require_once dirname( __DIR__, 2 ) . '/includes/GDPR_Tools.php';
 require_once dirname( __DIR__, 2 ) . '/includes/CPT_Proyecto.php';
 require_once dirname( __DIR__, 2 ) . '/includes/Rest_API.php';
+require_once dirname( __DIR__, 2 ) . '/includes/Rest/Privacidad.php';
 
 /**
  * Listados del área de socio.
  */
 final class RestApiListadosTest extends TestCase {
+
+	/**
+	 * Los manejadores de privacidad viven en Rest\Privacidad desde 2.11.12.
+	 */
+	private function privacidad(): \Convoca\Members\Rest\Privacidad {
+		return new \Convoca\Members\Rest\Privacidad();
+	}
+
 
 	/**
 	 * API.
@@ -205,7 +214,7 @@ final class RestApiListadosTest extends TestCase {
 		$this->con_sesion( 55 );
 		$GLOBALS['_wp_stores']['post_meta'][55]['_convoca_supresion_solicitada'] = '2026-10-20 10:00:00';
 
-		$datos = $this->api->get_privacidad( new \WP_REST_Request() )->get_data();
+		$datos = $this->privacidad()->estado( new \WP_REST_Request() )->get_data();
 
 		$this->assertTrue( $datos['pendiente'], 'con solicitud sin resolver' );
 		$this->assertSame( '2026-10-20 10:00:00', $datos['solicitada'] );
