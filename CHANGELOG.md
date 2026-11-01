@@ -1,3 +1,13 @@
+## [2.11.15] — 2026-11-02
+
+### Cambiado
+
+- **`chillerlan/php-qrcode` deja de viajar en este plugin**: la sirve Core (2.3.55)
+  desde su propio autoloader. El QR se sigue generando igual (la llamada no cambia);
+  se evita llevar la misma librería de 548 KB tres veces en el mismo sitio.
+  Queda en `require-dev` para que PHPStan y las pruebas la resuelvan, y el empaquetado
+  (`composer install --no-dev`) no la incluye.
+
 ## [2.11.14] — 2026-11-02
 
 ### Cambiado

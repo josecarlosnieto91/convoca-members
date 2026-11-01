@@ -4,8 +4,9 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "beac3892ddcdb15bf2b8b821328661d1",
-    "packages": [
+    "content-hash": "fbce52fd035b4d1d994659951e13c1b6",
+    "packages": [],
+    "packages-dev": [
         {
             "name": "chillerlan/php-qrcode",
             "version": "6.0.1",
@@ -101,7 +102,8 @@
                     "type": "Ko-Fi"
                 }
             ],
-            "time": "2026-03-18T21:21:07+00:00"
+            "time": "2026-03-18T21:21:07+00:00",
+            "published-time": "2026-03-30T15:49:24+00:00"
         },
         {
             "name": "chillerlan/php-settings-container",
@@ -170,10 +172,9 @@
                     "type": "ko_fi"
                 }
             ],
-            "time": "2026-03-20T21:10:52+00:00"
-        }
-    ],
-    "packages-dev": [
+            "time": "2026-03-20T21:10:52+00:00",
+            "published-time": "2026-03-20T21:26:09+00:00"
+        },
         {
             "name": "dealerdirect/phpcodesniffer-composer-installer",
             "version": "v1.2.1",
@@ -2382,8 +2383,8 @@
     "prefer-stable": false,
     "prefer-lowest": false,
     "platform": {
-        "php": ">=8.1"
+        "php": ">=8.2"
     },
     "platform-dev": {},
-    "plugin-api-version": "2.9.0"
+    "plugin-api-version": "2.11.0"
 }
