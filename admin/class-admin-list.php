@@ -138,6 +138,27 @@ class Admin_List extends \WP_List_Table {
 		}
 	}
 
+	/**
+	 * Versión de la caché del listado.
+	 *
+	 * @return string
+	 */
+	private static function version_de_cache(): string {
+		return (string) get_option( 'convoca_members_list_version', '1' );
+	}
+
+	/**
+	 * Tira la caché del listado subiendo su versión.
+	 *
+	 * Se llama en cada cambio que altere qué fichas hay: alta, edición, cambio de estado, borrado e
+	 * importación. Subir la versión invalida todas las claves a la vez sin recorrer transients.
+	 *
+	 * @return void
+	 */
+	public static function invalidar_cache(): void {
+		update_option( 'convoca_members_list_version', (string) ( time() . wp_rand( 100, 999 ) ), false );
+	}
+
 	public function prepare_items(): void {
 		$this->_column_headers = array( $this->get_columns(), array(), $this->get_sortable_columns() );
 		$this->process_bulk_action();
@@ -318,8 +339,11 @@ class Admin_List extends \WP_List_Table {
 			)
 		);
 
-		// Cache for 5 minutes if no search/filter active, to reduce DB load on paginated views.
-		$cache_key = 'convoca_list_members_' . md5( (string) wp_json_encode( $args ) );
+		// Caché de 5 minutos si no hay búsqueda ni filtros, para no castigar la base en cada página.
+		// La clave lleva una VERSIÓN que se sube al crear, editar o borrar: sin ella, la ficha
+		// eliminada seguía en el listado cinco minutos y los contadores —que van en vivo— decían 0
+		// mientras la tabla mostraba la fila.
+		$cache_key = 'convoca_list_members_' . self::version_de_cache() . '_' . md5( (string) wp_json_encode( $args ) );
 		$cached    = ! $search && ! $estado_filter && ! $tipo_filter && ! $plan_filter && ! $cuota_filter ? get_transient( $cache_key ) : false;
 
 		if ( $cached ) {

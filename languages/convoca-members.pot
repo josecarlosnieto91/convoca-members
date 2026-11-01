@@ -2,14 +2,14 @@
 # This file is distributed under the GPL-2.0-or-later.
 msgid ""
 msgstr ""
-"Project-Id-Version: Convoca Members 2.11.3\n"
+"Project-Id-Version: Convoca Members 2.11.4\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/convoca-members\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-11-01T09:11:32+00:00\n"
+"POT-Creation-Date: 2026-11-01T11:36:28+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.12.0\n"
 "X-Domain: convoca-members\n"
@@ -228,7 +228,7 @@ msgid "Todos los proyectos"
 msgstr ""
 
 #: admin/class-admin-horas.php:397
-#: admin/class-admin-list.php:414
+#: admin/class-admin-list.php:438
 msgid "Filtrar"
 msgstr ""
 
@@ -605,213 +605,213 @@ msgstr ""
 msgid "Baja en lote desde el listado"
 msgstr ""
 
-#: admin/class-admin-list.php:362
+#: admin/class-admin-list.php:386
 msgid "Todos los estados"
 msgstr ""
 
-#: admin/class-admin-list.php:375
+#: admin/class-admin-list.php:399
 msgid "Todos los tipos"
 msgstr ""
 
-#: admin/class-admin-list.php:377
+#: admin/class-admin-list.php:401
 #: includes/Email_Manager.php:894
 #: includes/PDF_Card.php:67
 msgid "Socio/a"
 msgstr ""
 
-#: admin/class-admin-list.php:378
+#: admin/class-admin-list.php:402
 #: includes/Email_Manager.php:890
 msgid "Voluntario/a"
 msgstr ""
 
-#: admin/class-admin-list.php:379
+#: admin/class-admin-list.php:403
 msgid "Socio + Vol."
 msgstr ""
 
-#: admin/class-admin-list.php:383
+#: admin/class-admin-list.php:407
 msgid "Todos los planes"
 msgstr ""
 
-#: admin/class-admin-list.php:393
+#: admin/class-admin-list.php:417
 msgid "Estado cuota"
 msgstr ""
 
-#: admin/class-admin-list.php:403
+#: admin/class-admin-list.php:427
 msgid "Privacidad (todas)"
 msgstr ""
 
-#: admin/class-admin-list.php:405
+#: admin/class-admin-list.php:429
 msgid "Con supresión pedida"
 msgstr ""
 
-#: admin/class-admin-list.php:409
+#: admin/class-admin-list.php:433
 msgid "Consentimiento (todos)"
 msgstr ""
 
-#: admin/class-admin-list.php:411
+#: admin/class-admin-list.php:435
 msgid "Con consentimiento"
 msgstr ""
 
-#: admin/class-admin-list.php:412
+#: admin/class-admin-list.php:436
 msgid "Sin consentimiento"
 msgstr ""
 
-#: admin/class-admin-list.php:420
+#: admin/class-admin-list.php:444
 msgid "Consentimiento registrado: queda la fecha y la versión del texto aceptado."
 msgstr ""
 
 #. translators: %d: number of members without registered consent.
-#: admin/class-admin-list.php:435
+#: admin/class-admin-list.php:459
 #, php-format
 msgid "%d socio activo sin consentimiento registrado."
 msgid_plural "%d socios activos sin consentimiento registrado."
 msgstr[0] ""
 msgstr[1] ""
 
-#: admin/class-admin-list.php:439
+#: admin/class-admin-list.php:463
 msgid "Ver cuáles"
 msgstr ""
 
 #. translators: %s: member name
-#: admin/class-admin-list.php:468
+#: admin/class-admin-list.php:492
 #, php-format
 msgid "Seleccionar %s"
 msgstr ""
 
-#: admin/class-admin-list.php:486
+#: admin/class-admin-list.php:510
 msgid "Sin asignar"
 msgstr ""
 
-#: admin/class-admin-list.php:493
+#: admin/class-admin-list.php:517
 msgid "Asignar número ahora"
 msgstr ""
 
 #. translators: %s: member name
-#: admin/class-admin-list.php:508
+#: admin/class-admin-list.php:532
 #, php-format
 msgid "Ver ficha de %s"
 msgstr ""
 
-#: admin/class-admin-list.php:511
+#: admin/class-admin-list.php:535
 #: includes/Admin_Voluntariado.php:191
 msgid "Ver ficha"
 msgstr ""
 
 #. translators: %s: member name
-#: admin/class-admin-list.php:524
+#: admin/class-admin-list.php:548
 #, php-format
 msgid "Aprobar alta de %s"
 msgstr ""
 
-#: admin/class-admin-list.php:527
+#: admin/class-admin-list.php:551
 msgid "Aprobar alta"
 msgstr ""
 
 #. translators: %s: member name
-#: admin/class-admin-list.php:541
+#: admin/class-admin-list.php:565
 #, php-format
 msgid "Reconciliar la ficha de %s"
 msgstr ""
 
-#: admin/class-admin-list.php:544
+#: admin/class-admin-list.php:568
 msgid "⚠ Reconciliar"
 msgstr ""
 
 #. translators: %s: member name
-#: admin/class-admin-list.php:551
+#: admin/class-admin-list.php:575
 #, php-format
 msgid "Ver tarjeta de %s"
 msgstr ""
 
-#: admin/class-admin-list.php:554
+#: admin/class-admin-list.php:578
 #: admin/class-admin-settings.php:882
 msgid "Tarjeta"
 msgstr ""
 
-#: admin/class-admin-list.php:561
+#: admin/class-admin-list.php:585
 msgid "¿Dar de baja a este socio? La ficha se conserva y deja de contar como socio activo."
 msgstr ""
 
 #. translators: %s: member name
-#: admin/class-admin-list.php:564
+#: admin/class-admin-list.php:588
 #, php-format
 msgid "Dar de baja a %s"
 msgstr ""
 
-#: admin/class-admin-list.php:567
+#: admin/class-admin-list.php:591
 msgid "Dar de baja"
 msgstr ""
 
-#: admin/class-admin-list.php:574
+#: admin/class-admin-list.php:598
 msgid "Se borran la ficha, sus cuotas, sus horas y sus inscripciones. No se puede deshacer. ¿Seguir?"
 msgstr ""
 
 #. translators: %s: member name
-#: admin/class-admin-list.php:577
+#: admin/class-admin-list.php:601
 #, php-format
 msgid "Eliminar definitivamente a %s"
 msgstr ""
 
-#: admin/class-admin-list.php:580
+#: admin/class-admin-list.php:604
 msgid "Eliminar definitivamente"
 msgstr ""
 
-#: admin/class-admin-list.php:604
-#: admin/class-admin-list.php:759
+#: admin/class-admin-list.php:628
+#: admin/class-admin-list.php:783
 #: admin/class-admin-proyectos.php:205
 #: templates/form-alta.php:259
 #: templates/form-voluntariado.php:136
 msgid "No"
 msgstr ""
 
-#: admin/class-admin-list.php:639
+#: admin/class-admin-list.php:663
 msgid "Tiene la cuota pagada y al día, pero a la ficha le falta la condición de socio. Se arregla con «Reconciliar»."
 msgstr ""
 
 #. translators: %s: date of the request.
-#: admin/class-admin-list.php:666
+#: admin/class-admin-list.php:690
 #, php-format
 msgid "Pidió la supresión de sus datos el %s"
 msgstr ""
 
 #. translators: %s: date of the request.
-#: admin/class-admin-list.php:666
+#: admin/class-admin-list.php:690
 msgid "Pide supresión"
 msgstr ""
 
-#: admin/class-admin-list.php:696
+#: admin/class-admin-list.php:720
 msgid "Su plan no pide horas: renueva pagando."
 msgstr ""
 
-#: admin/class-admin-list.php:703
+#: admin/class-admin-list.php:727
 msgid "Ya cumple: su próxima renovación es sin pago."
 msgstr ""
 
-#: admin/class-admin-list.php:706
+#: admin/class-admin-list.php:730
 msgid "Todavía no llega: le faltan horas para renovar sin pago."
 msgstr ""
 
 #. translators: %s: hours still missing.
-#: admin/class-admin-list.php:707
+#: admin/class-admin-list.php:731
 #, php-format
 msgid "faltan %s h"
 msgstr ""
 
-#: admin/class-admin-list.php:714
+#: admin/class-admin-list.php:738
 msgid "Sin constancia de consentimiento"
 msgstr ""
 
-#: admin/class-admin-list.php:715
+#: admin/class-admin-list.php:739
 msgid "Sin registrar"
 msgstr ""
 
 #. translators: %s: version of the accepted text.
-#: admin/class-admin-list.php:721
+#: admin/class-admin-list.php:745
 #, php-format
 msgid "texto v%s"
 msgstr ""
 
-#: admin/class-admin-list.php:757
+#: admin/class-admin-list.php:781
 #: admin/class-admin-proyectos.php:205
 #: admin/class-admin-proyectos.php:322
 #: templates/form-alta.php:258
@@ -820,19 +820,19 @@ msgstr ""
 msgid "Sí"
 msgstr ""
 
-#: admin/class-admin-list.php:800
+#: admin/class-admin-list.php:824
 msgid "Volver a registrar"
 msgstr ""
 
-#: admin/class-admin-list.php:800
+#: admin/class-admin-list.php:824
 msgid "Registrar consentimiento"
 msgstr ""
 
-#: admin/class-admin-list.php:816
+#: admin/class-admin-list.php:840
 msgid "No tienes permiso para registrar el consentimiento de este socio."
 msgstr ""
 
-#: admin/class-admin-list.php:824
+#: admin/class-admin-list.php:848
 msgid "Consentimiento registrado por la junta desde el listado de socios (soporte: papel, correo o presencial)."
 msgstr ""
 
@@ -1264,16 +1264,16 @@ msgstr ""
 msgid "Miembro no encontrado"
 msgstr ""
 
-#: admin/class-admin-metaboxes.php:746
+#: admin/class-admin-metaboxes.php:750
 msgid "Todos los datos del miembro han sido eliminados."
 msgstr ""
 
-#: admin/class-admin-metaboxes.php:759
+#: admin/class-admin-metaboxes.php:763
 #: includes/Rest_API.php:1430
 msgid "Documento no encontrado."
 msgstr ""
 
-#: admin/class-admin-metaboxes.php:763
+#: admin/class-admin-metaboxes.php:767
 msgid "No tienes permiso para cambiar la vigencia de los documentos."
 msgstr ""
 

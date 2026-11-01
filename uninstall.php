@@ -40,6 +40,7 @@ delete_option( 'convoca_members_settings' );
 delete_option( 'convoca_email_templates' );
 delete_option( 'convoca_members_db_version' );
 delete_option( 'convoca_members_diagnostic_cache' );
+delete_option( 'convoca_members_list_version' );
 delete_option( 'convoca_document_theme' );
 delete_option( 'convoca_gamification_tracks' );
 delete_option( 'convoca_members_plans' );

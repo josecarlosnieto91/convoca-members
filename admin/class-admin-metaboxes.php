@@ -743,6 +743,10 @@ class Admin_Metaboxes {
 
 		wp_delete_post( $member_id, true );
 
+		// El listado cachea cinco minutos: sin esto la ficha seguía apareciendo (y el enlace daba
+		// «Miembro no encontrado» al reintentar, porque ya no existía).
+		Admin_List::invalidar_cache();
+
 		wp_send_json_success( array( 'message' => __( 'Todos los datos del miembro han sido eliminados.', 'convoca-members' ) ) );
 	}
 

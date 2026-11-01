@@ -1,3 +1,9 @@
+## [2.11.4] — 2026-11-01
+
+### Cambiado
+
+- **el listado deja de servir fichas borradas**
+
 ## [2.11.3] — 2026-11-01
 
 ### Cambiado

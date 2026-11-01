@@ -520,6 +520,8 @@ class Admin_Member_Editor {
 
 		wp_delete_post( $post_id, true );
 
+		Admin_List::invalidar_cache();
+
 		wp_safe_redirect( admin_url( 'admin.php?page=conv-members&msg=deleted_forever' ) );
 		exit;
 	}
