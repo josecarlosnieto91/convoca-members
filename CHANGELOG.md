@@ -1,3 +1,12 @@
+## [2.11.8] — 2026-11-01
+
+### Cambiado
+
+- **`Admin_Status` delega en Core**: las comprobaciones de PHP, tablas y cron y el
+  pintado pasan a `Convoca\Core\Admin\Diagnostico`. La comprobación de la página
+  del área del socio sigue aquí, que es donde pertenece. La API pública del clase no
+  cambia: constantes y métodos se mantienen.
+
 ## [2.11.7] — 2026-11-01
 
 ### Cambiado

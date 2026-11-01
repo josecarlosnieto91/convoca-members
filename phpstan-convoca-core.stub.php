@@ -222,6 +222,19 @@ namespace {
 
 namespace Convoca\Core\Admin {
 
+    final class Diagnostico
+    {
+        public const SEVERITY_OK = 'ok';
+        public const SEVERITY_WARNING = 'warning';
+        public const SEVERITY_ERROR = 'error';
+
+        public static function php( string $minimo = '8.0' ): array { return array(); }
+        public static function tablas( array $tablas, string $arreglo = '' ): array { return array(); }
+        public static function cron( array $eventos, string $arreglo = '' ): array { return array(); }
+        public static function resultado( string $id, string $label, string $message, string $severity, string $fix = '' ): array { return array(); }
+        public static function pintar( array $resultados, string $titulo ): void {}
+    }
+
     /**
      * Andamiaje de las pantallas de administración del núcleo (convoca-core#16).
      *
