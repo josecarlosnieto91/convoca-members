@@ -121,12 +121,13 @@ class Rest_API {
 		);
 
 		// Card download/view.
+		$certificados = new Rest\Certificados();
 		register_rest_route(
 			self::NAMESPACE,
 			'/me/card',
 			array(
 				'methods'             => 'GET',
-				'callback'            => array( $this, 'get_card' ),
+				'callback'            => array( $certificados, 'carne' ),
 				'permission_callback' => array( $this, 'check_active_member' ),
 			)
 		);
@@ -159,7 +160,7 @@ class Rest_API {
 			'/me/certificate',
 			array(
 				'methods'             => 'GET',
-				'callback'            => array( $this, 'get_certificate' ),
+				'callback'            => array( $certificados, 'info' ),
 				'permission_callback' => array( $this, 'check_active_member' ),
 			)
 		);
@@ -170,7 +171,7 @@ class Rest_API {
 			'/me/certificate/download',
 			array(
 				'methods'             => 'GET',
-				'callback'            => array( $this, 'download_certificate' ),
+				'callback'            => array( $certificados, 'descargar' ),
 				'permission_callback' => array( $this, 'check_active_member' ),
 			)
 		);
@@ -1147,63 +1148,6 @@ class Rest_API {
 
 
 	/**
-	 * Get certificate download URL and info.
-	 */
-	public function get_certificate(): \WP_REST_Response {
-		$member_id = Member_Auth::get_current_member_id();
-		$post      = get_post( $member_id );
-
-		if ( ! $post || $post->post_type !== 'miembro' ) {
-			return new \WP_REST_Response( array( 'error' => __( 'Miembro no encontrado.', 'convoca-members' ) ), 404 );
-		}
-
-		// Verify completion by recalculating actual hours (not just meta).
-		$horas_aprobadas = Voluntariado_Manager::get_horas_aprobadas( $member_id );
-		$objetivo        = Voluntariado_Manager::get_horas_objetivo( $member_id );
-		$completado      = $horas_aprobadas >= $objetivo;
-
-		if ( ! $completado ) {
-			return new \WP_REST_Response(
-				array(
-					'success'  => false,
-					'message'  => __( 'Aún no has completado las horas mínimas requeridas para generar el certificado.', 'convoca-members' ),
-					'progress' => array(
-						'aprobadas' => $horas_aprobadas,
-						'objetivo'  => $objetivo,
-					),
-				),
-				400
-			);
-		}
-
-		$cert_id = get_post_meta( $member_id, '_convoca_certificado_id', true );
-
-		return new \WP_REST_Response(
-			array(
-				'success'        => true,
-				'certificado_id' => $cert_id,
-				'horas'          => $horas_aprobadas,
-				'objetivo'       => $objetivo,
-				'download_url'   => rest_url( 'convoca-members/v1/me/certificate/download' ),
-			)
-		);
-	}
-
-	/**
-	 * Download certificate as PDF.
-	 */
-	public function download_certificate(): void {
-		$member_id = Member_Auth::get_current_member_id();
-		$post      = get_post( $member_id );
-
-		if ( ! $member_id || ! $post || $post->post_type !== 'miembro' ) {
-			wp_send_json_error( __( 'Miembro no encontrado o no autorizado', 'convoca-members' ), 404 );
-		}
-
-		Certificate_Generator::serve_pdf( $member_id );
-	}
-
-	/**
 	 * Process unsubscribe request.
 	 */
 	/**
@@ -1308,16 +1252,6 @@ class Rest_API {
 		}
 
 		return new \WP_REST_Response( $items, 200 );
-	}
-
-	/**
-	 * Get member card HTML.
-	 */
-	public function get_card( \WP_REST_Request $request ): \WP_REST_Response {
-		$member_id = Member_Auth::get_current_member_id();
-		$theme     = sanitize_key( (string) $request->get_param( 'theme' ) );
-		$html      = PDF_Card::get_html( $member_id, $theme );
-		return new \WP_REST_Response( array( 'html' => $html ) );
 	}
 
 	/**

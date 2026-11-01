@@ -1,3 +1,11 @@
+## [2.11.13] — 2026-11-01
+
+### Cambiado
+
+- **carné y certificado salen de `Rest_API`**: 1.653 → 1.587 líneas y tres métodos menos.
+  El carné en HTML, el estado del certificado y su descarga en PDF viven en
+  `Rest\Certificados`. Las 27 rutas se capturan idénticas y la batería sigue en 1.101 pruebas.
+
 ## [2.11.12] — 2026-11-01
 
 ### Cambiado
