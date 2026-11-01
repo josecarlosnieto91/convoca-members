@@ -1,3 +1,12 @@
+## [2.11.11] — 2026-11-01
+
+### Cambiado
+
+- **los avisos del socio salen de `Rest_API`**: 1.752 → 1.702 líneas y tres métodos menos.
+  Los tres manejadores (leer, marcar uno, marcar todos) viven en `Rest\Notificaciones`, que
+  solo depende de la sesión del socio y de `Convoca\Core\Notifications`. Las 27 rutas se
+  capturan idénticas antes y después, y la batería sigue en 1.101 pruebas.
+
 ## [2.11.10] — 2026-11-01
 
 ### Cambiado

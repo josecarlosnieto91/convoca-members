@@ -17,11 +17,20 @@ use PHPUnit\Framework\TestCase;
 require_once dirname( __DIR__, 2 ) . '/includes/Member_Auth.php';
 require_once dirname( __DIR__, 2 ) . '/includes/GDPR_Tools.php';
 require_once dirname( __DIR__, 2 ) . '/includes/Rest_API.php';
+require_once dirname( __DIR__, 2 ) . '/includes/Rest/Notificaciones.php';
 
 /**
  * Lecturas del área de socio.
  */
 final class RestApiLecturasTest extends TestCase {
+
+	/**
+	 * Los manejadores de avisos viven en su propia clase desde 2.11.11.
+	 */
+	private function avisos(): \Convoca\Members\Rest\Notificaciones {
+		return new \Convoca\Members\Rest\Notificaciones();
+	}
+
 
 	/**
 	 * API.
@@ -220,13 +229,13 @@ final class RestApiLecturasTest extends TestCase {
 		}
 		$this->con_sesion( 55, array( '_convoca_notifications' => $avisos ) );
 
-		$datos = $this->api->get_member_notifications( new \WP_REST_Request() )->get_data();
+		$datos = $this->avisos()->get( new \WP_REST_Request() )->get_data();
 
 		$this->assertSame( 10, count( $datos['items'] ), 'diez por defecto' );
 		$this->assertSame( 9, $datos['unread'], 'nueve sin leer' );
 		$this->assertSame( 12, $datos['total'], 'y el total no se recorta' );
 
-		$tres = $this->api->get_member_notifications( new \WP_REST_Request( array( 'limit' => 3 ) ) )->get_data();
+		$tres = $this->avisos()->get( new \WP_REST_Request( array( 'limit' => 3 ) ) )->get_data();
 		$this->assertSame( 3, count( $tres['items'] ), 'el límite de la petición manda' );
 	}
 
@@ -240,11 +249,11 @@ final class RestApiLecturasTest extends TestCase {
 		);
 		$this->con_sesion( 55, array( '_convoca_notifications' => $avisos ) );
 
-		$malo = $this->api->mark_notification_read( new \WP_REST_Request() );
+		$malo = $this->avisos()->marcar( new \WP_REST_Request() );
 		$this->assertSame( 400, $malo->get_status(), 'sin id no se puede marcar nada' );
 		$this->assertFalse( $malo->get_data()['success'] );
 
-		$bueno = $this->api->mark_notification_read( new \WP_REST_Request( array( 'id' => 'n2' ) ) );
+		$bueno = $this->avisos()->marcar( new \WP_REST_Request( array( 'id' => 'n2' ) ) );
 		$this->assertTrue( $bueno->get_data()['success'] );
 
 		$guardados = get_post_meta( 55, '_convoca_notifications', true );
@@ -262,7 +271,7 @@ final class RestApiLecturasTest extends TestCase {
 		);
 		$this->con_sesion( 55, array( '_convoca_notifications' => $avisos ) );
 
-		$respuesta = $this->api->mark_all_notifications_read( new \WP_REST_Request() );
+		$respuesta = $this->avisos()->marcar_todas( new \WP_REST_Request() );
 		$this->assertTrue( $respuesta->get_data()['success'] );
 
 		$guardados = get_post_meta( 55, '_convoca_notifications', true );

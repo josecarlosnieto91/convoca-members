@@ -308,13 +308,14 @@ class Rest_API {
 			)
 		);
 
-		// Member notifications.
+		// Member notifications. Los manejadores viven en Rest\Notificaciones.
+		$notificaciones = new Rest\Notificaciones();
 		register_rest_route(
 			self::NAMESPACE,
 			'/member/notifications',
 			array(
 				'methods'             => 'GET',
-				'callback'            => array( $this, 'get_member_notifications' ),
+				'callback'            => array( $notificaciones, 'get' ),
 				'permission_callback' => array( $this, 'check_member_auth' ),
 			)
 		);
@@ -325,7 +326,7 @@ class Rest_API {
 			'/member/notifications/read',
 			array(
 				'methods'             => 'POST',
-				'callback'            => array( $this, 'mark_notification_read' ),
+				'callback'            => array( $notificaciones, 'marcar' ),
 				'permission_callback' => array( $this, 'check_member_auth' ),
 			)
 		);
@@ -336,7 +337,7 @@ class Rest_API {
 			'/member/notifications/read-all',
 			array(
 				'methods'             => 'POST',
-				'callback'            => array( $this, 'mark_all_notifications_read' ),
+				'callback'            => array( $notificaciones, 'marcar_todas' ),
 				'permission_callback' => array( $this, 'check_member_auth' ),
 			)
 		);
@@ -1366,57 +1367,6 @@ class Rest_API {
 		$theme     = sanitize_key( (string) $request->get_param( 'theme' ) );
 		$html      = PDF_Card::get_html( $member_id, $theme );
 		return new \WP_REST_Response( array( 'html' => $html ) );
-	}
-
-	/**
-	 * Get member notifications.
-	 */
-	public function get_member_notifications( \WP_REST_Request $request ): \WP_REST_Response {
-		$member_id = Member_Auth::get_current_member_id();
-		$limit     = (int) $request->get_param( 'limit' ) ?: 10;
-
-		$notifications = \Convoca\Core\Notifications::get_member( $member_id, $limit );
-		$unread_count  = \Convoca\Core\Notifications::count_member_unread( $member_id );
-		$all           = get_post_meta( $member_id, '_convoca_notifications', true ) ?: array();
-
-		return new \WP_REST_Response(
-			array(
-				'items'  => $notifications,
-				'unread' => $unread_count,
-				'total'  => count( $all ),
-			)
-		);
-	}
-
-	/**
-	 * Mark a notification as read.
-	 */
-	public function mark_notification_read( \WP_REST_Request $request ): \WP_REST_Response {
-		$member_id       = Member_Auth::get_current_member_id();
-		$notification_id = sanitize_text_field( $request->get_param( 'id' ) ?? '' );
-
-		if ( empty( $notification_id ) ) {
-			return new \WP_REST_Response(
-				array(
-					'success' => false,
-					'message' => __( 'Falta ID de notificación.', 'convoca-members' ),
-				),
-				400
-			);
-		}
-
-		\Convoca\Core\Notifications::mark_member_read( $member_id, $notification_id );
-
-		return new \WP_REST_Response( array( 'success' => true ) );
-	}
-
-	/**
-	 * Mark all notifications as read.
-	 */
-	public function mark_all_notifications_read( \WP_REST_Request $request ): \WP_REST_Response {
-		$member_id = Member_Auth::get_current_member_id();
-		\Convoca\Core\Notifications::mark_member_all_read( $member_id );
-		return new \WP_REST_Response( array( 'success' => true ) );
 	}
 
 	/**
