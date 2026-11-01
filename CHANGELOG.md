@@ -1,3 +1,9 @@
+## [2.11.3] — 2026-11-01
+
+### Cambiado
+
+- **el lector de xlsx y todas las clases, en el autoload**
+
 ## [2.11.2] — 2026-10-31
 
 ### Cambiado
