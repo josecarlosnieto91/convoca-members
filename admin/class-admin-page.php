@@ -258,15 +258,20 @@ class Admin_Page extends \Convoca\Core\Admin\Pantalla_Admin {
 	private function render_stats_bar(): void {
 		global $wpdb;
 
+		// Los mismos estados que lista la tabla: si el contador miraba solo `publish`, una ficha en
+		// `pending` salía en la tabla y no sumaba en ningún marcador (Total 0 con una fila).
+		$estados_sql = implode( ', ', array_fill( 0, count( Admin_List::ESTADOS_LISTADOS ), '%s' ) );
+
 		$counts = array();
 		foreach ( Estados::STATES as $state ) {
 			$counts[ $state ] = (int) $wpdb->get_var(
 				$wpdb->prepare(
+					// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- placeholders generados, no datos.
 					"SELECT COUNT(*) FROM {$wpdb->postmeta} pm
 				 JOIN {$wpdb->posts} p ON p.ID = pm.post_id
 				 WHERE pm.meta_key = '_convoca_estado_miembro' AND pm.meta_value = %s
-				   AND p.post_type = 'miembro' AND p.post_status = 'publish'",
-					$state
+				   AND p.post_type = 'miembro' AND p.post_status IN ( {$estados_sql} )",
+					array_merge( array( $state ), Admin_List::ESTADOS_LISTADOS )
 				)
 			);
 		}
@@ -274,7 +279,7 @@ class Admin_Page extends \Convoca\Core\Admin\Pantalla_Admin {
 		// Members without any estado meta are treated as "pendiente_documentacion".
 		$sin_estado                         = (int) $wpdb->get_var(
 			"SELECT COUNT(*) FROM {$wpdb->posts} p
-			 WHERE p.post_type = 'miembro' AND p.post_status = 'publish'
+			 WHERE p.post_type = 'miembro' AND p.post_status IN ( {$estados_sql} )
 			   AND NOT EXISTS (
 				   SELECT 1 FROM {$wpdb->postmeta} pm
 				    WHERE pm.post_id = p.ID AND pm.meta_key = '_convoca_estado_miembro'
@@ -285,7 +290,7 @@ class Admin_Page extends \Convoca\Core\Admin\Pantalla_Admin {
 		// Total = all published members.
 		$total = (int) $wpdb->get_var(
 			"SELECT COUNT(*) FROM {$wpdb->posts}
-			 WHERE post_type = 'miembro' AND post_status = 'publish'"
+			 WHERE post_type = 'miembro' AND post_status IN ( {$estados_sql} )"
 		);
 		?>
 		<div class="conv-stats-bar">

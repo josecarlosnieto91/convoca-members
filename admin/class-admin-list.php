@@ -159,6 +159,16 @@ class Admin_List extends \WP_List_Table {
 		update_option( 'convoca_members_list_version', (string) ( time() . wp_rand( 100, 999 ) ), false );
 	}
 
+	/**
+	 * Los estados de post que salen en el listado.
+	 *
+	 * Es la fuente única: la tabla y los contadores de arriba tienen que mirar los mismos, o pasa lo
+	 * de siempre —la fila se ve y el marcador dice cero, porque el contador solo sumaba `publish`.
+	 *
+	 * @var string[]
+	 */
+	public const ESTADOS_LISTADOS = array( 'publish', 'pending', 'draft', 'private', 'future' );
+
 	public function prepare_items(): void {
 		$this->_column_headers = array( $this->get_columns(), array(), $this->get_sortable_columns() );
 		$this->process_bulk_action();
@@ -172,7 +182,7 @@ class Admin_List extends \WP_List_Table {
 			'post_type'      => 'miembro',
 			'posts_per_page' => $per_page,
 			'paged'          => $page,
-			'post_status'    => array( 'publish', 'pending', 'draft', 'private', 'future' ),
+			'post_status'    => self::ESTADOS_LISTADOS,
 			'orderby'        => sanitize_text_field( $request_data['orderby'] ?? 'date' ),
 			'order'          => strtoupper( sanitize_text_field( $request_data['order'] ?? 'DESC' ) ) === 'ASC' ? 'ASC' : 'DESC',
 			'no_found_rows'  => $page > 1, // Only count rows on first page.

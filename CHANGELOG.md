@@ -1,3 +1,9 @@
+## [2.11.5] — 2026-11-01
+
+### Cambiado
+
+- **los contadores cuentan lo mismo que la tabla**
+
 ## [2.11.4] — 2026-11-01
 
 ### Cambiado
