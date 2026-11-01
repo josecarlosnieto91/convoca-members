@@ -995,6 +995,28 @@ class Rest_API {
 	 * Members search requires auth to see personal info.
 	 * Activities search is public.
 	 */
+	/**
+	 * Las seis claves por las que se busca a un socio.
+	 *
+	 * Vive aquí porque la usan la búsqueda global y el autocompletar del panel: si se añade un
+	 * dato a la búsqueda, se añade en un solo sitio.
+	 *
+	 * @param string $termino Término buscado.
+	 * @return array<int|string, mixed> Cláusulas `meta_query` en OR.
+	 */
+	private static function meta_query_de_socio( string $termino ): array {
+		$claves = array( '_convoca_email', '_convoca_dni', '_convoca_telefono', '_convoca_numero_socio', '_convoca_access_code', '_convoca_nombre' );
+		$query  = array( 'relation' => 'OR' );
+		foreach ( $claves as $clave ) {
+			$query[] = array(
+				'key'     => $clave,
+				'value'   => $termino,
+				'compare' => 'LIKE',
+			);
+		}
+		return $query;
+	}
+
 	public function fulltext_search( \WP_REST_Request $req ): \WP_REST_Response {
 		$q     = sanitize_text_field( $req->get_param( 'q' ) ?? '' );
 		$type  = sanitize_text_field( $req->get_param( 'type' ) ?? '' ); // Valores admitidos: members, activities, o vacio (ambos).
@@ -1020,16 +1042,7 @@ class Rest_API {
 
 		// ── Search members (requires member/admin session) ─────────────
 		if ( ( ! $type || $type === 'members' ) && $is_member_auth ) {
-			// Las seis claves se buscan igual (subcadena, sin distinguir mayúsculas): una lista y un
-			// bucle en vez de seis bloques idénticos, para que añadir o quitar un dato sea una línea.
-			$meta_query = array( 'relation' => 'OR' );
-			foreach ( array( '_convoca_email', '_convoca_dni', '_convoca_telefono', '_convoca_numero_socio', '_convoca_access_code', '_convoca_nombre' ) as $clave ) {
-				$meta_query[] = array(
-					'key'     => $clave,
-					'value'   => $q,
-					'compare' => 'LIKE',
-				);
-			}
+			$meta_query = self::meta_query_de_socio( $q );
 
 			$member_args = array(
 				'post_type'      => 'miembro',
@@ -1117,16 +1130,26 @@ class Rest_API {
 			return new \WP_REST_Response( array(), 200 );
 		}
 
-		$args    = array(
+		$args = array(
 			'post_type'      => 'miembro',
 			'post_status'    => 'any',
 			'posts_per_page' => 20,
-			's'              => $term,
 		);
-		$query   = new \WP_Query( $args );
+
+		// La cabecera de este método promete «name or email», y solo se buscaba en el título: escribir
+		// un correo en el autocompletar no devolvía nada. Mismo arreglo que la búsqueda global: dos
+		// consultas y unión por ID (members#88).
+		$por_texto = new \WP_Query( $args + array( 's' => $term ) );
+		$por_dato  = new \WP_Query( $args + array( 'meta_query' => self::meta_query_de_socio( $term ) ) );
+
 		$results = array();
-		foreach ( (array) $query->posts as $p ) {
-			$results[] = array(
+		$vistos  = array();
+		foreach ( array_merge( (array) $por_texto->posts, (array) $por_dato->posts ) as $p ) {
+			if ( isset( $vistos[ $p->ID ] ) ) {
+				continue;
+			}
+			$vistos[ $p->ID ] = true;
+			$results[]        = array(
 				'id'    => $p->ID,
 				'title' => $p->post_title,
 				'email' => get_post_meta( $p->ID, '_convoca_email', true ),

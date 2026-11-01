@@ -3,7 +3,7 @@
  * Plugin Name:       Convoca Members
  * Plugin URI:        https://getconvoca.app
  * Description:       Members, volunteers and communications management.
- * Version: 2.11.16
+ * Version: 2.11.17
  * Requires at least: 6.4
  * Requires PHP:      8.2
  * Tested up to:      7.1.3

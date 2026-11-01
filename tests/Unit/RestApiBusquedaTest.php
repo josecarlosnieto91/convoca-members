@@ -338,6 +338,23 @@ final class RestApiBusquedaTest extends TestCase {
 	}
 
 	/**
+	 * La búsqueda del panel encuentra por correo, no solo por nombre.
+	 *
+	 * El método promete «name or email» y solo buscaba en el título: escribir el correo de un socio
+	 * en el autocompletar no devolvía nada.
+	 */
+	public function test_la_busqueda_del_panel_encuentra_por_correo(): void {
+		$this->ficha( 55, 'miembro', 'Ada Lovelace', array( '_convoca_email' => 'ada@example.test' ) );
+
+		$req = new \WP_REST_Request();
+		$req->set_param( 'term', 'ada@example.test' );
+		$datos = (array) $this->api->admin_search_members( $req )->get_data();
+
+		$this->assertCount( 1, $datos, 'el correo encuentra al socio en el panel' );
+		$this->assertSame( 55, (int) $datos[0]['id'] );
+	}
+
+	/**
 	 * La búsqueda de socios del panel: pide dos letras y devuelve correo, que aquí **sí** es lo que se busca.
 	 */
 	public function test_la_busqueda_del_panel(): void {

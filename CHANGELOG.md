@@ -1,3 +1,11 @@
+## [2.11.17] — 2026-11-02
+
+### Corregido
+
+- **el autocompletar del panel no encontraba por correo**: el método promete «name or email» y
+  solo buscaba en el título. Ahora hace las mismas dos consultas que la búsqueda global, y las
+  seis claves viven en un solo sitio (`meta_query_de_socio`), así que añadir un dato se hace una vez.
+
 ## [2.11.16] — 2026-11-02
 
 ### Corregido
