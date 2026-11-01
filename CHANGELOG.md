@@ -1,3 +1,12 @@
+## [2.11.10] — 2026-11-01
+
+### Cambiado
+
+- **el arreglo de una comprobación va aparte**: `Diagnostico::resultado()` se queda en
+  cuatro parámetros y el texto del arreglo se añade con `con_arreglo()`. PHPMD marcaba los
+  cinco parámetros y la firma de cinco no era necesaria para las comprobaciones correctas.
+  Mismos textos y mismas severidades en la pantalla.
+
 ## [2.11.9] — 2026-11-01
 
 ### Corregido

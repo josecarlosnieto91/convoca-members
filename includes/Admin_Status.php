@@ -68,19 +68,23 @@ class Admin_Status {
 		$page = get_page_by_path( $slug );
 		if ( $page && $page->post_status === 'publish' ) {
 			$has = has_shortcode( $page->post_content, 'convoca_mi_area' );
-			return Diagnostico::resultado(
-				'page_mi_area',
-				'Página Mi Área',
-				$has ? 'Existe con shortcode [convoca_mi_area]' : 'Existe pero sin el shortcode',
-				$has ? self::SEVERITY_OK : self::SEVERITY_WARNING,
+			return Diagnostico::con_arreglo(
+				Diagnostico::resultado(
+					'page_mi_area',
+					'Página Mi Área',
+					$has ? 'Existe con shortcode [convoca_mi_area]' : 'Existe pero sin el shortcode',
+					$has ? self::SEVERITY_OK : self::SEVERITY_WARNING
+				),
 				'Añade el shortcode [convoca_mi_area] a la página.'
 			);
 		}
-		return Diagnostico::resultado(
-			'page_mi_area',
-			'Página Mi Área',
-			'No encontrada',
-			self::SEVERITY_ERROR,
+		return Diagnostico::con_arreglo(
+			Diagnostico::resultado(
+				'page_mi_area',
+				'Página Mi Área',
+				'No encontrada',
+				self::SEVERITY_ERROR
+			),
 			'Crea una página con el shortcode [convoca_mi_area]'
 		);
 	}
