@@ -1,3 +1,10 @@
+## [2.11.18] — 2026-11-02
+
+### Cambiado
+
+- **el tema de documentos se guarda por Core**: `Utils::set_document_theme()` en vez de la copia
+  local de la validación. Mismo comportamiento, una sola regla para todo el ecosistema.
+
 ## [2.11.17] — 2026-11-02
 
 ### Corregido

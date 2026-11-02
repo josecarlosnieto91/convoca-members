@@ -68,7 +68,7 @@ class Admin_Settings {
 			// Tema de los documentos (opción compartida del ecosistema, default light).
 			if ( isset( $_POST['convoca_document_theme'] ) ) {
 				$theme = sanitize_key( wp_unslash( $_POST['convoca_document_theme'] ) );
-				update_option( 'convoca_document_theme', in_array( $theme, array( 'light', 'dark' ), true ) ? $theme : 'light' );
+				\Convoca\Core\Utils::set_document_theme( $theme );
 			}
 
 			wp_safe_redirect( add_query_arg( 'updated', '1', wp_get_referer() ) );
