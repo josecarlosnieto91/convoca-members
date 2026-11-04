@@ -252,9 +252,13 @@ class Process_Member {
 		}
 
 		// 2. Identify and sanitize key fields
-		$nombre     = sanitize_text_field( $data['nombre'] ?? '' );
-		$dni        = strtoupper( trim( $data['dni'] ?? '' ) );
-		$dni        = str_replace( array( ' ', '-' ), '', $dni );
+		$nombre = sanitize_text_field( $data['nombre'] ?? '' );
+		$dni    = strtoupper( trim( $data['dni'] ?? '' ) );
+		$dni    = str_replace( array( ' ', '-' ), '', $dni );
+		// Con «no pedirlo» el dato no llega al formulario; si algo lo manda igual, no se guarda (#90).
+		if ( ! Opciones::dni_se_pide() ) {
+			$dni = '';
+		}
 		$email      = sanitize_email( $data['email'] ?? '' );
 		$plan       = sanitize_text_field( $data['plan'] ?? '' );
 		$sub_plan   = sanitize_text_field( $data['sub_plan'] ?? '' );
@@ -698,7 +702,7 @@ class Process_Member {
 		if ( empty( $data['nombre'] ) ) {
 			$errors[] = 'El nombre es obligatorio.';
 		}
-		if ( empty( $data['dni'] ) ) {
+		if ( empty( $data['dni'] ) && Opciones::dni_obligatorio() ) {
 			$errors[] = 'El DNI/NIE es obligatorio.';
 		}
 		if ( empty( $data['email'] ) ) {

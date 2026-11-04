@@ -58,6 +58,9 @@ class Admin_Settings {
 			foreach ( $raw as $key => $val ) {
 				$settings[ $key ] = sanitize_text_field( $val );
 			}
+			$settings['dni_modo'] = in_array( $settings['dni_modo'] ?? '', array( 'obligatorio', 'opcional', 'no' ), true )
+				? (string) $settings['dni_modo']
+				: 'obligatorio';
 			// Clamp grace period fields (also enforced by sanitize_settings).
 			$settings['grace_suspend_days']      = max( 0, min( 30, (int) ( $settings['grace_suspend_days'] ?? 1 ) ) );
 			$settings['grace_baja_days']         = max( 1, min( 90, (int) ( $settings['grace_baja_days'] ?? 30 ) ) );
@@ -190,6 +193,11 @@ class Admin_Settings {
 			// (la consume Convoca\Core\Email_Copy). Marcado por defecto.
 			'copy_all_emails'         => empty( $input['copy_all_emails'] ) ? 0 : 1,
 			'iban'                    => sanitize_text_field( $input['iban'] ?? '' ),
+			// DNI en el alta de socio y en voluntariado (#90). Por defecto, obligatorio: es el
+			// comportamiento anterior y no cambia nada en los sitios que ya están en marcha.
+			'dni_modo'                => in_array( $input['dni_modo'] ?? '', array( 'obligatorio', 'opcional', 'no' ), true )
+				? (string) $input['dni_modo']
+				: 'obligatorio',
 			'rgpd_version'            => sanitize_text_field( $input['rgpd_version'] ?? '1.0' ),
 			// Identidad del sitio y documentos de la entidad (pasada 9 del gauntlet): la marca del
 			// proveedor salía en la web del cliente y las plantillas llevaban tres URLs de Google
@@ -539,6 +547,7 @@ class Admin_Settings {
 
 	public function render_general_tab(): void {
 		$settings = get_option( 'convoca_members_settings', array() );
+		$dni_modo = \Convoca\Members\Opciones::dni_modo();
 		?>
 		<form method="post">
 			<?php wp_nonce_field( 'convoca_members_settings_save', '_convoca_settings_nonce' ); ?>
@@ -556,6 +565,16 @@ class Admin_Settings {
 				<input type="text" id="admin_email_domains" name="convoca_members_settings[admin_email_domains]"
 					value="<?php echo esc_attr( $settings['admin_email_domains'] ?? '' ); ?>">
 				<small class="convoca-small"><?php esc_html_e( 'Separados por «|». Las plantillas que nombran un correo de estos dominios lo sustituyen por el email configurado arriba. Vacío = el dominio de ese email.', 'convoca-members' ); ?></small>
+			</div>
+
+			<div class="convoca-field">
+				<label for="dni_modo"><?php esc_html_e( 'DNI/NIE en los formularios', 'convoca-members' ); ?></label>
+				<select id="dni_modo" name="convoca_members_settings[dni_modo]">
+					<option value="obligatorio" <?php selected( $dni_modo, 'obligatorio' ); ?>><?php esc_html_e( 'Obligatorio', 'convoca-members' ); ?></option>
+					<option value="opcional" <?php selected( $dni_modo, 'opcional' ); ?>><?php esc_html_e( 'Opcional', 'convoca-members' ); ?></option>
+					<option value="no" <?php selected( $dni_modo, 'no' ); ?>><?php esc_html_e( 'No pedirlo', 'convoca-members' ); ?></option>
+				</select>
+				<small class="convoca-small"><?php esc_html_e( 'Se aplica al alta de socio y al formulario de voluntariado. Con «No pedirlo» el campo no se muestra ni se guarda; el DNI del tutor de un menor sigue siendo obligatorio.', 'convoca-members' ); ?></small>
 			</div>
 
 			<div class="convoca-field">
@@ -1432,6 +1451,7 @@ class Admin_Settings {
 				'title'     => __( 'Página: Registro Voluntariado', 'convoca-members' ),
 				'shortcode' => __( '[convoca_voluntariado]', 'convoca-members' ),
 				'fix'       => __( 'Crea una página con el shortcode [convoca_voluntariado].', 'convoca-members' ),
+				'opcional'  => true,
 			),
 			'convoca_mi_area'               => array(
 				'title'     => __( 'Página: Área de Miembro', 'convoca-members' ),
@@ -1442,25 +1462,41 @@ class Admin_Settings {
 				'title'     => __( 'Página: Verificación de Certificados', 'convoca-members' ),
 				'shortcode' => __( '[convoca_verificar_certificado]', 'convoca-members' ),
 				'fix'       => __( 'Crea una página con el shortcode [convoca_verificar_certificado].', 'convoca-members' ),
+				'opcional'  => true,
 			),
 			'convoca_renovar'               => array(
 				'title'     => __( 'Página: Renovar membresía', 'convoca-members' ),
 				'shortcode' => '[convoca_renovar]',
 				'fix'       => __( 'Crea una página con el shortcode [convoca_renovar]: los avisos de renovación enlazan ahí (sin ella, al panel del socio).', 'convoca-members' ),
+				'opcional'  => true,
 			),
 			'convoca_panel_reservas'        => array(
 				'title'     => __( 'Página: Panel de Reservas', 'convoca-members' ),
 				'shortcode' => __( '[convoca_panel_reservas]', 'convoca-members' ),
-				'fix'       => __( 'Esta página es necesaria para el enlace QR de la tarjeta. Créala con el shortcode [convoca_panel_reservas].', 'convoca-members' ),
+				'fix'       => __( 'Solo hace falta si usas el enlace QR de la tarjeta: créala con el shortcode [convoca_panel_reservas].', 'convoca-members' ),
+				'opcional'  => true,
 			),
 		);
 
 		foreach ( $required_pages as $slug => $data ) {
 			$page     = $this->find_page_by_shortcode( $data['shortcode'] );
+			$opcional = ! empty( $data['opcional'] );
+
+			// Una página opcional que falta no rompe el plugin: es un aviso, no un error crítico (#89).
+			// El panel ya separa las dos cuentas desde core 2.4.5.
+			$status = 'ok';
+			if ( ! $page ) {
+				$status = $opcional ? 'warning' : 'error';
+			}
+
 			$checks[] = array(
 				'title'   => $data['title'],
-				'status'  => $page ? 'ok' : 'error',
-				'message' => $page ? sprintf( /* translators: %s: page title */ __( 'Detectada: %s', 'convoca-members' ), get_the_title( $page ) ) : __( 'No se ha encontrado ninguna página con este shortcode.', 'convoca-members' ),
+				'status'  => $status,
+				'message' => $page
+					? sprintf( /* translators: %s: page title */ __( 'Detectada: %s', 'convoca-members' ), get_the_title( $page ) )
+					: ( $opcional
+						? __( 'No configurada (opcional en este sitio).', 'convoca-members' )
+						: __( 'No se ha encontrado ninguna página con este shortcode.', 'convoca-members' ) ),
 				'fix'     => ! $page ? $data['fix'] : '',
 			);
 		}

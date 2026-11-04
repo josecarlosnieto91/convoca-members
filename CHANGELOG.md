@@ -1,3 +1,18 @@
+## [2.12.1] — 2026-11-08
+
+### Añadido
+
+- **el DNI se puede configurar** (#90): ajuste «DNI/NIE en los formularios» con obligatorio, opcional o no
+  pedirlo, por defecto obligatorio. Se aplica al alta de socio y al voluntariado: con «no pedirlo» el campo
+  no se pinta ni se guarda; con «opcional» se valida solo si viene relleno. El DNI del tutor de un menor
+  sigue siendo obligatorio. Ocho pruebas nuevas.
+
+### Corregido
+
+- **una página opcional que falta es un aviso, no un error crítico** (#89): de las seis páginas con
+  shortcode, solo «Alta de Socio» y «Área de Miembro» son imprescindibles; Voluntariado, Verificación,
+  Renovar y Panel de Reservas salen como aviso. El panel ya separa las dos cuentas desde core 2.4.5.
+
 ## [2.12.0] — 2026-11-04
 
 ### Añadido

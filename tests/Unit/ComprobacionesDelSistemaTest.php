@@ -279,20 +279,40 @@ final class ComprobacionesDelSistemaTest extends TestCase {
 	public function test_sin_paginas_cada_una_dice_que_shortcode_falta(): void {
 		$checks = $this->checks( true );
 
+		// Las dos páginas sin las que el producto no se puede usar son error; las demás, aviso (#89):
+		// un sitio sin voluntariado o sin tarjeta no tiene por qué llevarse un «problema crítico».
 		$esperados = array(
-			'Página: Alta de Socio'             => '[convoca_alta_socio]',
-			'Página: Registro Voluntariado'     => '[convoca_voluntariado]',
-			'Página: Área de Miembro'           => '[convoca_mi_area]',
-			'Página: Verificación de Certificados' => '[convoca_verificar_certificado]',
-			'Página: Renovar membresía'         => '[convoca_renovar]',
-			'Página: Panel de Reservas'         => '[convoca_panel_reservas]',
+			'Página: Alta de Socio'                => array( '[convoca_alta_socio]', 'error' ),
+			'Página: Área de Miembro'              => array( '[convoca_mi_area]', 'error' ),
+			'Página: Registro Voluntariado'        => array( '[convoca_voluntariado]', 'warning' ),
+			'Página: Verificación de Certificados' => array( '[convoca_verificar_certificado]', 'warning' ),
+			'Página: Renovar membresía'            => array( '[convoca_renovar]', 'warning' ),
+			'Página: Panel de Reservas'            => array( '[convoca_panel_reservas]', 'warning' ),
 		);
 
-		foreach ( $esperados as $titulo => $shortcode ) {
+		foreach ( $esperados as $titulo => $esperado ) {
 			$check = $this->por_titulo( $checks, $titulo );
 			$this->assertNotNull( $check, 'falta la comprobación: ' . $titulo );
-			$this->assertSame( 'error', $check['status'], $titulo . ' sin página es un error' );
-			$this->assertStringContainsString( $shortcode, (string) $check['fix'], 'el arreglo tiene que nombrar el shortcode' );
+			$this->assertSame( $esperado[1], $check['status'], $titulo . ' con la severidad que le toca' );
+			$this->assertStringContainsString( $esperado[0], (string) $check['fix'], 'el arreglo tiene que nombrar el shortcode' );
+		}
+	}
+
+	/**
+	 * Una página opcional que falta es un **aviso**, no un error crítico (issue #89).
+	 *
+	 * El panel separa las dos cuentas: si esto vuelve a ser `error`, un sitio sin voluntariado
+	 * aparece como roto y quien lo lee busca un fallo que no existe.
+	 */
+	public function test_una_pagina_opcional_ausente_es_un_aviso(): void {
+		$checks = $this->checks( true );
+
+		foreach ( array( 'Página: Registro Voluntariado', 'Página: Panel de Reservas' ) as $titulo ) {
+			$check = $this->por_titulo( $checks, $titulo );
+
+			$this->assertNotNull( $check );
+			$this->assertSame( 'warning', $check['status'], $titulo . ' es opcional: aviso' );
+			$this->assertStringContainsString( 'opcional', (string) $check['message'], 'y se dice que es opcional' );
 		}
 	}
 

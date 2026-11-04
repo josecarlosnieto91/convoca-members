@@ -99,12 +99,7 @@ endif;
 						placeholder="<?php esc_attr_e( 'Nombre y apellidos', 'convoca-members' ); ?>">
 					<span class="convoca-error-msg"><?php esc_html_e( 'Este campo es obligatorio.', 'convoca-members' ); ?></span>
 				</div>
-				<div class="convoca-field">
-					<label for="conv-vol-dni"><?php esc_html_e( 'DNI / NIE *', 'convoca-members' ); ?></label>
-					<input type="text" id="conv-vol-dni" name="dni" placeholder="12345678A" required
-						pattern="([0-9]{8}[A-Za-z]|[XYZxyz][0-9]{7}[A-Za-z])">
-					<span class="convoca-error-msg"><?php esc_html_e( 'Introduce un DNI o NIE válido.', 'convoca-members' ); ?></span>
-				</div>
+				<?php echo \Convoca\Members\Opciones::campo_dni( 'conv-vol-dni' ); // phpcs:ignore WordPress.Security.EscapeOutput -- marcado propio, ya escapado. ?>
 			</div>
 
 			<div class="convoca-grid-2">

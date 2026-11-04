@@ -118,9 +118,13 @@ class Form_Voluntariado {
 		// Unslash POST data to handle magic_quotes.
 		$post_data = wp_unslash( $_POST );
 
-		$nombre         = sanitize_text_field( $post_data['nombre'] ?? '' );
-		$dni            = strtoupper( trim( $post_data['dni'] ?? '' ) );
-		$dni            = str_replace( array( ' ', '-' ), '', $dni );
+		$nombre = sanitize_text_field( $post_data['nombre'] ?? '' );
+		$dni    = strtoupper( trim( $post_data['dni'] ?? '' ) );
+		$dni    = str_replace( array( ' ', '-' ), '', $dni );
+		// Con «no pedirlo» el campo no se pinta; si llega por POST, se descarta (#90).
+		if ( ! \Convoca\Members\Opciones::dni_se_pide() ) {
+			$dni = '';
+		}
 		$fecha_nac      = sanitize_text_field( $post_data['fecha_nacimiento'] ?? '' );
 		$email          = sanitize_email( $post_data['email'] ?? '' );
 		$telefono       = sanitize_text_field( $post_data['telefono'] ?? '' );
@@ -145,7 +149,7 @@ class Form_Voluntariado {
 		if ( empty( $nombre ) ) {
 			$errors[] = __( 'El nombre es obligatorio.', 'convoca-members' );
 		}
-		if ( empty( $dni ) ) {
+		if ( empty( $dni ) && \Convoca\Members\Opciones::dni_obligatorio() ) {
 			$errors[] = __( 'El DNI/NIE es obligatorio.', 'convoca-members' );
 		}
 		if ( empty( $fecha_nac ) ) {
