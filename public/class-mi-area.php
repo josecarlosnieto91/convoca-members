@@ -465,13 +465,22 @@ class Mi_Area {
 		 *
 		 * @param array $enlaces Enlaces a pintar.
 		 */
-		$enlaces = (array) apply_filters( 'convoca_mi_area_links', array() );
-		$enlaces = array_filter(
-			$enlaces,
-			static function ( $e ) {
-				return is_array( $e ) && ! empty( $e['url'] ) && ! empty( $e['label'] );
+		// Primero los del ajuste del sitio (Members → Enlaces del panel), y después el filtro, que
+		// manda si coinciden: así un sitio que ya los ponía por código no cambia de comportamiento.
+		$ajustes = (array) get_option( 'convoca_members_settings', array() );
+		$enlaces = array();
+
+		foreach ( (array) ( $ajustes['panel_links'] ?? array() ) as $conv_enlace ) {
+			if ( is_array( $conv_enlace ) && ! empty( $conv_enlace['url'] ) && ! empty( $conv_enlace['label'] ) ) {
+				$enlaces[ (string) $conv_enlace['url'] ] = $conv_enlace;
 			}
-		);
+		}
+
+		foreach ( (array) apply_filters( 'convoca_mi_area_links', array() ) as $conv_enlace ) {
+			if ( is_array( $conv_enlace ) && ! empty( $conv_enlace['url'] ) && ! empty( $conv_enlace['label'] ) ) {
+				$enlaces[ (string) $conv_enlace['url'] ] = $conv_enlace;
+			}
+		}
 
 		if ( ! $enlaces ) {
 			return;

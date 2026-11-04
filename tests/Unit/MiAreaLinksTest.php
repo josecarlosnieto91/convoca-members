@@ -24,6 +24,7 @@ class MiAreaLinksTest extends TestCase
 	{
 		parent::setUp();
 		remove_all_filters( 'convoca_mi_area_links' );
+		$GLOBALS['_wp_stores']['options']['convoca_members_settings'] = array();
 	}
 
 	/**
@@ -92,5 +93,49 @@ class MiAreaLinksTest extends TestCase
 		$this->assertStringNotContainsString( 'Sin URL', $html );
 		$this->assertStringNotContainsString( '/sin-texto/', $html );
 		$this->assertStringContainsString( 'conv-panel-nav', $html );
+	}
+
+	/**
+	 * Los enlaces cargados en Ajustes se pintan sin tocar código.
+	 */
+	public function test_los_enlaces_del_ajuste_se_pintan(): void
+	{
+		$GLOBALS['_wp_stores']['options']['convoca_members_settings'] = array(
+			'panel_links' => array(
+				array( 'label' => 'Mis turnos', 'url' => home_url( '/turnos/' ) ),
+				array( 'label' => 'Mi perfil público', 'url' => home_url( '/mi-perfil/' ) ),
+			),
+		);
+
+		$html = $this->panel();
+
+		$this->assertStringContainsString( '/turnos/', $html );
+		$this->assertStringContainsString( 'Mis turnos', $html );
+		$this->assertStringContainsString( '/mi-perfil/', $html );
+	}
+
+	/**
+	 * Si el código y el ajuste ponen el mismo enlace, manda el código: nadie cambia de comportamiento.
+	 */
+	public function test_el_filtro_manda_sobre_el_ajuste(): void
+	{
+		$GLOBALS['_wp_stores']['options']['convoca_members_settings'] = array(
+			'panel_links' => array(
+				array( 'label' => 'Del ajuste', 'url' => home_url( '/turnos/' ) ),
+			),
+		);
+		add_filter(
+			'convoca_mi_area_links',
+			static function ( array $enlaces ): array {
+				$enlaces[] = array( 'label' => 'Del filtro', 'url' => home_url( '/turnos/' ) );
+				return $enlaces;
+			}
+		);
+
+		$html = $this->panel();
+
+		$this->assertStringContainsString( 'Del filtro', $html );
+		$this->assertStringNotContainsString( 'Del ajuste', $html );
+		$this->assertSame( 1, substr_count( $html, '/turnos/' ), 'el mismo enlace no se duplica' );
 	}
 }

@@ -119,6 +119,65 @@ class Admin_Settings {
 	 *
 	 * @return array<string, mixed>
 	 */
+	/**
+	 * Convierte el texto del ajuste («Etiqueta | URL» por línea) en la lista que consume el panel.
+	 *
+	 * @param string $texto Líneas del formulario.
+	 * @return array<int, array{label: string, url: string}>
+	 */
+	private static function parse_panel_links( string $texto ): array {
+		$enlaces = array();
+
+		foreach ( (array) preg_split( '/\R/', $texto ) as $linea ) {
+			$linea = trim( (string) $linea );
+			if ( '' === $linea ) {
+				continue;
+			}
+
+			$partes = array_map( 'trim', explode( '|', $linea, 2 ) );
+			if ( count( $partes ) < 2 ) {
+				continue;
+			}
+
+			$label = sanitize_text_field( $partes[0] );
+			$url   = esc_url_raw( $partes[1] );
+			if ( '' === $label || '' === $url ) {
+				continue;
+			}
+
+			$enlaces[] = array(
+				'label' => $label,
+				'url'   => $url,
+			);
+		}
+
+		return $enlaces;
+	}
+
+	/**
+	 * La lista guardada, de vuelta a texto para el formulario.
+	 *
+	 * @param mixed $enlaces Lista guardada.
+	 * @return string
+	 */
+	private static function panel_links_a_texto( mixed $enlaces ): string {
+		$lineas = array();
+
+		foreach ( (array) $enlaces as $enlace ) {
+			if ( is_array( $enlace ) && ! empty( $enlace['label'] ) && ! empty( $enlace['url'] ) ) {
+				$lineas[] = $enlace['label'] . ' | ' . $enlace['url'];
+			}
+		}
+
+		return implode( "\n", $lineas );
+	}
+
+	/**
+	 * Sanea y guarda los ajustes.
+	 *
+	 * @param mixed $input Datos del formulario.
+	 * @return array<string, mixed>
+	 */
 	public function sanitize_settings( mixed $input ): array {
 		delete_option( self::CACHE_KEY );
 		if ( ! is_array( $input ) ) {
@@ -145,6 +204,9 @@ class Admin_Settings {
 			// Las preguntas de la entrevista inicial, una por línea: cada organización tiene las suyas
 			// (decisión de JC, 16/10/2026). Sin preguntas, la entrevista se resuelve marcándola como hecha.
 			'entrevista_preguntas'    => sanitize_textarea_field( $input['entrevista_preguntas'] ?? '' ),
+			// Enlaces del panel de socio: cada sitio pone los suyos y no hay límite. Se guardan como
+			// lista de etiqueta+URL; el filtro `convoca_mi_area_links` sigue mandando sobre ellos.
+			'panel_links'             => self::parse_panel_links( (string) ( $input['panel_links_text'] ?? '' ) ),
 			'doc_protocolo'           => esc_url_raw( $input['doc_protocolo'] ?? '' ),
 			'sender_name'             => sanitize_text_field( $input['sender_name'] ?? get_bloginfo( 'name' ) ),
 			'min_age'                 => (int) ( $input['min_age'] ?? 0 ),
@@ -582,6 +644,12 @@ class Admin_Settings {
 				<label for="entrevista_preguntas"><?php esc_html_e( 'Preguntas de la entrevista inicial', 'convoca-members' ); ?></label>
 				<textarea id="entrevista_preguntas" name="convoca_members_settings[entrevista_preguntas]" rows="6" class="large-text"><?php echo esc_textarea( $settings['entrevista_preguntas'] ?? '' ); ?></textarea>
 				<small class="convoca-small"><?php esc_html_e( 'Una por línea. La persona voluntaria las contesta desde su panel y con eso queda hecha la entrevista. Si se deja vacío, la entrevista se marca como hecha desde aquí.', 'convoca-members' ); ?></small>
+			</div>
+
+			<div class="convoca-field">
+				<label for="panel_links_text"><?php esc_html_e( 'Enlaces del panel de socio', 'convoca-members' ); ?></label>
+				<textarea id="panel_links_text" name="convoca_members_settings[panel_links_text]" rows="4" class="large-text"><?php echo esc_textarea( self::panel_links_a_texto( $settings['panel_links'] ?? array() ) ); ?></textarea>
+				<small class="convoca-small"><?php esc_html_e( 'Una por línea, con el formato «Etiqueta | URL». Salen en el panel de socio; sin límite. Si un enlace coincide con uno que ponga el tema o un mu-plugin, manda el del código.', 'convoca-members' ); ?></small>
 			</div>
 
 			<div class="convoca-field">

@@ -1,3 +1,18 @@
+## [2.12.0] — 2026-11-04
+
+### Añadido
+
+- **Los enlaces del panel de socio se configuran en Ajustes**, sin límite y sin tocar código: una línea
+  por enlace con el formato «Etiqueta | URL». Se guardan saneados (etiqueta y URL) y las líneas
+  incompletas o con URL inválida se descartan.
+- El filtro `convoca_mi_area_links` **se mantiene y manda** sobre el ajuste si coinciden, para que un
+  sitio que ya los ponía por código no cambie de comportamiento. El mismo enlace no se duplica.
+
+### Pruebas
+
+- 6 nuevas: los enlaces del ajuste se pintan, el filtro tiene prioridad sin duplicar, y el contrato de
+  texto del formulario (ida y vuelta, líneas incompletas y URL inválida).
+
 ## [2.11.18] — 2026-11-02
 
 ### Cambiado
