@@ -4133,7 +4133,7 @@ msgstr "This signup form needs JavaScript in the browser."
 
 #: templates/form-alta.php:90
 msgid "Actívalo y vuelve a intentarlo, o escríbenos y te damos de alta a mano:"
-msgstr ""
+msgstr "Enable it and try again, or write to us and we'll register you manually:"
 "Enable it and try again, or write to us and we will sign you up by hand:"
 
 #: templates/form-alta.php:106
@@ -4296,7 +4296,7 @@ msgstr "Preferred contact channel"
 
 #: templates/form-alta.php:280 templates/form-voluntariado.php:166
 msgid "⚠️ Al ser menor de edad, necesitas autorización de tu tutor/a legal."
-msgstr ""
+msgstr "⚠️ As a minor, you need authorisation from your legal guardian."
 "⚠️ As you are under age, you need authorisation from your legal guardian."
 
 #: templates/form-alta.php:283 templates/form-voluntariado.php:169
