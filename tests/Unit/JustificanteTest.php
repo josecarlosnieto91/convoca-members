@@ -73,4 +73,59 @@ final class JustificanteTest extends TestCase {
 		$this->assertStringContainsString( 'no es válido o ha caducado', $html );
 		$this->assertStringNotContainsString( '<form', $html );
 	}
+
+	/**
+	 * El justificante admite PDF e imágenes y nada más (#108).
+	 */
+	public function test_solo_pdf_e_imagenes(): void {
+		foreach ( array( 'justificante.pdf', 'foto.JPG', 'captura.png', 'escaneo.jpeg' ) as $bueno ) {
+			$this->assertTrue(
+				\Convoca\Members\Justificante::revisar_fichero( array( 'name' => $bueno, 'size' => 1024, 'type' => '' ) ),
+				'debería admitir ' . $bueno
+			);
+		}
+
+		foreach ( array( 'hoja.docx', 'datos.xlsx', 'programa.exe', 'video.mp4', 'sin-extension' ) as $malo ) {
+			$this->assertInstanceOf(
+				\WP_Error::class,
+				\Convoca\Members\Justificante::revisar_fichero( array( 'name' => $malo, 'size' => 1024, 'type' => '' ) ),
+				'debería rechazar ' . $malo
+			);
+		}
+	}
+
+	/**
+	 * Un fichero que se declara PDF pero dice ser otra cosa no pasa.
+	 */
+	public function test_el_tipo_declarado_tiene_que_ser_de_los_nuestros(): void {
+		$this->assertInstanceOf(
+			\WP_Error::class,
+			\Convoca\Members\Justificante::revisar_fichero( array( 'name' => 'justificante.pdf', 'size' => 1024, 'type' => 'application/zip' ) )
+		);
+	}
+
+	/**
+	 * El tope son 5 MB, y se mira antes de tocar la biblioteca.
+	 */
+	public function test_el_tamano_maximo(): void {
+		$this->assertTrue(
+			\Convoca\Members\Justificante::revisar_fichero( array( 'name' => 'j.pdf', 'size' => \Convoca\Members\Justificante::TAMANO_MAX, 'type' => 'application/pdf' ) ),
+			'5 MB justos pasan'
+		);
+		$this->assertInstanceOf(
+			\WP_Error::class,
+			\Convoca\Members\Justificante::revisar_fichero( array( 'name' => 'j.pdf', 'size' => \Convoca\Members\Justificante::TAMANO_MAX + 1, 'type' => 'application/pdf' ) )
+		);
+	}
+
+	/**
+	 * Subir el justificante NO da la condición de socio: la ficha queda pendiente de revisión (#107).
+	 */
+	public function test_el_justificante_no_activa_la_ficha(): void {
+		$fuente = (string) file_get_contents( dirname( __DIR__, 2 ) . '/includes/Justificante.php' );
+
+		$this->assertStringNotContainsString( "Estados::change( $member_id, 'activo'", $fuente, 'subir un fichero no puede dar el alta' );
+		$this->assertStringContainsString( "_convoca_justificante_estado', 'pendiente'", $fuente );
+		$this->assertStringContainsString( 'avisar_revision(', $fuente, 'administración se entera' );
+	}
 }

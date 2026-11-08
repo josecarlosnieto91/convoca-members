@@ -1,8 +1,10 @@
 msgid ""
 msgstr ""
-"Project-Id-Version: Convoca Members 2.13.1"
+"Project-Id-Version: Convoca Members 2.14.0\n"
+"Report-Msgid-Bugs-To: https://"
+"wordpress.org/support/plugin/convoca-members\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/convoca-members\n"
-"POT-Creation-Date: 2026-11-08T19:08:18+00:00\n"
+"POT-Creation-Date: 2026-11-08T19:39:41+00:00\n"
 "PO-Revision-Date: 2026-10-15T16:10:00+00:00\n"
 "Last-Translator: Jose Carlos Nieto Ramos\n"
 "Language-Team: English (United States)\n"
@@ -376,8 +378,9 @@ msgstr "Could not read the generated temporary file."
 msgid ""
 "La importación ha caducado o no se ha podido comprobar el archivo. Vuelve a "
 "subir el CSV."
-
-msgstr "The import has expired or the file could not be checked. Please upload the CSV again."
+msgstr ""
+"The import has expired or the file could not be checked. Please upload the "
+"CSV again."
 
 #: admin/class-admin-import-csv.php:410
 msgid "No se pudo abrir el archivo para importar."
@@ -587,8 +590,8 @@ msgstr "Consent version"
 #: admin/class-admin-list.php:433
 msgid ""
 "Consentimiento registrado: queda la fecha y la versión del texto aceptado."
-
-msgstr "Consent recorded: the date and the version of the accepted text are kept."
+msgstr ""
+"Consent recorded: the date and the version of the accepted text are kept."
 
 #. translators: %d: number of members without registered consent.
 #: admin/class-admin-list.php:448
@@ -701,8 +704,9 @@ msgstr "No"
 msgid ""
 "Tiene la cuota pagada y al día, pero a la ficha le falta la condición de "
 "socio. Se arregla con «Reconciliar»."
-
-msgstr "The fee is paid and up to date, but the record is missing member status. It is fixed with \"Reconcile\"."
+msgstr ""
+"The fee is paid and up to date, but the record is missing member status. It "
+"is fixed with \"Reconcile\"."
 
 #. translators: %s: date of the request.
 #: admin/class-admin-list.php:679
@@ -769,8 +773,9 @@ msgstr "You do not have permission to view this member's card."
 msgid ""
 "Consentimiento registrado por la junta desde el listado de socios (soporte: "
 "papel, correo o presencial)."
-
-msgstr "Consent recorded by the board from the member list (paper, email or in person)."
+msgstr ""
+"Consent recorded by the board from the member list (paper, email or in "
+"person)."
 
 #: admin/class-admin-logs.php:86
 msgid "Registros de Auditoría"
@@ -1515,8 +1520,9 @@ msgid ""
 "La protección corta los intentos repetidos para que nadie inunde el "
 "formulario. Aquí ves quién está cortado ahora mismo y puedes levantarlo sin "
 "tocar la base de datos."
-
-msgstr "The protection cuts repeated attempts so nobody can flood the form. Here you can see who is blocked right now and lift it without touching the database."
+msgstr ""
+"The protection cuts repeated attempts so nobody can flood the form. Here you "
+"can see who is blocked right now and lift it without touching the database."
 
 #: admin/class-admin-settings.php:422
 msgid "Bloqueo levantado. Ya puede volver a intentarlo."
@@ -1640,8 +1646,10 @@ msgid ""
 "Se aplica al alta de socio y al formulario de voluntariado. Con «No pedirlo» "
 "el campo no se muestra ni se guarda; el DNI del tutor de un menor sigue "
 "siendo obligatorio."
-
-msgstr "Applies to member sign-up and the volunteering form. With \"Do not ask for it\" the field is not shown or stored; a minor's guardian ID is still required."
+msgstr ""
+"Applies to member sign-up and the volunteering form. With \"Do not ask for "
+"it\" the field is not shown or stored; a minor's guardian ID is still "
+"required."
 
 #: admin/class-admin-settings.php:584
 msgid "Enviar copia de los correos a la administración"
@@ -1744,8 +1752,9 @@ msgid ""
 "Una por línea. La persona voluntaria las contesta desde su panel y con eso "
 "queda hecha la entrevista. Si se deja vacío, la entrevista se marca como "
 "hecha desde aquí."
-
-msgstr "One per line. The volunteer answers them from their panel and that completes the interview. If left empty, the interview is marked as done from here."
+msgstr ""
+"One per line. The volunteer answers them from their panel and that completes "
+"the interview. If left empty, the interview is marked as done from here."
 
 #: admin/class-admin-settings.php:669
 msgid "Enlaces del panel de socio"
@@ -1756,8 +1765,10 @@ msgid ""
 "Una por línea, con el formato «Etiqueta | URL». Salen en el panel de socio; "
 "sin límite. Si un enlace coincide con uno que ponga el tema o un mu-plugin, "
 "manda el del código."
-
-msgstr "One per line, in the form \"Label | URL\". They appear in the member panel; no limit. If a link matches one set by the theme or a mu-plugin, the code's wins."
+msgstr ""
+"One per line, in the form \"Label | URL\". They appear in the member panel; "
+"no limit. If a link matches one set by the theme or a mu-plugin, the code's "
+"wins."
 
 #: admin/class-admin-settings.php:675
 msgid "Correo del voluntariado"
@@ -1767,8 +1778,9 @@ msgstr "Volunteer form"
 msgid ""
 "Recibe los avisos de horas apuntadas pendientes de aprobar. Vacío = se avisa "
 "al correo de administración."
-
-msgstr "Receives notices of logged hours pending approval. Empty = the administration email is notified."
+msgstr ""
+"Receives notices of logged hours pending approval. Empty = the "
+"administration email is notified."
 
 #: admin/class-admin-settings.php:682
 msgid "Protocolo de prevención del acoso (URL)"
@@ -2602,8 +2614,9 @@ msgstr "Volunteering type"
 msgid ""
 "En qué punto está cada persona: solicitud, entrevista inicial, voluntariado "
 "en activo y desvinculación. Lo que queda pendiente sale marcado con ⚠."
-
-msgstr "Where each person stands: application, initial interview, active volunteering and withdrawal. Anything pending is marked with ⚠."
+msgstr ""
+"Where each person stands: application, initial interview, active "
+"volunteering and withdrawal. Anything pending is marked with ⚠."
 
 #: includes/Admin_Voluntariado.php:229
 msgid "Nadie en este paso."
@@ -2832,8 +2845,9 @@ msgstr "Send my answers"
 msgid ""
 "Te falta aceptar el acuerdo de voluntariado. Al aceptarlo se genera tu "
 "acuerdo firmado, con su fecha, y queda guardado."
-
-msgstr "You still need to accept the volunteering agreement. Accepting it generates your signed agreement, dated, and saves it."
+msgstr ""
+"You still need to accept the volunteering agreement. Accepting it generates "
+"your signed agreement, dated, and saves it."
 
 #: includes/Circuito_Voluntariado.php:948
 msgid "Acepto el acuerdo de voluntariado"
@@ -2841,7 +2855,8 @@ msgstr "Volunteer form"
 
 #: includes/Circuito_Voluntariado.php:953
 msgid "Has pedido desvincularte: la junta lo confirma en cuanto lo vea."
-msgstr "You have asked to withdraw: the board will confirm it as soon as they see it."
+msgstr ""
+"You have asked to withdraw: the board will confirm it as soon as they see it."
 
 #: includes/Circuito_Voluntariado.php:955
 msgid "Quiero desvincularme"
@@ -2853,7 +2868,9 @@ msgstr "Note (optional)"
 
 #: includes/Circuito_Voluntariado.php:959
 msgid "Tus horas quedan registradas y podrás descargar tu certificado igual."
-msgstr "Your hours are still recorded and you will be able to download your certificate all the same."
+msgstr ""
+"Your hours are still recorded and you will be able to download your "
+"certificate all the same."
 
 #: includes/Circuito_Voluntariado.php:960
 msgid "Pedir la desvinculación"
@@ -2869,15 +2886,17 @@ msgstr "Your time as a volunteer ended on %1$s (%2$s)."
 msgid ""
 "Tus horas quedan registradas y tu certificado se puede seguir descargando y "
 "validando."
-
-msgstr "Your hours are still recorded and your certificate can still be downloaded and verified."
+msgstr ""
+"Your hours are still recorded and your certificate can still be downloaded "
+"and verified."
 
 #: includes/Circuito_Voluntariado.php:976
 msgid ""
 "Además, eres monitor de actividades: puedes acreditar horas de otras "
 "personas."
-
-msgstr "In addition, you are an activity instructor: you can credit other people's hours."
+msgstr ""
+"In addition, you are an activity instructor: you can credit other people's "
+"hours."
 
 #: includes/CPT_Documento.php:49
 msgctxt "Post Type General Name"
@@ -3266,8 +3285,9 @@ msgstr "<h1>Hi {nombre},</h1>"
 msgid ""
 "<p>Cuando hayas hecho la transferencia, <a href=\"{justificante_url}\">sube "
 "el justificante aquí</a>. El enlace caduca en 3 días.</p>"
-
-msgstr "<p>Once you have made the transfer, <a href=\\\\\"{justificante_url}\\\\\">upload the receipt here</a>. The link expires in 3 days.</p>"
+msgstr ""
+"<p>Once you have made the transfer, <a href=\\\\\"{justificante_url}\\\\"
+"\">upload the receipt here</a>. The link expires in 3 days.</p>"
 
 #: includes/Email_Manager.php:209
 msgid ""
@@ -3622,7 +3642,9 @@ msgstr "Hours"
 
 #: includes/Email_Manager.php:442
 msgid "<p>Si te viene mal, respóndenos a este correo y buscamos otro día.</p>"
-msgstr "<p>If it does not suit you, reply to this email and we will find another day.</p>"
+msgstr ""
+"<p>If it does not suit you, reply to this email and we will find another day."
+"</p>"
 
 #: includes/Email_Manager.php:443
 msgid "Ver mi área"
@@ -3636,8 +3658,10 @@ msgstr "Remember your volunteer hours — "
 msgid ""
 "<p>Aquí tienes tu acuerdo de voluntariado, con tus datos y tu firma. "
 "Guárdalo: es tu compromiso con la entidad y el nuestro contigo.</p>"
-
-msgstr "<p>Here is your volunteering agreement, with your details and your signature. Keep it: it is your commitment to the organisation and ours to you.</p>"
+msgstr ""
+"<p>Here is your volunteering agreement, with your details and your "
+"signature. Keep it: it is your commitment to the organisation and ours to "
+"you.</p>"
 
 #: includes/Email_Manager.php:449
 msgid "<p>Puedes aceptarlo (y volver a descargarlo) desde tu área.</p>"
@@ -3662,8 +3686,9 @@ msgstr "<p>What they say:</p>"
 #: includes/Email_Manager.php:457
 msgid ""
 "<p>La baja no se aplica sola: confírmala desde Miembros → Voluntarios.</p>"
-
-msgstr "<p>The withdrawal does not apply by itself: confirm it under Members → Volunteers.</p>"
+msgstr ""
+"<p>The withdrawal does not apply by itself: confirm it under Members → "
+"Volunteers.</p>"
 
 #: includes/Email_Manager.php:458
 msgid "Confirmarla"
@@ -3685,8 +3710,9 @@ msgstr "<p>Your time as a volunteer has ended ({causa_baja}).</p>"
 msgid ""
 "<p>Lo que hiciste no se borra: tus horas quedan registradas ({horas} h) y tu "
 "certificado se puede descargar y validar cuando quieras.</p>"
-
-msgstr "<p>What you did is not erased: your hours remain recorded ({horas} h) and your certificate can be downloaded and verified whenever you want.</p>"
+msgstr ""
+"<p>What you did is not erased: your hours remain recorded ({horas} h) and "
+"your certificate can be downloaded and verified whenever you want.</p>"
 
 #: includes/Email_Manager.php:465
 msgid "Descargar mi certificado"
@@ -3703,7 +3729,6 @@ msgstr "<h1>{nombre} has logged hours</h1>"
 #: includes/Email_Manager.php:470
 msgid ""
 "<p>{horas} horas del día {fecha_horas}. Se aprueban (o se rechazan) aquí:</p>"
-
 msgstr "<p>{horas} hours on {fecha_horas}. Approve (or reject) them here:</p>"
 
 #: includes/Email_Manager.php:471
@@ -3939,15 +3964,17 @@ msgstr "[%s] Member data erasure request"
 msgid ""
 "El socio/a «%1$s» (ficha #%2$d) ha pedido la supresión de sus datos "
 "personales el %3$s."
-
-msgstr "The member \"%1$s\" (record #%2$d) requested erasure of their personal data on %3$s."
+msgstr ""
+"The member \"%1$s\" (record #%2$d) requested erasure of their personal data "
+"on %3$s."
 
 #: includes/GDPR_Tools.php:491
 msgid ""
 "La baja NO borra nada: la supresión hay que resolverla con el borrador de "
 "datos personales."
-
-msgstr "Withdrawal does NOT erase anything: erasure must be handled with the personal data eraser."
+msgstr ""
+"Withdrawal does NOT erase anything: erasure must be handled with the "
+"personal data eraser."
 
 #. translators: %s: link to the member profile in the admin.
 #: includes/GDPR_Tools.php:498
@@ -3997,25 +4024,74 @@ msgstr "Upload payment receipt"
 
 #: includes/Justificante.php:182
 msgid "Este enlace no es válido o ha caducado. Pide uno nuevo a la asociación."
-msgstr "This link is not valid or has expired. Ask the association for a new one."
+msgstr ""
+"This link is not valid or has expired. Ask the association for a new one."
 
 #: includes/Justificante.php:188
-msgid "Hemos recibido tu justificante. Tu alta queda registrada como pagada."
-msgstr "We have received your receipt. Your sign-up is recorded as paid."
+msgid ""
+"Hemos recibido tu justificante. Lo revisaremos y te avisaremos cuando esté "
+"comprobado; hasta entonces tu alta sigue pendiente."
 
-#: includes/Justificante.php:197
-msgid "Justificante de pago (PDF o imagen)"
+msgstr "We have received your receipt. We will review it and let you know once it is checked; until then your sign-up remains pending."
+
+#: includes/Justificante.php:193
+msgid "No has adjuntado ningún fichero."
+msgstr "No file was uploaded."
+
+#: includes/Justificante.php:194 includes/Justificante.php:197
+#: includes/Justificante.php:253
+msgid "El justificante no puede pasar de 5 MB."
+msgstr "The receipt cannot be larger than 5 MB."
+
+#: includes/Justificante.php:195 includes/Justificante.php:259
+#: includes/Justificante.php:266
+msgid "El justificante tiene que ser un PDF o una imagen (JPG o PNG)."
+msgstr "The receipt must be a PDF or an image (JPG or PNG)."
+
+#: includes/Justificante.php:196
+msgid "No se ha podido guardar el fichero. Inténtalo de nuevo."
+msgstr "Could not read the generated temporary file."
+
+#: includes/Justificante.php:211
+msgid "Justificante de pago (PDF o imagen, máximo 5 MB)"
 msgstr "Payment receipt (PDF or image)"
 
-#: includes/Justificante.php:199
+#: includes/Justificante.php:213
 msgid "Enviar justificante"
 msgstr "Send receipt"
 
-#: includes/Justificante.php:215 public/class-form-handler.php:86
-msgid "La petición ha caducado. Vuelve a intentarlo."
-msgstr "Enable it and try again."
+#: includes/Justificante.php:250
+msgid "El fichero está vacío."
+msgstr "The file is empty."
 
-#: includes/Justificante.php:226
+#. translators: %s: nombre del sitio.
+#: includes/Justificante.php:288
+#, php-format
+msgid "[%s] Justificante de pago pendiente de revisar"
+msgstr "[%s] Payment receipt pending review"
+
+#. translators: 1: nombre de la persona, 2: enlace a la ficha, 3: enlace al justificante.
+#: includes/Justificante.php:293
+#, php-format
+msgid ""
+"%1$s ha subido un justificante de pago. La ficha sigue pendiente hasta que "
+"se compruebe el ingreso.\n"
+"\n"
+"Ficha: %2$s\n"
+"Justificante: %3$s"
+msgstr ""
+"%1$s has uploaded a payment receipt. The record remains pending until the "
+"payment is checked.\n"
+"\n"
+"Record: %2$s\n"
+"Receipt: %3$s"
+
+
+#: includes/Justificante.php:310 public/class-form-handler.php:86
+msgid "La petición ha caducado. Vuelve a intentarlo."
+msgstr "The request has expired. Please try again."
+
+#: includes/Justificante.php:321
 msgid "Este enlace no es válido o ha caducado."
 msgstr "Plan is invalid or not assigned."
 
@@ -4146,15 +4222,16 @@ msgid "Error inesperado al reactivar el registro."
 msgstr "Unexpected error reactivating the record."
 
 #. translators: 1: correo bloqueado, 2: correo de contacto.
-#: includes/Process_Member.php:762
+#: includes/Process_Member.php:761
 #, php-format
 msgid ""
 "Hemos recibido varios registros seguidos con el correo %1$s. Espera unos "
 "minutos y vuelve a intentarlo. Si no eras tú, escríbenos a %2$s."
+msgstr ""
+"We have received several sign-ups in a row with the email %1$s. Wait a few "
+"minutes and try again. If it was not you, write to us at %2$s."
 
-msgstr "We have received several sign-ups in a row with the email %1$s. Wait a few minutes and try again. If it was not you, write to us at %2$s."
-
-#: includes/Process_Member.php:763
+#: includes/Process_Member.php:762
 msgid "tu correo"
 msgstr "you@email.com"
 
@@ -4186,14 +4263,16 @@ msgstr "Notification ID is missing."
 
 #: includes/Rest/Privacidad.php:73
 msgid "No se ha podido registrar la solicitud. Escríbenos y lo arreglamos."
-msgstr "The request could not be registered. Write to us and we will sort it out."
+msgstr ""
+"The request could not be registered. Write to us and we will sort it out."
 
 #: includes/Rest/Privacidad.php:83
 msgid ""
 "Solicitud registrada. La junta la revisará y borrará tus datos personales; "
 "recibirás aviso cuando esté."
-
-msgstr "Request registered. The board will review it and erase your personal data; you will be notified when it is done."
+msgstr ""
+"Request registered. The board will review it and erase your personal data; "
+"you will be notified when it is done."
 
 #: includes/Rest_API.php:408
 msgid ""
@@ -4220,8 +4299,9 @@ msgstr "We could not identify you as a member."
 msgid ""
 "Todavía no has llegado a las horas de tu plan, así que este año te toca "
 "cuota. En cuanto las tengas, la renovación te sale sin pago."
-
-msgstr "You have not yet reached the hours in your plan, so this year the fee applies. As soon as you have them, your renewal is free."
+msgstr ""
+"You have not yet reached the hours in your plan, so this year the fee "
+"applies. As soon as you have them, your renewal is free."
 
 #: includes/Rest_API.php:601
 msgid ""
@@ -4500,8 +4580,10 @@ msgstr "Unauthorised request (invalid nonce)"
 msgid ""
 "Se han hecho varios intentos de registro desde tu conexión. Espera unos "
 "minutos y vuelve a probarlo. Si no eras tú, escríbenos a %s y lo miramos."
-
-msgstr "Several sign-up attempts have been made from your connection. Wait a few minutes and try again. If it was not you, write to us at %s and we will look into it."
+msgstr ""
+"Several sign-up attempts have been made from your connection. Wait a few "
+"minutes and try again. If it was not you, write to us at %s and we will look "
+"into it."
 
 #: public/class-form-handler.php:283
 msgid "Demasiadas peticiones. Inténtalo de nuevo más tarde."
@@ -5427,6 +5509,10 @@ msgstr ""
 #: templates/form-voluntariado.php:331
 msgid "¿Tienes dudas? Escríbenos a"
 msgstr "Any questions? Write to us at"
+
+#~ msgid ""
+#~ "Hemos recibido tu justificante. Tu alta queda registrada como pagada."
+#~ msgstr "We have received your receipt. Your sign-up is recorded as paid."
 
 #~ msgid "Archivo temporal no encontrado. Vuelve a subir el CSV."
 #~ msgstr "Temporary file not found. Upload the CSV again."

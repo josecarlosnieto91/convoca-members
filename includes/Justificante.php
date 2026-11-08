@@ -185,8 +185,22 @@ class Justificante {
 
 		if ( isset( $_GET['subido'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 			return '<div class="convoca-alert convoca-alert--success">'
-				. esc_html__( 'Hemos recibido tu justificante. Tu alta queda registrada como pagada.', 'convoca-members' )
+				. esc_html__( 'Hemos recibido tu justificante. Lo revisaremos y te avisaremos cuando esté comprobado; hasta entonces tu alta sigue pendiente.', 'convoca-members' )
 				. '</div>';
+		}
+
+		$errores = array(
+			'fichero'         => __( 'No has adjuntado ningún fichero.', 'convoca-members' ),
+			'tamano'          => __( 'El justificante no puede pasar de 5 MB.', 'convoca-members' ),
+			'tipo'            => __( 'El justificante tiene que ser un PDF o una imagen (JPG o PNG).', 'convoca-members' ),
+			'subida'          => __( 'No se ha podido guardar el fichero. Inténtalo de nuevo.', 'convoca-members' ),
+			'demasiado-grande' => __( 'El justificante no puede pasar de 5 MB.', 'convoca-members' ),
+		);
+		if ( isset( $_GET['error'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+			$clave = sanitize_key( wp_unslash( (string) $_GET['error'] ) );
+			if ( isset( $errores[ $clave ] ) ) {
+				return '<div class="convoca-alert convoca-alert--warning">' . esc_html( $errores[ $clave ] ) . '</div>';
+			}
 		}
 
 		$html  = '<form class="convoca-justificante" method="post" action="' . esc_url( admin_url( 'admin-post.php' ) ) . '" enctype="multipart/form-data">';
@@ -194,7 +208,7 @@ class Justificante {
 		$html .= '<input type="hidden" name="member_id" value="' . esc_attr( (string) $member_id ) . '" />';
 		$html .= '<input type="hidden" name="token" value="' . esc_attr( $token ) . '" />';
 		$html .= wp_nonce_field( self::ACCION, '_convoca_nonce', true, false );
-		$html .= '<p><label for="convoca-justificante">' . esc_html__( 'Justificante de pago (PDF o imagen)', 'convoca-members' ) . '</label>';
+		$html .= '<p><label for="convoca-justificante">' . esc_html__( 'Justificante de pago (PDF o imagen, máximo 5 MB)', 'convoca-members' ) . '</label>';
 		$html .= '<input type="file" id="convoca-justificante" name="justificante" accept="application/pdf,image/jpeg,image/png" required /></p>';
 		$html .= '<p><button type="submit" class="convoca-btn convoca-btn-primary">' . esc_html__( 'Enviar justificante', 'convoca-members' ) . '</button></p>';
 		$html .= '</form>';
@@ -206,6 +220,87 @@ class Justificante {
 	 * Recibe el fichero, lo guarda y cambia el estado.
 	 *
 	 * @return void
+	 */
+
+	/**
+	 * Tipos que se admiten como justificante de pago.
+	 *
+	 * @var array<string, string>
+	 */
+	public const MIMES = array(
+		'pdf'      => 'application/pdf',
+		'jpg|jpeg' => 'image/jpeg',
+		'png'      => 'image/png',
+	);
+
+	/**
+	 * Tope de tamaño del justificante: 5 MB.
+	 */
+	public const TAMANO_MAX = 5242880;
+
+	/**
+	 * Comprueba tipo y tamaño antes de dejar el fichero en la biblioteca (#108).
+	 *
+	 * @param array<string, mixed> $fichero Entrada de `$_FILES`.
+	 * @return bool|\WP_Error
+	 */
+	public static function revisar_fichero( array $fichero ): bool|\WP_Error {
+		$tamano = isset( $fichero['size'] ) ? (int) $fichero['size'] : 0;
+		if ( $tamano <= 0 ) {
+			return new \WP_Error( 'vacio', __( 'El fichero está vacío.', 'convoca-members' ) );
+		}
+		if ( $tamano > self::TAMANO_MAX ) {
+			return new \WP_Error( 'demasiado-grande', __( 'El justificante no puede pasar de 5 MB.', 'convoca-members' ) );
+		}
+
+		$nombre    = isset( $fichero['name'] ) ? (string) $fichero['name'] : '';
+		$extension = strtolower( (string) pathinfo( $nombre, PATHINFO_EXTENSION ) );
+		if ( ! in_array( $extension, array( 'pdf', 'jpg', 'jpeg', 'png' ), true ) ) {
+			return new \WP_Error( 'tipo', __( 'El justificante tiene que ser un PDF o una imagen (JPG o PNG).', 'convoca-members' ) );
+		}
+
+		// El tipo declarado tiene que ser de los nuestros: un `.pdf` que dice ser otra cosa no pasa.
+		$tipo    = isset( $fichero['type'] ) ? strtolower( (string) $fichero['type'] ) : '';
+		$validos = array( 'application/pdf', 'image/jpeg', 'image/png', 'image/jpg' );
+		if ( '' !== $tipo && ! in_array( $tipo, $validos, true ) ) {
+			return new \WP_Error( 'tipo', __( 'El justificante tiene que ser un PDF o una imagen (JPG o PNG).', 'convoca-members' ) );
+		}
+
+		return true;
+	}
+
+	/**
+	 * Avisa a administración de que hay un justificante por revisar.
+	 *
+	 * @param int $member_id Ficha.
+	 * @param int $adjunto   Id del adjunto.
+	 * @return void
+	 */
+	private static function avisar_revision( int $member_id, int $adjunto ): void {
+		$ajustes = (array) get_option( 'convoca_members_settings', array() );
+		$destino = (string) ( $ajustes['admin_email'] ?? get_option( 'admin_email' ) );
+		$nombre  = (string) get_the_title( $member_id );
+
+		wp_mail(
+			$destino,
+			sprintf(
+				/* translators: %s: nombre del sitio. */
+				__( '[%s] Justificante de pago pendiente de revisar', 'convoca-members' ),
+				wp_specialchars_decode( (string) get_bloginfo( 'name' ), ENT_QUOTES )
+			),
+			sprintf(
+				/* translators: 1: nombre de la persona, 2: enlace a la ficha, 3: enlace al justificante. */
+				__( "%1\$s ha subido un justificante de pago. La ficha sigue pendiente hasta que se compruebe el ingreso.\n\nFicha: %2\$s\nJustificante: %3\$s", 'convoca-members' ),
+				$nombre,
+				admin_url( 'post.php?post=' . $member_id . '&action=edit' ),
+				(string) wp_get_attachment_url( $adjunto )
+			),
+			array( 'Content-Type: text/plain; charset=UTF-8' )
+		);
+	}
+
+	/**
+	 * Procesa la subida del justificante.
 	 */
 	public static function procesar(): void {
 		$nonce = isset( $_POST['_convoca_nonce'] ) ? sanitize_text_field( wp_unslash( (string) $_POST['_convoca_nonce'] ) ) : '';
@@ -234,6 +329,15 @@ class Justificante {
 			exit;
 		}
 
+		// Antes de tocar la biblioteca: tipo y tamaño (#108). Sin esto, cualquiera con un enlace válido
+		// subía lo que quisiera, del tamaño que quisiera, a los medios de la asociación.
+		$revisado = self::revisar_fichero( (array) $_FILES['justificante'] );
+		if ( is_wp_error( $revisado ) ) {
+			$codigo = 'demasiado-grande' === $revisado->get_error_code() ? 'tamano' : 'tipo';
+			wp_safe_redirect( add_query_arg( 'error', $codigo, wp_get_referer() ? wp_get_referer() : home_url( '/' ) ) );
+			exit;
+		}
+
 		// Rutas de la administración: en el arnés de análisis no existen y falsean el informe.
 		// @phpstan-ignore-next-line
 		require_once ABSPATH . 'wp-admin/includes/file.php';
@@ -242,7 +346,25 @@ class Justificante {
 		// @phpstan-ignore-next-line
 		require_once ABSPATH . 'wp-admin/includes/image.php';
 
-		$adjunto = media_handle_upload( 'justificante', 0 );
+		// Nombre propio y saneado: no se mezcla con las imágenes del sitio y se sabe de quién es.
+		$renombrar = static function ( array $file ) use ( $member_id ): array {
+			$extension    = strtolower( (string) pathinfo( (string) $file['name'], PATHINFO_EXTENSION ) );
+			$file['name'] = 'justificante-' . $member_id . '-' . gmdate( 'Ymd-His' ) . '.' . $extension;
+			return $file;
+		};
+		add_filter( 'wp_handle_upload_prefilter', $renombrar );
+
+		$adjunto = media_handle_upload(
+			'justificante',
+			0,
+			array(),
+			array(
+				'test_form' => false,
+				'mimes'     => self::MIMES,
+			)
+		);
+
+		remove_filter( 'wp_handle_upload_prefilter', $renombrar );
 
 		if ( is_wp_error( $adjunto ) ) {
 			wp_safe_redirect( add_query_arg( 'error', 'subida', wp_get_referer() ? wp_get_referer() : home_url( '/' ) ) );
@@ -251,14 +373,14 @@ class Justificante {
 
 		update_post_meta( $member_id, '_convoca_justificante_id', (int) $adjunto );
 		update_post_meta( $member_id, '_convoca_justificante_fecha', current_time( 'mysql' ) );
+		update_post_meta( $member_id, '_convoca_justificante_estado', 'pendiente' );
 
-		// Subir el justificante es declarar el pago: la ficha pasa a activa.
-		$cambio = Estados::change( $member_id, 'activo', 'Justificante de pago subido por el socio' );
+		// El justificante NO activa la ficha: se queda pendiente de que alguien mire el extracto. La
+		// página de pago promete exactamente eso («quedará pendiente hasta que verifiquemos el ingreso»)
+		// y antes el código se lo saltaba (#107): subir una foto del gato daba la condición de socio.
+		update_post_meta( $adjunto, '_convoca_privado', '1' );
 
-		if ( is_wp_error( $cambio ) ) {
-			// El fichero está guardado: no se pierde trabajo, pero queda para revisión manual.
-			update_post_meta( $member_id, '_convoca_justificante_revision', $cambio->get_error_message() );
-		}
+		self::avisar_revision( $member_id, (int) $adjunto );
 
 		$destino = remove_query_arg( array( self::PARAM, 'id' ) );
 		$destino = add_query_arg( 'subido', '1', $destino );

@@ -1,3 +1,21 @@
+## [2.14.0] — 2026-11-08
+
+### Corregido
+
+- **#107 — subir el justificante ya no da la condición de socio.** Se guarda, se marca como pendiente y
+  se avisa a administración; la ficha sigue en `pendiente_pago` hasta que alguien comprueba el ingreso.
+  Antes, subir cualquier fichero (una foto del gato servía) activaba la ficha sin verificación, mientras
+  la página de pago prometía justo lo contrario.
+- **#108 — el justificante tiene tipo y tope.** Solo PDF, JPG o PNG (extensión **y** tipo declarado), y
+  como máximo 5 MB, comprobado antes de `media_handle_upload`; además se sube con `mimes` propios,
+  nombre saneado (`justificante-<ficha>-<fecha>.<ext>`) y marca de privado. Antes entraba cualquier cosa
+  del tamaño que permitiera el servidor en la biblioteca de medios, desde un enlace público.
+
+La página de resultado dice ahora la verdad: «lo revisaremos y te avisaremos cuando esté comprobado».
+Los errores de tipo y tamaño se explican en la propia página.
+
+4 pruebas nuevas en `JustificanteTest`.
+
 ## [2.13.1] — 2026-11-08
 
 ### Corregido
