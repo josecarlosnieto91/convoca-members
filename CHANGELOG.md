@@ -1,3 +1,18 @@
+## [2.15.0] — 2026-11-08
+
+### Corregido
+
+- **#101 — el correo de solicitud sale después del pedido de pago.** Antes se enviaba antes de crear el
+  pedido, así que el «Concepto» de la transferencia caía al nombre de la persona porque
+  `_convoca_pago_id` todavía era 0. Tesorería no podía casar el ingreso con la ficha; ahora el correo
+  lleva el mismo código que la página de pago.
+- **#102 — el correo de solicitud dice dónde subir el justificante.** El bloque de la transferencia
+  incluía el enlace firmado de 3 días (`Justificante::url()`, sin sesión, caduca y lo dice) y el botón de
+  respaldo de `solicitud_recibida` pasa de «Acceder a Mi Área» a «Subir el justificante»: a un socio
+  recién inscrito Mi Área le está cerrada («las credenciales llegan al ser aprobado»).
+
+3 pruebas nuevas en `CorreoSolicitudTest`.
+
 ## [2.14.1] — 2026-11-08
 
 ### Corregido

@@ -1,10 +1,10 @@
 msgid ""
 msgstr ""
-"Project-Id-Version: Convoca Members 2.14.1"
+"Project-Id-Version: Convoca Members 2.15.0\n"
 "Report-Msgid-Bugs-To: https://"
 "wordpress.org/support/plugin/convoca-members\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/convoca-members\n"
-"POT-Creation-Date: 2026-11-08T19:39:41+00:00\n"
+"POT-Creation-Date: 2026-11-08T19:51:59+00:00\n"
 "PO-Revision-Date: 2026-10-15T16:10:00+00:00\n"
 "Last-Translator: Jose Carlos Nieto Ramos\n"
 "Language-Team: English (United States)\n"
@@ -152,8 +152,8 @@ msgstr "Detailed description"
 #: admin/class-admin-member-editor.php:134 admin/class-admin-metaboxes.php:337
 #: admin/class-admin-page.php:128 admin/class-admin-page.php:696
 #: admin/class-admin-settings.php:495 admin/class-admin-webhooks.php:316
-#: admin/class-csv-exporter.php:53 includes/Email_Manager.php:200
-#: includes/Email_Manager.php:227 includes/GDPR_Tools.php:131
+#: admin/class-csv-exporter.php:53 includes/Email_Manager.php:202
+#: includes/Email_Manager.php:229 includes/GDPR_Tools.php:131
 #: includes/GDPR_Tools.php:201 includes/GDPR_Tools.php:249
 #: includes/GDPR_Tools.php:302 public/class-mi-area.php:576
 msgid "Estado"
@@ -394,29 +394,33 @@ msgstr "Error reading headers."
 #: admin/class-admin-import-csv.php:511
 #, php-format
 msgid "%d socio importado correctamente."
-
-msgstr "%d member imported successfully."
+msgid_plural "%d socios importados correctamente."
+msgstr[0] "%d member imported successfully."
+msgstr[1] "%d member imported successfully."
 
 #. translators: %d: error count
 #: admin/class-admin-import-csv.php:521
 #, php-format
 msgid "%d fila con errores:"
-
-msgstr "%d row with errors:"
+msgid_plural "%d filas con errores:"
+msgstr[0] "%d row with errors:"
+msgstr[1] "%d row with errors:"
 
 #. translators: %d: number of members
 #: admin/class-admin-import-csv.php:605
 #, php-format
 msgid "🎉 Importación completada. %d socio importado."
-
-msgstr "🎉 Import complete. %d member imported."
+msgid_plural "🎉 Importación completada. %d socios importados."
+msgstr[0] "🎉 Import complete. %d member imported."
+msgstr[1] "🎉 Import complete. %d member imported."
 
 #. translators: %d: error count
 #: admin/class-admin-import-csv.php:611
 #, php-format
 msgid "%d error:"
-
-msgstr "%d error:"
+msgid_plural "%d errores:"
+msgstr[0] "%d error:"
+msgstr[1] "%d error:"
 
 #. translators: %d: line number
 #: admin/class-admin-import-csv.php:642
@@ -510,15 +514,15 @@ msgstr "Renew now"
 #: admin/class-admin-list.php:101 admin/class-admin-member-editor.php:145
 #: admin/class-admin-metaboxes.php:348 admin/class-admin-page.php:403
 #: admin/class-admin-page.php:696 admin/class-csv-exporter.php:54
-#: includes/Email_Manager.php:192 includes/Email_Manager.php:223
-#: includes/Email_Manager.php:243 includes/Email_Manager.php:331
-#: includes/Email_Manager.php:412 public/class-mi-area.php:579
+#: includes/Email_Manager.php:194 includes/Email_Manager.php:225
+#: includes/Email_Manager.php:245 includes/Email_Manager.php:333
+#: includes/Email_Manager.php:414 public/class-mi-area.php:579
 #: templates/form-alta.php:514
 msgid "Plan"
 msgstr "Plan"
 
-#: admin/class-admin-list.php:102 includes/Email_Manager.php:196
-#: includes/Email_Manager.php:297
+#: admin/class-admin-list.php:102 includes/Email_Manager.php:198
+#: includes/Email_Manager.php:299
 msgid "Cuota"
 msgstr "Dues"
 
@@ -546,12 +550,12 @@ msgstr "All statuses"
 msgid "Todos los tipos"
 msgstr "All types"
 
-#: admin/class-admin-list.php:390 includes/Email_Manager.php:894
+#: admin/class-admin-list.php:390 includes/Email_Manager.php:896
 #: includes/PDF_Card.php:81
 msgid "Socio/a"
 msgstr "Member"
 
-#: admin/class-admin-list.php:391 includes/Email_Manager.php:890
+#: admin/class-admin-list.php:391 includes/Email_Manager.php:892
 msgid "Voluntario/a"
 msgstr "Volunteer"
 
@@ -597,8 +601,9 @@ msgstr ""
 #: admin/class-admin-list.php:448
 #, php-format
 msgid "%d socio activo sin consentimiento registrado."
-
-msgstr "%d active member without recorded consent."
+msgid_plural "%d socios activos sin consentimiento registrado."
+msgstr[0] "%d active member without recorded consent."
+msgstr[1] "%d active member without recorded consent."
 
 #: admin/class-admin-list.php:452
 msgid "Ver cuáles"
@@ -1424,7 +1429,7 @@ msgid "Listado de Miembros"
 msgstr "Member List"
 
 #: admin/class-admin-proyectos.php:110 admin/class-admin-proyectos.php:111
-#: includes/CPT_Proyecto.php:50 includes/Email_Manager.php:416
+#: includes/CPT_Proyecto.php:50 includes/Email_Manager.php:418
 msgid "Proyectos"
 msgstr "Projects"
 
@@ -1459,7 +1464,7 @@ msgstr "Lead"
 
 #: admin/class-admin-proyectos.php:191 admin/class-admin-proyectos.php:222
 #: admin/class-admin-settings.php:903 admin/class-admin-webhooks.php:317
-#: includes/Email_Manager.php:1169 includes/Estados.php:63
+#: includes/Email_Manager.php:1183 includes/Estados.php:63
 msgid "Activo"
 msgstr "Active"
 
@@ -2466,7 +2471,7 @@ msgstr "GDPR date"
 msgid "Comunicaciones"
 msgstr "Communications"
 
-#: admin/class-csv-exporter.php:62 includes/Email_Manager.php:301
+#: admin/class-csv-exporter.php:62 includes/Email_Manager.php:303
 msgid "Fecha renovación"
 msgstr "Renewal date"
 
@@ -2744,8 +2749,9 @@ msgstr "Could not read the generated temporary file."
 #: includes/Certificate_Generator.php:300 includes/PDF_Card.php:116
 #, php-format
 msgid "%d año"
-
-msgstr "%d year"
+msgid_plural "%d años"
+msgstr[0] "%d year"
+msgstr[1] "%d year"
 
 #: includes/Certificate_Generator.php:415 includes/Rest/Certificados.php:67
 msgid ""
@@ -2982,15 +2988,17 @@ msgstr "No expiry date"
 #: includes/CPT_Documento.php:146
 #, php-format
 msgid "Caducado el %1$s (hace %2$d día)"
-
-msgstr "Expired on %1$s (%2$d day ago)"
+msgid_plural "Caducado el %1$s (hace %2$d días)"
+msgstr[0] "Expired on %1$s (%2$d day ago)"
+msgstr[1] "Expired on %1$s (%2$d day ago)"
 
 #. translators: 1: fecha de caducidad, 2: días que quedan.
 #: includes/CPT_Documento.php:160
 #, php-format
 msgid "Caduca el %1$s (quedan %2$d día)"
-
-msgstr "Expires on %1$s (%2$d day left)"
+msgid_plural "Caduca el %1$s (quedan %2$d días)"
+msgstr[0] "Expires on %1$s (%2$d day left)"
+msgstr[1] "Expires on %1$s (%2$d day left)"
 
 #. translators: %s: fecha de caducidad.
 #: includes/CPT_Documento.php:173
@@ -3234,11 +3242,11 @@ msgstr "Weekly summary"
 msgid "Resumen Semanal"
 msgstr "Weekly Summary"
 
-#: includes/Email_Manager.php:167
+#: includes/Email_Manager.php:169
 msgid "<h1>¡Bienvenido/a, {nombre}!</h1>"
 msgstr "<h1>Welcome, {nombre}!</h1>"
 
-#: includes/Email_Manager.php:168
+#: includes/Email_Manager.php:170
 msgid ""
 "<p>Tu solicitud ha sido aprobada. Ya puedes acceder a tu área privada de "
 "socio/a.</p>"
@@ -3246,15 +3254,15 @@ msgstr ""
 "<p>Your application has been approved. You can now access your private "
 "member area.</p>"
 
-#: includes/Email_Manager.php:172
+#: includes/Email_Manager.php:174
 msgid "Usuario"
 msgstr "Username"
 
-#: includes/Email_Manager.php:176 public/class-mi-area.php:390
+#: includes/Email_Manager.php:178 public/class-mi-area.php:390
 msgid "Contraseña"
 msgstr "Password"
 
-#: includes/Email_Manager.php:181
+#: includes/Email_Manager.php:183
 msgid ""
 "<p style=\"color:#dc2626;font-size:0.9rem;\">⚠️ Por seguridad, cambia tu "
 "contraseña después del primer inicio de sesión.</p>"
@@ -3262,26 +3270,26 @@ msgstr ""
 "<p style=\"color:#dc2626;font-size:0.9rem;\">⚠️ For security, change your "
 "password after your first login.</p>"
 
-#: includes/Email_Manager.php:182 includes/Email_Manager.php:1123
-#: includes/Email_Manager.php:1124 includes/Email_Manager.php:1138
+#: includes/Email_Manager.php:184 includes/Email_Manager.php:1138
+#: includes/Email_Manager.php:1152
 msgid "Acceder a Mi Área"
 msgstr "Access My Area"
 
-#: includes/Email_Manager.php:186
+#: includes/Email_Manager.php:188
 msgid "Hemos recibido tu solicitud de {tipo_solicitud} — "
 msgstr "We have received your {tipo_solicitud} application — "
 
-#: includes/Email_Manager.php:187 includes/Email_Manager.php:238
-#: includes/Email_Manager.php:258 includes/Email_Manager.php:273
-#: includes/Email_Manager.php:288 includes/Email_Manager.php:312
-#: includes/Email_Manager.php:319 includes/Email_Manager.php:326
-#: includes/Email_Manager.php:364 includes/Email_Manager.php:372
-#: includes/Email_Manager.php:380 includes/Email_Manager.php:428
-#: includes/Email_Manager.php:447
+#: includes/Email_Manager.php:189 includes/Email_Manager.php:240
+#: includes/Email_Manager.php:260 includes/Email_Manager.php:275
+#: includes/Email_Manager.php:290 includes/Email_Manager.php:314
+#: includes/Email_Manager.php:321 includes/Email_Manager.php:328
+#: includes/Email_Manager.php:366 includes/Email_Manager.php:374
+#: includes/Email_Manager.php:382 includes/Email_Manager.php:430
+#: includes/Email_Manager.php:449
 msgid "<h1>Hola {nombre},</h1>"
 msgstr "<h1>Hi {nombre},</h1>"
 
-#: includes/Email_Manager.php:208
+#: includes/Email_Manager.php:210
 msgid ""
 "<p>Cuando hayas hecho la transferencia, <a href=\"{justificante_url}\">sube "
 "el justificante aquí</a>. El enlace caduca en 3 días.</p>"
@@ -3289,7 +3297,7 @@ msgstr ""
 "<p>Once you have made the transfer, <a href=\\\\\"{justificante_url}\\\\"
 "\">upload the receipt here</a>. The link expires in 3 days.</p>"
 
-#: includes/Email_Manager.php:209
+#: includes/Email_Manager.php:211
 msgid ""
 "<p>Un miembro del equipo revisará tu solicitud y te contactaremos pronto.</p>"
 msgstr ""
@@ -3297,24 +3305,24 @@ msgstr ""
 "p>"
 
 #. translators: %s: site name
-#: includes/Email_Manager.php:210
+#: includes/Email_Manager.php:212
 #, php-format
 msgid "<p>¡Gracias por unirte a la familia %s!</p>"
 msgstr "<p>Thank you for joining the %s family!</p>"
 
 #. translators: %s: site name
-#: includes/Email_Manager.php:213
+#: includes/Email_Manager.php:215
 #, php-format
 msgid "¡Bienvenido/a, {nombre}! Ya formas parte de %s"
 msgstr "Welcome, {nombre}! You are now part of %s"
 
 #. translators: %s: site name
-#: includes/Email_Manager.php:214
+#: includes/Email_Manager.php:216
 msgid "<h1>¡Bienvenido/a, {nombre}! 🎉</h1>"
 msgstr "<h1>Welcome, {nombre}! 🎉</h1>"
 
 #. translators: %s: site name
-#: includes/Email_Manager.php:215
+#: includes/Email_Manager.php:217
 #, php-format
 msgid ""
 "<p>Tu alta como <strong>{tipo_miembro}</strong> en %s ha sido confirmada.</p>"
@@ -3322,12 +3330,12 @@ msgstr ""
 "<p>Your signup as <strong>{tipo_miembro}</strong> at %s has been confirmed.</"
 "p>"
 
-#: includes/Email_Manager.php:219
+#: includes/Email_Manager.php:221
 msgid "Nº Socio"
 msgstr "Member No."
 
 #. translators: %s: site name
-#: includes/Email_Manager.php:232
+#: includes/Email_Manager.php:234
 #, php-format
 msgid ""
 "<p>Ya formas parte de la comunidad %s. Puedes participar en todas nuestras "
@@ -3337,7 +3345,7 @@ msgstr ""
 "activities and projects.</p>"
 
 #. translators: %s: site name
-#: includes/Email_Manager.php:233
+#: includes/Email_Manager.php:235
 msgid ""
 "<p>Si tienes cualquier duda, escríbenos a <a href=\"mailto:{admin_email}"
 "\">{admin_email}</a>.</p>"
@@ -3345,11 +3353,11 @@ msgstr ""
 "<p>If you have any questions, write to us at <a href=\"mailto:{admin_email}"
 "\">{admin_email}</a>.</p>"
 
-#: includes/Email_Manager.php:237
+#: includes/Email_Manager.php:239
 msgid "Recordatorio de pago (1/3) — "
 msgstr "Payment reminder (1/3) — "
 
-#: includes/Email_Manager.php:239
+#: includes/Email_Manager.php:241
 msgid ""
 "<p>Tu solicitud de alta/renovación como <strong>{tipo_miembro}</strong> está "
 "pendiente de pago.</p>"
@@ -3357,14 +3365,14 @@ msgstr ""
 "<p>Your signup/renewal application as <strong>{tipo_miembro}</strong> is "
 "pending payment.</p>"
 
-#: includes/Email_Manager.php:247 includes/Email_Manager.php:263
-#: includes/Email_Manager.php:278 includes/Email_Manager.php:335
-#: includes/Email_Manager.php:1038 includes/GDPR_Tools.php:197
+#: includes/Email_Manager.php:249 includes/Email_Manager.php:265
+#: includes/Email_Manager.php:280 includes/Email_Manager.php:337
+#: includes/Email_Manager.php:1040 includes/GDPR_Tools.php:197
 #: templates/form-alta.php:526
 msgid "Importe"
 msgstr "Amount"
 
-#: includes/Email_Manager.php:252
+#: includes/Email_Manager.php:254
 msgid ""
 "<p>Puedes realizar el pago de forma segura desde tu panel de socio o con un "
 "clic en el botón:</p>"
@@ -3372,17 +3380,17 @@ msgstr ""
 "<p>You can pay securely from your member panel or with one click on the "
 "button:</p>"
 
-#: includes/Email_Manager.php:253 includes/Email_Manager.php:269
-#: includes/Email_Manager.php:284 includes/Email_Manager.php:1125
-#: includes/Email_Manager.php:1126 includes/Email_Manager.php:1127
+#: includes/Email_Manager.php:255 includes/Email_Manager.php:271
+#: includes/Email_Manager.php:286 includes/Email_Manager.php:1139
+#: includes/Email_Manager.php:1140 includes/Email_Manager.php:1141
 msgid "Pagar ahora"
 msgstr "Pay now"
 
-#: includes/Email_Manager.php:257
+#: includes/Email_Manager.php:259
 msgid "Segundo aviso: pago pendiente — "
 msgstr "Second notice: payment pending — "
 
-#: includes/Email_Manager.php:259
+#: includes/Email_Manager.php:261
 msgid ""
 "<p>Seguimos sin constancia del pago de tu cuota de <strong>{tipo_miembro}</"
 "strong>.</p>"
@@ -3390,7 +3398,7 @@ msgstr ""
 "<p>We still have no record of payment for your <strong>{tipo_miembro}</"
 "strong> dues.</p>"
 
-#: includes/Email_Manager.php:268
+#: includes/Email_Manager.php:270
 msgid ""
 "<p>Es importante completar el pago para mantener tu estado activo y acceder "
 "a las ventajas de socio.</p>"
@@ -3398,11 +3406,11 @@ msgstr ""
 "<p>It is important to complete the payment to keep your active status and "
 "access your member benefits.</p>"
 
-#: includes/Email_Manager.php:272
+#: includes/Email_Manager.php:274
 msgid "Último aviso: suspensión inminente — "
 msgstr "Final notice: imminent suspension — "
 
-#: includes/Email_Manager.php:274
+#: includes/Email_Manager.php:276
 msgid ""
 "<p>Este es el <strong>último aviso</strong> respecto a tu cuota pendiente de "
 "<strong>{tipo_miembro}</strong>.</p>"
@@ -3410,7 +3418,7 @@ msgstr ""
 "<p>This is the <strong>final notice</strong> regarding your outstanding "
 "<strong>{tipo_miembro}</strong> dues.</p>"
 
-#: includes/Email_Manager.php:289
+#: includes/Email_Manager.php:291
 msgid ""
 "<p>Faltan <strong>30 días</strong> para tu fecha de renovación como "
 "{tipo_miembro}.</p>"
@@ -3418,11 +3426,11 @@ msgstr ""
 "<p>There are <strong>30 days</strong> left until your renewal date as "
 "{tipo_miembro}.</p>"
 
-#: includes/Email_Manager.php:293
+#: includes/Email_Manager.php:295
 msgid "Plan actual"
 msgstr "Current plan"
 
-#: includes/Email_Manager.php:306
+#: includes/Email_Manager.php:308
 msgid ""
 "<p>Puedes renovar con un clic. El enlace es seguro y seguirá siendo válido "
 "aunque se acerque o pase la fecha de vencimiento:</p>"
@@ -3430,12 +3438,12 @@ msgstr ""
 "<p>You can renew with one click. The link is secure and will remain valid "
 "even if the expiration date is near or has passed:</p>"
 
-#: includes/Email_Manager.php:307 includes/Email_Manager.php:315
-#: includes/Email_Manager.php:322 includes/Email_Manager.php:1128
+#: includes/Email_Manager.php:309 includes/Email_Manager.php:317
+#: includes/Email_Manager.php:324 includes/Email_Manager.php:1142
 msgid "Renovar ahora"
 msgstr "Renew now"
 
-#: includes/Email_Manager.php:313
+#: includes/Email_Manager.php:315
 msgid ""
 "<p>Faltan solo <strong>15 días</strong> para que venza tu membresía de "
 "{tipo_miembro}.</p>"
@@ -3443,21 +3451,21 @@ msgstr ""
 "<p>Only <strong>15 days</strong> remain until your {tipo_miembro} membership "
 "expires.</p>"
 
-#: includes/Email_Manager.php:318
+#: includes/Email_Manager.php:320
 msgid "Última semana para tu renovación — "
 msgstr "Last week to renew — "
 
-#: includes/Email_Manager.php:320
+#: includes/Email_Manager.php:322
 msgid ""
 "<p>Tu membresía de {tipo_miembro} vencerá en <strong>7 días</strong>.</p>"
 msgstr ""
 "<p>Your {tipo_miembro} membership will expire in <strong>7 days</strong>.</p>"
 
-#: includes/Email_Manager.php:325
+#: includes/Email_Manager.php:327
 msgid "Procesando tu renovación automática — "
 msgstr "Processing your auto-renewal — "
 
-#: includes/Email_Manager.php:327
+#: includes/Email_Manager.php:329
 msgid ""
 "<p>Como tienes activada la renovación automática, hemos generado el cargo "
 "correspondiente a tu cuota de {tipo_miembro}.</p>"
@@ -3465,11 +3473,11 @@ msgstr ""
 "<p>Because you have auto-renewal enabled, we have generated the charge for "
 "your {tipo_miembro} dues.</p>"
 
-#: includes/Email_Manager.php:339 public/class-mi-area.php:581
+#: includes/Email_Manager.php:341 public/class-mi-area.php:581
 msgid "Próxima renovación"
 msgstr "Next renewal"
 
-#: includes/Email_Manager.php:344
+#: includes/Email_Manager.php:346
 msgid ""
 "<p>No tienes que hacer nada. Si hay algún problema con el cargo, te "
 "avisaremos.</p>"
@@ -3478,20 +3486,20 @@ msgstr ""
 "will let you know.</p>"
 
 #. translators: %s: site name
-#: includes/Email_Manager.php:345
+#: includes/Email_Manager.php:347
 #, php-format
 msgid "<p>¡Gracias por seguir apoyando a %s!</p>"
 msgstr "<p>Thank you for continuing to support %s!</p>"
 
-#: includes/Email_Manager.php:348
+#: includes/Email_Manager.php:350
 msgid "Renovación completada con éxito — "
 msgstr "Renewal completed successfully — "
 
-#: includes/Email_Manager.php:349
+#: includes/Email_Manager.php:351
 msgid "<h1>¡Buenas noticias, {nombre}! 🎉</h1>"
 msgstr "<h1>Great news, {nombre}! 🎉</h1>"
 
-#: includes/Email_Manager.php:350
+#: includes/Email_Manager.php:352
 msgid ""
 "<p>El pago de tu cuota anual como <strong>{tipo_miembro}</strong> se ha "
 "procesado correctamente.</p>"
@@ -3499,20 +3507,20 @@ msgstr ""
 "<p>Your annual dues payment as <strong>{tipo_miembro}</strong> has been "
 "processed successfully.</p>"
 
-#: includes/Email_Manager.php:354
+#: includes/Email_Manager.php:356
 msgid "Nueva fecha renovación"
 msgstr "New renewal date"
 
-#: includes/Email_Manager.php:359
+#: includes/Email_Manager.php:361
 msgid ""
 "<p>Adjunto a este email encontrarás tu tarjeta de socio/a actualizada.</p>"
 msgstr "<p>Attached to this email you will find your updated member card.</p>"
 
-#: includes/Email_Manager.php:363
+#: includes/Email_Manager.php:365
 msgid "Confirma tu nuevo email — "
 msgstr "Confirm your new email — "
 
-#: includes/Email_Manager.php:365
+#: includes/Email_Manager.php:367
 msgid ""
 "<p>Has solicitado cambiar tu email de contacto a <strong>{nuevo_email}</"
 "strong>.</p>"
@@ -3520,18 +3528,18 @@ msgstr ""
 "<p>You have requested to change your contact email to <strong>{nuevo_email}</"
 "strong>.</p>"
 
-#: includes/Email_Manager.php:366
+#: includes/Email_Manager.php:368
 msgid ""
 "<p>Para confirmar el cambio, haz clic en el siguiente enlace (válido por 24 "
 "horas):</p>"
 msgstr ""
 "<p>To confirm the change, click the link below (valid for 24 hours):</p>"
 
-#: includes/Email_Manager.php:367
+#: includes/Email_Manager.php:369
 msgid "Confirmar email"
 msgstr "Confirm email"
 
-#: includes/Email_Manager.php:368
+#: includes/Email_Manager.php:370
 msgid ""
 "<p>Si no has solicitado este cambio, ignora este mensaje. Tu email actual "
 "seguirá activo.</p>"
@@ -3539,11 +3547,11 @@ msgstr ""
 "<p>If you did not request this change, ignore this message. Your current "
 "email will remain active.</p>"
 
-#: includes/Email_Manager.php:371
+#: includes/Email_Manager.php:373
 msgid "Verifica tu teléfono — "
 msgstr "Verify your phone — "
 
-#: includes/Email_Manager.php:373
+#: includes/Email_Manager.php:375
 msgid ""
 "<p>Has solicitado verificar tu número de teléfono <strong>{telefono}</"
 "strong>.</p>"
@@ -3551,7 +3559,7 @@ msgstr ""
 "<p>You have requested to verify your phone number <strong>{telefono}</"
 "strong>.</p>"
 
-#: includes/Email_Manager.php:374
+#: includes/Email_Manager.php:376
 msgid ""
 "<p>Para confirmar que es tu número, haz clic en el siguiente enlace (válido "
 "por 24 horas):</p>"
@@ -3559,42 +3567,42 @@ msgstr ""
 "<p>To confirm it is your number, click the link below (valid for 24 hours):</"
 "p>"
 
-#: includes/Email_Manager.php:375
+#: includes/Email_Manager.php:377
 msgid "Verificar teléfono"
 msgstr "Verify phone"
 
-#: includes/Email_Manager.php:376
+#: includes/Email_Manager.php:378
 msgid "<p>Si no has solicitado esta verificación, ignora este mensaje.</p>"
 msgstr "<p>If you did not request this verification, ignore this message.</p>"
 
-#: includes/Email_Manager.php:379
+#: includes/Email_Manager.php:381
 msgid "Recuerda tus horas de voluntariado — "
 msgstr "Remember your volunteer hours — "
 
-#: includes/Email_Manager.php:385
+#: includes/Email_Manager.php:387
 msgid "Horas registradas"
 msgstr "Hours logged"
 
-#: includes/Email_Manager.php:389
+#: includes/Email_Manager.php:391
 msgid "Objetivo anual"
 msgstr "Annual goal"
 
-#: includes/Email_Manager.php:393
+#: includes/Email_Manager.php:395
 msgid "Progreso"
 msgstr "Progress"
 
 #. translators: %s: site name
-#: includes/Email_Manager.php:402
+#: includes/Email_Manager.php:404
 #, php-format
 msgid "¡Felicidades! Has completado tu voluntariado — %s"
 msgstr "Congratulations! You have completed your volunteering — %s"
 
 #. translators: %s: site name
-#: includes/Email_Manager.php:403
+#: includes/Email_Manager.php:405
 msgid "<h1>¡Enhorabuena, {nombre}! 🎉</h1>"
 msgstr "<h1>Congratulations, {nombre}! 🎉</h1>"
 
-#: includes/Email_Manager.php:404
+#: includes/Email_Manager.php:406
 msgid ""
 "<p>Has completado las <strong>{horas_totales}h</strong> de voluntariado "
 "requeridas para el plan <strong>{plan_nombre}</strong>.</p>"
@@ -3602,19 +3610,19 @@ msgstr ""
 "<p>You have completed the <strong>{horas_totales}h</strong> of volunteering "
 "required for the <strong>{plan_nombre}</strong> plan.</p>"
 
-#: includes/Email_Manager.php:408
+#: includes/Email_Manager.php:410
 msgid "Horas completadas"
 msgstr "Hours completed"
 
-#: includes/Email_Manager.php:421
+#: includes/Email_Manager.php:423
 msgid "<p>Ya puedes descargar tu certificado oficial de voluntariado:</p>"
 msgstr "<p>You can now download your official volunteer certificate:</p>"
 
-#: includes/Email_Manager.php:422
+#: includes/Email_Manager.php:424
 msgid "Descargar Certificado"
 msgstr "Download Certificate"
 
-#: includes/Email_Manager.php:423
+#: includes/Email_Manager.php:425
 msgid ""
 "<p style=\"font-size:13px;color:#64748b;margin-top:8px\">ID del certificado: "
 "{certificado_id}</p>"
@@ -3622,39 +3630,39 @@ msgstr ""
 "<p style=\"font-size:13px;color:#64748b;margin-top:8px\">Certificate ID: "
 "{certificado_id}</p>"
 
-#: includes/Email_Manager.php:427
+#: includes/Email_Manager.php:429
 msgid "Tu entrevista de voluntariado: {fecha_cita} a las {hora_cita}"
 msgstr "Your volunteering interview: {fecha_cita} at {hora_cita}"
 
-#: includes/Email_Manager.php:429
+#: includes/Email_Manager.php:431
 msgid ""
 "<p>Queremos conocerte. Te esperamos para la entrevista inicial de "
 "voluntariado:</p>"
 msgstr "<p>You can now download your official volunteer certificate:</p>"
 
-#: includes/Email_Manager.php:433
+#: includes/Email_Manager.php:435
 msgid "Día"
 msgstr "Day"
 
-#: includes/Email_Manager.php:437
+#: includes/Email_Manager.php:439
 msgid "Hora"
 msgstr "Hours"
 
-#: includes/Email_Manager.php:442
+#: includes/Email_Manager.php:444
 msgid "<p>Si te viene mal, respóndenos a este correo y buscamos otro día.</p>"
 msgstr ""
 "<p>If it does not suit you, reply to this email and we will find another day."
 "</p>"
 
-#: includes/Email_Manager.php:443
+#: includes/Email_Manager.php:445
 msgid "Ver mi área"
 msgstr "View my card"
 
-#: includes/Email_Manager.php:446
+#: includes/Email_Manager.php:448
 msgid "Tu acuerdo de voluntariado — "
 msgstr "Remember your volunteer hours — "
 
-#: includes/Email_Manager.php:448
+#: includes/Email_Manager.php:450
 msgid ""
 "<p>Aquí tienes tu acuerdo de voluntariado, con tus datos y tu firma. "
 "Guárdalo: es tu compromiso con la entidad y el nuestro contigo.</p>"
@@ -3663,50 +3671,50 @@ msgstr ""
 "signature. Keep it: it is your commitment to the organisation and ours to "
 "you.</p>"
 
-#: includes/Email_Manager.php:449
+#: includes/Email_Manager.php:451
 msgid "<p>Puedes aceptarlo (y volver a descargarlo) desde tu área.</p>"
 msgstr "<p>You can accept it (and download it again) from your area.</p>"
 
-#: includes/Email_Manager.php:450
+#: includes/Email_Manager.php:452
 msgid "Ver y aceptar mi acuerdo"
 msgstr "View and accept my agreement"
 
-#: includes/Email_Manager.php:453
+#: includes/Email_Manager.php:455
 msgid "Un voluntariado ha pedido la baja: {nombre}"
 msgstr "A volunteer has requested withdrawal: {nombre}"
 
-#: includes/Email_Manager.php:454
+#: includes/Email_Manager.php:456
 msgid "<h1>{nombre} ha pedido desvincularse</h1>"
 msgstr "<h1>{nombre} has requested withdrawal</h1>"
 
-#: includes/Email_Manager.php:455
+#: includes/Email_Manager.php:457
 msgid "<p>Lo que cuenta:</p>"
 msgstr "<p>What they say:</p>"
 
-#: includes/Email_Manager.php:457
+#: includes/Email_Manager.php:459
 msgid ""
 "<p>La baja no se aplica sola: confírmala desde Miembros → Voluntarios.</p>"
 msgstr ""
 "<p>The withdrawal does not apply by itself: confirm it under Members → "
 "Volunteers.</p>"
 
-#: includes/Email_Manager.php:458
+#: includes/Email_Manager.php:460
 msgid "Confirmarla"
 msgstr "Confirm email"
 
-#: includes/Email_Manager.php:461
+#: includes/Email_Manager.php:463
 msgid "Tu etapa como voluntario se ha cerrado"
 msgstr "Your time as a volunteer has ended"
 
-#: includes/Email_Manager.php:462
+#: includes/Email_Manager.php:464
 msgid "<h1>Gracias por el tiempo, {nombre}</h1>"
 msgstr "<h1>Hi {nombre},</h1>"
 
-#: includes/Email_Manager.php:463
+#: includes/Email_Manager.php:465
 msgid "<p>Tu etapa como voluntario se ha cerrado ({causa_baja}).</p>"
 msgstr "<p>Your time as a volunteer has ended ({causa_baja}).</p>"
 
-#: includes/Email_Manager.php:464
+#: includes/Email_Manager.php:466
 msgid ""
 "<p>Lo que hiciste no se borra: tus horas quedan registradas ({horas} h) y tu "
 "certificado se puede descargar y validar cuando quieras.</p>"
@@ -3714,123 +3722,137 @@ msgstr ""
 "<p>What you did is not erased: your hours remain recorded ({horas} h) and "
 "your certificate can be downloaded and verified whenever you want.</p>"
 
-#: includes/Email_Manager.php:465
+#: includes/Email_Manager.php:467
 msgid "Descargar mi certificado"
 msgstr "Download Certificate"
 
-#: includes/Email_Manager.php:468
+#: includes/Email_Manager.php:470
 msgid "Horas de voluntariado pendientes de aprobar: {nombre}"
 msgstr "Volunteering hours pending approval: {nombre}"
 
-#: includes/Email_Manager.php:469
+#: includes/Email_Manager.php:471
 msgid "<h1>{nombre} ha apuntado horas</h1>"
 msgstr "<h1>{nombre} has logged hours</h1>"
 
-#: includes/Email_Manager.php:470
+#: includes/Email_Manager.php:472
 msgid ""
 "<p>{horas} horas del día {fecha_horas}. Se aprueban (o se rechazan) aquí:</p>"
 msgstr "<p>{horas} hours on {fecha_horas}. Approve (or reject) them here:</p>"
 
-#: includes/Email_Manager.php:471
+#: includes/Email_Manager.php:473
 msgid "Aprobar las horas"
 msgstr "Approve signup"
 
-#: includes/Email_Manager.php:663
+#: includes/Email_Manager.php:665
 msgid "(sin motivo)"
 msgstr "(no reason)"
 
 #. translators: %s: site name
-#: includes/Email_Manager.php:768 includes/Email_Manager.php:1217
+#: includes/Email_Manager.php:770 includes/Email_Manager.php:1231
 #, php-format
 msgid "Has recibido este email porque eres miembro de %s."
 msgstr "You are receiving this email because you are a member of %s."
 
 #. translators: %s: email subject
-#: includes/Email_Manager.php:808
+#: includes/Email_Manager.php:810
 #, php-format
 msgid "Email enviado: %s"
 msgstr "Email sent: %s"
 
 #. translators: %s: email subject
-#: includes/Email_Manager.php:814
+#: includes/Email_Manager.php:816
 #, php-format
 msgid "Error al enviar email: %s"
 msgstr "Error sending email: %s"
 
-#: includes/Email_Manager.php:956
+#: includes/Email_Manager.php:958
 msgid "renovación"
 msgstr "renewal"
 
-#: includes/Email_Manager.php:956
+#: includes/Email_Manager.php:958
 msgid "alta"
 msgstr "signup"
 
-#: includes/Email_Manager.php:1026
+#: includes/Email_Manager.php:1028
 msgid "IBAN"
 msgstr "IBAN"
 
-#: includes/Email_Manager.php:1030
+#: includes/Email_Manager.php:1032
 msgid "Beneficiario"
 msgstr "Beneficiary"
 
-#: includes/Email_Manager.php:1034 includes/GDPR_Tools.php:193
+#: includes/Email_Manager.php:1036 includes/GDPR_Tools.php:193
 msgid "Concepto"
 msgstr "Description"
 
-#: includes/Email_Manager.php:1059
+#: includes/Email_Manager.php:1065
 msgid "Cómo hacer la transferencia"
-msgstr "IBAN for bank transfers"
 
-#: includes/Email_Manager.php:1062
+msgstr "How to make the transfer"
+
+#. translators: %s: enlace a la página para subir el justificante.
+#: includes/Email_Manager.php:1071
+#, php-format
 msgid ""
-"Cuando la hagas, puedes adjuntar el justificante desde la página de pago "
-"para que podamos validarla antes."
+"Cuando la hagas, <a href=\"%s\">sube el justificante aquí</a>. El enlace "
+"caduca en 3 días."
 msgstr ""
-"You will be able to attach the receipt on that page so that we can validate "
-"your sign-up as soon as possible."
+"Once you have made it, <a href=\"%s\">upload the receipt here</a>. The "
+"link expires in 3 days."
 
-#: includes/Email_Manager.php:1129 includes/Email_Manager.php:1130
+#: includes/Email_Manager.php:1074
+msgid ""
+"Cuando la hagas, puedes adjuntar el justificante para que podamos validarla "
+"antes."
+
+msgstr "Once you have made it, you can attach the receipt so we can check it first."
+
+#: includes/Email_Manager.php:1137
+msgid "Subir el justificante"
+msgstr "Upload payment receipt"
+
+#: includes/Email_Manager.php:1143 includes/Email_Manager.php:1144
 msgid "Renovar mi cuota"
 msgstr "Renew my dues"
 
-#: includes/Email_Manager.php:1131
+#: includes/Email_Manager.php:1145
 msgid "Ver mi membresía"
 msgstr "View my membership"
 
-#: includes/Email_Manager.php:1132
+#: includes/Email_Manager.php:1146
 msgid "Ver mi carnet"
 msgstr "View my card"
 
-#: includes/Email_Manager.php:1133 includes/Email_Manager.php:1144
+#: includes/Email_Manager.php:1147 includes/Email_Manager.php:1158
 msgid "Registrar mis horas"
 msgstr "Log my hours"
 
-#: includes/Email_Manager.php:1139 includes/Email_Manager.php:1142
-#: includes/Email_Manager.php:1143
+#: includes/Email_Manager.php:1153 includes/Email_Manager.php:1156
+#: includes/Email_Manager.php:1157
 msgid "Ver mi voluntariado"
 msgstr "Volunteer type"
 
-#: includes/Email_Manager.php:1140
+#: includes/Email_Manager.php:1154
 msgid "Ver la cita"
 msgstr "View license"
 
-#: includes/Email_Manager.php:1141
+#: includes/Email_Manager.php:1155
 msgid "Ver el acuerdo"
 msgstr "View the agreement"
 
-#: includes/Email_Manager.php:1145
+#: includes/Email_Manager.php:1159
 msgid "Confirmar mi correo"
 msgstr "Confirm email"
 
-#: includes/Email_Manager.php:1146
+#: includes/Email_Manager.php:1160
 msgid "Verificar mi teléfono"
 msgstr "Verify phone"
 
-#: includes/Email_Manager.php:1165
+#: includes/Email_Manager.php:1179
 msgid "Socia"
 msgstr "Member"
 
-#: includes/Email_Manager.php:1180
+#: includes/Email_Manager.php:1194
 msgid "Limpieza de río, Plantación de árboles"
 msgstr "River clean-up, Tree planting"
 
@@ -4031,8 +4053,9 @@ msgstr ""
 msgid ""
 "Hemos recibido tu justificante. Lo revisaremos y te avisaremos cuando esté "
 "comprobado; hasta entonces tu alta sigue pendiente."
-
-msgstr "We have received your receipt. We will review it and let you know once it is checked; until then your sign-up remains pending."
+msgstr ""
+"We have received your receipt. We will review it and let you know once it is "
+"checked; until then your sign-up remains pending."
 
 #: includes/Justificante.php:193
 msgid "No has adjuntado ningún fichero."
@@ -4085,7 +4108,6 @@ msgstr ""
 "\n"
 "Record: %2$s\n"
 "Receipt: %3$s"
-
 
 #: includes/Justificante.php:310 public/class-form-handler.php:86
 msgid "La petición ha caducado. Vuelve a intentarlo."
@@ -4185,7 +4207,7 @@ msgstr "Error generating the document:"
 msgid "Acuerdo Voluntariado - "
 msgstr "Volunteer Agreement - "
 
-#: includes/Process_Member.php:282
+#: includes/Process_Member.php:282 includes/Process_Member.php:293
 msgid "El plan seleccionado no es válido."
 msgstr "The selected plan is invalid."
 
@@ -4193,19 +4215,19 @@ msgstr "The selected plan is invalid."
 msgid "El plan seleccionado no está disponible en este momento."
 msgstr "The selected plan is not available at this time."
 
-#: includes/Process_Member.php:374
+#: includes/Process_Member.php:381
 msgid "Ya existe un miembro registrado con este DNI o email."
 msgstr "A member is already registered with this DNI or email."
 
-#: includes/Process_Member.php:389
+#: includes/Process_Member.php:396
 msgid "Error al crear el registro en la base de datos."
 msgstr "Error creating the record in the database."
 
-#: includes/Process_Member.php:460
+#: includes/Process_Member.php:467
 msgid "Error inesperado al crear el registro."
 msgstr "Unexpected error creating the record."
 
-#: includes/Process_Member.php:504 includes/Process_Member.php:682
+#: includes/Process_Member.php:509 includes/Process_Member.php:684
 msgid ""
 "No se ha podido contactar con la pasarela. Tu registro está guardado pero el "
 "pago está pendiente."
@@ -4213,16 +4235,16 @@ msgstr ""
 "The payment gateway could not be reached. Your registration is saved but "
 "payment is pending."
 
-#: includes/Process_Member.php:557
+#: includes/Process_Member.php:559
 msgid "No se pudo reactivar tu ficha. Contacta con coordinación."
 msgstr "Your profile could not be reactivated. Contact coordination."
 
-#: includes/Process_Member.php:637
+#: includes/Process_Member.php:639
 msgid "Error inesperado al reactivar el registro."
 msgstr "Unexpected error reactivating the record."
 
 #. translators: 1: correo bloqueado, 2: correo de contacto.
-#: includes/Process_Member.php:761
+#: includes/Process_Member.php:763
 #, php-format
 msgid ""
 "Hemos recibido varios registros seguidos con el correo %1$s. Espera unos "
@@ -4231,7 +4253,7 @@ msgstr ""
 "We have received several sign-ups in a row with the email %1$s. Wait a few "
 "minutes and try again. If it was not you, write to us at %2$s."
 
-#: includes/Process_Member.php:762
+#: includes/Process_Member.php:764
 msgid "tu correo"
 msgstr "you@email.com"
 

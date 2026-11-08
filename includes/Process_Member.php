@@ -467,12 +467,18 @@ class Process_Member {
 			return new \WP_Error( 'create_failed', __( 'Error inesperado al crear el registro.', 'convoca-members' ) );
 		}
 
-		// 9. Notifications
-		delete_post_meta( $post_id, '_convoca_solicitud_renovacion' );
-		\Convoca\Core\Utils::do_action( 'convoca_members_email_solicitud', 'convoca_email_solicitud', $post_id );
+		// 9. Aviso de creación: la ficha ya existe.
 		\Convoca\Core\Utils::do_action( 'convoca_members_created', 'convoca_miembro_creado', $post_id );
 
-		// 10. Handle Gateway Redirection
+		$resultado = array(
+			'id'       => $post_id,
+			'nombre'   => $nombre,
+			'estado'   => $estado,
+			'redirect' => add_query_arg( 'members_success', '1', home_url() ),
+		);
+
+		// 10. Pedido de pago ANTES del correo: el concepto de la transferencia es el código del pedido,
+		// no el nombre de la persona (#101). El correo se manda después, cuando ya hay `_convoca_pago_id`.
 		$importe = (float) ( $plan_data['price'] ?? 0 );
 		if ( in_array( $forma_pago, array( 'tarjeta', 'bizum', 'transferencia' ), true ) && $importe > 0 && \Convoca\Core\Features::is_gateway_active() && function_exists( 'Convoca\Gateway\convoca_gateway_create_payment' ) ) {
 			$amount_cents = (int) round( $importe * 100 );
@@ -491,12 +497,7 @@ class Process_Member {
 
 			if ( ! is_wp_error( $payment ) ) {
 				update_post_meta( $post_id, '_convoca_pago_id', $payment['pago_id'] );
-				return array(
-					'id'       => $post_id,
-					'nombre'   => $nombre,
-					'redirect' => $payment['payment_url'],
-					'estado'   => $estado,
-				);
+				$resultado['redirect'] = $payment['payment_url'];
 			} else {
 				\Convoca\Core\Logger::error( 'Error al crear pago en pasarela: ' . $payment->get_error_message(), 'Members', $post_id );
 
@@ -504,22 +505,16 @@ class Process_Member {
 				update_post_meta( $post_id, '_convoca_needs_manual_review', '1' );
 				update_post_meta( $post_id, '_convoca_review_note', 'Error pasarela: ' . $payment->get_error_message() );
 
-				return array(
-					'id'            => $post_id,
-					'nombre'        => $nombre,
-					'gateway_error' => true,
-					'error_message' => __( 'No se ha podido contactar con la pasarela. Tu registro está guardado pero el pago está pendiente.', 'convoca-members' ),
-					'estado'        => $estado,
-				);
+				$resultado['gateway_error'] = true;
+				$resultado['error_message'] = __( 'No se ha podido contactar con la pasarela. Tu registro está guardado pero el pago está pendiente.', 'convoca-members' );
 			}
 		}
 
-		return array(
-			'id'       => $post_id,
-			'nombre'   => $nombre,
-			'estado'   => $estado,
-			'redirect' => add_query_arg( 'members_success', '1', home_url() ),
-		);
+		// 11. Correo de solicitud, ya con el código del pedido y el enlace de justificante (#101, #102).
+		delete_post_meta( $post_id, '_convoca_solicitud_renovacion' );
+		\Convoca\Core\Utils::do_action( 'convoca_members_email_solicitud', 'convoca_email_solicitud', $post_id );
+
+		return $resultado;
 	}
 
 	/**

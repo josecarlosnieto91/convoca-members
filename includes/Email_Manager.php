@@ -106,6 +106,8 @@ class Email_Manager {
 		'{password}',
 		'{login_url}',
 		'{admin_email}',
+		// Enlace firmado de 3 días para subir el justificante sin sesión (members#102).
+		'{justificante_url}',
 		'{link_confirmacion}',
 		'{nuevo_email}',
 		'{telefono}',
@@ -1056,10 +1058,20 @@ class Email_Manager {
 
 		$instrucciones = (string) ( $settings['instructions'] ?? '' );
 
+		// El enlace firmado de justificante (3 días) va en el propio correo: antes remitía a «la página
+		// de pago» sin decir cuál y, si la persona cerraba la pestaña, no tenía forma de volver (#102).
+		$enlace_justificante = $post_id > 0 ? Justificante::url( $post_id ) : '';
+
 		return '<h3>' . esc_html__( 'Cómo hacer la transferencia', 'convoca-members' ) . '</h3>'
 			. Email_Layout::meta_table( $filas )
 			. ( '' !== trim( $instrucciones ) ? '<p>' . esc_html( $instrucciones ) . '</p>' : '' )
-			. '<p>' . esc_html__( 'Cuando la hagas, puedes adjuntar el justificante desde la página de pago para que podamos validarla antes.', 'convoca-members' ) . '</p>';
+			. ( '' !== $enlace_justificante
+				? '<p>' . sprintf(
+					/* translators: %s: enlace a la página para subir el justificante. */
+					esc_html__( 'Cuando la hagas, <a href="%s">sube el justificante aquí</a>. El enlace caduca en 3 días.', 'convoca-members' ),
+					esc_url( $enlace_justificante )
+				) . '</p>'
+				: '<p>' . esc_html__( 'Cuando la hagas, puedes adjuntar el justificante para que podamos validarla antes.', 'convoca-members' ) . '</p>' );
 	}
 
 	/**
@@ -1120,7 +1132,9 @@ class Email_Manager {
 	 */
 	private static function default_cta( string $slug ): array {
 		$ctas = array(
-			'solicitud_recibida'        => array( '{login_url}', __( 'Acceder a Mi Área', 'convoca-members' ) ),
+			// Con la ficha pendiente de pago, Mi Área es una puerta cerrada («las credenciales llegan al
+			// ser aprobado»): el botón lleva al justificante, que sí funciona sin sesión (#102).
+			'solicitud_recibida'        => array( '{justificante_url}', __( 'Subir el justificante', 'convoca-members' ) ),
 			'bienvenida'                => array( '{login_url}', __( 'Acceder a Mi Área', 'convoca-members' ) ),
 			'recordatorio_pago'         => array( '{link_pago}', __( 'Pagar ahora', 'convoca-members' ) ),
 			'pago_pendiente_2'          => array( '{link_pago}', __( 'Pagar ahora', 'convoca-members' ) ),
