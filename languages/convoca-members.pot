@@ -2,14 +2,14 @@
 # This file is distributed under the GPL-2.0-or-later.
 msgid ""
 msgstr ""
-"Project-Id-Version: Convoca Members 2.15.1\n"
+"Project-Id-Version: Convoca Members 2.15.2\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/convoca-members\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-11-08T19:57:20+00:00\n"
+"POT-Creation-Date: 2026-11-08T20:03:05+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.12.0\n"
 "X-Domain: convoca-members\n"
@@ -1269,7 +1269,7 @@ msgid "Todos los datos del miembro han sido eliminados."
 msgstr ""
 
 #: admin/class-admin-metaboxes.php:763
-#: includes/Rest_API.php:1278
+#: includes/Rest_API.php:1297
 msgid "Documento no encontrado."
 msgstr ""
 
@@ -2502,8 +2502,8 @@ msgid "No tienes permisos suficientes para exportar la lista de miembros."
 msgstr ""
 
 #: admin/class-csv-exporter.php:136
-#: includes/Rest_API.php:1296
-#: includes/Rest_API.php:1310
+#: includes/Rest_API.php:1315
+#: includes/Rest_API.php:1329
 msgid "Acceso Denegado"
 msgstr ""
 
@@ -3980,19 +3980,19 @@ msgstr ""
 msgid "Demasiados intentos de acceso. Por favor, espera 15 minutos e inténtalo de nuevo."
 msgstr ""
 
-#: includes/Member_Auth.php:78
+#: includes/Member_Auth.php:82
 msgid "Usuario o contraseña incorrectos."
 msgstr ""
 
-#: includes/Member_Auth.php:88
+#: includes/Member_Auth.php:92
 msgid "Tu usuario no está vinculado a un perfil de socio. Contacta con coordinación."
 msgstr ""
 
-#: includes/Member_Auth.php:96
+#: includes/Member_Auth.php:100
 msgid "No se encontró tu perfil de socio. Contacta con coordinación."
 msgstr ""
 
-#: includes/Member_Auth.php:118
+#: includes/Member_Auth.php:122
 msgid "Tu membresía está dada de baja. Si quieres reincorporarte, vuelve a darte de alta desde el formulario."
 msgstr ""
 
@@ -4107,10 +4107,10 @@ msgid "api.mailgun.net (US) o api.eu.mailgun.net (EU)."
 msgstr ""
 
 #: includes/Rest/Certificados.php:56
-#: includes/Rest_API.php:632
-#: includes/Rest_API.php:1337
-#: includes/Rest_API.php:1399
-#: includes/Rest_API.php:1554
+#: includes/Rest_API.php:651
+#: includes/Rest_API.php:1356
+#: includes/Rest_API.php:1418
+#: includes/Rest_API.php:1573
 msgid "Miembro no encontrado."
 msgstr ""
 
@@ -4142,115 +4142,115 @@ msgstr ""
 msgid "Tu cuenta no puede renovar en este estado. Contacta con coordinación."
 msgstr ""
 
-#: includes/Rest_API.php:580
+#: includes/Rest_API.php:599
 msgid "No hemos podido identificarte como socio."
 msgstr ""
 
-#: includes/Rest_API.php:590
+#: includes/Rest_API.php:609
 msgid "Todavía no has llegado a las horas de tu plan, así que este año te toca cuota. En cuanto las tengas, la renovación te sale sin pago."
 msgstr ""
 
-#: includes/Rest_API.php:601
+#: includes/Rest_API.php:620
 msgid "¡Hecho! Tu membresía se ha renovado sin pago con tus horas de voluntariado."
 msgstr ""
 
-#: includes/Rest_API.php:711
+#: includes/Rest_API.php:730
 msgid "Actividad desconocida"
 msgstr ""
 
-#: includes/Rest_API.php:825
-#: includes/Rest_API.php:832
+#: includes/Rest_API.php:844
+#: includes/Rest_API.php:851
 #: public/class-mi-area.php:441
 msgid "Mis turnos"
 msgstr ""
 
-#: includes/Rest_API.php:826
+#: includes/Rest_API.php:845
 msgid "Los turnos no están disponibles en este momento."
 msgstr ""
 
-#: includes/Rest_API.php:839
+#: includes/Rest_API.php:858
 msgid "Cuadrante del centro"
 msgstr ""
 
-#: includes/Rest_API.php:845
+#: includes/Rest_API.php:864
 msgid "Tu calendario"
 msgstr ""
 
-#: includes/Rest_API.php:964
+#: includes/Rest_API.php:983
 msgid "Demasiadas peticiones."
 msgstr ""
 
-#: includes/Rest_API.php:1204
+#: includes/Rest_API.php:1223
 msgid "¡Gracias! Ya has enviado el cuestionario."
 msgstr ""
 
-#: includes/Rest_API.php:1207
+#: includes/Rest_API.php:1226
 msgid "Te falta contestar alguna pregunta: el cuestionario está en blanco."
 msgstr ""
 
-#: includes/Rest_API.php:1213
+#: includes/Rest_API.php:1232
 msgid "Acuerdo aceptado: queda guardado con su fecha."
 msgstr ""
 
-#: includes/Rest_API.php:1218
+#: includes/Rest_API.php:1237
 msgid "Hemos avisado a la junta para confirmar tu desvinculación."
 msgstr ""
 
-#: includes/Rest_API.php:1278
-#: includes/Rest_API.php:1302
+#: includes/Rest_API.php:1297
+#: includes/Rest_API.php:1321
 #: public/class-mi-area.php:172
 msgid "Error"
 msgstr ""
 
-#: includes/Rest_API.php:1296
+#: includes/Rest_API.php:1315
 msgid "No tienes permiso para ver este documento."
 msgstr ""
 
-#: includes/Rest_API.php:1302
+#: includes/Rest_API.php:1321
 msgid "El archivo físico no existe en el servidor."
 msgstr ""
 
-#: includes/Rest_API.php:1310
+#: includes/Rest_API.php:1329
 msgid "Archivo no válido."
 msgstr ""
 
-#: includes/Rest_API.php:1344
+#: includes/Rest_API.php:1363
 msgid "No se encontró el plan de la membresía."
 msgstr ""
 
-#: includes/Rest_API.php:1350
+#: includes/Rest_API.php:1369
 msgid "Este plan no requiere pago."
 msgstr ""
 
-#: includes/Rest_API.php:1354
+#: includes/Rest_API.php:1373
 msgid "La pasarela de pago no está disponible."
 msgstr ""
 
-#: includes/Rest_API.php:1425
+#: includes/Rest_API.php:1444
 msgid "El cumpleaños ya está establecido y no puede modificarse."
 msgstr ""
 
-#: includes/Rest_API.php:1438
+#: includes/Rest_API.php:1457
 msgid "Fecha de cumpleaños no válida."
 msgstr ""
 
-#: includes/Rest_API.php:1457
+#: includes/Rest_API.php:1476
 msgid "Email no válido."
 msgstr ""
 
-#: includes/Rest_API.php:1481
+#: includes/Rest_API.php:1500
 msgid "Ese email ya está en uso por otro socio."
 msgstr ""
 
-#: includes/Rest_API.php:1524
+#: includes/Rest_API.php:1543
 msgid "Token de confirmación no válido."
 msgstr ""
 
-#: includes/Rest_API.php:1527
+#: includes/Rest_API.php:1546
 msgid "El enlace de confirmación ha caducado. Solicítalo de nuevo."
 msgstr ""
 
-#: includes/Rest_API.php:1560
+#: includes/Rest_API.php:1579
 msgid "Guarda primero tu número de teléfono en el perfil."
 msgstr ""
 

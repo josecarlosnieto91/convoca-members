@@ -474,6 +474,25 @@ class Rest_API {
 		$token = Member_Auth::login( $username, $password );
 
 		if ( is_wp_error( $token ) ) {
+			// Un bloqueo por intentos no es «credenciales mal»: 429 y `Retry-After`, como en el alta
+			// (#104). Un 401 aquí manda a los clientes a «contraseña incorrecta» cuando lo que toca
+			// es esperar.
+			$datos_error = (array) $token->get_error_data();
+
+			if ( 'rate_limited' === $token->get_error_code() ) {
+				$respuesta = new \WP_REST_Response(
+					array(
+						'success'     => false,
+						'message'     => $token->get_error_message(),
+						'retry_after' => (int) ( $datos_error['retry_after'] ?? Member_Auth::LOGIN_LOCKOUT_SECONDS ),
+					),
+					429
+				);
+				$respuesta->header( 'Retry-After', (string) (int) ( $datos_error['retry_after'] ?? Member_Auth::LOGIN_LOCKOUT_SECONDS ) );
+
+				return $respuesta;
+			}
+
 			return new \WP_REST_Response(
 				array(
 					'success' => false,

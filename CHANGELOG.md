@@ -1,3 +1,14 @@
+## [2.15.2] — 2026-11-08
+
+### Corregido
+
+- **#104 — el bloqueo del login responde 429, no 401.** Un 401 significa «credenciales mal» y mandaba a los
+  clientes a «contraseña incorrecta» cuando lo que tocaba era esperar. Ahora el error `rate_limited` lleva
+  `status 429` y `retry_after` (900 s), la respuesta incluye `retry_after` y la cabecera `Retry-After`.
+  `Member_Auth::LOGIN_LOCKOUT_SECONDS` pasa a público porque es la política que necesita la API.
+
+1 prueba nueva: el bloqueo del login devuelve 429 y 900 segundos.
+
 ## [2.15.1] — 2026-11-08
 
 ### Corregido

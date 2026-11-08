@@ -431,4 +431,23 @@ final class MemberAuthLoginTest extends TestCase {
 			'user_login' => 'ada',
 		);
 	}
+
+	/**
+	 * El bloqueo del login responde 429, no 401, y dice cuánto falta (#104).
+	 */
+	public function test_el_bloqueo_del_login_responde_429(): void {
+		$_SERVER['REMOTE_ADDR'] = '203.0.113.7';
+		$this->cerrar_la_puerta( 'ada', '203.0.113.7' );
+
+		$peticion = new \WP_REST_Request();
+		$peticion->set_param( 'username', 'ada' );
+		$peticion->set_param( 'password', 'otra' );
+
+		$respuesta = ( new \Convoca\Members\Rest_API() )->login( $peticion );
+
+		$this->assertSame( 429, $respuesta->get_status(), 'un bloqueo no es «credenciales mal»' );
+		$datos = (array) $respuesta->get_data();
+		$this->assertSame( 900, (int) $datos['retry_after'], '15 minutos de espera' );
+		$this->assertStringContainsString( '15 minutos', (string) $datos['message'] );
+	}
 }

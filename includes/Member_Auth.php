@@ -35,11 +35,11 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Member_Auth {
 
-	private const SESSION_COOKIE        = 'convoca_member_session';
-	private const TRANSIENT_PREFIX      = 'convoca_member_session_';
-	private const SESSION_EXPIRATION    = 6 * HOUR_IN_SECONDS;
-	private const MAX_LOGIN_ATTEMPTS    = 5;
-	private const LOGIN_LOCKOUT_SECONDS = 15 * MINUTE_IN_SECONDS;
+	private const SESSION_COOKIE       = 'convoca_member_session';
+	private const TRANSIENT_PREFIX     = 'convoca_member_session_';
+	private const SESSION_EXPIRATION   = 6 * HOUR_IN_SECONDS;
+	private const MAX_LOGIN_ATTEMPTS   = 5;
+	public const LOGIN_LOCKOUT_SECONDS = 15 * MINUTE_IN_SECONDS;
 
 	/**
 	 * Authenticate a member using WordPress credentials.
@@ -64,7 +64,11 @@ class Member_Auth {
 		if ( ! Utils::check_rate_limit( 'login', self::MAX_LOGIN_ATTEMPTS, self::LOGIN_LOCKOUT_SECONDS, $identidad_intento ) ) {
 			return new \WP_Error(
 				'rate_limited',
-				__( 'Demasiados intentos de acceso. Por favor, espera 15 minutos e inténtalo de nuevo.', 'convoca-members' )
+				__( 'Demasiados intentos de acceso. Por favor, espera 15 minutos e inténtalo de nuevo.', 'convoca-members' ),
+				array(
+					'status'      => 429,
+					'retry_after' => self::LOGIN_LOCKOUT_SECONDS,
+				)
 			);
 		}
 
