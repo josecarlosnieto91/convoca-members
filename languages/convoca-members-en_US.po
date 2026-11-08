@@ -1,6 +1,6 @@
 msgid ""
 msgstr ""
-"Project-Id-Version: Convoca Members 2.8.75\n"
+"Project-Id-Version: Convoca Members 2.13.1"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/convoca-members\n"
 "POT-Creation-Date: 2026-11-08T19:08:18+00:00\n"
 "PO-Revision-Date: 2026-10-15T16:10:00+00:00\n"

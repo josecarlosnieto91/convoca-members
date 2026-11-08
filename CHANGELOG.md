@@ -1,3 +1,11 @@
+## [2.13.1] — 2026-11-08
+
+### Corregido
+
+- **el campo marcado cuando falta el tutor era el equivocado.** «El nombre del tutor o tutora es
+  obligatorio» casaba también con `nombre` y el formulario marcaba el nombre de la persona en vez del
+  tutor. Ahora cada mensaje se queda con el primer campo que le corresponde.
+
 ## [2.13.0] — 2026-11-08
 
 ### Corregido

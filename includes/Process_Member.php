@@ -731,13 +731,12 @@ class Process_Member {
 		$campos = array();
 		foreach ( $errores as $mensaje ) {
 			foreach ( $mapa as $campo => $claves ) {
-				if ( isset( $campos[ $campo ] ) ) {
-					continue;
-				}
 				foreach ( $claves as $clave ) {
+					// El primer campo que casa se queda el mensaje: «El nombre del tutor» es tutor_nombre,
+					// no `nombre`, aunque lleve la palabra dentro.
 					if ( false !== mb_stripos( $mensaje, $clave ) ) {
-						$campos[ $campo ] = $mensaje;
-						break;
+						$campos[ $campo ] = $campos[ $campo ] ?? $mensaje;
+						continue 3;
 					}
 				}
 			}
