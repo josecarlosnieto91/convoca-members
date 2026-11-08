@@ -105,6 +105,13 @@ class Justificante {
 	public static function url( int $member_id ): string {
 		$pagina = self::pagina();
 
+		// Si el sitio no tiene la página, se crea ahora: el correo no puede prometer un enlace que no
+		// existe y la persona no tiene otra forma de llegar (#102).
+		if ( $pagina <= 0 ) {
+			self::asegurar_pagina();
+			$pagina = self::pagina();
+		}
+
 		if ( $pagina <= 0 ) {
 			return '';
 		}
@@ -136,6 +143,23 @@ class Justificante {
 			update_option( self::OPCION_PAGINA, (int) $existente->ID );
 
 			return (int) $existente->ID;
+		}
+
+		// Una página con el shortcode en otro slug también sirve: no se crea una segunda.
+		$con_shortcode = get_posts(
+			array(
+				'post_type'      => 'page',
+				'post_status'    => 'publish',
+				'numberposts'    => 1,
+				's'              => '[' . self::SHORTCODE . ']',
+				'fields'         => 'ids',
+				'no_found_rows'  => true,
+			)
+		);
+		if ( ! empty( $con_shortcode ) ) {
+			update_option( self::OPCION_PAGINA, (int) $con_shortcode[0] );
+
+			return (int) $con_shortcode[0];
 		}
 
 		return 0;

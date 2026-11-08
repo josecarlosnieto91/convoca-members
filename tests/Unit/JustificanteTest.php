@@ -128,4 +128,15 @@ final class JustificanteTest extends TestCase {
 		$this->assertStringContainsString( "_convoca_justificante_estado', 'pendiente'", $fuente );
 		$this->assertStringContainsString( 'avisar_revision(', $fuente, 'administración se entera' );
 	}
+
+	/**
+	 * Si el sitio no tiene la página de justificante, el enlace la crea: un correo no puede mandar a
+	 * una dirección que no existe (#102).
+	 */
+	public function test_el_enlace_asegura_la_pagina(): void {
+		$fuente = (string) file_get_contents( dirname( __DIR__, 2 ) . '/includes/Justificante.php' );
+
+		$this->assertStringContainsString( 'self::asegurar_pagina();', $fuente );
+		$this->assertStringContainsString( "'s'              => '[' . self::SHORTCODE . ']'", $fuente, 'también vale una página con el shortcode en otro slug' );
+	}
 }

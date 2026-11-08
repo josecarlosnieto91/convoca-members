@@ -1,3 +1,13 @@
+## [2.15.1] — 2026-11-08
+
+### Corregido
+
+- **la página de justificante puede no existir** y entonces el correo se quedaba sin enlace: `url()` la
+  crea en el momento (`asegurar_pagina()`) y `pagina()` también reconoce una página con el shortcode en
+  otro slug. Detectado al verificar #102 en la demo, donde la opción estaba vacía y no había página.
+
+1 prueba nueva.
+
 ## [2.15.0] — 2026-11-08
 
 ### Corregido
