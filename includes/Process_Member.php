@@ -251,6 +251,13 @@ class Process_Member {
 			return $validation;
 		}
 
+		// 1b. Cupo de altas: se mira DESPUÉS de validar, para que un DNI mal escrito no gaste un intento
+		// (#99), y aquí dentro, que es el camino común de los tres accesos (#95).
+		$email_cupo = sanitize_email( (string) ( $data['email'] ?? '' ) );
+		if ( ! \Convoca\Core\Utils::check_rate_limit( 'alta_socio', self::MAX_ALTAS_HORA, HOUR_IN_SECONDS, $email_cupo ) ) {
+			return new \WP_Error( 'rate_limited', self::mensaje_bloqueo( $email_cupo ), array( 'status' => 429 ) );
+		}
+
 		// 2. Identify and sanitize key fields
 		$nombre = sanitize_text_field( $data['nombre'] ?? '' );
 		$dni    = strtoupper( trim( $data['dni'] ?? '' ) );
@@ -406,7 +413,7 @@ class Process_Member {
 				'fecha_nacimiento'     => $fecha_nac,
 				'email'                => $email,
 				'access_code'          => Utils::generate_access_code(),
-				'telefono'             => sanitize_text_field( $data['telefono'] ?? '' ),
+				'telefono'             => Telefono::normalizar( (string) ( $data['telefono'] ?? '' ) ),
 				'whatsapp'             => sanitize_text_field( $data['whatsapp'] ?? 'si' ),
 				'direccion'            => sanitize_text_field( $data['direccion'] ?? '' ),
 				'municipio'            => sanitize_text_field( $data['municipio'] ?? '' ),
@@ -422,9 +429,13 @@ class Process_Member {
 			);
 
 			if ( $menor ) {
-				$meta['tutor_nombre']       = sanitize_text_field( $data['tutor_nombre'] ?? '' );
-				$meta['tutor_dni']          = sanitize_text_field( $data['tutor_dni'] ?? '' );
-				$meta['tutor_autorizacion'] = '1';
+				$meta['tutor_nombre'] = sanitize_text_field( $data['tutor_nombre'] ?? '' );
+				$meta['tutor_dni']    = strtoupper( str_replace( array( ' ', '-' ), '', (string) ( $data['tutor_dni'] ?? '' ) ) );
+
+				// La marca de autorización solo existe si hay tutor de verdad (#93).
+				if ( '' !== $meta['tutor_nombre'] && '' !== $meta['tutor_dni'] ) {
+					$meta['tutor_autorizacion'] = '1';
+				}
 			}
 
 			foreach ( $meta as $key => $value ) {
@@ -564,7 +575,7 @@ class Process_Member {
 			'estado_cuota'      => 'pendiente',
 			'dni'               => $dni,
 			'email'             => $email,
-			'telefono'          => sanitize_text_field( $data['telefono'] ?? '' ),
+			'telefono'          => Telefono::normalizar( (string) ( $data['telefono'] ?? '' ) ),
 			'whatsapp'          => sanitize_text_field( $data['whatsapp'] ?? 'si' ),
 			'direccion'         => sanitize_text_field( $data['direccion'] ?? '' ),
 			'municipio'         => sanitize_text_field( $data['municipio'] ?? '' ),
@@ -577,9 +588,12 @@ class Process_Member {
 			$meta['fecha_nacimiento'] = sanitize_text_field( $data['fecha_nacimiento'] );
 		}
 		if ( $menor ) {
-			$meta['tutor_nombre']       = sanitize_text_field( $data['tutor_nombre'] ?? '' );
-			$meta['tutor_dni']          = sanitize_text_field( $data['tutor_dni'] ?? '' );
-			$meta['tutor_autorizacion'] = '1';
+			$meta['tutor_nombre'] = sanitize_text_field( $data['tutor_nombre'] ?? '' );
+			$meta['tutor_dni']    = strtoupper( str_replace( array( ' ', '-' ), '', (string) ( $data['tutor_dni'] ?? '' ) ) );
+
+			if ( '' !== $meta['tutor_nombre'] && '' !== $meta['tutor_dni'] ) {
+				$meta['tutor_autorizacion'] = '1';
+			}
 		}
 
 		// A re-entry starts a new volunteer cycle at today when applicable.
@@ -684,6 +698,93 @@ class Process_Member {
 	 * @param array<string, mixed> $data
 	 * @param array<string, mixed> $files
 	 */
+	/**
+	 * Altas válidas por correo y hora.
+	 *
+	 * Tres era muy poco para un formulario de cuatro pasos y contaba también los rechazos de validación
+	 * (#99). Ahora solo cuentan los envíos que pasan la validación.
+	 */
+	public const MAX_ALTAS_HORA = 6;
+
+	/**
+	 * Campo del formulario al que corresponde cada mensaje de error.
+	 *
+	 * @param array<int, string> $errores Mensajes.
+	 * @return array<string, string> Campo => primer mensaje.
+	 */
+	private static function campos_por_error( array $errores ): array {
+		$mapa = array(
+			'tutor_dni'         => array( 'DNI del tutor' ),
+			'tutor_nombre'      => array( 'nombre del tutor' ),
+			'dni'               => array( 'DNI/NIE' ),
+			'telefono'          => array( 'teléfono' ),
+			'email'             => array( 'email', 'correo' ),
+			'fecha_nacimiento'  => array( 'fecha de nacimiento' ),
+			'direccion'         => array( 'dirección' ),
+			'municipio'         => array( 'municipio' ),
+			'plan'              => array( 'plan' ),
+			'forma_pago'        => array( 'método de pago', 'forma de pago' ),
+			'nombre'            => array( 'nombre' ),
+			'rgpd'              => array( 'privacidad' ),
+		);
+
+		$campos = array();
+		foreach ( $errores as $mensaje ) {
+			foreach ( $mapa as $campo => $claves ) {
+				if ( isset( $campos[ $campo ] ) ) {
+					continue;
+				}
+				foreach ( $claves as $clave ) {
+					if ( false !== mb_stripos( $mensaje, $clave ) ) {
+						$campos[ $campo ] = $mensaje;
+						break;
+					}
+				}
+			}
+		}
+
+		return $campos;
+	}
+
+	/**
+	 * Mensaje del limitador: dice qué correo, hasta cuándo y a quién escribir (#99).
+	 *
+	 * @return string
+	 */
+	public static function mensaje_bloqueo( string $email = '' ): string {
+		$ajustes  = get_option( 'convoca_members_settings', array() );
+		$contacto = is_array( $ajustes ) && ! empty( $ajustes['admin_email'] )
+			? (string) $ajustes['admin_email']
+			: (string) get_option( 'admin_email' );
+
+		return sprintf(
+			/* translators: 1: correo bloqueado, 2: correo de contacto. */
+			__( 'Hemos recibido varios registros seguidos con el correo %1$s. Espera unos minutos y vuelve a intentarlo. Si no eras tú, escríbenos a %2$s.', 'convoca-members' ),
+			'' !== $email ? $email : __( 'tu correo', 'convoca-members' ),
+			$contacto
+		);
+	}
+
+	/**
+	 * Clave del plan tal y como la resuelve el motor (familiar/juvenil usan sub_plan).
+	 *
+	 * @param array<string, mixed> $data Datos del alta.
+	 * @return string
+	 */
+	private static function clave_plan( array $data ): string {
+		$plan     = sanitize_text_field( (string) ( $data['plan'] ?? '' ) );
+		$sub_plan = sanitize_text_field( (string) ( $data['sub_plan'] ?? '' ) );
+
+		return ( in_array( $plan, array( 'familiar', 'juvenil' ), true ) && '' !== $sub_plan ) ? $sub_plan : $plan;
+	}
+
+	/**
+	 * Valida los datos del alta.
+	 *
+	 * @param array<string, mixed> $data  Datos del formulario.
+	 * @param array<string, mixed> $files Ficheros subidos.
+	 * @return bool|\WP_Error
+	 */
 	public static function validate( array $data, array $files = array() ): bool|\WP_Error {
 		// Vaciar de espacios ANTES de comprobar nada.
 		// `empty( '   ' )` es FALSE —una cadena de espacios no está vacía—, así que un alta con el nombre
@@ -734,15 +835,31 @@ class Process_Member {
 				if ( $age < $min_age ) {
 					$errors[] = sprintf( 'Lo sentimos, debes tener al menos %d años para registrarte (tienes %d).', $min_age, $age );
 				}
+
+				// Menor de edad: el tutor es obligatorio y su DNI se valida (#93). Antes el servidor
+				// aceptaba la ficha sin tutor y dejaba una autorización que nadie había dado.
+				if ( $age < 18 ) {
+					$tutor_nombre = sanitize_text_field( (string) ( $data['tutor_nombre'] ?? '' ) );
+					$tutor_dni    = strtoupper( str_replace( array( ' ', '-' ), '', (string) ( $data['tutor_dni'] ?? '' ) ) );
+
+					if ( '' === $tutor_nombre ) {
+						$errors[] = 'El nombre del tutor o tutora es obligatorio al inscribir a un menor.';
+					}
+					if ( '' === $tutor_dni ) {
+						$errors[] = 'El DNI del tutor o tutora es obligatorio al inscribir a un menor.';
+					} elseif ( ! Utils::validar_dni( $tutor_dni ) ) {
+						$errors[] = 'El DNI del tutor o tutora no es válido.';
+					}
+				}
 			}
 		}
 
-		// Validate telefono: not empty and reasonable format.
-		$telefono = $data['telefono'] ?? '';
-		if ( empty( $telefono ) ) {
+		// Teléfono: se normaliza antes de validar (+34, guiones, puntos, paréntesis) — #98.
+		$telefono = Telefono::normalizar( (string) ( $data['telefono'] ?? '' ) );
+		if ( '' === $telefono ) {
 			$errors[] = 'El teléfono es obligatorio.';
-		} elseif ( ! preg_match( '/^[6-9]\d{8}$/', preg_replace( '/\s+/', '', $telefono ) ) ) {
-			$errors[] = 'El teléfono debe ser un número español válido (9 dígitos, empezando por 6, 7, 8 o 9).';
+		} elseif ( ! Telefono::es_valido( $telefono ) ) {
+			$errors[] = 'El teléfono debe ser un número español válido (9 dígitos, empezando por 6, 7, 8 o 9). Puedes escribirlo con prefijo +34, guiones o puntos.';
 		}
 
 		if ( empty( $data['direccion'] ) ) {
@@ -754,8 +871,18 @@ class Process_Member {
 		if ( empty( $data['plan'] ) ) {
 			$errors[] = 'Debes seleccionar un plan de membresía.';
 		}
-		if ( empty( $data['forma_pago'] ) ) {
+		$forma_pago = sanitize_key( (string) ( $data['forma_pago'] ?? '' ) );
+		if ( '' === $forma_pago ) {
 			$errors[] = 'Debes seleccionar una forma de pago.';
+		} else {
+			// El plan decide qué métodos admite; antes se guardaba cualquier cosa (#94).
+			$plan_para_metodos = CPT_Miembro::get_plan( self::clave_plan( $data ) );
+			$admitidos         = (array) ( $plan_para_metodos['payment_methods'] ?? array() );
+
+			// «voluntariado» no es un cobro: es la vía de quien colabora con horas y no paga cuota.
+			if ( 'voluntariado' !== $forma_pago && array() !== $admitidos && ! in_array( $forma_pago, $admitidos, true ) ) {
+				$errors[] = 'Ese método de pago no está disponible para tu cuota.';
+			}
 		}
 		if ( empty( $data['rgpd'] ) ) {
 			$errors[] = 'Debes aceptar la política de privacidad.';
@@ -794,7 +921,8 @@ class Process_Member {
 		// No longer required here as it's handled in the gateway instructions page.
 
 		if ( ! empty( $errors ) ) {
-			return new \WP_Error( 'validation_error', implode( ' ', $errors ) );
+			// El campo culpable viaja con el error para que el formulario sepa dónde mirar (#96).
+			return new \WP_Error( 'validation_error', implode( ' ', $errors ), array( 'campos' => self::campos_por_error( $errors ) ) );
 		}
 
 		return true;

@@ -32,13 +32,19 @@ class BloqueoPorPersonaTest extends TestCase {
 		return (string) file_get_contents( dirname( __DIR__, 2 ) . '/' . $rel );
 	}
 
-	/** El alta cuenta por el correo de quien lo intenta, no solo por su conexión. */
+	/**
+	 * El alta cuenta por el correo de quien lo intenta, no solo por su conexión, y se mira en el motor
+	 * para que los tres accesos (REST, AJAX y sin JavaScript) pasen por el mismo cupo (#95).
+	 */
 	public function test_el_alta_cuenta_por_persona(): void {
-		$alta = $this->leer( 'public/class-form-handler.php' );
+		$motor = $this->leer( 'includes/Process_Member.php' );
 
-		$this->assertStringContainsString( "\$email_intento  = sanitize_email(", $alta );
-		$this->assertStringContainsString( "check_rate_limit( 'alta_socio', 3, 3600, \$email_intento )", $alta, 'El REST pasa el correo' );
-		$this->assertStringContainsString( "check_rate_limit( 'alta_socio', 3, 3600, sanitize_email( (string) ( \$_POST['email'] ?? '' ) ) )", $alta, 'Y el camino antiguo también' );
+		$this->assertStringContainsString( "\$email_cupo = sanitize_email(", $motor );
+		$this->assertStringContainsString( "check_rate_limit( 'alta_socio', self::MAX_ALTAS_HORA, HOUR_IN_SECONDS, \$email_cupo )", $motor, 'El motor pasa el correo' );
+
+		// Y no queda un segundo limitador en la puerta que pueda descontar dos veces.
+		$alta = $this->leer( 'public/class-form-handler.php' );
+		$this->assertStringNotContainsString( "check_rate_limit( 'alta_socio'", $alta, 'la puerta no vuelve a contar' );
 	}
 
 	/** El voluntariado, igual. */

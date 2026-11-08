@@ -108,12 +108,15 @@ class Form_Handler {
 		}
 
 		if ( is_wp_error( $resultado ) ) {
-			$destino = add_query_arg(
+			$datos_error = (array) $resultado->get_error_data();
+			$campos      = array_keys( (array) ( $datos_error['campos'] ?? array() ) );
+			$destino     = add_query_arg(
 				array(
 					'convoca_alta' => 'error',
 					'motivo'       => rawurlencode( $resultado->get_error_message() ),
+					'campo'        => rawurlencode( (string) ( $campos[0] ?? '' ) ),
 				),
-				remove_query_arg( array( 'convoca_alta', 'motivo' ), $destino )
+				remove_query_arg( array( 'convoca_alta', 'motivo', 'campo' ), $destino )
 			);
 
 			wp_safe_redirect( $destino );
@@ -192,24 +195,6 @@ class Form_Handler {
 			);
 		}
 
-		// 1b. Rate limit, POR PERSONA (su correo) y por conexión como segundo criterio.
-		//
-		// Antes era solo por IP: varios errores de una persona dejaban fuera a todos los demás de su misma
-		// conexión durante una hora —una sede, un telecentro, una familia— y el siguiente leía «Demasiados
-		// intentos» sin saber que no era culpa suya (members#46).
-		$datos_peticion = (array) ( $request->get_json_params() ?: $request->get_params() );
-		$email_intento  = sanitize_email( (string) ( $datos_peticion['email'] ?? '' ) );
-
-		if ( ! \Convoca\Core\Utils::check_rate_limit( 'alta_socio', 3, 3600, $email_intento ) ) {
-			return new \WP_REST_Response(
-				array(
-					'success' => false,
-					'data'    => array( 'errors' => array( self::mensaje_bloqueo() ) ),
-				),
-				429
-			);
-		}
-
 		// 2. Process via Central Logic
 		$params = $request->get_params();
 		$files  = $_FILES; // WP REST doesn't handle $_FILES naturally in all cases, but for this multipart it should be populated.
@@ -217,12 +202,17 @@ class Form_Handler {
 		$result = Process_Member::register( $params, $files );
 
 		if ( is_wp_error( $result ) ) {
+			$datos_error = (array) $result->get_error_data();
 			return new \WP_REST_Response(
 				array(
 					'success' => false,
-					'data'    => array( 'errors' => array( $result->get_error_message() ) ),
+					'data'    => array(
+						'errors' => array( $result->get_error_message() ),
+						'fields' => (array) ( $datos_error['campos'] ?? array() ),
+						'code'   => $result->get_error_code(),
+					),
 				),
-				400
+				(int) ( $datos_error['status'] ?? 400 )
 			);
 		}
 
@@ -264,14 +254,18 @@ class Form_Handler {
 	public function handle_submit(): void {
 		check_ajax_referer( 'convoca_alta_nonce', 'nonce' );
 
-		if ( ! \Convoca\Core\Utils::check_rate_limit( 'alta_socio', 3, 3600, sanitize_email( (string) ( $_POST['email'] ?? '' ) ) ) ) {
-			wp_send_json_error( array( 'errors' => array( self::mensaje_bloqueo() ) ), 429 );
-		}
-
 		$result = Process_Member::register( wp_unslash( $_POST ), $_FILES );
 
 		if ( is_wp_error( $result ) ) {
-			wp_send_json_error( array( 'errors' => array( $result->get_error_message() ) ) );
+			$datos_error = (array) $result->get_error_data();
+			wp_send_json_error(
+				array(
+					'errors' => array( $result->get_error_message() ),
+					'fields' => (array) ( $datos_error['campos'] ?? array() ),
+					'code'   => $result->get_error_code(),
+				),
+				(int) ( $datos_error['status'] ?? 400 )
+			);
 		}
 
 		do_action( 'convoca_member_created', $result['member_id'], $result );

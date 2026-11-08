@@ -70,6 +70,19 @@ endif;
 
 <div id="convoca-form-alta" class="convoca-form" role="region" aria-label="<?php esc_attr_e( 'Formulario de alta de socio/a', 'convoca-members' ); ?>">
 
+	<?php
+	// Vuelta de un envío sin JavaScript: el mensaje del servidor se pinta aquí y el campo culpable se
+	// marca, que hasta ahora el aviso se perdía en la URL (#96).
+	$convoca_error_alta = isset( $_GET['convoca_alta'] ) && 'error' === sanitize_key( wp_unslash( $_GET['convoca_alta'] ) );
+	$convoca_motivo     = $convoca_error_alta && isset( $_GET['motivo'] ) ? sanitize_text_field( rawurldecode( wp_unslash( $_GET['motivo'] ) ) ) : '';
+	$convoca_campo      = $convoca_error_alta && isset( $_GET['campo'] ) ? sanitize_key( wp_unslash( $_GET['campo'] ) ) : '';
+	// Marca el campo que el servidor señaló, también sin JavaScript.
+	$convoca_marca = static fn( string $campo ): string => $convoca_campo === $campo ? ' aria-invalid="true"' : '';
+	?>
+	<?php if ( '' !== $convoca_motivo ) : ?>
+		<div class="convoca-alert convoca-alert-error" role="alert"><?php echo esc_html( $convoca_motivo ); ?></div>
+	<?php endif; ?>
+
 	<!-- Step indicator -->
 	<div class="conv-step-indicator" role="progressbar" aria-label="<?php esc_attr_e( 'Progreso del formulario', 'convoca-members' ); ?>" aria-valuenow="1"
 		aria-valuemin="1" aria-valuemax="4">
@@ -123,6 +136,7 @@ endif;
 			$juvenil_plans  = array_filter( $all_plans, fn( $p ) => ( $p['modalidad'] ?? '' ) === 'Juvenil' && $is_active( $p ) );
 			$has_familiar   = ! empty( $familiar_plans );
 			$has_juvenil    = ! empty( $juvenil_plans );
+
 			?>
 
 			<div class="conv-plan-grid" role="radiogroup" aria-label="<?php esc_attr_e( 'Planes de colaboración', 'convoca-members' ); ?>">
@@ -132,7 +146,7 @@ endif;
 						<div class="conv-plan-label">
 							<h3><?php echo esc_html( $plan['label'] ); ?></h3>
 							<div class="conv-price"><?php echo (int) $plan['price']; ?>€</div>
-							<span class="conv-alt"><?php /* translators: %s son las horas de voluntariado del plan. */ echo esc_html( sprintf( __( '· %sh para renovar sin pagar', 'convoca-members' ), (float) $plan['hours'] ) ); ?></span>
+							<span class="conv-alt"><?php /* translators: %s son las horas de voluntariado del plan. */ echo esc_html( sprintf( __( '· %s h para renovar sin pagar', 'convoca-members' ), \Convoca\Members\Formato::horas( $plan['hours'] ) ) ); ?></span>
 						</div>
 					</label>
 				<?php endforeach; ?>
@@ -142,9 +156,9 @@ endif;
 					<input type="radio" name="plan" value="familiar">
 					<div class="conv-plan-label">
 						<h3>👨‍👩‍👧‍👦 <?php esc_html_e( 'Familiar', 'convoca-members' ); ?></h3>
-						<div class="conv-price"><?php /* translators: %d es el precio en euros del plan más barato de la modalidad. */ echo esc_html( sprintf( __( 'Desde %d€', 'convoca-members' ), (int) min( array_column( $familiar_plans, 'price' ) ) ) ); ?>
+						<div class="conv-price"><?php echo esc_html( \Convoca\Members\Formato::precio( $familiar_plans ) ); ?>
 						</div>
-						<span class="conv-alt"><?php /* translators: %s son las horas del plan familiar más barato. */ echo esc_html( sprintf( __( 'ó desde %sh', 'convoca-members' ), (float) min( array_column( $familiar_plans, 'hours' ) ) ) ); ?></span>
+						<span class="conv-alt"><?php /* translators: %s son las horas del plan familiar más barato. */ echo esc_html( sprintf( __( 'ó desde %s h', 'convoca-members' ), \Convoca\Members\Formato::horas( min( array_column( $familiar_plans, 'hours' ) ) ) ) ); ?></span>
 					</div>
 				</label>
 				<?php endif; ?>
@@ -153,9 +167,9 @@ endif;
 					<input type="radio" name="plan" value="juvenil">
 					<div class="conv-plan-label">
 						<h3>🚀 <?php esc_html_e( 'Juvenil', 'convoca-members' ); ?></h3>
-						<div class="conv-price"><?php /* translators: %d es el precio en euros del plan más barato de la modalidad. */ echo esc_html( sprintf( __( 'Desde %d€', 'convoca-members' ), (int) min( array_column( $juvenil_plans, 'price' ) ) ) ); ?>
+						<div class="conv-price"><?php echo esc_html( \Convoca\Members\Formato::precio( $juvenil_plans ) ); ?>
 						</div>
-						<span class="conv-alt"><?php /* translators: %s son las horas del plan juvenil más barato. */ echo esc_html( sprintf( __( 'ó desde %sh (14–30 años)', 'convoca-members' ), (float) min( array_column( $juvenil_plans, 'hours' ) ) ) ); ?></span>
+						<span class="conv-alt"><?php /* translators: %s son las horas del plan juvenil más barato. */ echo esc_html( sprintf( __( 'ó desde %s h (14–30 años)', 'convoca-members' ), \Convoca\Members\Formato::horas( min( array_column( $juvenil_plans, 'hours' ) ) ) ) ); ?></span>
 					</div>
 				</label>
 				<?php endif; ?>
@@ -169,11 +183,11 @@ endif;
 					<label><input type="radio" name="sub_plan" value="<?php echo esc_attr( $slug ); ?>">
 						<?php
 						printf(
-							/* translators: %1$s es el nombre del plan, %2$d el precio en euros y %3$s las horas. */
-							esc_html__( '%1$s — %2$d€ ó %3$sh', 'convoca-members' ),
+							/* translators: %1$s es el nombre del plan, %2$s el precio en euros y %3$s las horas. */
+							esc_html__( '%1$s — %2$s€ ó %3$s h', 'convoca-members' ),
 							esc_html( $plan['label'] ),
-							(int) $plan['price'],
-							(float) $plan['hours']
+							number_format_i18n( (float) $plan['price'], fmod( (float) $plan['price'], 1.0 ) > 0 ? 2 : 0 ),
+							\Convoca\Members\Formato::horas( $plan['hours'] )
 						);
 						?>
 						</label>
@@ -188,11 +202,11 @@ endif;
 					<label><input type="radio" name="sub_plan" value="<?php echo esc_attr( $slug ); ?>">
 						<?php
 						printf(
-							/* translators: %1$s es el nombre del plan, %2$d el precio en euros y %3$s las horas. */
-							esc_html__( '%1$s — %2$d€ ó %3$sh', 'convoca-members' ),
+							/* translators: %1$s es el nombre del plan, %2$s el precio en euros y %3$s las horas. */
+							esc_html__( '%1$s — %2$s€ ó %3$s h', 'convoca-members' ),
 							esc_html( $plan['label'] ),
-							(int) $plan['price'],
-							(float) $plan['hours']
+							number_format_i18n( (float) $plan['price'], fmod( (float) $plan['price'], 1.0 ) > 0 ? 2 : 0 ),
+							\Convoca\Members\Formato::horas( $plan['hours'] )
 						);
 						?>
 						</label>
@@ -218,7 +232,7 @@ endif;
 			<div class="convoca-grid-2">
 				<div class="convoca-field">
 					<label for="conv-nombre"><?php esc_html_e( 'Nombre completo *', 'convoca-members' ); ?></label>
-					<input type="text" id="conv-nombre" name="nombre" placeholder="<?php esc_attr_e( 'Nombre y apellidos', 'convoca-members' ); ?>" required
+					<input type="text" id="conv-nombre"<?php echo $convoca_marca( 'nombre' ); // phpcs:ignore WordPress.Security.EscapeOutput -- atributo fijo. ?> name="nombre" placeholder="<?php esc_attr_e( 'Nombre y apellidos', 'convoca-members' ); ?>" required
 						autocomplete="name">
 					<span class="convoca-error-msg"><?php esc_html_e( 'Este campo es obligatorio.', 'convoca-members' ); ?></span>
 				</div>
@@ -228,13 +242,13 @@ endif;
 			<div class="convoca-grid-2">
 				<div class="convoca-field">
 					<label for="conv-fechanac"><?php esc_html_e( 'Fecha de nacimiento *', 'convoca-members' ); ?></label>
-					<input type="date" id="conv-fechanac" name="fecha_nacimiento" required>
+					<input type="date" id="conv-fechanac"<?php echo $convoca_marca( 'fecha_nacimiento' ); // phpcs:ignore WordPress.Security.EscapeOutput -- atributo fijo. ?> name="fecha_nacimiento" required>
 					<span class="convoca-error-msg"><?php esc_html_e( 'Introduce tu fecha de nacimiento.', 'convoca-members' ); ?></span>
 					<span id="conv-age-badge" class="conv-age-badge" style="display:none"></span>
 				</div>
 				<div class="convoca-field">
 					<label for="conv-email"><?php esc_html_e( 'Correo electrónico *', 'convoca-members' ); ?></label>
-					<input type="email" id="conv-email" name="email" placeholder="<?php esc_attr_e( 'tu@correo.com', 'convoca-members' ); ?>" required
+					<input type="email" id="conv-email"<?php echo $convoca_marca( 'email' ); // phpcs:ignore WordPress.Security.EscapeOutput -- atributo fijo. ?> name="email" placeholder="<?php esc_attr_e( 'tu@correo.com', 'convoca-members' ); ?>" required
 						autocomplete="email">
 					<span class="convoca-error-msg"><?php esc_html_e( 'Introduce un email válido.', 'convoca-members' ); ?></span>
 				</div>
@@ -243,7 +257,7 @@ endif;
 			<div class="convoca-grid-2">
 				<div class="convoca-field">
 					<label for="conv-telefono"><?php esc_html_e( 'Teléfono *', 'convoca-members' ); ?></label>
-					<input type="tel" id="conv-telefono" name="telefono" placeholder="600 000 000" required
+					<input type="tel" id="conv-telefono"<?php echo $convoca_marca( 'telefono' ); // phpcs:ignore WordPress.Security.EscapeOutput -- atributo fijo. ?> name="telefono" placeholder="600 000 000" required
 						autocomplete="tel">
 					<span class="convoca-error-msg"><?php esc_html_e( 'Introduce tu número de teléfono.', 'convoca-members' ); ?></span>
 				</div>
@@ -258,7 +272,7 @@ endif;
 
 			<div class="convoca-field">
 				<label for="conv-direccion"><?php esc_html_e( 'Dirección postal *', 'convoca-members' ); ?></label>
-				<input type="text" id="conv-direccion" name="direccion" placeholder="<?php esc_attr_e( 'Calle, número, piso', 'convoca-members' ); ?>" required
+				<input type="text" id="conv-direccion"<?php echo $convoca_marca( 'direccion' ); // phpcs:ignore WordPress.Security.EscapeOutput -- atributo fijo. ?> name="direccion" placeholder="<?php esc_attr_e( 'Calle, número, piso', 'convoca-members' ); ?>" required
 					autocomplete="street-address">
 				<span class="convoca-error-msg"><?php esc_html_e( 'Introduce tu dirección.', 'convoca-members' ); ?></span>
 			</div>
@@ -266,7 +280,7 @@ endif;
 			<div class="convoca-grid-2">
 				<div class="convoca-field">
 					<label for="conv-municipio"><?php esc_html_e( 'Municipio / Localidad *', 'convoca-members' ); ?></label>
-					<input type="text" id="conv-municipio" name="municipio" placeholder="<?php esc_attr_e( 'Ej: Oviedo', 'convoca-members' ); ?>" required>
+					<input type="text" id="conv-municipio"<?php echo $convoca_marca( 'municipio' ); // phpcs:ignore WordPress.Security.EscapeOutput -- atributo fijo. ?> name="municipio" placeholder="<?php esc_attr_e( 'Ej: Oviedo', 'convoca-members' ); ?>" required>
 					<span class="convoca-error-msg"><?php esc_html_e( 'Introduce tu municipio.', 'convoca-members' ); ?></span>
 				</div>
 				<div class="convoca-field">
@@ -285,7 +299,7 @@ endif;
 				<div class="convoca-grid-2 convoca-mt-small">
 					<div class="convoca-field">
 						<label for="conv-tutor-nombre"><?php esc_html_e( 'Nombre del tutor/a legal *', 'convoca-members' ); ?></label>
-						<input type="text" id="conv-tutor-nombre" name="tutor_nombre">
+						<input type="text" id="conv-tutor-nombre"<?php echo $convoca_marca( 'tutor_nombre' ); // phpcs:ignore WordPress.Security.EscapeOutput -- atributo fijo. ?> name="tutor_nombre">
 						<?php
 						// Aviso propio: sin él, a quien se apunta siendo menor el asistente se le quedaba parado
 						// sin señalarle NADA (medido en la demo el 16/10/2026). No llevan `required` a propósito:
@@ -295,7 +309,7 @@ endif;
 					</div>
 					<div class="convoca-field">
 						<label for="conv-tutor-dni"><?php esc_html_e( 'DNI del tutor/a *', 'convoca-members' ); ?></label>
-						<input type="text" id="conv-tutor-dni" name="tutor_dni">
+						<input type="text" id="conv-tutor-dni"<?php echo $convoca_marca( 'tutor_dni' ); // phpcs:ignore WordPress.Security.EscapeOutput -- atributo fijo. ?> name="tutor_dni">
 						<span class="convoca-error-msg"><?php esc_html_e( 'Hace falta el DNI de tu tutor/a legal.', 'convoca-members' ); ?></span>
 					</div>
 				</div>

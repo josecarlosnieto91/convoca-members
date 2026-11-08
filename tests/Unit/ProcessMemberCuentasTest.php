@@ -98,10 +98,10 @@ final class ProcessMemberCuentasTest extends TestCase {
 	}
 
 	/**
-	 * El teléfono tiene que ser español: ni corto, ni con prefijo internacional.
+	 * El teléfono tiene que ser español de nueve cifras, pero se admite como lo escribe la gente (#98).
 	 */
 	public function test_el_telefono(): void {
-		foreach ( array( '12345678', '6000000', '+34600000000' ) as $malo ) {
+		foreach ( array( '12345678', '6000000', '+346000000', '6000000000' ) as $malo ) {
 			$datos             = $this->alta();
 			$datos['telefono'] = $malo;
 
@@ -112,10 +112,13 @@ final class ProcessMemberCuentasTest extends TestCase {
 			);
 		}
 
-		$datos             = $this->alta();
-		$datos['telefono'] = '600 00 00 00'; // con espacios: se limpian antes de mirarlo
+		// Todas estas formas son el mismo número: se normalizan antes de validar.
+		foreach ( array( '600 00 00 00', '+34 600 000 000', '0034-600-000-000', '600.000.000', '(600) 000 000' ) as $bueno ) {
+			$datos             = $this->alta();
+			$datos['telefono'] = $bueno;
 
-		$this->assertTrue( Process_Member::validate( $datos ) );
+			$this->assertTrue( Process_Member::validate( $datos ), 'debería aceptar ' . $bueno );
+		}
 	}
 
 	/**

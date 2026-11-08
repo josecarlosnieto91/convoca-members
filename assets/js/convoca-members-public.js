@@ -222,6 +222,31 @@
           if (primerFallo) primerFallo.focus();
           return false;
         }
+
+        // Formato: DNI/NIE con letra correcta y teléfono español (#97, #98).
+        const dniInput = conv.$('#conv-dni', stepEl);
+        if (dniInput && dniInput.value.trim() && !dniValido(dniInput.value)) {
+          marcarCampo(dniInput, 'El DNI/NIE no es válido: revisa los números y la letra.');
+          conv.showAlert(alert, 'El DNI/NIE no es válido: revisa los números y la letra.');
+          dniInput.focus();
+          return false;
+        }
+
+        const telInput = conv.$('#conv-telefono', stepEl);
+        if (telInput && telInput.value.trim() && !telefonoValido(telInput.value)) {
+          marcarCampo(telInput, 'Escribe un teléfono español de 9 cifras; puedes usar +34, guiones o puntos.');
+          conv.showAlert(alert, 'El teléfono no es válido: escribe 9 cifras (admite +34, guiones o puntos).');
+          telInput.focus();
+          return false;
+        }
+
+        const tutorDniInput = conv.$('#conv-tutor-dni', stepEl);
+        if (tutorDniInput && tutorDniInput.value.trim() && !dniValido(tutorDniInput.value)) {
+          marcarCampo(tutorDniInput, 'El DNI del tutor o tutora no es válido.');
+          conv.showAlert(alert, 'El DNI del tutor o tutora no es válido.');
+          tutorDniInput.focus();
+          return false;
+        }
       }
 
       if (n === 3) {
@@ -382,6 +407,14 @@
             const msgs = res.data?.errors?.join('<br>') || res.data?.message || conv.mensajes.reintentar;
             conv.showAlert(alert, msgs);
             conv.setLoading(btn, false, '✔ Confirmar alta');
+
+            // Si el servidor dice qué campo falla, se vuelve a ese paso y se marca (#96).
+            const campos = res.data?.fields || {};
+            const primero = Object.keys(campos)[0];
+            if (primero) {
+              irAlCampo(primero);
+              marcarCampo(form.querySelector(`[name="${primero}"]`), campos[primero]);
+            }
           }
         })
         .catch(() => {
@@ -483,6 +516,80 @@
   });
 
   /* ── Shared utilities ── */
+  /* ── Validación de DNI/NIE y teléfono en el navegador (#97) ──
+     El servidor ya lo comprobaba; el formulario no, así que se podía rellenar todo, pulsar «confirmar» y
+     recibir un rechazo sin señal en el campo. Estas dos funciones replican exactamente las reglas del
+     servidor para avisar antes de enviar. */
+
+  function normalizarTelefono(valor) {
+    let n = String(valor || '').replace(/[^0-9+]/g, '');
+    if (n.indexOf('+34') === 0) n = n.slice(3);
+    else if (n.indexOf('0034') === 0) n = n.slice(4);
+    return n.replace(/^\+/, '');
+  }
+
+  function telefonoValido(valor) {
+    return /^[6-9][0-9]{8}$/.test(normalizarTelefono(valor));
+  }
+
+  function dniValido(valor) {
+    const v = String(valor || '').toUpperCase().replace(/[\s-]/g, '');
+    const letras = 'TRWAGMYFPDXBNJZSQVHLCKE';
+    let m = v.match(/^([0-9]{8})([A-Z])$/);
+    if (m) return letras[parseInt(m[1], 10) % 23] === m[2];
+    m = v.match(/^([XYZ])([0-9]{7})([A-Z])$/);
+    if (m) {
+      const numero = String({ X: 0, Y: 1, Z: 2 }[m[1]]) + m[2];
+      return letras[parseInt(numero, 10) % 23] === m[3];
+    }
+    return false;
+  }
+
+  /** Marca un campo, le pone el aviso y devuelve el elemento. */
+  function marcarCampo(el, mensaje) {
+    if (!el) return null;
+    const field = el.closest('.convoca-field') || el.closest('.convoca-check-group');
+    if (field) field.classList.add('has-error');
+    el.setAttribute('aria-invalid', 'true');
+    if (field && mensaje) {
+      let aviso = field.querySelector('.convoca-field-error');
+      if (!aviso) {
+        aviso = document.createElement('span');
+        aviso.className = 'convoca-field-error';
+        aviso.setAttribute('role', 'alert');
+        field.appendChild(aviso);
+      }
+      aviso.textContent = mensaje;
+    }
+    return el;
+  }
+
+  /** Lleva el formulario al paso que contiene el campo y lo marca (#96). */
+  function irAlCampo(nombre) {
+    const mapa = { forma_pago: '#conv-pago', rgpd: '#conv-rgpd' };
+    const el = form.querySelector(`[name="${nombre}"], [name="${nombre}[]"]`) || conv.$(mapa[nombre] || ('#conv-' + nombre.replace(/_/g, '-')));
+    if (!el) return false;
+
+    const paso = el.closest('.conv-form-step');
+    const n = paso ? +paso.dataset.step : 0;
+    if (n && n !== current) {
+      // Salto directo: no se valida el paso actual, porque el que manda es el error del servidor.
+      current = n;
+      steps.forEach(st => st.classList.toggle('active', +st.dataset.step === n));
+      dots.forEach(d => {
+        d.classList.remove('active', 'done');
+        if (+d.dataset.step < n) d.classList.add('done');
+        if (+d.dataset.step === n) d.classList.add('active');
+      });
+      if (progress) progress.setAttribute('aria-valuenow', n);
+    }
+
+    marcarCampo(el);
+    if (typeof el.focus === 'function') el.focus({ preventScroll: true });
+    el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    return true;
+  }
+
   function calcAge(dateStr) {
     if (!dateStr) return null;
     const dob = new Date(dateStr);

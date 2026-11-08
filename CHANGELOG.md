@@ -1,3 +1,32 @@
+## [2.13.0] — 2026-11-08
+
+### Corregido
+
+- **#93 — un menor ya no se da de alta sin tutor.** El servidor exige nombre y DNI del tutor cuando la
+  fecha de nacimiento da menos de 18 años, valida la letra del DNI y solo marca `tutor_autorizacion`
+  cuando hay datos de verdad. Antes aceptaba la ficha con la autorización puesta y el tutor vacío.
+- **#94 — el método de pago tiene que ser del plan.** Se rechaza lo que el plan no admite antes de crear
+  la ficha, en vez de guardarlo y quedarse sin pedido de pago. `voluntariado` no es un cobro y se admite
+  siempre.
+- **#95 — el camino sin JavaScript pasa por el limitador.** El cupo vive ahora en el motor del alta, así
+  que los tres accesos (REST, AJAX y formulario clásico) cuentan en el mismo sitio y no hay una puerta
+  sin guarda.
+- **#96 — un rechazo del servidor marca el campo y vuelve al paso.** La respuesta lleva `fields` (campo →
+  mensaje), el formulario salta al paso que lo contiene, lo marca y le lleva el foco. Sin JavaScript, el
+  aviso se pinta en la página (antes se quedaba en la URL) y el campo se marca con `aria-invalid`.
+- **#97 — el navegador comprueba lo mismo que el servidor.** DNI/NIE con su letra y teléfono español, con
+  el mismo algoritmo, antes de enviar.
+- **#98 — el teléfono se normaliza.** `+34 600 111 222`, `600-111-222`, `600.111.222`, `(600) 111 222` y
+  `0034…` son el mismo número; se guarda en nueve cifras.
+- **#99 — un fallo de validación no gasta cupo.** El limitador se mira después de validar, sube a 6 altas
+  válidas por correo y hora, y el aviso dice el correo afectado y a quién escribir.
+- **#100 — el paso 1 se lee como un texto.** «Desde» solo aparece si hay más de una modalidad, y las horas
+  van con coma decimal (22,5 h, no 22.5h).
+
+### Añadido
+
+- `Telefono` (normalización y validación) y `Formato` (precio y horas), con 8 pruebas nuevas.
+
 ## [2.12.3] — 2026-11-08
 
 ### Corregido

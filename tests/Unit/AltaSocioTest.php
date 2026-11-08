@@ -13,6 +13,7 @@
 namespace Convoca\Members\Tests;
 
 use Convoca\Members\Form_Handler;
+use Convoca\Members\Process_Member;
 use PHPUnit\Framework\TestCase;
 
 class AltaSocioTest extends TestCase {
@@ -107,26 +108,74 @@ class AltaSocioTest extends TestCase {
 	}
 
 	/**
-	 * El límite de intentos es POR PERSONA: al cuarto intento de la misma cuenta se bloquea.
+	 * El cupo es POR PERSONA y solo lo gastan los envíos que pasan la validación (#99).
 	 */
 	public function test_el_limite_de_intentos_bloquea_por_persona(): void {
 		$GLOBALS['_wp_stores']['nonces_validos'] = array( 'el-bueno' );
 
 		// El limitador del núcleo guarda caducidad en los bits altos e intentos en los bajos: se
-		// siembra un contador de 4 intentos con caducidad futura, que es el estado real tras pasarse.
+		// siembra el contador ya agotado, con caducidad futura, que es el estado real tras pasarse.
 		$GLOBALS['_wp_stores']['get_var_mapa'] = array(
-			'SELECT option_value FROM' => (string) ( ( ( time() + 3600 ) << 20 ) | 4 ),
+			'SELECT option_value FROM' => (string) ( ( ( time() + 3600 ) << 20 ) | ( Process_Member::MAX_ALTAS_HORA + 1 ) ),
 		);
 
 		$peticion = new \WP_REST_Request();
 		$peticion->set_param( 'nonce', 'el-bueno' );
-		$peticion->set_json_params( array( 'email' => 'ana@example.test' ) );
+		foreach ( $this->alta_valida() as $campo => $valor ) {
+			$peticion->set_param( $campo, $valor );
+		}
 
 		$respuesta = Form_Handler::handle_submit_rest( $peticion );
 
-		$this->assertSame( 429, $respuesta->get_status(), 'cuatro intentos de la misma persona se cortan' );
+		$this->assertSame( 429, $respuesta->get_status(), 'agotado el cupo, se corta' );
 		$this->assertFalse( $respuesta->get_data()['success'] );
 		$this->assertSame( array(), $GLOBALS['convoca_test_posts'], 'y no se crea a nadie' );
+	}
+
+	/**
+	 * Un rechazo de validación no gasta cupo: quien se equivoca escribiendo el DNI puede corregirlo.
+	 */
+	public function test_un_fallo_de_validacion_no_gasta_cupo(): void {
+		$GLOBALS['_wp_stores']['nonces_validos'] = array( 'el-bueno' );
+
+		// Contador al límite: si el alta inválida lo tocara, la siguiente daría 429.
+		$GLOBALS['_wp_stores']['get_var_mapa'] = array(
+			'SELECT option_value FROM' => (string) ( ( ( time() + 3600 ) << 20 ) | ( Process_Member::MAX_ALTAS_HORA - 1 ) ),
+		);
+
+		$datos             = $this->alta_valida();
+		$datos['telefono'] = '12345';
+
+		$peticion = new \WP_REST_Request();
+		$peticion->set_param( 'nonce', 'el-bueno' );
+		foreach ( $datos as $campo => $valor ) {
+			$peticion->set_param( $campo, $valor );
+		}
+
+		$respuesta = Form_Handler::handle_submit_rest( $peticion );
+
+		$this->assertSame( 400, $respuesta->get_status(), 'es un error de datos, no un bloqueo' );
+		$this->assertStringContainsString( 'teléfono', (string) $respuesta->get_data()['data']['errors'][0] );
+	}
+
+	/**
+	 * Alta completa y válida, con el plan por defecto.
+	 *
+	 * @return array<string, string>
+	 */
+	private function alta_valida(): array {
+		return array(
+			'nombre'           => 'Ana Prueba',
+			'dni'              => '00000000T',
+			'email'            => 'ana@example.test',
+			'fecha_nacimiento' => '1990-01-01',
+			'telefono'         => '600000000',
+			'direccion'        => 'Calle de prueba 1',
+			'municipio'        => 'Oviedo',
+			'plan'             => 'bronze',
+			'forma_pago'       => 'transferencia',
+			'rgpd'             => '1',
+		);
 	}
 
 	/**
