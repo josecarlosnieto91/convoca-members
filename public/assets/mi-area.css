@@ -1,15 +1,31 @@
 :root {
+	/* Tokens neutros del producto: cualquier sitio puede sobrescribirlos desde su CSS. */
+	--conv-bg: #ffffff;
+	--conv-surface: #f6f7f7;
+	--conv-fg: #1d2327;
+	--conv-muted: #50575e;
+	--conv-border: #dcdcde;
+	--conv-accent: #2271b1;
+	--conv-accent-strong: #135e96;
+	--conv-highlight: #8a6500;
+	--conv-ok: #0a7c3f;
+	--conv-accent-alt: #3858e9;
+	--conv-font-display: 'Outfit', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+	--conv-font-body: 'Outfit', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+}
+
+:root {
   --border-color: rgba(0, 0, 0, 0.05);
-  --card-bg: var(--wp--preset--color--blanco, #fff);
-  --text-main: var(--wp--preset--color--antracita, #1a1a1a);
-  --text-muted: var(--wp--preset--color--gris-plomo, #666);
+  --card-bg: var(--conv-bg);
+  --text-main: var(--conv-fg);
+  --text-muted: var(--conv-muted);
 }
 
 #conv-mi-area {
   min-height: 400px;
   max-width: 1200px;
   margin: 2rem auto;
-  font-family: var(--wp--preset--font-family--body, 'Outfit', sans-serif);
+  font-family: var(--conv-font-body);
   color: var(--text-main);
 }
 
@@ -23,7 +39,7 @@
 }
 
 .text-gradient {
-  background: linear-gradient(135deg, var(--wp--preset--color--verde, #2d5a27), var(--wp--preset--color--naranja, #ff8700));
+  background: linear-gradient(135deg, var(--conv-ok), var(--conv-accent));
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   font-weight: 800;
@@ -51,7 +67,7 @@
 .conv-login-form input {
   width: 100%;
   padding: 0.75rem 1rem;
-  background: var(--wp--preset--color--blanco, #fff);
+  background: var(--conv-bg);
   border: 1px solid var(--border-color);
   border-radius: 0.5rem;
   color: var(--text-main);
@@ -59,11 +75,11 @@
 }
 
 .conv-login-form input:focus {
-  border-color: var(--wp--preset--color--naranja, #ff8700);
+  border-color: var(--conv-accent);
   outline: none;
 }
 .conv-login-form input:focus-visible {
-  outline: 3px solid var(--wp--preset--color--amarillo, #ffab00);
+  outline: 3px solid var(--conv-highlight);
   outline-offset: 2px;
 }
 
@@ -116,7 +132,7 @@
 }
 
 .conv-panel-nav li.active {
-  border-left: 3px solid var(--wp--preset--color--naranja, #ff8700);
+  border-left: 3px solid var(--conv-accent);
   padding-left: calc(1rem - 3px);
 }
 
@@ -160,11 +176,11 @@
   width: 100%;
   padding: 1rem;
   /* El respaldo NO puede ser el naranja brillante: WordPress solo emite las
-     variables `--wp--preset--color-*` que los BLOQUES de esa página usan, y este
+     variables de color que los BLOQUES de esa página usan, y este
      botón lo pinta el plugin, así que en /mi-cuenta/ la variable no está y el
-     respaldo dejaba blanco sobre #ff8700 (2.4:1). Medido con axe el 13/10/2026.
+     respaldo dejaba blanco sobre var(--conv-accent) (2.4:1). Medido con axe el 13/10/2026.
      El tema sigue mandando si declara `naranja-oscuro`; si no, se usa el oscuro. */
-  background: var(--wp--preset--color--naranja-oscuro, #b05500);
+  background: var(--conv-accent-strong);
   color: #fff;
   border: none;
   border-radius: 0.5rem;
@@ -176,7 +192,7 @@
 }
 
 .btn-primary:hover {
-  background: var(--wp--preset--color--naranja-oscuro-hover, #8f4400);
+  background: var(--conv-accent-strong);
   transform: translateY(-2px);
   box-shadow: 0 6px 15px rgba(143, 68, 0, 0.35);
 }
@@ -190,7 +206,7 @@
 }
 
 .btn-link:hover {
-  color: var(--wp--preset--color--naranja-oscuro, #b05500);
+  color: var(--conv-accent-strong);
 }
 
 /* Spinner */
@@ -198,7 +214,7 @@
   width: 40px;
   height: 40px;
   border: 4px solid rgba(0, 0, 0, 0.1);
-  border-top-color: var(--wp--preset--color--naranja, #ff8700);
+  border-top-color: var(--conv-accent);
   border-radius: 50%;
   animation: conv-spin 1s linear infinite;
   position: absolute;
@@ -240,7 +256,7 @@
 
 .conv-member-notif-unread {
   background: rgba(255, 135, 0, 0.05);
-  border-left: 3px solid var(--wp--preset--color--naranja, #ff8700);
+  border-left: 3px solid var(--conv-accent);
 }
 
 .conv-member-notif-icon {
@@ -266,8 +282,8 @@
 }
 
 .conv-member-notif-read-btn {
-  border: 1px solid var(--wp--preset--color--verde, #059669);
-  color: var(--wp--preset--color--verde, #059669);
+  border: 1px solid var(--conv-ok);
+  color: var(--conv-ok);
   background: transparent;
   width: 2rem;
   height: 2rem;
@@ -283,14 +299,14 @@
 }
 
 .conv-member-notif-read-btn:hover {
-  background: var(--wp--preset--color--verde, #059669);
+  background: var(--conv-ok);
   color: #fff;
 }
 
 .conv-btn-mark-all-read {
-  border: 1px solid var(--wp--preset--color--lila, #7c3aed);
+  border: 1px solid var(--conv-accent-alt);
   background: transparent;
-  color: var(--wp--preset--color--lila, #7c3aed);
+  color: var(--conv-accent-alt);
   padding: 0.5rem 1rem;
   border-radius: 0.5rem;
   cursor: pointer;
@@ -387,7 +403,7 @@
 .conv-progress-label.completed {
   justify-content: center;
   font-weight: 700;
-  color: var(--wp--preset--color--naranja, #ff8700);
+  color: var(--conv-accent);
 }
 
 /* Level ladder (horizontal steps) */
@@ -544,13 +560,13 @@
 }
 
 .conv-search-input:focus {
-  border-color: #FF8700;
+  border-color: var(--conv-accent);
   box-shadow: 0 0 0 3px rgba(255, 135, 0, 0.15);
 }
 
 .conv-search-btn {
   padding: 12px 24px;
-  background: #FF8700;
+  background: var(--conv-accent);
   color: #fff;
   border: none;
   border-radius: 8px;
@@ -571,7 +587,7 @@
 
 .conv-search-item {
   background: #faf8f6;
-  border-left: 4px solid #FF8700;
+  border-left: 4px solid var(--conv-accent);
   border-radius: 0 8px 8px 0;
   padding: 14px 18px;
   transition: background 0.2s;

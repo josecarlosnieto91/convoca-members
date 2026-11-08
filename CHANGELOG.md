@@ -1,3 +1,11 @@
+## [2.12.2] — 2026-11-08
+
+### Cambiado
+
+- **el CSS deja de depender de la paleta del tema**: Las tres hojas (pública, área del socio y administración) usan tokens neutros en vez de **68 presets** y **34 colores** de la paleta de un cliente. Los plugins usan tokens `--conv-*` con valor
+  neutro y el tema de Convoca los rellena con su paleta, así que su aspecto no cambia. Prueba nueva
+  (`CssTokensTest`) que falla si vuelven los presets o un color de cliente.
+
 ## [2.12.1] — 2026-11-08
 
 ### Añadido

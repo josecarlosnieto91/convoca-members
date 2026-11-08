@@ -1,3 +1,19 @@
+:root {
+	/* Tokens neutros del producto: cualquier sitio puede sobrescribirlos desde su CSS. */
+	--conv-bg: #ffffff;
+	--conv-surface: #f6f7f7;
+	--conv-fg: #1d2327;
+	--conv-muted: #50575e;
+	--conv-border: #dcdcde;
+	--conv-accent: #2271b1;
+	--conv-accent-strong: #135e96;
+	--conv-highlight: #8a6500;
+	--conv-ok: #0a7c3f;
+	--conv-accent-alt: #3858e9;
+	--conv-font-display: 'Outfit', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+	--conv-font-body: 'Outfit', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+}
+
 /**
  * Convoca Members — Admin CSS
  */
@@ -23,7 +39,7 @@
     display: block;
     font-size: 1.8rem;
     font-weight: 700;
-    color: #320028;
+    color: var(--conv-accent-strong);
     line-height: 1;
     margin-bottom: 0.2rem;
 }
@@ -51,7 +67,7 @@
 
 .conv-detail-card h3 {
     margin-top: 0;
-    color: #320028;
+    color: var(--conv-accent-strong);
 }
 
 /* ── Template Cards (Settings) ────────────────── */
@@ -65,7 +81,7 @@
 
 .conv-template-card h3 {
     margin-top: 0;
-    color: #320028;
+    color: var(--conv-accent-strong);
 }
 }
 
@@ -160,7 +176,7 @@ body.conv-modal-open {
 .conv-modal-header h2 {
     margin: 0;
     font-size: 1.3em;
-    color: #320028;
+    color: var(--conv-accent-strong);
 }
 
 .conv-modal-close {

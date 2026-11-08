@@ -1,3 +1,19 @@
+:root {
+	/* Tokens neutros del producto: cualquier sitio puede sobrescribirlos desde su CSS. */
+	--conv-bg: #ffffff;
+	--conv-surface: #f6f7f7;
+	--conv-fg: #1d2327;
+	--conv-muted: #50575e;
+	--conv-border: #dcdcde;
+	--conv-accent: #2271b1;
+	--conv-accent-strong: #135e96;
+	--conv-highlight: #8a6500;
+	--conv-ok: #0a7c3f;
+	--conv-accent-alt: #3858e9;
+	--conv-font-display: 'Outfit', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+	--conv-font-body: 'Outfit', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+}
+
 /**
  * Convoca Members — Public CSS v2
  * Aligned with Convoca Theme v2.
@@ -19,10 +35,10 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    font-family: var(--wp--preset--font-family--display, 'Outfit', sans-serif);
+    font-family: var(--conv-font-display);
     font-weight: 700;
     font-size: 0.9rem;
-    background: var(--wp--preset--color--gris-medio, #e0e0e0);
+    background: var(--conv-muted);
     color: #999;
     transition: all var(--wp--custom--transition, 0.3s ease);
     position: relative;
@@ -35,23 +51,23 @@
     left: 100%;
     width: 0.75rem;
     height: 2px;
-    background: var(--wp--preset--color--gris-medio, #e0e0e0);
+    background: var(--conv-muted);
     transition: background var(--wp--custom--transition, 0.3s ease);
 }
 
 .conv-step-dot.done::after {
-    background: var(--wp--preset--color--verde, #2d5a27);
+    background: var(--conv-ok);
 }
 
 .conv-step-dot.active {
-    background: var(--wp--preset--color--naranja, #ff8700);
-    color: var(--wp--preset--color--blanco, #fff);
+    background: var(--conv-accent);
+    color: var(--conv-bg);
     box-shadow: 0 0 0 4px rgba(255, 135, 0, 0.2);
 }
 
 .conv-step-dot.done {
-    background: var(--wp--preset--color--verde, #2d5a27);
-    color: var(--wp--preset--color--blanco, #fff);
+    background: var(--conv-ok);
+    color: var(--conv-bg);
 }
 
 /* ── Steps (multi-step navigation) ───────────── */
@@ -111,56 +127,56 @@
     align-items: center;
     justify-content: center;
     padding: 1rem 1.25rem;
-    border: 2px solid var(--wp--preset--color--gris-medio, #e0e0e0);
+    border: 2px solid var(--conv-muted);
     border-radius: var(--wp--custom--radius--default, 12px);
     text-align: center;
     transition: all var(--wp--custom--transition, 0.3s ease);
-    background: var(--wp--preset--color--blanco, #fff);
+    background: var(--conv-bg);
     box-sizing: border-box;
     min-height: 100%;
 }
 
 .conv-plan-label h4 {
-    font-family: var(--wp--preset--font-family--display, 'Outfit', sans-serif);
+    font-family: var(--conv-font-display);
     font-size: 1.05rem;
     margin: 0 0 0.25rem;
-    color: var(--wp--preset--color--violeta, #320028);
+    color: var(--conv-accent-alt);
 }
 
 .conv-price {
-    font-family: var(--wp--preset--font-family--display, 'Outfit', sans-serif);
+    font-family: var(--conv-font-display);
     font-size: 1.3rem;
     font-weight: 700;
     /* naranja-oscuro: el naranja de marca da 2.41:1 sobre blanco (exige 3:1) */
-    color: var(--wp--preset--color--naranja-oscuro, #b05500);
+    color: var(--conv-accent-strong);
 }
 
 .conv-alt {
     font-size: 0.8rem;
     /* #888 daba 3.54:1 sobre blanco siendo texto pequeno (exige 4.5:1) */
-    color: var(--wp--preset--color--gris-texto, #59616a);
+    color: var(--conv-muted);
     display: block;
     margin-top: 0.15rem;
 }
 
 .conv-plan-option input:checked+.conv-plan-label {
-    border-color: var(--wp--preset--color--naranja, #ff8700);
+    border-color: var(--conv-accent);
     background: rgba(255, 135, 0, 0.06);
-    box-shadow: 0 0 0 2px var(--wp--preset--color--naranja, #ff8700);
+    box-shadow: 0 0 0 2px var(--conv-accent);
 }
 
 .conv-plan-option:hover .conv-plan-label {
-    border-color: var(--wp--preset--color--naranja, #ff8700);
+    border-color: var(--conv-accent);
 }
 
 .conv-plan-option input:focus-visible+.conv-plan-label {
-    outline: 3px solid var(--wp--preset--color--amarillo, #ffab00);
+    outline: 3px solid var(--conv-highlight);
     outline-offset: 2px;
 }
 
 /* ── Advantages Box (from static web) ─────────── */
 .conv-advantages {
-    background: var(--wp--preset--color--gris-piedra, #f4f4f4);
+    background: var(--conv-border);
     border-radius: var(--wp--custom--radius--small, 8px);
     padding: 0.75rem 1.25rem;
     margin: 1rem 0;
@@ -171,7 +187,7 @@
 .conv-advantages p {
     font-weight: 700;
     margin: 0 0 0.3rem;
-    color: var(--wp--preset--color--violeta, #320028);
+    color: var(--conv-accent-alt);
 }
 
 .conv-advantages ul {
@@ -186,7 +202,7 @@
 
 .conv-advantages li::before {
     content: '✓ ';
-    color: var(--wp--preset--color--naranja, #ff8700);
+    color: var(--conv-accent);
     font-weight: 700;
 }
 
@@ -194,7 +210,7 @@
 .conv-sub-plan {
     margin-top: 1rem;
     padding: 1rem;
-    background: var(--wp--preset--color--gris-piedra, #f4f4f4);
+    background: var(--conv-border);
     border-radius: var(--wp--custom--radius--small, 8px);
     animation: conv-fade-in 0.3s ease;
 }
@@ -209,7 +225,7 @@
 }
 
 .conv-sub-plan input[type="radio"] {
-    accent-color: var(--wp--preset--color--naranja, #ff8700);
+    accent-color: var(--conv-accent);
 }
 
 /* Common utility classes and grid systems removed in favor of convoca-common.css */
@@ -223,22 +239,22 @@
 
 .conv-summary-table td {
     padding: 0.6rem 0.75rem;
-    border-bottom: 1px solid var(--wp--preset--color--gris-medio, #e0e0e0);
+    border-bottom: 1px solid var(--conv-muted);
     font-size: 0.92rem;
 }
 
 .conv-summary-table td:first-child {
     font-weight: 700;
     width: 40%;
-    color: var(--wp--preset--color--violeta, #320028);
+    color: var(--conv-accent-alt);
 }
 
 /* ── Card Preview ─────────────────────────────── */
 .conv-card-preview {
     background: linear-gradient(135deg,
-            var(--wp--preset--color--violeta, #320028),
-            var(--wp--preset--color--granate, #7d0032));
-    color: var(--wp--preset--color--blanco, #fff);
+            var(--conv-accent-alt),
+            var(--conv-accent-alt));
+    color: var(--conv-bg);
     border-radius: var(--wp--custom--radius--default, 12px);
     padding: 1.5rem;
     max-width: 420px;
@@ -260,8 +276,8 @@
 }
 
 .conv-card-preview h3 {
-    font-family: var(--wp--preset--font-family--display, 'Outfit', sans-serif);
-    color: var(--wp--preset--color--amarillo, #ffab00);
+    font-family: var(--conv-font-display);
+    color: var(--conv-highlight);
     margin: 0 0 0.2rem;
     font-size: 1.1rem;
     position: relative;
@@ -270,7 +286,7 @@
 
 .conv-card-name {
     font-size: 1.4rem;
-    font-family: var(--wp--preset--font-family--display, 'Outfit', sans-serif);
+    font-family: var(--conv-font-display);
     font-weight: 700;
     margin-bottom: 0.5rem;
     position: relative;
@@ -286,7 +302,7 @@
 
 .conv-card-type {
     display: inline-block;
-    background: var(--wp--preset--color--naranja, #ff8700);
+    background: var(--conv-accent);
     padding: 0.15rem 0.7rem;
     border-radius: var(--wp--custom--radius--pill, 50px);
     font-size: 0.8rem;
@@ -317,7 +333,7 @@
     align-items: center;
     gap: 0.5rem;
     padding: 0.5rem 0.7rem;
-    background: var(--wp--preset--color--gris-piedra, #f4f4f4);
+    background: var(--conv-border);
     border-radius: var(--wp--custom--radius--small, 8px);
     cursor: pointer;
     font-size: 0.9rem;
@@ -331,12 +347,12 @@
 
 .conv-interest-grid input:checked+span,
 .conv-interest-grid label:has(input:checked) {
-    border-color: var(--wp--preset--color--naranja, #ff8700);
+    border-color: var(--conv-accent);
     background: rgba(255, 135, 0, 0.06);
 }
 
 .conv-interest-grid input {
-    accent-color: var(--wp--preset--color--naranja, #ff8700);
+    accent-color: var(--conv-accent);
 }
 
 /* Success screen and buttons managed by convoca-common.css */
@@ -400,7 +416,7 @@
 }
 
 .conv-verify-card .subtitle {
-    color: var(--wp--preset--color--gris-texto, #5a5a5a);
+    color: var(--conv-muted);
     margin-bottom: 1.25rem;
 }
 
@@ -419,16 +435,16 @@
 .conv-verify-form input[type="text"] {
     width: 100%;
     padding: 0.75rem 1rem;
-    border: 2px solid var(--wp--preset--color--gris-medio, #e0e0e0);
+    border: 2px solid var(--conv-muted);
     border-radius: var(--wp--custom--radius--small, 8px);
     font-family: monospace;
     letter-spacing: 1px;
 }
 
 .conv-verify-form input[type="text"]:focus-visible {
-    outline: 3px solid var(--wp--preset--color--amarillo, #ffab00);
+    outline: 3px solid var(--conv-highlight);
     outline-offset: 2px;
-    border-color: var(--wp--preset--color--naranja, #ff8700);
+    border-color: var(--conv-accent);
 }
 
 .conv-verify-form .form-actions {
@@ -469,7 +485,7 @@
     justify-content: space-between;
     gap: 0.5rem;
     padding-bottom: 0.5rem;
-    border-bottom: 1px solid var(--wp--preset--color--gris-medio, #e0e0e0);
+    border-bottom: 1px solid var(--conv-muted);
 }
 
 .conv-cert-details .detail-row:last-child {
@@ -479,7 +495,7 @@
 
 .conv-cert-details .detail-label {
     font-weight: 600;
-    color: var(--wp--preset--color--gris-texto, #5a5a5a);
+    color: var(--conv-muted);
 }
 
 .conv-cert-details .detail-value {
@@ -489,7 +505,7 @@
 
 /* Palabra con degradado: el resto de páginas la recibe de mi-area.css. */
 .text-gradient {
-    background: linear-gradient(135deg, var(--wp--preset--color--verde, #2d5a27), var(--wp--preset--color--naranja, #ff8700));
+    background: linear-gradient(135deg, var(--conv-ok), var(--conv-accent));
     -webkit-background-clip: text;
     background-clip: text;
     -webkit-text-fill-color: transparent;
@@ -503,8 +519,8 @@
     margin-top: 0.35rem;
     padding: 0.15rem 0.6rem;
     border-radius: 999px;
-    background: var(--wp--preset--color--gris-piedra, #f4f4f4);
-    color: var(--wp--preset--color--gris-texto, #5a5a5a);
+    background: var(--conv-border);
+    color: var(--conv-muted);
     font-size: 0.8125rem;
     font-weight: 600;
 }
