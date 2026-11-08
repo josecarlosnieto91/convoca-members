@@ -1,6 +1,6 @@
 msgid ""
 msgstr ""
-"Project-Id-Version: Convoca Members 2.14.0\n"
+"Project-Id-Version: Convoca Members 2.14.1"
 "Report-Msgid-Bugs-To: https://"
 "wordpress.org/support/plugin/convoca-members\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/convoca-members\n"

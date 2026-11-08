@@ -106,6 +106,20 @@ class AltaValidacionMinimoTest extends TestCase {
 	}
 
 	/**
+	 * Un plan que el formulario no ofrece no se puede dar de alta por la API (#103).
+	 */
+	public function test_el_plan_voluntariado_no_es_una_cuota(): void {
+		// El formulario ofrece las modalidades Numerario, Familiar y Juvenil; «voluntariado» es una
+		// modalidad interna, no una cuota elegible.
+		$this->assertFalse( Process_Member::plan_ofertado( 'voluntariado' ) );
+		$this->assertTrue( Process_Member::plan_ofertado( 'bronze' ) );
+
+		// Y el motor lo rechaza antes de crear nada, que es lo que hacía la API (#103).
+		$motor = (string) file_get_contents( dirname( __DIR__, 2 ) . '/includes/Process_Member.php' );
+		$this->assertStringContainsString( 'if ( ! self::plan_ofertado( $plan_key ) )', $motor );
+	}
+
+	/**
 	 * El error dice qué campo corregir, para que el formulario pueda volver a ese paso (#96).
 	 */
 	public function test_el_error_dice_el_campo(): void {

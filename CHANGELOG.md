@@ -1,3 +1,14 @@
+## [2.14.1] — 2026-11-08
+
+### Corregido
+
+- **#103 — la API ya no acepta el plan «voluntariado».** No es una cuota que el formulario ofrezca, pero
+  entraba por la API y dejaba una ficha de 0 € en `pendiente_pago` para siempre, sin cobro que la sacara
+  de ahí. Ahora se valida que el plan sea de una modalidad elegible (Numerario, Familiar o Juvenil), tanto
+  en `validate()` como en `register()`.
+
+1 prueba nueva: `test_el_plan_voluntariado_no_es_una_cuota`.
+
 ## [2.14.0] — 2026-11-08
 
 ### Corregido

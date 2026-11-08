@@ -286,6 +286,13 @@ class Process_Member {
 			return new \WP_Error( 'inactive_plan', __( 'El plan seleccionado no está disponible en este momento.', 'convoca-members' ) );
 		}
 
+		// 3c. Solo se admiten los planes que el formulario ofrece de verdad (#103). `voluntariado`
+		// existe en la configuración como modalidad interna, no como cuota elegible: por la API dejaba
+		// fichas de 0 € en «pendiente de pago» para siempre, sin cobro que las sacara de ahí.
+		if ( ! self::plan_ofertado( $plan_key ) ) {
+			return new \WP_Error( 'invalid_plan', __( 'El plan seleccionado no es válido.', 'convoca-members' ) );
+		}
+
 		// 5. Calculate age/minor status
 		$fecha_nac = sanitize_text_field( $data['fecha_nacimiento'] ?? '' );
 		$menor     = false;
@@ -762,6 +769,23 @@ class Process_Member {
 			'' !== $email ? $email : __( 'tu correo', 'convoca-members' ),
 			$contacto
 		);
+	}
+
+	/**
+	 * ¿Es un plan que el formulario ofrece? Las modalidades elegibles son las que pinta el paso 1.
+	 *
+	 * @param string $clave Clave del plan.
+	 * @return bool
+	 */
+	public static function plan_ofertado( string $clave ): bool {
+		$plan = CPT_Miembro::get_plan( $clave );
+		if ( ! $plan ) {
+			return false;
+		}
+
+		$modalidad = (string) ( $plan['modalidad'] ?? 'Numerario' );
+
+		return in_array( $modalidad, array( 'Numerario', 'Familiar', 'Juvenil' ), true );
 	}
 
 	/**
