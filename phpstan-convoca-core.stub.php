@@ -177,6 +177,58 @@ namespace Convoca\Core {
 		public static function mark_member_read( int $member_id, string $notification_id ): void {}
 		public static function mark_member_all_read( int $member_id ): void {}
 	}
+
+	/**
+	 * Registro de intentos de los formularios públicos (core 2.5.0).
+	 */
+	final class Intentos {
+		/**
+		 * Anota un intento.
+		 *
+		 * @param string               $tipo      Tipo.
+		 * @param string               $resultado Resultado.
+		 * @param array<string, mixed> $args      Datos.
+		 * @return int
+		 */
+		public static function registrar( string $tipo, string $resultado, array $args = array() ): int { return 0; }
+
+		/**
+		 * Huella del correo.
+		 *
+		 * @param string $email Correo.
+		 * @return string
+		 */
+		public static function identidad( string $email ): string { return ''; }
+	}
+
+	/**
+	 * Honeypot y trampa de tiempo (core 2.5.0).
+	 */
+	final class Anti_Bot {
+		/**
+		 * Campos ocultos.
+		 *
+		 * @return string
+		 */
+		public static function campos(): string { return ''; }
+
+		/**
+		 * Motivo por el que se considera bot.
+		 *
+		 * @param array<string, mixed> $datos Datos.
+		 * @param int|null             $ahora Momento.
+		 * @return string|null
+		 */
+		public static function motivo( array $datos, ?int $ahora = null ): ?string { return null; }
+
+		/**
+		 * ¿Llegó sin sello?
+		 *
+		 * @param array<string, mixed> $datos Datos.
+		 * @return bool
+		 */
+		public static function sin_sello( array $datos ): bool { return false; }
+	}
 }
 
 namespace Convoca\Gateway {

@@ -1,3 +1,18 @@
+## [2.16.0] — 2026-11-08
+
+### Añadido
+
+- **#105 — cada intento de alta queda registrado**, también los que no llegan a socio: aceptado,
+  rechazado por validación, bloqueado por el limitador, sin sello o detectado como bot. Va a la tabla
+  `convoca_intentos` del core con el correo y la IP **hasheados** (HMAC), no en claro, y con el motivo
+  cuando lo hay (el primer mensaje de error, recortado).
+- **#106 — barrera anti-bot en el alta**: honeypot (`convoca_web`) y sello de tiempo firmado
+  (`convoca_t`, 3 s mínimo, 24 h de vigencia) del core. Un bot recibe un error genérico, sin pistas sobre
+  qué campo falló. Si el formulario llega sin sello —una página cacheada puede servirse sin él— **no se
+  bloquea**, pero se anota como `sin_sello` para medirlo.
+
+Requiere `convoca-core` 2.5.0 o superior.
+
 ## [2.15.2] — 2026-11-08
 
 ### Corregido

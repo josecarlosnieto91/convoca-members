@@ -123,6 +123,9 @@ endif;
 		<?php // Marcador del envío sin JavaScript: lo lee el aviso de arriba. ?>
 		<input type="hidden" name="convoca_sin_js_alta" value="1" />
 
+		<?php // Honeypot y sello de tiempo: cortan el primer envío de un bot (members#106). ?>
+		<?php echo \Convoca\Core\Anti_Bot::campos(); // phpcs:ignore WordPress.Security.EscapeOutput -- marcado propio, ya escapado. ?>
+
 		<!-- ═══ STEP 1: Plan ═══ -->
 		<div class="conv-form-step active" data-step="1">
 			<h2><?php esc_html_e( 'Paso 1 — Elige tu forma de colaborar', 'convoca-members' ); ?></h2>

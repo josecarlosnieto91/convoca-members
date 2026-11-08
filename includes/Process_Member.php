@@ -245,9 +245,37 @@ class Process_Member {
 	 * @return array<string, mixed>
 	 */
 	public static function register( array $data, array $files = array() ): array|\WP_Error {
+		$email_traza = sanitize_email( (string) ( $data['email'] ?? '' ) );
+
+		// 0. Barrera anti-bot: honeypot y trampa de tiempo (members#106). Se comprueba antes de validar
+		// para no dar pistas al bot sobre qué campo estaba mal.
+		$senal_bot = \Convoca\Core\Anti_Bot::motivo( $data );
+		if ( null !== $senal_bot ) {
+			\Convoca\Core\Intentos::registrar(
+				'alta',
+				'bot',
+				array(
+					'email' => $email_traza, 'motivo' => $senal_bot
+				)
+			);
+			return new \WP_Error( 'no_procesable', __( 'No se ha podido procesar la solicitud. Vuelve a intentarlo desde el formulario.', 'convoca-members' ) );
+		}
+		if ( \Convoca\Core\Anti_Bot::sin_sello( $data ) ) {
+			\Convoca\Core\Intentos::registrar( 'alta', 'sin_sello', array( 'email' => $email_traza ) );
+		}
+
 		// 1. Validate
 		$validation = self::validate( $data, $files );
 		if ( is_wp_error( $validation ) ) {
+			\Convoca\Core\Intentos::registrar(
+				'alta',
+				'validacion',
+				array(
+					'email'  => $email_traza,
+					'motivo' => mb_substr( $validation->get_error_message(), 0, 191 ),
+				)
+			);
+
 			return $validation;
 		}
 
@@ -255,6 +283,8 @@ class Process_Member {
 		// (#99), y aquí dentro, que es el camino común de los tres accesos (#95).
 		$email_cupo = sanitize_email( (string) ( $data['email'] ?? '' ) );
 		if ( ! \Convoca\Core\Utils::check_rate_limit( 'alta_socio', self::MAX_ALTAS_HORA, HOUR_IN_SECONDS, $email_cupo ) ) {
+			\Convoca\Core\Intentos::registrar( 'alta', 'bloqueo', array( 'email' => $email_cupo ) );
+
 			return new \WP_Error( 'rate_limited', self::mensaje_bloqueo( $email_cupo ), array( 'status' => 429 ) );
 		}
 
@@ -509,6 +539,15 @@ class Process_Member {
 				$resultado['error_message'] = __( 'No se ha podido contactar con la pasarela. Tu registro está guardado pero el pago está pendiente.', 'convoca-members' );
 			}
 		}
+
+		// Traza del alta aceptada (members#105).
+		\Convoca\Core\Intentos::registrar(
+			'alta',
+			'ok',
+			array(
+				'email' => $email, 'referencia' => $post_id
+			)
+		);
 
 		// 11. Correo de solicitud, ya con el código del pedido y el enlace de justificante (#101, #102).
 		delete_post_meta( $post_id, '_convoca_solicitud_renovacion' );
