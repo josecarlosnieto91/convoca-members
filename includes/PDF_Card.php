@@ -43,6 +43,20 @@ class PDF_Card {
 	 *                         tarjeta. El botón sigue estando para quien abre la vista en el navegador.
 	 */
 	public static function get_html( int $post_id, string $theme = '', bool $para_pdf = false ): string {
+		return Estilos_PDF::aplicar( self::construir_html( $post_id, $theme, $para_pdf ) );
+	}
+
+	/**
+	 * Construye el documento con los colores de la marca.
+	 *
+	 * El color final lo pone `get_html()` con `Estilos_PDF::aplicar()`.
+	 *
+	 * @param int    $post_id  Socio.
+	 * @param string $theme    Tema.
+	 * @param bool   $para_pdf Modo PDF.
+	 * @return string
+	 */
+	private static function construir_html( int $post_id, string $theme = '', bool $para_pdf = false ): string {
 		$theme  = in_array( $theme, array( 'light', 'dark' ), true ) ? $theme : \Convoca\Core\Utils::get_document_theme( 'card' );
 		$light  = 'light' === $theme;
 		$nombre = get_the_title( $post_id );
@@ -110,7 +124,12 @@ class PDF_Card {
 
 		$verification_hash = hash_hmac( 'sha256', 'member_' . $post_id, \Convoca\Core\Utils::get_persistent_salt() );
 		$site_domain       = strtoupper( (string) wp_parse_url( home_url(), PHP_URL_HOST ) );
-		$verify_url        = home_url( '/verificar-socio/?id=' . $post_id . '&token=' . $verification_hash );
+		$verify_url        = add_query_arg(
+			array(
+				'id' => $post_id, 'token' => $verification_hash
+			),
+			Paginas::url( 'verificar-socio', '', Paginas::url( 'mi-area', 'convoca_mi_area' ) )
+		);
 
 		// QR local (E2E-7): generar con chillerlan como Certificate_Generator,
 		// sin depender de api.qrserver.com (API externa / filtración de datos).

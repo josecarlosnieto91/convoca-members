@@ -1,3 +1,18 @@
+## [2.12.3] — 2026-11-08
+
+### Corregido
+
+- **el carnet y el certificado usan el color del sitio** (#92): `Estilos_PDF` gana `uva()` y
+  `naranja()`, que leen `Site_Settings` y caen a la marca solo si no hay ajuste. La sustitución se hace
+  al final del documento (`Estilos_PDF::aplicar()`), en un solo sitio, para no tocar los constructores
+  de HTML.
+- **las páginas se resuelven, no se escriben** (#92): nuevo `Paginas::url()` busca la página por slug y,
+  si el sitio la ha renombrado, por su shortcode; si no hay ninguna, usa un respaldo que existe. Lo usan
+  el QR del carnet (`verificar-socio`), el del certificado (`verificar-certificado`) y el enlace del
+  correo al área del socio.
+
+Tres pruebas nuevas para los colores y la resolución de páginas.
+
 ## [2.12.2] — 2026-11-08
 
 ### Cambiado

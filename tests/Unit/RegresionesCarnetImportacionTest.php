@@ -45,12 +45,15 @@ final class RegresionesCarnetImportacionTest extends TestCase {
 	public function test_el_qr_del_carnet_apunta_al_verificador_con_token(): void {
 		$tarjeta = $this->fuente( 'includes/PDF_Card.php' );
 
-		$this->assertMatchesRegularExpression(
-			"/home_url\( '\/verificar-socio\/\?id='/",
+		// La página se resuelve por slug y, si el sitio la renombra, por shortcode (#92): el QR no puede
+		// llevar una ruta escrita a mano que deje de existir.
+		$this->assertStringContainsString(
+			"Paginas::url( 'verificar-socio'",
 			$tarjeta,
-			'El QR debe apuntar a /verificar-socio/ con el id del socio.'
+			'El QR tiene que resolver la página del verificador, no escribir la ruta.'
 		);
-		$this->assertStringContainsString( '&token=', $tarjeta, 'El QR debe llevar el token de verificación.' );
+		$this->assertStringContainsString( "'id' => $post_id", $tarjeta, 'El QR debe llevar el id del socio.' );
+		$this->assertStringContainsString( "'token' => $verification_hash", $tarjeta, 'El QR debe llevar el token de verificación.' );
 	}
 
 	/**

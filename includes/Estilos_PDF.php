@@ -52,6 +52,59 @@ final class Estilos_PDF {
 	public const TIPOGRAFIA = '"Segoe UI", Roboto, Helvetica, Arial, sans-serif';
 
 	/**
+	 * Morado del documento: el del sitio, o el de la marca como respaldo.
+	 *
+	 * Los PDF no pueden usar variables CSS (Dompdf no las resuelve), así que el color viaja en
+	 * hexadecimal y se decide aquí (#92).
+	 *
+	 * @return string
+	 */
+	public static function uva(): string {
+		return self::color( 'acento_fuerte', self::UVA );
+	}
+
+	/**
+	 * Naranja del documento: el del sitio, o el de la marca como respaldo.
+	 *
+	 * @return string
+	 */
+	public static function naranja(): string {
+		return self::color( 'acento', self::NARANJA );
+	}
+
+	/**
+	 * Color del sitio, si el núcleo está disponible.
+	 *
+	 * @param string $clave   Clave del ajuste.
+	 * @param string $defecto Valor de respaldo.
+	 * @return string
+	 */
+	private static function color( string $clave, string $defecto ): string {
+		if ( ! class_exists( '\\Convoca\\Core\\Site_Settings' ) ) {
+			return $defecto;
+		}
+
+		return \Convoca\Core\Site_Settings::color( $clave, $defecto );
+	}
+
+	/**
+	 * Cambia los colores de marca de un documento por los del sitio.
+	 *
+	 * Los constructores de HTML llevan los colores dentro de cadenas: en vez de tocar cada línea
+	 * (y arriesgar el PDF), se sustituyen al final, en un solo sitio y probado.
+	 *
+	 * @param string $html Documento.
+	 * @return string
+	 */
+	public static function aplicar( string $html ): string {
+		return str_replace(
+			array( self::UVA, self::NARANJA ),
+			array( self::uva(), self::naranja() ),
+			$html
+		);
+	}
+
+	/**
 	 * Reglas comunes a todos los documentos.
 	 *
 	 * Se antepone a la hoja de cada documento: define lo mínimo que comparten y deja que cada uno

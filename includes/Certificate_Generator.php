@@ -109,7 +109,7 @@ class Certificate_Generator {
 			$cert_id = 'VOL-' . wp_date( 'Y' ) . '-' . strtoupper( wp_generate_password( 5, false, false ) );
 		}
 
-		$verify_url = home_url( '/verificar-certificado/?id=' . $cert_id );
+		$verify_url = add_query_arg( 'id', $cert_id, Paginas::url( 'verificar-certificado', 'convoca_verificar_certificado' ) );
 		$qr_data    = self::generate_qr_data( $verify_url );
 
 		$valido_hasta = self::validity_expiry_mysql();
@@ -266,6 +266,26 @@ class Certificate_Generator {
 	 * @param array<int, array<string, mixed>> $proyectos
 	 */
 	private static function build_html( string $nombre, float $horas, string $plan, array $proyectos, string $cert_id, string $qr_data, string $verify_url, string $valido_hasta = '', string $theme = '' ): string {
+		return Estilos_PDF::aplicar(
+			self::construir_html( $nombre, $horas, $plan, $proyectos, $cert_id, $qr_data, $verify_url, $valido_hasta, $theme )
+		);
+	}
+
+	/**
+	 * Construye el certificado con los colores de la marca.
+	 *
+	 * @param string $nombre       Nombre.
+	 * @param float  $horas        Horas.
+	 * @param string $plan         Plan.
+	 * @param array<int, array<string, mixed>> $proyectos Proyectos.
+	 * @param string $cert_id      Código.
+	 * @param string $qr_data      QR.
+	 * @param string $verify_url   URL de verificación.
+	 * @param string $valido_hasta Caducidad.
+	 * @param string $theme        Tema.
+	 * @return string
+	 */
+	private static function construir_html( string $nombre, float $horas, string $plan, array $proyectos, string $cert_id, string $qr_data, string $verify_url, string $valido_hasta = '', string $theme = '' ): string {
 		$theme          = in_array( $theme, array( 'light', 'dark' ), true ) ? $theme : \Convoca\Core\Utils::get_document_theme( 'certificate' );
 		$light          = 'light' === $theme;
 		$proyectos_html = '';
