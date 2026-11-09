@@ -1,3 +1,11 @@
+## [2.16.3] — 2026-11-09
+
+### Seguridad
+
+- **`wp convoca-members migrar-opciones`** cifra el IBAN que siga en claro en
+  `convoca_members_settings` y `convoca_gateway_settings`, con copia previa en
+  `{prefijo}convoca_cifrado_previo`. `--dry-run` solo cuenta. Idempotente.
+
 ## [2.16.2] — 2026-11-09
 
 ### Seguridad

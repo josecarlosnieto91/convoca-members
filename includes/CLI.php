@@ -33,6 +33,7 @@ final class CLI {
 		}
 
 		\WP_CLI::add_command( 'convoca-members migrar-cifrado', array( self::class, 'migrar_cifrado' ) );
+		\WP_CLI::add_command( 'convoca-members migrar-opciones', array( self::class, 'migrar_opciones' ) );
 	}
 
 	/**
@@ -76,6 +77,119 @@ final class CLI {
 		}
 
 		self::ejecutar( $post_meta, $user_meta );
+	}
+
+	/**
+	 * Cifra el IBAN de las opciones de configuración.
+	 *
+	 * ## OPTIONS
+	 *
+	 * [--dry-run]
+	 * : Solo cuenta; no escribe nada.
+	 *
+	 * ## EXAMPLES
+	 *
+	 *     wp convoca-members migrar-opciones --dry-run
+	 *     wp convoca-members migrar-opciones
+	 *
+	 * @param array<int,string>   $args       Argumentos posicionales.
+	 * @param array<string,mixed> $assoc_args Opciones.
+	 * @return void
+	 */
+	public static function migrar_opciones( array $args, array $assoc_args ): void {
+		if ( ! self::hay_llave() ) {
+			\WP_CLI::error( 'Falta CONVOCA_ENCRYPTION_KEY válida en wp-config.php o no hay motor de cifrado.' );
+		}
+
+		$pendientes = self::opciones_pendientes();
+
+		if ( ! $pendientes ) {
+			\WP_CLI::success( 'No hay IBAN en claro en las opciones. Nada que migrar.' );
+			return;
+		}
+
+		\WP_CLI::log( 'Opciones con IBAN en claro: ' . implode( ', ', array_keys( $pendientes ) ) );
+
+		if ( isset( $assoc_args['dry-run'] ) ) {
+			\WP_CLI::success( 'Dry-run: no se ha escrito nada.' );
+			return;
+		}
+
+		self::guardar_opciones( $pendientes );
+	}
+
+	/**
+	 * Opciones cuyo IBAN sigue en claro, leídas de la tabla sin filtros.
+	 *
+	 * @return array<string,array{raw:string,valor:array<string,mixed>}>
+	 */
+	private static function opciones_pendientes(): array {
+		global $wpdb;
+
+		$pendientes = array();
+
+		foreach ( array( 'convoca_members_settings', 'convoca_gateway_settings' ) as $opcion ) {
+			$raw = $wpdb->get_var(
+				$wpdb->prepare(
+					"SELECT option_value FROM {$wpdb->options} WHERE option_name = %s",
+					$opcion
+				)
+			);
+
+			if ( ! is_string( $raw ) || '' === $raw ) {
+				continue;
+			}
+
+			$valor = maybe_unserialize( $raw );
+
+			if ( ! is_array( $valor ) || empty( $valor['iban'] ) || ! is_string( $valor['iban'] ) ) {
+				continue;
+			}
+
+			if ( 0 === strpos( $valor['iban'], \Convoca\Core\Cifrado::PREFIX ) ) {
+				continue;
+			}
+
+			$pendientes[ $opcion ] = array(
+				'raw'   => $raw,
+				'valor' => $valor,
+			);
+		}
+
+		return $pendientes;
+	}
+
+	/**
+	 * Copia y cifra las opciones pendientes.
+	 *
+	 * @param array<string,array{raw:string,valor:array<string,mixed>}> $pendientes Pendientes.
+	 * @return void
+	 */
+	private static function guardar_opciones( array $pendientes ): void {
+		global $wpdb;
+
+		self::crear_copia( $wpdb );
+
+		foreach ( $pendientes as $opcion => $datos ) {
+			$wpdb->insert(
+				$wpdb->prefix . self::TABLA_COPIA,
+				array(
+					'meta_type'  => 'option',
+					'meta_id'    => 0,
+					'objeto'     => 0,
+					'meta_key'   => $opcion,
+					'meta_value' => (string) $datos['raw'],
+					'creado'     => current_time( 'mysql' ),
+				)
+			);
+
+			$valor         = (array) $datos['valor'];
+			$valor['iban'] = \Convoca\Core\Cifrado::cifrar( (string) $valor['iban'] );
+			update_option( $opcion, $valor );
+		}
+
+		\WP_CLI::log( 'Copia previa en ' . $wpdb->prefix . self::TABLA_COPIA . ' (bórrala cuando verifiques).' );
+		\WP_CLI::success( 'IBAN migrado.' );
 	}
 
 	/**
