@@ -77,6 +77,43 @@ class EstadosTest extends TestCase
 
     // ── State machine: change() ───────────────────────────
 
+    public function test_la_bienvenida_se_puede_silenciar_con_el_filtro(): void
+    {
+        \Convoca\Core\Utils::clear_fired();
+        $estados = new Estados();
+
+        add_filter(
+            'convoca_members_enviar_bienvenida',
+            static function () {
+                return false;
+            }
+        );
+        $estados->on_state_change(self::POST_ID, 'activo', 'pendiente_pago');
+        remove_all_filters('convoca_members_enviar_bienvenida');
+
+        $hooks = array_keys(\Convoca\Core\Utils::get_fired());
+        $this->assertNotContains('convoca_members_email_bienvenida', $hooks, 'la casilla apagada no manda bienvenida');
+
+        \Convoca\Core\Utils::clear_fired();
+        $estados->on_state_change(self::POST_ID, 'activo', 'pendiente_pago');
+
+        $hooks = array_keys(\Convoca\Core\Utils::get_fired());
+        $this->assertContains('convoca_members_email_bienvenida', $hooks, 'sin filtro, sale');
+    }
+
+    public function test_registrar_nota_deja_historial_sin_cambiar_estado(): void
+    {
+        update_post_meta(self::POST_ID, '_convoca_estado_miembro', 'activo');
+
+        Estados::registrar_nota(self::POST_ID, 'Importación CSV');
+
+        $this->assertSame('activo', get_post_meta(self::POST_ID, '_convoca_estado_miembro', true));
+        $historial = get_post_meta(self::POST_ID, '_convoca_historial', true);
+        $this->assertSame('Importación CSV', end($historial)['nota']);
+        $this->assertSame('activo', end($historial)['de']);
+        $this->assertSame('activo', end($historial)['a']);
+    }
+
     public function test_change_invalid_state_returns_error(): void
     {
         $result = Estados::change(self::POST_ID, 'estado_inexistente');

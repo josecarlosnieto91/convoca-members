@@ -1,3 +1,16 @@
+## [2.16.1] — 2026-11-09
+
+### Corregido
+
+- **#109 — la importación CSV pasa por la máquina de estados.** Se acabó el `update_post_meta`
+  directo: `Estados::change()` deja el historial («Importación CSV») y dispara la bienvenida por el
+  camino único.
+- La casilla «Enviar email de bienvenida a cada socio» ya manda ese correo: antes solo avisaba a
+  administración. Sin casilla no sale bienvenida, pero el aviso interno y el historial quedan.
+- `Estados::registrar_nota()` para fichas que ya estaban activas: la importación queda auditada sin
+  cambiar de estado.
+- Filtro `convoca_members_enviar_bienvenida` para silenciar la bienvenida sin saltarse el estado.
+
 ## [2.16.0] — 2026-11-08
 
 ### Añadido

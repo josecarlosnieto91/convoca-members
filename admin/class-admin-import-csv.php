@@ -200,7 +200,7 @@ class Admin_Import_CSV {
 						<div style="margin-top:20px;display:flex;gap:16px;flex-wrap:wrap;">
 							<label>
 								<input type="checkbox" name="send_welcome" value="1" checked>
-								<?php esc_html_e( 'Enviar email de bienvenida', 'convoca-members' ); ?>
+								<?php esc_html_e( 'Enviar email de bienvenida a cada socio', 'convoca-members' ); ?>
 							</label>
 							<label>
 								<input type="checkbox" name="update_existing" value="1">
@@ -710,11 +710,34 @@ class Admin_Import_CSV {
 				update_post_meta( $post_id, '_convoca_' . $m, sanitize_text_field( $row[ $m ] ) );
 			}
 		}
-		update_post_meta( $post_id, '_convoca_estado_miembro', 'activo' );
+		$estado_anterior = (string) get_post_meta( $post_id, '_convoca_estado_miembro', true );
 
-		if ( $send_welcome ) {
-			do_action( 'convoca_member_created', $post_id, array( 'nombre' => $nombre ) );
+		// La casilla es SOLO para el correo al socio; el aviso a administración sale siempre.
+		$filtrar_bienvenida = static function (): bool {
+			return false;
+		};
+		if ( ! $send_welcome ) {
+			add_filter( 'convoca_members_enviar_bienvenida', $filtrar_bienvenida );
 		}
+
+		$resultado = Estados::change( $post_id, 'activo', __( 'Importación CSV', 'convoca-members' ) );
+
+		if ( ! $send_welcome ) {
+			remove_filter( 'convoca_members_enviar_bienvenida', $filtrar_bienvenida );
+		}
+
+		if ( is_wp_error( $resultado ) ) {
+			\Convoca\Core\Logger::warning(
+				sprintf( 'Importación CSV: no se pudo pasar el miembro #%d a activo: %s', $post_id, $resultado->get_error_message() ),
+				'Members/Import'
+			);
+		} elseif ( 'activo' === $estado_anterior ) {
+			// La ficha ya estaba activa: `change()` no mueve nada, pero la importación debe quedar
+			// en el historial igual que cuando sí cambia el estado.
+			Estados::registrar_nota( $post_id, __( 'Importación CSV', 'convoca-members' ) );
+		}
+
+		do_action( 'convoca_member_created', $post_id, array( 'nombre' => $nombre ) );
 
 		return $post_id;
 	}

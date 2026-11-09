@@ -506,12 +506,20 @@ final class FlujoDeImportacionTest extends TestCase {
 		);
 
 		try {
+			ob_start();
+			// La importación en lote deja una línea de auditoría por socio; en la prueba se silencia
+			// para no convertir 25 líneas de `error_log` en ruido de PHPUnit.
+			$nivel_previo = get_option( 'convoca_log_level', 'info' );
+			update_option( 'convoca_log_level', 'error' );
 			$this->ejecutar();
 			$this->fail( 'el camino largo termina en exit' );
 		} catch ( \Throwable $e ) {
 			// `exit` en proceso aparte: PHPUnit detecta que el hijo murió. Si el flujo siguiera, aquí no se
 			// llegaría a nada y el test fallaría por el `fail()` de arriba.
 			$this->assertTrue( true );
+		} finally {
+			update_option( 'convoca_log_level', $nivel_previo ?? 'info' );
+			ob_end_clean();
 		}
 	}
 }

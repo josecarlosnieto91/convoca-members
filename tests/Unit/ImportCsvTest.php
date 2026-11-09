@@ -54,6 +54,8 @@ final class ImportCsvTest extends TestCase {
 		$GLOBALS['_wp_insert_args']          = array();
 		$GLOBALS['_wp_insert_falla']         = false;
 		$this->importador                    = new Admin_Import_CSV();
+		// El enganche que manda la bienvenida lo registra el constructor de Estados.
+		new \Convoca\Members\Estados();
 	}
 
 	/**
@@ -255,23 +257,34 @@ final class ImportCsvTest extends TestCase {
 	}
 
 	/**
-	 * El aviso de bienvenida solo sale si se pidió.
+	 * La casilla decide el correo al socio; el aviso a administración sale siempre.
+	 *
+	 * La bienvenida la dispara `Estados` (y se puede silenciar con el filtro
+	 * `convoca_members_enviar_bienvenida`); aquí se comprueba que la ficha pasa por la máquina de
+	 * estados y que la importación queda en el historial en los dos casos (members#109).
 	 */
-	public function test_la_bienvenida_es_opcional(): void {
-		$GLOBALS['convoca_bienvenidas'] = 0;
-		add_action(
-			'convoca_member_created',
-			static function () {
-				++$GLOBALS['convoca_bienvenidas'];
-			}
-		);
+	public function test_la_bienvenida_es_opcional_y_el_aviso_no(): void {
+		\Convoca\Core\Utils::clear_fired();
+		$GLOBALS['_wp_actions'] = array();
 
-		$this->importar( array( 'nombre' => 'Sin aviso', 'email' => 'sin@example.test' ) );
-		$this->assertSame( 0, $GLOBALS['convoca_bienvenidas'], 'sin pedirla no sale' );
+		list( $sin, ) = $this->importar( array( 'nombre' => 'Sin aviso', 'email' => 'sin@example.test' ) );
+		$hooks       = array_column( $GLOBALS['_wp_actions'] ?? array(), 'hook' );
 
-		$this->importar( array( 'nombre' => 'Con aviso', 'email' => 'con@example.test' ), true );
-		$this->assertSame( 1, $GLOBALS['convoca_bienvenidas'], 'pedida, sale una vez' );
+		$this->assertContains( 'convoca_member_created', $hooks, 'el aviso a administración sale siempre' );
+		$this->assertContains( 'convoca_members_estado_changed', $hooks, 'la ficha pasa por la máquina de estados' );
+		$this->assertNotContains( 'convoca_members_email_bienvenida', $hooks, 'sin casilla no hay bienvenida' );
+		$this->assertSame( 'activo', $GLOBALS['_wp_stores']['post_meta'][ $sin ]['_convoca_estado_miembro'] );
+		$historial = $GLOBALS['_wp_stores']['post_meta'][ $sin ]['_convoca_historial'];
+		$this->assertSame( 'Importación CSV', end( $historial )['nota'], 'la importación queda auditada' );
 
-		unset( $GLOBALS['convoca_bienvenidas'] );
+		\Convoca\Core\Utils::clear_fired();
+		$GLOBALS['_wp_actions'] = array();
+		list( $con, ) = $this->importar( array( 'nombre' => 'Con aviso', 'email' => 'con@example.test' ), true );
+		$hooks       = array_column( $GLOBALS['_wp_actions'], 'hook' );
+
+		$this->assertContains( 'convoca_member_created', $hooks );
+		$this->assertContains( 'convoca_members_estado_changed', $hooks );
+		$this->assertContains( 'convoca_members_email_bienvenida', $hooks, 'con casilla sale la bienvenida' );
+		$this->assertSame( 'activo', $GLOBALS['_wp_stores']['post_meta'][ $con ]['_convoca_estado_miembro'] );
 	}
 }

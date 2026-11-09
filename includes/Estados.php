@@ -189,12 +189,41 @@ class Estados {
 	}
 
 	/**
+	 * Deja una nota en el historial sin cambiar el estado.
+	 *
+	 * Sirve para operaciones que no cambian de estado pero deben quedar auditadas (una importación
+	 * CSV de una ficha que ya estaba activa). No dispara los correos del cambio de estado.
+	 *
+	 * @param int    $post_id Miembro.
+	 * @param string $nota    Nota.
+	 * @return void
+	 */
+	public static function registrar_nota( int $post_id, string $nota ): void {
+		$estado = (string) get_post_meta( $post_id, '_convoca_estado_miembro', true );
+		$estado = '' !== $estado ? $estado : 'NUEVO';
+
+		self::log( $post_id, $estado, $estado, $nota );
+	}
+
+	/**
 	 * Trigger emails on state change.
 	 */
 	public function on_state_change( int $post_id, string $nuevo, string $old ): void {
 		switch ( $nuevo ) {
 			case 'activo':
-				\Convoca\Core\Utils::do_action( 'convoca_members_email_bienvenida', 'convoca_email_bienvenida', $post_id );
+				/**
+				 * Permite silenciar la bienvenida sin salirse de la máquina de estados.
+				 *
+				 * La importación CSV la apaga cuando la casilla no está marcada (members#109).
+				 *
+				 * @param bool   $enviar Si se envía la bienvenida.
+				 * @param int    $post_id Miembro.
+				 * @param string $nuevo   Estado nuevo.
+				 * @param string $old     Estado anterior.
+				 */
+				if ( apply_filters( 'convoca_members_enviar_bienvenida', true, $post_id, $nuevo, $old ) ) {
+					\Convoca\Core\Utils::do_action( 'convoca_members_email_bienvenida', 'convoca_email_bienvenida', $post_id );
+				}
 				break;
 			case 'pendiente_pago':
 				\Convoca\Core\Utils::do_action( 'convoca_members_email_recordatorio_pago', 'convoca_email_recordatorio_pago', $post_id );

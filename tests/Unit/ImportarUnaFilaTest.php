@@ -245,16 +245,20 @@ final class ImportarUnaFilaTest extends TestCase {
 	}
 
 	/**
-	 * El aviso de bienvenida solo sale si se pidió.
+	 * El aviso a administración sale siempre; la casilla es para el correo al socio.
 	 *
-	 * Importar 200 socios sin querer mandarles 200 correos es una decisión que se toma en la pantalla; si el aviso
-	 * saliera siempre, la opción no serviría de nada.
+	 * Importar 200 socios sin querer mandarles 200 correos es una decisión que se toma en la
+	 * pantalla; esa decisión se aplica al correo de bienvenida, no al aviso interno (members#109).
 	 */
-	public function test_el_aviso_de_bienvenida_es_opcional(): void {
+	public function test_el_aviso_a_administracion_sale_siempre(): void {
 		list( $r ) = $this->importar( array( 'nombre' => 'Ada', 'email' => 'ada@example.test' ), false );
 
 		$this->assertIsInt( $r, 'la fila se importa igual' );
-		$this->assertNotContains( 'convoca_member_created', $this->hooks_disparados(), 'sin pedirlo no se avisa' );
+		$this->assertContains( 'convoca_member_created', $this->hooks_disparados(), 'el aviso interno no se apaga' );
+		$this->assertContains( 'convoca_members_estado_changed', $this->hooks_disparados(), 'pasa por Estados' );
+
+		$historial = $GLOBALS['_wp_stores']['post_meta'][ $r ]['_convoca_historial'];
+		$this->assertSame( 'Importación CSV', end( $historial )['nota'], 'y queda auditada' );
 	}
 
 	/**
