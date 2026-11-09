@@ -1,3 +1,16 @@
+## [2.16.2] — 2026-11-09
+
+### Seguridad
+
+- **Cifrado en reposo de DNI, direcciones y notas.** Las escrituras pasan por
+  `Datos_Socio::guardar_meta()` y `guardar_meta_usuario()`: el valor se cifra con
+  `Convoca\Core\Cifrado` y el DNI deja su índice ciego para buscar por igualdad sin descifrar la tabla.
+  Las lecturas usan `leer_meta()` / `leer_meta_usuario()` o `dni()` con capability y auditoría.
+- **Migración con copia previa.** `wp convoca-members migrar-cifrado [--dry-run] [--limit=N]` cifra lo
+  que siga en claro, guarda las filas originales en `{prefijo}convoca_cifrado_previo` y es idempotente.
+  Exige `CONVOCA_ENCRYPTION_KEY` válida; sin llave no toca nada.
+- La búsqueda por DNI usa el índice ciego cuando hay llave y mantiene el meta en claro cuando no la hay.
+
 ## [2.16.1] — 2026-11-09
 
 ### Corregido
