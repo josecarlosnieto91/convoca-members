@@ -90,10 +90,134 @@ class Datos_Socio {
 		return array(
 			'email'     => $email,
 			'nombre'    => $nombre,
-			'dni'       => (string) get_post_meta( $ficha, '_convoca_dni', true ),
+			'dni'       => self::dni_descifrado_de_ficha( $ficha ),
 			'direccion' => (string) get_post_meta( $ficha, '_convoca_direccion', true ),
 			'municipio' => (string) get_post_meta( $ficha, '_convoca_municipio', true ),
 		);
+	}
+
+	/**
+	 * DNI de una ficha para un gestor, con capability y auditoría.
+	 *
+	 * Es la única puerta para que seguros, accidentes, PDFs y exportaciones obtengan el DNI. Sin
+	 * permiso devuelve cadena vacía. No se llama a `Cifrado::descifrar()` desde fuera de esta clase
+	 * para el DNI.
+	 *
+	 * @param int    $ficha  ID de la ficha.
+	 * @param string $motivo Motivo para la auditoría (seguro, accidente, pdf, export...).
+	 * @return string
+	 */
+	public static function dni( int $ficha, string $motivo = 'consulta' ): string {
+		if ( $ficha <= 0 ) {
+			return '';
+		}
+
+		$autorizado = current_user_can( 'gestionar_miembros' ) || ( defined( 'WP_CLI' ) && WP_CLI );
+
+		if ( ! $autorizado ) {
+			return '';
+		}
+
+		$dni = self::dni_descifrado_de_ficha( $ficha );
+
+		if ( '' === $dni ) {
+			return '';
+		}
+
+		/**
+		 * Se dispara cada vez que un gestor descifra un DNI.
+		 *
+		 * @param int    $ficha  Ficha.
+		 * @param string $motivo Motivo declarado por el consumidor.
+		 * @param int    $user_id Usuario que lo pidió.
+		 */
+		do_action( 'convoca_members_dni_descifrado', $ficha, $motivo, get_current_user_id() );
+
+		\Convoca\Core\Logger::info(
+			sprintf( 'DNI descifrado para la ficha #%d. Motivo: %s', $ficha, $motivo ),
+			'Members/Audit',
+			$ficha
+		);
+
+		return $dni;
+	}
+
+	/**
+	 * DNI del propio socio, o de un gestor que consulta su ficha.
+	 *
+	 * @param int    $user_id Usuario.
+	 * @param string $motivo  Motivo.
+	 * @return string
+	 */
+	public static function dni_de_usuario( int $user_id, string $motivo = 'perfil' ): string {
+		if ( $user_id <= 0 ) {
+			return '';
+		}
+
+		$autorizado = get_current_user_id() === $user_id
+			|| current_user_can( 'gestionar_miembros' )
+			|| ( defined( 'WP_CLI' ) && WP_CLI );
+
+		if ( ! $autorizado ) {
+			return '';
+		}
+
+		$dni = (string) get_user_meta( $user_id, '_convoca_dni', true );
+
+		if ( '' === $dni ) {
+			$dni = (string) get_user_meta( $user_id, '_convoca_shifts_dni', true );
+		}
+
+		$dni = self::descifrar( $dni );
+
+		if ( '' === $dni ) {
+			return '';
+		}
+
+		do_action( 'convoca_members_dni_descifrado', 0, $motivo, $user_id );
+
+		return $dni;
+	}
+
+	/**
+	 * DNI descifrado de una ficha, sin comprobar capability.
+	 *
+	 * Solo para el puente de cursos (el socio viendo sus propios datos) y para `dni()`. No es una
+	 * puerta pública: no se expone fuera de esta clase.
+	 *
+	 * @param int $ficha Ficha.
+	 * @return string
+	 */
+	private static function dni_descifrado_de_ficha( int $ficha ): string {
+		$dni = (string) get_post_meta( $ficha, '_convoca_dni', true );
+
+		if ( '' === $dni ) {
+			$user_id = (int) get_post_meta( $ficha, '_convoca_user_id', true );
+
+			if ( $user_id > 0 ) {
+				$dni = (string) get_user_meta( $user_id, '_convoca_dni', true );
+
+				if ( '' === $dni ) {
+					$dni = (string) get_user_meta( $user_id, '_convoca_shifts_dni', true );
+				}
+			}
+		}
+
+		return self::descifrar( $dni );
+	}
+
+	/**
+	 * Descifra si hay librería; si no, devuelve el valor tal cual.
+	 *
+	 * @param string $valor Valor almacenado.
+	 * @return string
+	 */
+	private static function descifrar( string $valor ): string {
+		if ( '' === $valor || ! class_exists( '\\Convoca\\Core\\Cifrado' ) ) {
+			return $valor;
+		}
+
+		return \Convoca\Core\Cifrado::descifrar( $valor );
 	}
 
 	/**
