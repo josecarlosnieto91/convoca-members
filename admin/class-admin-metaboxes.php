@@ -587,7 +587,7 @@ class Admin_Metaboxes {
 			} else {
 				$val = isset( $data[ 'convoca_' . $field ] ) ? sanitize_text_field( $data[ 'convoca_' . $field ] ) : '';
 			}
-			update_post_meta( $post_id, '_convoca_' . $field, $val );
+			Datos_Socio::guardar_meta( $post_id, $field, $val );
 		}
 
 		// Handle State Change via State Machine.
@@ -640,7 +640,7 @@ class Admin_Metaboxes {
 				'id'         => $member->ID,
 				'name'       => $member->post_title,
 				'email'      => get_post_meta( $member_id, '_convoca_email', true ),
-				'dni'        => get_post_meta( $member_id, '_convoca_dni', true ),
+				'dni'        => Datos_Socio::leer_meta( $member_id, 'dni' ),
 				'telefono'   => get_post_meta( $member_id, '_convoca_telefono', true ),
 				'estado'     => get_post_meta( $member_id, '_convoca_estado_miembro', true ),
 				'plan'       => get_post_meta( $member_id, '_convoca_plan', true ),

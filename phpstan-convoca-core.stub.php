@@ -229,6 +229,17 @@ namespace Convoca\Core {
 		 */
 		public static function sin_sello( array $datos ): bool { return false; }
 	}
+
+	/**
+	 * Cifrado de datos en reposo (convoca-core/includes/Cifrado.php).
+	 */
+	final class Cifrado {
+		public const PREFIX = 'enc:v1:';
+		public static function disponible(): bool { return false; }
+		public static function cifrar( string $claro ): string { return $claro; }
+		public static function descifrar( string $valor ): string { return $valor; }
+		public static function indice_ciego( string $valor ): string { return ''; }
+	}
 }
 
 namespace Convoca\Gateway {

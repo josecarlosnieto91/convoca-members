@@ -159,10 +159,10 @@ class PDF_Document {
 			$signature = new \Convoca\Core\Signature();
 
 			// Collect user data (canonical keys; legacy _convoca_shifts_* fallback until migration).
-			$dni       = get_user_meta( $user_id, '_convoca_dni', true ) ?: get_user_meta( $user_id, '_convoca_shifts_dni', true );
+			$dni       = Datos_Socio::dni_de_usuario( $user_id, 'pdf' );
 			$email     = $user->user_email;
 			$telefono  = get_user_meta( $user_id, '_convoca_telefono', true ) ?: get_user_meta( $user_id, '_convoca_shifts_telefono', true );
-			$direccion = get_user_meta( $user_id, '_convoca_voluntario_direccion', true ) ?: get_user_meta( $user_id, '_convoca_shifts_direccion', true );
+			$direccion = Datos_Socio::leer_meta_usuario( $user_id, 'voluntario_direccion' ) ?: Datos_Socio::leer_meta_usuario( $user_id, 'shifts_direccion' );
 			$municipio = get_user_meta( $user_id, '_convoca_voluntario_municipio', true ) ?: get_user_meta( $user_id, '_convoca_shifts_municipio', true );
 
 			$legal_text = get_option( 'convoca_volunteer_legal_text', '' );

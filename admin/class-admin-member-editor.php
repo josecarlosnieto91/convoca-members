@@ -74,7 +74,7 @@ class Admin_Member_Editor {
 		}
 
 		$post = $is_edit ? get_post( $post_id ) : null;
-		$m    = fn( string $k ) => $post ? get_post_meta( $post_id, '_convoca_' . $k, true ) : '';
+		$m    = fn( string $k ) => $post ? Datos_Socio::leer_meta( $post_id, $k ) : '';
 
 		$plans = CPT_Miembro::get_plans();
 
@@ -406,14 +406,14 @@ class Admin_Member_Editor {
 		foreach ( $fields as $key => $sanitizer ) {
 			$raw = $data[ 'convoca_' . $key ] ?? '';
 			$val = $sanitizer( $raw );
-			update_post_meta( $post_id, '_convoca_' . $key, $val );
+			Datos_Socio::guardar_meta( $post_id, $key, $val );
 		}
 
 		// Boolean checkboxes.
 		$bool_fields = array( 'pago_recurrente', 'es_voluntario' );
 		foreach ( $bool_fields as $key ) {
 			$val = isset( $data[ 'convoca_' . $key ] ) ? '1' : '0';
-			update_post_meta( $post_id, '_convoca_' . $key, $val );
+			Datos_Socio::guardar_meta( $post_id, $key, $val );
 		}
 
 		// Condición de monitor (issue #30, fase 4): no sale de ningún plan, se concede a mano desde aquí.

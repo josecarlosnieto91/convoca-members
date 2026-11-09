@@ -242,6 +242,10 @@ add_action(
 		// Upgrade Manager (checks for DB version upgrades on admin_init).
 		new \Convoca\Members\Members_Upgrade_Manager();
 
+		if ( defined( 'WP_CLI' ) && WP_CLI ) {
+			\Convoca\Members\CLI::registrar();
+		}
+
 		// Admin.
 		if ( is_admin() ) {
 			new \Convoca\Members\Admin_Page();

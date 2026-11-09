@@ -164,9 +164,9 @@ class Process_Member {
 		update_post_meta( $member_id, '_convoca_user_id', $user_id );
 		update_user_meta( $user_id, '_convoca_member_id', $member_id );
 
-		// Copy member data to user meta.
+		// Copy member data to user meta. El DNI se cifra en el usuario y deja su índice.
 		update_user_meta( $user_id, '_convoca_email', $email );
-		update_user_meta( $user_id, '_convoca_dni', get_post_meta( $member_id, '_convoca_dni', true ) );
+		Datos_Socio::guardar_dni_usuario( $user_id, (string) Datos_Socio::leer_meta( $member_id, 'dni' ) );
 		update_user_meta( $user_id, '_convoca_telefono', get_post_meta( $member_id, '_convoca_telefono', true ) );
 
 		// La marca de voluntariado del alta es una SOLICITUD, no un dato decorativo: la asociación la
@@ -364,16 +364,19 @@ class Process_Member {
 			$exists = false;
 
 			if ( '' !== $dni ) {
+				$clave_dni = Datos_Socio::clave_busqueda_dni();
+				$valor_dni = Datos_Socio::valor_busqueda_dni( $dni );
+
 				$exists = $wpdb->get_var(
 					$wpdb->prepare(
 						"SELECT pm.post_id FROM {$wpdb->postmeta} pm
 						 JOIN {$wpdb->posts} p ON p.ID = pm.post_id
 						 WHERE p.post_type = 'miembro'
 						   AND p.post_status = 'publish'
-						   AND pm.meta_key = '_convoca_dni'
+						   AND pm.meta_key = '{$clave_dni}'
 						   AND pm.meta_value = %s
-						 LIMIT 1 FOR UPDATE",
-						$dni
+						   LIMIT 1 FOR UPDATE",
+						$valor_dni
 					)
 				);
 			}
@@ -476,7 +479,7 @@ class Process_Member {
 			}
 
 			foreach ( $meta as $key => $value ) {
-				update_post_meta( $post_id, '_convoca_' . $key, $value );
+				Datos_Socio::guardar_meta( $post_id, $key, $value );
 			}
 
 			// Log GDPR consent.
@@ -656,7 +659,7 @@ class Process_Member {
 			);
 
 			foreach ( $meta as $key => $value ) {
-				update_post_meta( $existing_id, '_convoca_' . $key, $value );
+				Datos_Socio::guardar_meta( $existing_id, $key, $value );
 			}
 
 			// Clear expiry artifacts; the record leaves 'baja'.

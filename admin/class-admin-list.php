@@ -184,16 +184,6 @@ class Admin_List extends \WP_List_Table {
 					'compare' => 'LIKE',
 				),
 				array(
-					'key'     => '_convoca_dni',
-					'value'   => $search,
-					'compare' => 'LIKE',
-				),
-				array(
-					'key'     => '_convoca_dni',
-					'value'   => $cleaned_search,
-					'compare' => 'LIKE',
-				),
-				array(
 					'key'     => '_convoca_telefono',
 					'value'   => $search,
 					'compare' => 'LIKE',
@@ -212,6 +202,11 @@ class Admin_List extends \WP_List_Table {
 					'key'     => '_convoca_nombre',
 					'value'   => $search,
 					'compare' => 'LIKE',
+				),
+				array(
+					'key'     => Datos_Socio::clave_busqueda_dni(),
+					'value'   => Datos_Socio::valor_busqueda_dni( $cleaned_search ),
+					'compare' => '=',
 				),
 			);
 			// **No se pasa `s`**: WordPress lo combina con el `meta_query` con AND, así que exigía que el texto

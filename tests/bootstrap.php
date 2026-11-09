@@ -93,6 +93,7 @@ namespace {
             return $single ? $v : ($v !== '' ? [$v] : []);
         }
         function update_user_meta($id, $key, $value) { $GLOBALS['_wp_stores']['user_meta'][$id][$key] = $value; return true; }
+        function delete_user_meta($id, $key) { unset($GLOBALS['_wp_stores']['user_meta'][$id][$key]); return true; }
     }
 
     if (!\function_exists('current_time')) {
@@ -243,6 +244,13 @@ namespace {
     }
     if (!\function_exists('remove_all_filters')) {
         function remove_all_filters($h) { unset($GLOBALS['_wp_filters_prueba'][$h]); }
+        function remove_filter($h, $c, $p = 10) {
+            if (!isset($GLOBALS['_wp_filters_prueba'][$h][$p])) { return false; }
+            foreach ($GLOBALS['_wp_filters_prueba'][$h][$p] as $i => $cb) {
+                if ($cb === $c) { unset($GLOBALS['_wp_filters_prueba'][$h][$p][$i]); return true; }
+            }
+            return false;
+        }
     }
     if (!\function_exists('register_post_type')) { function register_post_type($s, $a) { return null; } }
     if (!\function_exists('register_post_meta')) { function register_post_meta($t, $k, $a) { return true; } }

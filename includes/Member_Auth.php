@@ -310,7 +310,7 @@ class Member_Auth {
 			'name'          => $post->post_title,
 			'email'         => get_post_meta( $member_id, '_convoca_email', true ),
 			'phone'         => get_post_meta( $member_id, '_convoca_telefono', true ),
-			'dni'           => get_post_meta( $member_id, '_convoca_dni', true ),
+			'dni'           => Datos_Socio::leer_meta( $member_id, 'dni' ),
 			'member_status' => get_post_meta( $member_id, '_convoca_estado_miembro', true ),
 		);
 	}

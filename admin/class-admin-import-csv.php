@@ -707,7 +707,7 @@ class Admin_Import_CSV {
 		$meta_map = array( 'apellidos', 'email', 'dni', 'telefono', 'direccion', 'municipio', 'plan' );
 		foreach ( $meta_map as $m ) {
 			if ( ! empty( $row[ $m ] ) ) {
-				update_post_meta( $post_id, '_convoca_' . $m, sanitize_text_field( $row[ $m ] ) );
+				Datos_Socio::guardar_meta( $post_id, $m, sanitize_text_field( $row[ $m ] ) );
 			}
 		}
 		$estado_anterior = (string) get_post_meta( $post_id, '_convoca_estado_miembro', true );
@@ -778,8 +778,8 @@ class Admin_Import_CSV {
 					'post_type'      => 'miembro',
 					'posts_per_page' => 1,
 					'post_status'    => 'publish',
-					'meta_key'       => '_convoca_dni',
-					'meta_value'     => $dni,
+					'meta_key'       => Datos_Socio::clave_busqueda_dni(),
+					'meta_value'     => Datos_Socio::valor_busqueda_dni( $dni ),
 					'fields'         => 'ids',
 				)
 			);

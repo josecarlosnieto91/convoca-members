@@ -230,8 +230,8 @@ class Form_Voluntariado {
 		// Check for duplicate DNI in user meta (new canonical key; legacy _convoca_shifts_dni covered by migration).
 		$existing_dni = get_users(
 			array(
-				'meta_key'   => '_convoca_dni',
-				'meta_value' => $dni,
+				'meta_key'   => Datos_Socio::clave_busqueda_dni(),
+				'meta_value' => Datos_Socio::valor_busqueda_dni( $dni ),
 				'number'     => 1,
 			)
 		);
@@ -298,7 +298,7 @@ class Form_Voluntariado {
 			);
 
 			foreach ( $member_meta as $key => $value ) {
-				update_post_meta( $member_post_id, '_convoca_' . $key, $value );
+				Datos_Socio::guardar_meta( $member_post_id, $key, $value );
 			}
 
 			// Vincular WP user con el miembro.
@@ -337,7 +337,7 @@ class Form_Voluntariado {
 		$meta_map = array_merge( $meta_map, $dynamic_data );
 
 		foreach ( $meta_map as $key => $value ) {
-			update_user_meta( $user_id, $key, $value );
+			Datos_Socio::guardar_meta_usuario( $user_id, $key, $value );
 		}
 
 		// Notify admins.

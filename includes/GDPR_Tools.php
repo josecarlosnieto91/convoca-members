@@ -134,7 +134,7 @@ class GDPR_Tools {
 			);
 
 			foreach ( $meta_map as $meta_key => $label ) {
-				$value = get_post_meta( $member_id, $meta_key, true );
+				$value = Datos_Socio::leer_meta( $member_id, $meta_key );
 				if ( $value ) {
 					$profile_data[] = array(
 						'name'  => $label,

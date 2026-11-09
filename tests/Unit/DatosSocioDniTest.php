@@ -23,13 +23,16 @@ final class DatosSocioDniTest extends TestCase {
 	private array $previo = array();
 
 	/**
+	 * Filtro de llave de la prueba.
+	 *
+	 * @var callable|null
+	 */
+	private $filtro_clave = null;
+
+	/**
 	 * Prepara stores, llave y clase.
 	 */
 	protected function setUp(): void {
-		if ( ! defined( 'CONVOCA_ENCRYPTION_KEY' ) ) {
-			define( 'CONVOCA_ENCRYPTION_KEY', base64_encode( str_repeat( 'k', 32 ) ) );
-		}
-
 		$this->previo = array(
 			'post_meta'  => $GLOBALS['_wp_stores']['post_meta'] ?? array(),
 			'user_meta'  => $GLOBALS['_wp_stores']['user_meta'] ?? array(),
@@ -40,6 +43,8 @@ final class DatosSocioDniTest extends TestCase {
 		require_once dirname( __DIR__, 3 ) . '/convoca-core/includes/Cifrado.php';
 		require_once dirname( __DIR__, 2 ) . '/includes/Datos_Socio.php';
 
+		$this->filtro_clave = static fn(): string => base64_encode( str_repeat( 'k', 32 ) );
+
 		$GLOBALS['_wp_stores']['post_meta'] = array();
 		$GLOBALS['_wp_stores']['user_meta'] = array();
 		$GLOBALS['_test_caps']              = array( 'gestionar_miembros' => true );
@@ -47,6 +52,7 @@ final class DatosSocioDniTest extends TestCase {
 		$GLOBALS['_dni_auditados']          = 0;
 
 		remove_all_filters( 'convoca_cifrado_clave' );
+		add_filter( 'convoca_cifrado_clave', $this->filtro_clave );
 	}
 
 	/**
@@ -58,7 +64,10 @@ final class DatosSocioDniTest extends TestCase {
 		$GLOBALS['_test_caps']              = $this->previo['caps'];
 		$GLOBALS['_test_user_id']           = $this->previo['user_id'];
 
-		remove_all_filters( 'convoca_cifrado_clave' );
+		if ( $this->filtro_clave ) {
+			remove_filter( 'convoca_cifrado_clave', $this->filtro_clave );
+		}
+
 		unset( $GLOBALS['_dni_auditados'] );
 	}
 
@@ -147,5 +156,50 @@ final class DatosSocioDniTest extends TestCase {
 		$datos = Datos_Socio::datos_de_ficha( 84 );
 
 		$this->assertSame( '12345678Z', $datos['dni'] );
+	}
+
+	/**
+	 * Guardar cifra el DNI, deja índice y la lectura lo devuelve en claro.
+	 */
+	public function test_guardar_meta_cifra_el_dni_y_deja_indice(): void {
+		Datos_Socio::guardar_meta( 85, 'dni', '12345678Z' );
+
+		$guardado = (string) $GLOBALS['_wp_stores']['post_meta'][85]['_convoca_dni'];
+
+		$this->assertStringStartsWith( 'enc:v1:', $guardado );
+		$this->assertNotSame( '12345678Z', $guardado );
+		$this->assertSame( '12345678Z', Datos_Socio::leer_meta( 85, 'dni' ) );
+		$this->assertSame(
+			Datos_Socio::indice( '12345678Z' ),
+			$GLOBALS['_wp_stores']['post_meta'][85]['_convoca_dni_idx']
+		);
+	}
+
+	/**
+	 * La dirección también se cifra; el municipio no.
+	 */
+	public function test_guardar_meta_cifra_la_direccion(): void {
+		Datos_Socio::guardar_meta( 86, 'direccion', 'Calle Mayor 1' );
+		Datos_Socio::guardar_meta( 86, 'municipio', 'Oviedo' );
+
+		$this->assertStringStartsWith(
+			'enc:v1:',
+			(string) $GLOBALS['_wp_stores']['post_meta'][86]['_convoca_direccion']
+		);
+		$this->assertSame( 'Oviedo', $GLOBALS['_wp_stores']['post_meta'][86]['_convoca_municipio'] );
+		$this->assertSame( 'Calle Mayor 1', Datos_Socio::leer_meta( 86, 'direccion' ) );
+	}
+
+	/**
+	 * El DNI del usuario se cifra y su lectura autorizada lo descifra.
+	 */
+	public function test_guardar_dni_usuario_cifra_y_lee(): void {
+		Datos_Socio::guardar_dni_usuario( 9, '12345678Z' );
+
+		$this->assertStringStartsWith(
+			'enc:v1:',
+			(string) $GLOBALS['_wp_stores']['user_meta'][9]['_convoca_dni']
+		);
+		$this->assertSame( '12345678Z', Datos_Socio::leer_meta_usuario( 9, 'dni' ) );
 	}
 }

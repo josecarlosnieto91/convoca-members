@@ -669,7 +669,7 @@ class Rest_API {
 				'nombre'              => $post->post_title,
 				'email'               => get_post_meta( $member_id, '_convoca_email', true ),
 				'email_pendiente'     => get_post_meta( $member_id, '_convoca_email_pendiente', true ),
-				'direccion'           => get_post_meta( $member_id, '_convoca_direccion', true ),
+				'direccion'           => Datos_Socio::leer_meta( $member_id, 'direccion' ),
 				'telefono'            => get_post_meta( $member_id, '_convoca_telefono', true ),
 				'telefono_verificado' => '1' === get_post_meta( $member_id, '_convoca_telefono_verificado', true ),
 				'cumpleanos'          => get_post_meta( $member_id, '_convoca_cumpleanos', true ),
@@ -695,7 +695,7 @@ class Rest_API {
 	public function get_inscriptions( \WP_REST_Request $request ): \WP_REST_Response {
 		$member_id = Member_Auth::get_current_member_id();
 		$email     = get_post_meta( $member_id, '_convoca_email', true );
-		$dni       = get_post_meta( $member_id, '_convoca_dni', true );
+		$dni       = Datos_Socio::leer_meta( $member_id, 'dni' );
 
 		// Query inscriptions by email or DNI.
 		$args = array(
@@ -709,8 +709,8 @@ class Rest_API {
 					'value' => $email,
 				),
 				array(
-					'key'   => '_convoca_dni',
-					'value' => $dni,
+					'key'   => Datos_Socio::clave_busqueda_dni(),
+					'value' => Datos_Socio::valor_busqueda_dni( $dni ),
 				),
 			),
 		);
@@ -1024,7 +1024,7 @@ class Rest_API {
 	 * @return array<int|string, mixed> Cláusulas `meta_query` en OR.
 	 */
 	private static function meta_query_de_socio( string $termino ): array {
-		$claves = array( '_convoca_email', '_convoca_dni', '_convoca_telefono', '_convoca_numero_socio', '_convoca_access_code', '_convoca_nombre' );
+		$claves = array( '_convoca_email', '_convoca_telefono', '_convoca_numero_socio', '_convoca_access_code', '_convoca_nombre' );
 		$query  = array( 'relation' => 'OR' );
 		foreach ( $claves as $clave ) {
 			$query[] = array(
@@ -1033,6 +1033,23 @@ class Rest_API {
 				'compare' => 'LIKE',
 			);
 		}
+
+		$indice = Datos_Socio::indice( $termino );
+
+		if ( '' !== $indice ) {
+			$query[] = array(
+				'key'     => '_convoca_dni_idx',
+				'value'   => $indice,
+				'compare' => '=',
+			);
+		} else {
+			$query[] = array(
+				'key'     => '_convoca_dni',
+				'value'   => $termino,
+				'compare' => 'LIKE',
+			);
+		}
+
 		return $query;
 	}
 

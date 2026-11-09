@@ -699,7 +699,7 @@ class Admin_Page extends \Convoca\Core\Admin\Pantalla_Admin {
 			$rows[] = array(
 				$post->post_title,
 				get_post_meta( $post->ID, '_convoca_email', true ),
-				get_post_meta( $post->ID, '_convoca_dni', true ),
+				Datos_Socio::leer_meta( $post->ID, 'dni' ),
 				get_post_meta( $post->ID, '_convoca_plan', true ),
 				get_post_meta( $post->ID, '_convoca_estado_miembro', true ) ?: '—',
 				get_post_meta( $post->ID, '_convoca_telefono', true ),

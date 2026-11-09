@@ -91,9 +91,207 @@ class Datos_Socio {
 			'email'     => $email,
 			'nombre'    => $nombre,
 			'dni'       => self::dni_descifrado_de_ficha( $ficha ),
-			'direccion' => (string) get_post_meta( $ficha, '_convoca_direccion', true ),
+			'direccion' => self::leer_meta( $ficha, 'direccion' ),
 			'municipio' => (string) get_post_meta( $ficha, '_convoca_municipio', true ),
 		);
+	}
+
+	/**
+	 * Campos cuyo valor se cifra en reposo.
+	 *
+	 * El teléfono y el email no están: login, avisos y búsquedas dependen de ellos (decisión de JC).
+	 *
+	 * @var string[]
+	 */
+	public const CAMPOS_CIFRADOS = array(
+		'dni',
+		'shifts_dni',
+		'voluntario_tutor_dni',
+		'direccion',
+		'voluntario_direccion',
+		'shifts_direccion',
+		'factura_direccion',
+		'notas',
+		'observaciones',
+	);
+
+	/**
+	 * Guarda un meta de ficha cifrando los campos sensibles.
+	 *
+	 * Punto único de escritura para los bucles que guardan `_convoca_*`. El DNI deja además su
+	 * índice ciego para poder buscar por igualdad sin descifrar la tabla.
+	 *
+	 * @param int    $ficha Ficha.
+	 * @param string $campo Campo con o sin prefijo `_convoca_`.
+	 * @param mixed  $valor Valor.
+	 * @return void
+	 */
+	public static function guardar_meta( int $ficha, string $campo, $valor ): void {
+		$campo = str_starts_with( $campo, '_convoca_' ) ? substr( $campo, 9 ) : $campo;
+		$clave = '_convoca_' . $campo;
+
+		if ( '' === $campo || $ficha <= 0 ) {
+			return;
+		}
+
+		$original = is_string( $valor ) ? $valor : '';
+
+		if ( in_array( $campo, self::CAMPOS_CIFRADOS, true ) && '' !== $original ) {
+			$valor = self::cifrar( $original );
+		}
+
+		update_post_meta( $ficha, $clave, $valor );
+
+		if ( 'dni' === $campo ) {
+			$indice = self::indice( $original );
+
+			if ( '' !== $indice ) {
+				update_post_meta( $ficha, '_convoca_dni_idx', $indice );
+			} else {
+				delete_post_meta( $ficha, '_convoca_dni_idx' );
+			}
+		}
+	}
+
+	/**
+	 * Guarda un meta de usuario cifrando los campos sensibles.
+	 *
+	 * @param int    $user_id Usuario.
+	 * @param string $campo   Campo con o sin prefijo `_convoca_`.
+	 * @param mixed  $valor   Valor.
+	 * @return void
+	 */
+	public static function guardar_meta_usuario( int $user_id, string $campo, $valor ): void {
+		$campo = str_starts_with( $campo, '_convoca_' ) ? substr( $campo, 9 ) : $campo;
+		$clave = '_convoca_' . $campo;
+
+		if ( '' === $campo || $user_id <= 0 ) {
+			return;
+		}
+
+		$original = is_string( $valor ) ? $valor : '';
+
+		if ( in_array( $campo, self::CAMPOS_CIFRADOS, true ) && '' !== $original ) {
+			$valor = self::cifrar( $original );
+		}
+
+		update_user_meta( $user_id, $clave, $valor );
+
+		if ( 'dni' === $campo ) {
+			$indice = self::indice( $original );
+
+			if ( '' !== $indice ) {
+				update_user_meta( $user_id, '_convoca_dni_idx', $indice );
+			} else {
+				delete_user_meta( $user_id, '_convoca_dni_idx' );
+			}
+		}
+	}
+
+	/**
+	 * Lee un meta de usuario descifrando los campos sensibles.
+	 *
+	 * @param int    $user_id Usuario.
+	 * @param string $campo   Campo con o sin prefijo `_convoca_`.
+	 * @return mixed
+	 */
+	public static function leer_meta_usuario( int $user_id, string $campo ) {
+		$campo = str_starts_with( $campo, '_convoca_' ) ? substr( $campo, 9 ) : $campo;
+		$valor = get_user_meta( $user_id, '_convoca_' . $campo, true );
+
+		if ( in_array( $campo, self::CAMPOS_CIFRADOS, true ) && is_string( $valor ) ) {
+			return self::descifrar( $valor );
+		}
+
+		return $valor;
+	}
+
+	/**
+	 * Guarda el DNI en el usuario, cifrado, con su índice.
+	 *
+	 * @param int    $user_id Usuario.
+	 * @param string $dni     DNI en claro.
+	 * @return void
+	 */
+	public static function guardar_dni_usuario( int $user_id, string $dni ): void {
+		if ( $user_id <= 0 || '' === $dni ) {
+			return;
+		}
+
+		update_user_meta( $user_id, '_convoca_dni', self::cifrar( $dni ) );
+
+		$indice = self::indice( $dni );
+
+		if ( '' !== $indice ) {
+			update_user_meta( $user_id, '_convoca_dni_idx', $indice );
+		}
+	}
+
+	/**
+	 * Lee un meta de ficha descifrando los campos sensibles.
+	 *
+	 * @param int    $ficha Ficha.
+	 * @param string $campo Campo con o sin prefijo `_convoca_`.
+	 * @return mixed
+	 */
+	public static function leer_meta( int $ficha, string $campo ) {
+		$campo = str_starts_with( $campo, '_convoca_' ) ? substr( $campo, 9 ) : $campo;
+		$valor = get_post_meta( $ficha, '_convoca_' . $campo, true );
+
+		if ( in_array( $campo, self::CAMPOS_CIFRADOS, true ) && is_string( $valor ) ) {
+			return self::descifrar( $valor );
+		}
+
+		return $valor;
+	}
+
+	/**
+	 * Clave de búsqueda por DNI: índice ciego si hay llave; si no, el meta antiguo.
+	 *
+	 * @return string
+	 */
+	public static function clave_busqueda_dni(): string {
+		return '' !== self::indice( '00000000T' ) ? '_convoca_dni_idx' : '_convoca_dni';
+	}
+
+	/**
+	 * Valor de búsqueda por DNI: índice ciego si hay llave; si no, el DNI en claro.
+	 *
+	 * @param string $dni DNI.
+	 * @return string
+	 */
+	public static function valor_busqueda_dni( string $dni ): string {
+		$indice = self::indice( $dni );
+
+		return '' !== $indice ? $indice : $dni;
+	}
+
+	/**
+	 * Índice ciego de un DNI, si la librería está disponible.
+	 *
+	 * @param string $dni DNI.
+	 * @return string
+	 */
+	public static function indice( string $dni ): string {
+		if ( '' === $dni || ! class_exists( '\\Convoca\\Core\\Cifrado' ) ) {
+			return '';
+		}
+
+		return \Convoca\Core\Cifrado::indice_ciego( $dni );
+	}
+
+	/**
+	 * Cifra si hay librería; si no, deja el valor tal cual.
+	 *
+	 * @param string $valor Valor en claro.
+	 * @return string
+	 */
+	private static function cifrar( string $valor ): string {
+		if ( '' === $valor || ! class_exists( '\\Convoca\\Core\\Cifrado' ) ) {
+			return $valor;
+		}
+
+		return \Convoca\Core\Cifrado::cifrar( $valor );
 	}
 
 	/**
