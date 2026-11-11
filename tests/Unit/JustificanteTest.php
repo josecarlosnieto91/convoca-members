@@ -124,7 +124,7 @@ final class JustificanteTest extends TestCase {
 	public function test_el_justificante_no_activa_la_ficha(): void {
 		$fuente = (string) file_get_contents( dirname( __DIR__, 2 ) . '/includes/Justificante.php' );
 
-		$this->assertStringNotContainsString( "Estados::change( $member_id, 'activo'", $fuente, 'subir un fichero no puede dar el alta' );
+		$this->assertStringNotContainsString( 'Estados::change( $member_id, \'activo\'', $fuente, 'subir un fichero no puede dar el alta' );
 		$this->assertStringContainsString( "_convoca_justificante_estado', 'pendiente'", $fuente );
 		$this->assertStringContainsString( 'avisar_revision(', $fuente, 'administración se entera' );
 	}
