@@ -1,3 +1,10 @@
+## [2.16.4] — 2026-11-11
+
+### Corregido
+
+- **El aviso del paso 1 se limpia al elegir un plan**
+- El cambio de radio de plan oculta el aviso de validación anterior.
+
 ## [2.16.3] — 2026-11-09
 
 ### Seguridad
