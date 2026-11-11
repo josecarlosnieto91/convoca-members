@@ -62,6 +62,8 @@
     conv.$$('input[name="plan"]', altaWrap).forEach(radio =>
       radio.addEventListener('change', () => {
         const v = radio.value;
+        // Al corregir la selección, el aviso del paso 1 deja de ser cierto (members#110).
+        conv.hideAlert(alert);
         const famEl = conv.$('#conv-sub-familiar');
         const juvEl = conv.$('#conv-sub-juvenil');
         if (famEl) famEl.style.display = v === 'familiar' ? 'block' : 'none';
