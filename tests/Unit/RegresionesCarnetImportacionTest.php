@@ -52,8 +52,8 @@ final class RegresionesCarnetImportacionTest extends TestCase {
 			$tarjeta,
 			'El QR tiene que resolver la página del verificador, no escribir la ruta.'
 		);
-		$this->assertStringContainsString( "'id' => $post_id", $tarjeta, 'El QR debe llevar el id del socio.' );
-		$this->assertStringContainsString( "'token' => $verification_hash", $tarjeta, 'El QR debe llevar el token de verificación.' );
+		$this->assertStringContainsString( "'id' => \$post_id", $tarjeta, 'El QR debe llevar el id del socio.' );
+		$this->assertStringContainsString( "'token' => \$verification_hash", $tarjeta, 'El QR debe llevar el token de verificación.' );
 	}
 
 	/**
