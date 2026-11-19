@@ -2,7 +2,7 @@
 Contributors: josecarlosnietoramos
 Tags: members, volunteers, membership, certificates, associations
 Requires at least: 6.4
-Tested up to: 7.1.4
+Tested up to: 7.1.5
 Requires PHP: 8.2
 Stable tag: 2.16.4
 License: GPL-2.0-or-later
