@@ -268,7 +268,7 @@ class Form_Handler {
 			);
 		}
 
-		do_action( 'convoca_member_created', $result['member_id'], $result );
+		do_action( 'convoca_member_created', $result['id'], $result );
 
 		wp_send_json_success( $result );
 	}

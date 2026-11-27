@@ -85,6 +85,16 @@ final class ProcessMemberAltaTest extends TestCase {
 	}
 
 	/**
+	 * Sin nombre ni DNI no se crea ficha (#23).
+	 */
+	public function test_el_alta_rechaza_nombre_y_dni_vacios(): void {
+		$resultado = Process_Member::register( $this->alta( array( 'nombre' => '', 'dni' => '' ) ) );
+
+		$this->assertInstanceOf( \WP_Error::class, $resultado );
+		$this->assertSame( 'validation_error', $resultado->get_error_code() );
+	}
+
+	/**
 	 * Familiar/juvenil guarda la clave del subplan que se cobra, no la modalidad (#115).
 	 */
 	public function test_familiar_guarda_el_subplan(): void {

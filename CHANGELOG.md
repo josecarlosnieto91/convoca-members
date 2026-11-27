@@ -1,3 +1,13 @@
+## [2.16.6] — 2026-11-27
+
+### Corregido
+
+- **El alta rechaza nombre y DNI vacíos (#23).** `Process_Member::register()` devuelve `validation_error`
+  con el campo que falta antes de crear la ficha; un DNI con letra inválida tampoco pasa.
+- **El aviso de alta usa el identificador real (#D5).** El adaptador AJAX publica `id`, no `member_id`.
+- **Sin pruebas incompletas en Members.** Las dos regresiones pendientes de #23 y #26 quedan activadas:
+  el contador de importación solo suma filas creadas y el alta vacía se prueba en el motor.
+
 ## [2.16.5] — 2026-11-27
 
 ### Corregido
