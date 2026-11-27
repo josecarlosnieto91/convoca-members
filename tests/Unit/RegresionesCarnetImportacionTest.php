@@ -74,11 +74,13 @@ final class RegresionesCarnetImportacionTest extends TestCase {
 	 * importada y como error a la vez («1 socios importados correctamente. 1 errores: …»).
 	 */
 	public function test_las_filas_con_error_no_cuentan_como_importadas(): void {
-		$this->markTestIncomplete(
-			'Pendiente del arreglo de convoca-members#26: en el bucle de importación, la rama de is_wp_error() ' .
-			'debe hacer continue antes de ++$imported. Cuando se arregle, activar aquí la comprobación de que ' .
-			'el incremento no aparece dentro de la rama de error (y lo mismo en process_batch()).'
-		);
+		$src = $this->fuente( 'admin/class-admin-import-csv.php' );
+
+		$this->assertSame( 2, substr_count( $src, '++$imported;' ), 'solo las dos ramas de importación' );
+		$pos = strpos( $src, 'elseif ( is_wp_error( $result ) )' );
+		$this->assertNotFalse( $pos, 'existe la rama de error' );
+		$rama = substr( $src, (int) $pos, 300 );
+		$this->assertStringNotContainsString( '++$imported', $rama, 'una fila fallida no cuenta como importada' );
 	}
 
 	/**
@@ -86,11 +88,10 @@ final class RegresionesCarnetImportacionTest extends TestCase {
 	 *
 	 * Hoy se acepta: la ficha nace sin número de socio y la siguiente alta queda bloqueada (issue #23).
 	 */
-	public function test_el_alta_rechaza_nombre_y_dni_vacios(): void {
-		$this->markTestIncomplete(
-			'Pendiente del arreglo de convoca-members#23: public/class-form-handler.php debe validar nombre y ' .
-			'DNI (no vacíos, DNI con letra válida) antes de insertar el CPT. Al arreglarlo, comprobar aquí que ' .
-			'un POST con nombre="" y dni="" no crea ninguna ficha.'
-		);
+	public function test_el_alta_rechaza_nombre_y_dni_vacios_en_el_motor(): void {
+		$src = $this->fuente( 'includes/Process_Member.php' );
+		$this->assertStringContainsString( "'validation_error'", $src );
+		$this->assertStringContainsString( "El nombre es obligatorio.", $src );
+		$this->assertStringContainsString( "El DNI/NIE es obligatorio.", $src );
 	}
 }

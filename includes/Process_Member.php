@@ -296,7 +296,32 @@ class Process_Member {
 		if ( ! Opciones::dni_se_pide() ) {
 			$dni = '';
 		}
-		$email      = sanitize_email( $data['email'] ?? '' );
+		$email = sanitize_email( $data['email'] ?? '' );
+
+		// Nombre y DNI son obligatorios: sin ellos la ficha nace incompleta y bloquea números
+		// de socio posteriores (issue #23).
+		$campos = array();
+		if ( '' === $nombre ) {
+			$campos['nombre'] = __( 'El nombre es obligatorio.', 'convoca-members' );
+		}
+		if ( Opciones::dni_se_pide() ) {
+			if ( '' === $dni ) {
+				$campos['dni'] = __( 'El DNI/NIE es obligatorio.', 'convoca-members' );
+			} elseif ( ! Utils::validar_dni( $dni ) ) {
+				$campos['dni'] = __( 'El DNI/NIE no es válido.', 'convoca-members' );
+			}
+		}
+		if ( $campos ) {
+			return new \WP_Error(
+				'validation_error',
+				implode( ' ', $campos ),
+				array(
+					'campos' => $campos,
+					'status' => 400,
+				)
+			);
+		}
+
 		$plan       = sanitize_text_field( $data['plan'] ?? '' );
 		$sub_plan   = sanitize_text_field( $data['sub_plan'] ?? '' );
 		$forma_pago = sanitize_text_field( $data['forma_pago'] ?? '' );
