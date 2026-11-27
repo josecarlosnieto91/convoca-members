@@ -1,3 +1,15 @@
+## [2.16.5] — 2026-11-27
+
+### Corregido
+
+- **La ficha familiar/juvenil guarda la clave del subplan cobrado (#115).** `_convoca_plan` deja de llevar la
+  modalidad; renovación automática, objetivo de horas y filtro del listado resuelven el plan correcto.
+- **«Cerrar sesión» invalida la sesión en el servidor (#116).** Nueva ruta `POST /me/logout`; el botón de Mi
+  Área la llama y después recarga. Antes solo intentaba borrar una cookie distinta de la real.
+- **Una ficha de baja ya no abre sesión de WordPress (#117).** El estado se comprueba antes de emitir la cookie.
+- **La baja automática alcanza a los suspendidos (#118).** El cron de expiraciones incluye `suspendido`, no solo
+  `activo`; la suspensión previa ya no detiene el ciclo.
+
 ## [2.16.4] — 2026-11-11
 
 ### Corregido

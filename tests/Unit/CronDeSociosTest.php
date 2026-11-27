@@ -235,5 +235,7 @@ final class CronDeSociosTest extends TestCase {
 
 		$this->assertNotEmpty( $con_fecha, 'se consultó por la fecha de renovación' );
 		$this->assertStringNotContainsString( '%s', (string) $con_fecha[0], 'el marcador se sustituyó' );
+		// Un socio suspendido por impago sigue siendo candidato a la baja automática (#118).
+		$this->assertMatchesRegularExpression( "/meta_value IN \\(\\s*'activo',\\s*'suspendido'\\s*\\)/", (string) $con_fecha[0] );
 	}
 }

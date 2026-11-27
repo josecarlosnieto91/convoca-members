@@ -560,7 +560,7 @@ class Cron_Manager {
 		$query = "
             SELECT p.ID
             FROM {$wpdb->posts} p
-            JOIN {$wpdb->postmeta} pm_est ON p.ID = pm_est.post_id AND pm_est.meta_key = '_convoca_estado_miembro' AND pm_est.meta_value = 'activo'
+            JOIN {$wpdb->postmeta} pm_est ON p.ID = pm_est.post_id AND pm_est.meta_key = '_convoca_estado_miembro' AND pm_est.meta_value IN ('activo', 'suspendido')
             JOIN {$wpdb->postmeta} pm_ren ON p.ID = pm_ren.post_id AND pm_ren.meta_key = '_convoca_fecha_renovacion' AND pm_ren.meta_value IS NOT NULL AND pm_ren.meta_value != ''
             WHERE p.post_type = 'miembro'
               AND p.post_status = 'publish'

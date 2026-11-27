@@ -85,6 +85,25 @@ final class ProcessMemberAltaTest extends TestCase {
 	}
 
 	/**
+	 * Familiar/juvenil guarda la clave del subplan que se cobra, no la modalidad (#115).
+	 */
+	public function test_familiar_guarda_el_subplan(): void {
+		$resultado = Process_Member::register(
+			$this->alta(
+				array(
+					'plan'     => 'familiar',
+					'sub_plan' => 'fam-bronze',
+				)
+			)
+		);
+
+		$this->assertIsArray( $resultado );
+		$id = (int) $resultado['id'];
+		$this->assertSame( 'fam-bronze', (string) get_post_meta( $id, '_convoca_plan', true ) );
+		$this->assertSame( 'familiar', (string) get_post_meta( $id, '_convoca_plan_modalidad', true ) );
+	}
+
+	/**
 	 * La ficha creada por un alta.
 	 *
 	 * @param array $resultado Resultado del alta.

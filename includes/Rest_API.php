@@ -67,6 +67,17 @@ class Rest_API {
 			)
 		);
 
+		// Cerrar sesión del socio: invalida el transient y la cookie de servidor (issue #116).
+		register_rest_route(
+			self::NAMESPACE,
+			'/me/logout',
+			array(
+				'methods'             => 'POST',
+				'callback'            => array( $this, 'logout' ),
+				'permission_callback' => array( $this, 'check_member_auth' ),
+			)
+		);
+
 		// Inscriptions (read-only for any authenticated member; only active
 		// members may create new ones via convoca-enroll).
 		register_rest_route(
@@ -641,6 +652,16 @@ class Rest_API {
 		// `build_payment_url()` es API pública del gateway y este plugin ya la usa: basta con comprobar que el
 		// plugin esté ahí (PHPStan ve el doble y avisa, con razón, de que `method_exists` sobra).
 		return (string) \Convoca\Gateway\Payment_Handler::build_payment_url( $pago_id );
+	}
+
+	/**
+	 * Cierra la sesión del socio y la de WordPress abierta por el mismo acceso.
+	 */
+	public function logout( \WP_REST_Request $request ): \WP_REST_Response {
+		Member_Auth::logout();
+		wp_logout();
+
+		return new \WP_REST_Response( array( 'ok' => true ), 200 );
 	}
 
 	public function get_profile( \WP_REST_Request $request ): \WP_REST_Response {
