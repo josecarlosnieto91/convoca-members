@@ -146,8 +146,10 @@
     },
 
     handleLogout: function() {
-      document.cookie = 'conv_member_session=; Path=/; Expires=Thu, 01 Jan 1970 00:00:01 GMT;';
-      location.reload();
+      fetch(window.convMiArea.apiUrl + '/me/logout', {
+        method: 'POST',
+        headers: { 'X-WP-Nonce': window.convMiArea.nonce }
+      }).finally(() => location.reload());
     },
 
     switchTab: function(tab) {

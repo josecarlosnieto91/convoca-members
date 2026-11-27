@@ -151,6 +151,8 @@ final class MemberAuthLoginTest extends TestCase {
 
 		$this->assertSame( 'member_baja', $r->get_error_code() );
 		$this->assertSame( array(), $GLOBALS['_wp_cookies'] ?? array() );
+		$this->assertSame( array(), $GLOBALS['_wp_auth_cookies'] ?? array(), 'no se abre sesión de WordPress a una baja' );
+		$this->assertEmpty( $GLOBALS['_wp_usuario_actual'] ?? 0, 'no se fija el usuario de WordPress' );
 		$this->assertSame( 'info', $this->ultimo_aviso()['level'] ?? '' );
 	}
 

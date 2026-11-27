@@ -108,12 +108,8 @@ class Member_Auth {
 		// en la página de turnos le contestaba «si eres voluntario/a, inicia sesión para apuntarte» y tenía que
 		// descubrir un SEGUNDO formulario de acceso, con las mismas credenciales y sin que nadie se lo dijera.
 		// Ahora una sola entrada sirve para todo: panel, turnos e inscripciones.
-		if ( ! is_user_logged_in() ) {
-			wp_set_current_user( $user->ID );
-			wp_set_auth_cookie( $user->ID, false, is_ssl() );
-		}
-
-		// Members with status 'baja' cannot log in; their membership ended.
+		// Members with status 'baja' cannot log in; their membership ended. Se comprueba
+		// ANTES de emitir la sesión de WordPress (issue #117).
 		$member_status = get_post_meta( $member_id, '_convoca_estado_miembro', true );
 		if ( $member_status === 'baja' ) {
 			Logger::info( "Intento de inicio de sesión de socio dado de baja: {$member->post_title} (ID: {$member_id})", 'Members/Members', $member_id );
@@ -121,6 +117,11 @@ class Member_Auth {
 				'member_baja',
 				__( 'Tu membresía está dada de baja. Si quieres reincorporarte, vuelve a darte de alta desde el formulario.', 'convoca-members' )
 			);
+		}
+
+		if ( ! is_user_logged_in() ) {
+			wp_set_current_user( $user->ID );
+			wp_set_auth_cookie( $user->ID, false, is_ssl() );
 		}
 
 		// Generate session token.
