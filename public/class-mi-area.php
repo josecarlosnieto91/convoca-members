@@ -135,7 +135,7 @@ class Mi_Area {
 		$plan_data  = CPT_Miembro::get_plan( $plan_key );
 		$estado     = get_post_meta( $member_id, '_convoca_estado_miembro', true );
 		$renovacion = get_post_meta( $member_id, '_convoca_fecha_renovacion', true );
-		$importe    = (float) ( get_post_meta( $member_id, '_convoca_importe_cuota', true ) ?: ( $plan_data['price'] ?? 0 ) );
+		$importe    = CPT_Miembro::precio_renovacion( (int) $member_id );
 
 		?>
 		<div class="convoca-renovar card glass">

@@ -1428,7 +1428,7 @@ class Rest_API {
 			return new \WP_REST_Response( array( 'error' => __( 'No se encontró el plan de la membresía.', 'convoca-members' ) ), 400 );
 		}
 
-		$importe = (float) ( get_post_meta( $member_id, '_convoca_importe_cuota', true ) ?: ( $plan_data['price'] ?? 0 ) );
+		$importe = CPT_Miembro::precio_renovacion( (int) $member_id );
 
 		if ( $importe <= 0 ) {
 			return new \WP_REST_Response( array( 'error' => __( 'Este plan no requiere pago.', 'convoca-members' ) ), 400 );
