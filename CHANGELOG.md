@@ -1,3 +1,10 @@
+## [2.16.26] — 2026-11-27
+
+### Corregido
+
+- **La renovación por horas deja constancia en el historial (#138).** Un asiento con horas, objetivo y
+  cambio de vigencia; sin pago ni recibo.
+
 ## [2.16.25] — 2026-11-27
 
 ### Corregido
