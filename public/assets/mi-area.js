@@ -187,10 +187,12 @@
       var self = this;
       var html = '' +
         '<h2>🔍 ' + (window.convTrans ? convTrans('Buscar actividades', 'convoca-members') : 'Buscar actividades') + '</h2>' +
+        '<label class="screen-reader-text" for="conv-search-input">' + (window.convTrans ? convTrans('Buscar actividades', 'convoca-members') : 'Buscar actividades') + '</label>' +
         '<div class="conv-search-wrap">' +
           '<input type="text" id="conv-search-input" class="conv-search-input" placeholder="' + (window.convTrans ? convTrans('Buscar por nombre, ubicación…', 'convoca-members') : 'Buscar por nombre, ubicación…') + '" />' +
-          '<button id="conv-search-btn" class="conv-search-btn">🔍</button>' +
+          '<button id="conv-search-btn" class="conv-search-btn" aria-label="' + (window.convTrans ? convTrans('Buscar actividades', 'convoca-members') : 'Buscar actividades') + '" title="' + (window.convTrans ? convTrans('Buscar actividades', 'convoca-members') : 'Buscar actividades') + '"><span aria-hidden="true">🔍</span></button>' +
         '</div>' +
+        '<div id="conv-search-status" class="screen-reader-text" role="status" aria-live="polite"></div>' +
         '<div id="conv-search-results" class="conv-search-results"></div>';
       this.$main.innerHTML = html;
 
@@ -198,20 +200,24 @@
       var input = conv.$('#conv-search-input');
       var btn = conv.$('#conv-search-btn');
       var results = conv.$('#conv-search-results');
+      var status = conv.$('#conv-search-status');
       if (!input) return;
 
       function doSearch() {
         var q = input.value.trim();
         if (q.length < 2) {
           results.innerHTML = '<p class="text-muted">' + (window.convTrans ? convTrans('Escribe al menos 2 caracteres.', 'convoca-members') : 'Escribe al menos 2 caracteres.') + '</p>';
+          status.textContent = window.convTrans ? convTrans('Escribe al menos 2 caracteres.', 'convoca-members') : 'Escribe al menos 2 caracteres.';
           return;
         }
         results.innerHTML = '<div class="conv-spinner"></div>';
+        status.textContent = window.convTrans ? convTrans('Buscando actividades…', 'convoca-members') : 'Buscando actividades…';
         fetch(window.convMiArea.apiUrl + '/search?q=' + encodeURIComponent(q) + '&type=activities&limit=20')
           .then(function(r) { return r.json(); })
           .then(function(data) {
             if (!data.results || data.results.length === 0) {
               results.innerHTML = '<p class="text-muted">' + (window.convTrans ? convTrans('No se encontraron resultados.', 'convoca-members') : 'No se encontraron resultados.') + '</p>';
+              status.textContent = window.convTrans ? convTrans('No se encontraron resultados.', 'convoca-members') : 'No se encontraron resultados.';
               return;
             }
             var rows = '';
@@ -224,9 +230,14 @@
               '</div>';
             });
             results.innerHTML = rows;
+            var n = data.results.length;
+            status.textContent = window.convTrans
+              ? convTrans(n === 1 ? '1 resultado' : n + ' resultados', 'convoca-members')
+              : (n === 1 ? '1 resultado' : n + ' resultados');
           })
           .catch(function() {
             results.innerHTML = '<p class="text-danger">' + (window.convTrans ? convTrans('Error al buscar.', 'convoca-members') : 'Error al buscar.') + '</p>';
+            status.textContent = window.convTrans ? convTrans('Error al buscar.', 'convoca-members') : 'Error al buscar.';
           });
       }
 

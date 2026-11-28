@@ -1,3 +1,10 @@
+## [2.16.24] — 2026-11-27
+
+### Corregido
+
+- **Buscador de Mi Área accesible (#141).** Etiqueta `for` en el campo, nombre accesible en el botón
+  y región `role="status"` que anuncia la búsqueda, el número de resultados o la ausencia de ellos.
+
 ## [2.16.23] — 2026-11-27
 
 ### Corregido
