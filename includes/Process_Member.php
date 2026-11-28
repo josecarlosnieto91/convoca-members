@@ -368,6 +368,14 @@ class Process_Member {
 
 		// 7. Create Post with transaction
 		global $wpdb;
+		// Cerrojo por persona: dos altas simultáneas con el mismo DNI o correo se serializan antes
+		// de abrir la transacción. `FOR UPDATE` sobre una fila que aún no existe no basta entre
+		// conexiones distintas (#134).
+		$alta_lock = 'convoca_alta_' . md5( strtoupper( $dni ) . '|' . strtolower( $email ) );
+		if ( ! \Convoca\Core\Utils::acquire_lock( $alta_lock, 60 ) ) {
+			return new \WP_Error( 'busy', __( 'Hay otra alta en curso para estos datos. Inténtalo de nuevo en unos segundos.', 'convoca-members' ), array( 'status' => 409 ) );
+		}
+
 		$wpdb->query( 'START TRANSACTION' );
 
 		try {
@@ -525,6 +533,8 @@ class Process_Member {
 			$wpdb->query( 'ROLLBACK' );
 			\Convoca\Core\Logger::error( 'Excepción durante registro de miembro: ' . $e->getMessage(), 'Members' );
 			return new \WP_Error( 'create_failed', __( 'Error inesperado al crear el registro.', 'convoca-members' ) );
+		} finally {
+			\Convoca\Core\Utils::release_lock( $alta_lock );
 		}
 
 		// 9. Aviso de creación: la ficha ya existe.
