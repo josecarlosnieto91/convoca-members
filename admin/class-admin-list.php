@@ -311,25 +311,11 @@ class Admin_List extends \WP_List_Table {
 			$args['meta_query'] = $mq;
 		}
 
-		$query = new \WP_Query( $args );
+		$sin_filtros = ! $search && ! $estado_filter && ! $tipo_filter && ! $plan_filter && ! $cuota_filter;
+		$cache_key   = 'convoca_list_members_' . Listado_Cache::version() . '_' . md5( (string) wp_json_encode( $args ) );
 
-		$this->items = (array) $query->posts;
-
-		$this->set_pagination_args(
-			array(
-				'total_items' => $query->found_posts,
-				'per_page'    => $per_page,
-				'total_pages' => $query->max_num_pages,
-			)
-		);
-
-		// Caché de 5 minutos si no hay búsqueda ni filtros, para no castigar la base en cada página.
-		// La clave lleva una VERSIÓN que se sube al crear, editar o borrar: sin ella, la ficha
-		// eliminada seguía en el listado cinco minutos y los contadores —que van en vivo— decían 0
-		// mientras la tabla mostraba la fila.
-		$cache_key = 'convoca_list_members_' . Listado_Cache::version() . '_' . md5( (string) wp_json_encode( $args ) );
-		$cached    = ! $search && ! $estado_filter && ! $tipo_filter && ! $plan_filter && ! $cuota_filter ? get_transient( $cache_key ) : false;
-
+		// Primero la caché: con ella caliente no se ejecuta la consulta completa.
+		$cached = $sin_filtros ? get_transient( $cache_key ) : false;
 		if ( $cached ) {
 			$this->items = $cached['items'];
 			$this->set_pagination_args( $cached['pagination'] );
@@ -345,7 +331,7 @@ class Admin_List extends \WP_List_Table {
 		);
 		$this->set_pagination_args( $pagination );
 
-		if ( ! $search && ! $estado_filter && ! $tipo_filter && ! $plan_filter && ! $cuota_filter ) {
+		if ( $sin_filtros ) {
 			set_transient(
 				$cache_key,
 				array(

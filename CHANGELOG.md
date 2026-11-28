@@ -1,3 +1,10 @@
+## [2.16.9] — 2026-11-27
+
+### Corregido
+
+- **El listado refleja al instante las altas y ediciones (#127).** La caché se consulta antes de la
+  consulta completa y se invalida al crear, editar, cambiar de estado o borrar una ficha.
+
 ## [2.16.8] — 2026-11-27
 
 ### Corregido

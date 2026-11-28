@@ -139,6 +139,7 @@ class Estados {
 
 		// Save new state.
 		update_post_meta( $post_id, '_convoca_estado_miembro', $nuevo );
+		Listado_Cache::invalidar();
 
 		// Record timestamp for pending payment state (for cron reminders).
 		if ( $nuevo === 'pendiente_pago' ) {
