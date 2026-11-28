@@ -315,7 +315,6 @@
           <div class="conv-meta-grid">
             <div class="meta-item"><strong>Nombre:</strong> <span>${profile.nombre}</span></div>
             <div class="meta-item"><strong>Email:</strong> <span>${profile.email}</span>${profile.email_pendiente ? ' <em class="text-muted">(cambio pendiente de confirmar)</em>' : ''}</div>
-            <div class="meta-item"><strong>Código de Acceso:</strong> <span>${profile.codigo}</span></div>
             <div class="meta-item"><strong>Estado:</strong> ${this.formatEstado(profile.estado)}</div>
             ${renewalRow}
             <div class="meta-item"><strong>Dirección:</strong> <span>${profile.direccion || '—'}</span></div>

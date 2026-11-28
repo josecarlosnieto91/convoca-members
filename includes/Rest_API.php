@@ -672,9 +672,6 @@ class Rest_API {
 			return new \WP_REST_Response( array( 'error' => __( 'Miembro no encontrado.', 'convoca-members' ) ), 404 );
 		}
 
-		$access_code = get_post_meta( $member_id, '_convoca_access_code', true );
-		$masked_code = ! empty( $access_code ) ? substr( $access_code, 0, 4 ) . '****' : '';
-
 		$fecha_baja = get_post_meta( $member_id, '_convoca_fecha_baja', true );
 		$estado     = get_post_meta( $member_id, '_convoca_estado_miembro', true );
 
@@ -694,7 +691,6 @@ class Rest_API {
 				'telefono'            => get_post_meta( $member_id, '_convoca_telefono', true ),
 				'telefono_verificado' => '1' === get_post_meta( $member_id, '_convoca_telefono_verificado', true ),
 				'cumpleanos'          => get_post_meta( $member_id, '_convoca_cumpleanos', true ),
-				'codigo'              => $masked_code,
 				'estado'              => $estado,
 				'plan'                => get_post_meta( $member_id, '_convoca_plan_label', true ) ?: get_post_meta( $member_id, '_convoca_plan', true ),
 				'forma_pago'          => get_post_meta( $member_id, '_convoca_forma_pago', true ),

@@ -93,7 +93,7 @@ class CPT_Miembro {
 		'msg_bienvenida',       // boolean — sent?
 		'msg_renovacion',       // boolean — sent?
 		'avisos_generales',     // free text.
-		'access_code',          // member portal access code.
+		'access_code',          // legado: exportación e importación; no es credencial.
 	);
 
 	/** Status for payments (cuotas). */

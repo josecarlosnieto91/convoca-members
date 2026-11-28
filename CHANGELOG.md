@@ -1,3 +1,10 @@
+## [2.16.22] — 2026-11-27
+
+### Corregido
+
+- **El código de acceso legado deja de presentarse como credencial (#143).** Se retira del panel y
+  de `GET /me`; la meta se conserva solo para exportación e importación heredadas.
+
 ## [2.16.21] — 2026-11-27
 
 ### Corregido

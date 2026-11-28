@@ -134,9 +134,7 @@ final class RestApiLecturasTest extends TestCase {
 		$this->assertSame( 'Ada Lovelace', $datos['nombre'] );
 		$this->assertSame( 'ada@example.test', $datos['email'] );
 
-		$codigo = (string) ( $datos['codigo'] ?? '' );
-		$this->assertStringContainsString( '****', (string) $codigo, 'el código no puede salir entero' );
-		$this->assertStringNotContainsString( '5678', (string) $codigo, 'y menos la parte final' );
+		$this->assertArrayNotHasKey( 'codigo', $datos, 'el código legado no se presenta como credencial' );
 	}
 
 	/**
