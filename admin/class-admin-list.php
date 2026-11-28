@@ -355,7 +355,8 @@ class Admin_List extends \WP_List_Table {
 		}
 		?>
 		<div class="alignleft actions">
-			<select name="estado_filter">
+			<label class="screen-reader-text" for="convoca-filter-estado">Estado del socio</label>
+			<select id="convoca-filter-estado" name="estado_filter">
 				<option value="">
 					<?php esc_html_e( 'Todos los estados', 'convoca-members' ); ?>
 				</option>
@@ -368,7 +369,8 @@ class Admin_List extends \WP_List_Table {
 					</option>
 				<?php endforeach; ?>
 			</select>
-			<select name="tipo_filter">
+			<label class="screen-reader-text" for="convoca-filter-tipo">Tipo de socio</label>
+			<select id="convoca-filter-tipo" name="tipo_filter">
 				<option value="">
 					<?php esc_html_e( 'Todos los tipos', 'convoca-members' ); ?>
 				</option>
@@ -376,7 +378,8 @@ class Admin_List extends \WP_List_Table {
 				<option value="voluntario" <?php selected( $get_data['tipo_filter'] ?? '', 'voluntario' ); ?>><?php esc_html_e( 'Voluntario/a', 'convoca-members' ); ?></option>
 				<option value="socio_voluntario" <?php selected( $get_data['tipo_filter'] ?? '', 'socio_voluntario' ); ?>><?php esc_html_e( 'Socio + Vol.', 'convoca-members' ); ?></option>
 			</select>
-			<select name="plan_filter">
+			<label class="screen-reader-text" for="convoca-filter-plan">Plan</label>
+			<select id="convoca-filter-plan" name="plan_filter">
 				<option value="">
 					<?php esc_html_e( 'Todos los planes', 'convoca-members' ); ?>
 				</option>
@@ -386,7 +389,8 @@ class Admin_List extends \WP_List_Table {
 					</option>
 				<?php endforeach; ?>
 			</select>
-			<select name="cuota_filter">
+			<label class="screen-reader-text" for="convoca-filter-cuota">Estado de la cuota</label>
+			<select id="convoca-filter-cuota" name="cuota_filter">
 				<option value="">
 					<?php esc_html_e( 'Estado cuota', 'convoca-members' ); ?>
 				</option>
@@ -396,13 +400,15 @@ class Admin_List extends \WP_List_Table {
 					</option>
 				<?php endforeach; ?>
 			</select>
-			<select name="privacidad_filter">
+			<label class="screen-reader-text" for="convoca-filter-privacidad">Privacidad</label>
+			<select id="convoca-filter-privacidad" name="privacidad_filter">
 				<option value="">
 					<?php esc_html_e( 'Privacidad (todas)', 'convoca-members' ); ?>
 				</option>
 				<option value="supresion" <?php selected( $get_data['privacidad_filter'] ?? '', 'supresion' ); ?>><?php esc_html_e( 'Con supresión pedida', 'convoca-members' ); ?></option>
 			</select>
-			<select name="consentimiento_filter">
+			<label class="screen-reader-text" for="convoca-filter-consentimiento">Consentimiento</label>
+			<select id="convoca-filter-consentimiento" name="consentimiento_filter">
 				<option value="">
 					<?php esc_html_e( 'Consentimiento (todos)', 'convoca-members' ); ?>
 				</option>
