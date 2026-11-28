@@ -212,6 +212,60 @@ final class AdminWebhooksTest extends TestCase {
 	}
 
 	/**
+	 * Probar una URL caída no puede decir que fue bien.
+	 */
+	public function test_probar_una_url_caida_avisa_del_fallo(): void {
+		$GLOBALS['_wp_stores']['options']['convoca_webhooks'] = array(
+			array(
+				'id'     => 'abc',
+				'url'    => 'https://destino.example.test/hook',
+				'secret' => 'x',
+				'events' => array( 'test.ping' ),
+				'label'  => 'Uno',
+				'active' => true,
+			),
+		);
+		$GLOBALS['_wp_stores']['http_response'] = array( 'response' => array( 'code' => 500 ) );
+		$_GET = array( 'convoca_wh_action' => 'test', 'webhook_id' => 'abc', '_wpnonce' => 'bueno' );
+
+		try {
+			$this->ejecutar();
+			$this->fail( 'debía redirigir' );
+		} catch ( \RuntimeException $r ) {
+			$this->assertStringContainsString( 'msg=test_failed', $r->getMessage() );
+		} finally {
+			unset( $GLOBALS['_wp_stores']['http_response'] );
+		}
+	}
+
+	/**
+	 * Y una URL que responde 200 sí se anuncia como enviada.
+	 */
+	public function test_probar_una_url_viva_anuncia_el_envio(): void {
+		$GLOBALS['_wp_stores']['options']['convoca_webhooks'] = array(
+			array(
+				'id'     => 'abc',
+				'url'    => 'https://destino.example.test/hook',
+				'secret' => 'x',
+				'events' => array( 'test.ping' ),
+				'label'  => 'Uno',
+				'active' => true,
+			),
+		);
+		$GLOBALS['_wp_stores']['http_response'] = array( 'response' => array( 'code' => 200 ) );
+		$_GET = array( 'convoca_wh_action' => 'test', 'webhook_id' => 'abc', '_wpnonce' => 'bueno' );
+
+		try {
+			$this->ejecutar();
+			$this->fail( 'debía redirigir' );
+		} catch ( \RuntimeException $r ) {
+			$this->assertStringContainsString( 'msg=tested', $r->getMessage() );
+		} finally {
+			unset( $GLOBALS['_wp_stores']['http_response'] );
+		}
+	}
+
+	/**
 	 * Borrar quita el webhook.
 	 */
 	public function test_borrar(): void {
