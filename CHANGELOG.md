@@ -1,3 +1,10 @@
+## [2.16.40] — 2026-11-27
+
+### Corregido
+
+- **El enlace de renovación se conserva (#128).** La URL firmada se guarda con el pago y se devuelve
+  byte a byte en las siguientes pulsaciones, en vez de regenerar la firma con otro timestamp.
+
 ## [2.16.39] — 2026-11-27
 
 ### Corregido
