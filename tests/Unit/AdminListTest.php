@@ -54,9 +54,63 @@ final class AdminListTest extends TestCase {
 	}
 
 	/**
+	 * La página 2 conserva el total y los enlaces (#126).
+	 */
+	public function test_la_paginacion_sobrevive_a_la_segunda_pagina(): void {
+		for ( $i = 1; $i <= 21; $i++ ) {
+			$post              = new \WP_Post();
+			$post->ID          = 800 + $i;
+			$post->post_type   = 'miembro';
+			$post->post_status = 'publish';
+			$post->post_title  = 'Socia ' . $i;
+			$GLOBALS['_wp_stores']['posts'][ 800 + $i ] = $post;
+		}
+		$_GET = $_REQUEST = array( 'paged' => 2 );
+
+		$listado = new Admin_List();
+		$listado->prepare_items();
+		$args = $listado->get_pagination_args();
+
+		$this->assertSame( 21, $args['total_items'] );
+		$this->assertSame( 2, $args['total_pages'] );
+	}
+
+	/**
+	 * La consulta del listado no puede saltarse el recuento en ninguna página.
+	 */
+	public function test_la_consulta_no_desactiva_el_recuento(): void {
+		$src = (string) file_get_contents( dirname( __DIR__, 2 ) . '/admin/class-admin-list.php' );
+
+		$this->assertStringNotContainsString( 'no_found_rows', $src, 'sin recuento no hay enlaces de paginación' );
+	}
+
+	/**
+	 * Con 45 fichas son tres páginas.
+	 */
+	public function test_cuarenta_y_cinco_fichas_dan_tres_paginas(): void {
+		for ( $i = 1; $i <= 45; $i++ ) {
+			$post              = new \WP_Post();
+			$post->ID          = 900 + $i;
+			$post->post_type   = 'miembro';
+			$post->post_status = 'publish';
+			$post->post_title  = 'Socia ' . $i;
+			$GLOBALS['_wp_stores']['posts'][ 900 + $i ] = $post;
+		}
+		$_GET = $_REQUEST = array();
+
+		$listado = new Admin_List();
+		$listado->prepare_items();
+		$args = $listado->get_pagination_args();
+
+		$this->assertSame( 3, $args['total_pages'] );
+	}
+
+	/**
 	 * La caché se mira antes de consultar y crear una ficha la invalida (#127).
 	 */
 	public function test_la_cache_evita_la_consulta_y_se_invalida_al_guardar(): void {
+		$GLOBALS['_wp_stores']['posts']      = array();
+		$GLOBALS['_wp_stores']['transients'] = array();
 		$post             = new \WP_Post();
 		$post->ID         = 700;
 		$post->post_type  = 'miembro';
