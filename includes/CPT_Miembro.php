@@ -374,6 +374,33 @@ class CPT_Miembro {
 	}
 
 	/**
+	 * Precio que se cobra al renovar: la tarifa vigente del plan.
+	 *
+	 * El panel y el cron deben cobrar lo mismo. Se usa el precio actual del plan y, solo si el
+	 * plan ya no existe o no tiene precio, el importe guardado en la ficha. Un sitio puede fijar
+	 * una diferencia expresa con el filtro `convoca_members_precio_renovacion` (#137).
+	 *
+	 * @param int $post_id Ficha.
+	 * @return float
+	 */
+	public static function precio_renovacion( int $post_id ): float {
+		$plan   = self::get_plan( (string) get_post_meta( $post_id, '_convoca_plan', true ) );
+		$precio = (float) ( $plan['price'] ?? 0 );
+		if ( $precio <= 0 ) {
+			$precio = (float) get_post_meta( $post_id, '_convoca_importe_cuota', true );
+		}
+
+		/**
+		 * Permite conservar una tarifa o aplicar una diferencia expresa.
+		 *
+		 * @param float      $precio  Precio vigente.
+		 * @param int        $post_id Ficha.
+		 * @param array|null $plan    Plan.
+		 */
+		return (float) apply_filters( 'convoca_members_precio_renovacion', $precio, $post_id, $plan );
+	}
+
+	/**
 	 * Get plan data by key.
 	 *
 	 * Acepta también la ETIQUETA del plan y la clave con otra caja: los socios se han guardado en

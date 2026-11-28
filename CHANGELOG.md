@@ -1,3 +1,11 @@
+## [2.16.27] — 2026-11-27
+
+### Corregido
+
+- **Panel y cron cobran la misma tarifa al renovar (#137).** Ambos usan la tarifa vigente del plan
+  mediante `CPT_Miembro::precio_renovacion()`; el filtro `convoca_members_precio_renovacion` permite
+  conservar una tarifa o aplicar una diferencia expresa.
+
 ## [2.16.26] — 2026-11-27
 
 ### Corregido

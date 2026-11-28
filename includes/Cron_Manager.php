@@ -411,7 +411,7 @@ class Cron_Manager {
 			$token              = \Convoca\Gateway\Payment_Handler::get_member_token( $member_id );
 			$needs_tokenization = empty( $token );
 
-			$amount_cents     = (int) round( $plan_data['price'] * 100 );
+			$amount_cents     = (int) round( CPT_Miembro::precio_renovacion( $member_id ) * 100 );
 			$product_desc     = mb_substr( 'RENOVACIÓN ' . strtoupper( get_bloginfo( 'name' ) ) . ' - ' . strtoupper( $plan_data['label'] ), 0, 125 );
 			$members_settings = get_option( 'convoca_members_settings', array() );
 			$max_attempts     = max( 1, (int) ( $members_settings['auto_renew_max_attempts'] ?? 3 ) );
@@ -944,7 +944,7 @@ class Cron_Manager {
 
 		$plan_key  = get_post_meta( $post_id, '_convoca_plan', true );
 		$plan_data = CPT_Miembro::get_plan( $plan_key );
-		$importe   = (float) ( get_post_meta( $post_id, '_convoca_importe_cuota', true ) ?: ( $plan_data ? $plan_data['price'] : 0 ) );
+		$importe   = CPT_Miembro::precio_renovacion( $post_id );
 
 		$can_pay = $importe > 0 && \Convoca\Core\Features::is_gateway_active() && function_exists( 'Convoca\Gateway\convoca_gateway_create_payment' );
 
