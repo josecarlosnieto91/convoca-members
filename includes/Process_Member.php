@@ -539,7 +539,6 @@ class Process_Member {
 		}
 
 		// 9. Aviso de creación: la ficha ya existe.
-		\Convoca\Core\Utils::do_action( 'convoca_members_created', 'convoca_miembro_creado', $post_id );
 
 		$resultado = array(
 			'id'       => $post_id,
@@ -547,6 +546,9 @@ class Process_Member {
 			'estado'   => $estado,
 			'redirect' => add_query_arg( 'members_success', '1', home_url() ),
 		);
+
+		// Core espera id y datos del alta (dos argumentos).
+		\Convoca\Core\Utils::do_action( 'convoca_members_created', 'convoca_miembro_creado', $post_id, $resultado );
 
 		// 10. Pedido de pago ANTES del correo: el concepto de la transferencia es el código del pedido,
 		// no el nombre de la persona (#101). El correo se manda después, cuando ya hay `_convoca_pago_id`.
