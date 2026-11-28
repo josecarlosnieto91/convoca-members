@@ -1,3 +1,11 @@
+## [2.16.36] — 2026-11-27
+
+### Corregido
+
+- **Errores del alta asociados a su campo y foco al cambiar de paso (#130).** Un solo aviso por
+  campo con `id` y `aria-describedby`; al avanzar, el foco va al título del paso y se anuncia
+  «Paso N de 4».
+
 ## [2.16.35] — 2026-11-27
 
 ### Corregido
