@@ -37,6 +37,10 @@
       });
       if (progress) progress.setAttribute('aria-valuenow', n);
       if (n === 4) populateSummary();
+      const status = conv.$('#conv-step-status', altaWrap);
+      if (status) status.textContent = 'Paso ' + n + ' de ' + steps.length;
+      const title = conv.$('#conv-step-title-' + n, altaWrap);
+      if (title) title.focus({ preventScroll: true });
       altaWrap.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
 
@@ -88,6 +92,8 @@
           const fecha = new Date(input.value + 'T00:00:00');
           if (fecha > new Date()) conv.showFieldError(field, 'La fecha de nacimiento no puede ser futura.');
         }
+        vincularAviso(input, field);
+        if (!field.classList.contains('has-error')) input.removeAttribute('aria-invalid');
       });
       input.addEventListener('input', function () {
         const field = input.closest('.convoca-field');
@@ -215,13 +221,14 @@
         obligatorios.forEach(f => {
           const field = f.closest('.convoca-field');
           const falta = !f.value || (f.pattern && !new RegExp(f.pattern).test(f.value));
-          if (field) field.classList.toggle('has-error', falta);
           if (falta) {
-            f.setAttribute('aria-invalid', 'true');
+            marcarCampo(f, 'Este campo es obligatorio.');
             ok = false;
             if (!primerFallo) primerFallo = f;
           } else {
+            if (field) conv.clearFieldError(field);
             f.removeAttribute('aria-invalid');
+            f.removeAttribute('aria-describedby');
           }
         });
 
@@ -554,20 +561,27 @@
   }
 
   /** Marca un campo, le pone el aviso y devuelve el elemento. */
+  function vincularAviso(el, field) {
+    if (!el || !field) return;
+    field.querySelectorAll('.convoca-field-error').forEach(n => n.remove());
+    const aviso = field.querySelector('.convoca-error-msg');
+    if (!aviso || !aviso.textContent.trim()) {
+      el.removeAttribute('aria-describedby');
+      return;
+    }
+    if (!aviso.id) aviso.id = 'conv-error-' + (el.id || el.name || 'campo');
+    el.setAttribute('aria-describedby', aviso.id);
+    aviso.setAttribute('aria-live', 'polite');
+  }
+
   function marcarCampo(el, mensaje) {
     if (!el) return null;
     const field = el.closest('.convoca-field') || el.closest('.convoca-check-group');
-    if (field) field.classList.add('has-error');
     el.setAttribute('aria-invalid', 'true');
-    if (field && mensaje) {
-      let aviso = field.querySelector('.convoca-field-error');
-      if (!aviso) {
-        aviso = document.createElement('span');
-        aviso.className = 'convoca-field-error';
-        aviso.setAttribute('role', 'alert');
-        field.appendChild(aviso);
-      }
-      aviso.textContent = mensaje;
+    if (field) {
+      conv.clearFieldError(field);
+      if (mensaje) conv.showFieldError(field, mensaje);
+      vincularAviso(el, field);
     }
     return el;
   }

@@ -64,8 +64,8 @@ class ValidacionPaso2Test extends TestCase {
 	public function test_marca_avisa_y_lleva_el_foco(): void {
 		$js = $this->js();
 
-		$this->assertStringContainsString( "field.classList.toggle('has-error', falta)", $js, 'El campo se marca en rojo (y su aviso se ve)' );
-		$this->assertStringContainsString( "f.setAttribute('aria-invalid', 'true')", $js, 'Y se anuncia a quien usa lector de pantalla' );
+		$this->assertStringContainsString( "marcarCampo(f, 'Este campo es obligatorio.')", $js, 'El campo se marca en rojo con su aviso único' );
+		$this->assertStringContainsString( "el.setAttribute('aria-invalid', 'true')", $js, 'Y se anuncia a quien usa lector de pantalla' );
 		$this->assertStringContainsString( 'primerFallo.focus()', $js, 'Con el foco en el primero que falta' );
 		$this->assertStringContainsString( 'Revisa los campos marcados', $js, 'Y un aviso que dice qué mirar' );
 	}

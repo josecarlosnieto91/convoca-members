@@ -84,6 +84,7 @@ endif;
 	<?php endif; ?>
 
 	<!-- Step indicator -->
+	<div id="conv-step-status" class="screen-reader-text" role="status" aria-live="polite"></div>
 	<div class="conv-step-indicator" role="progressbar" aria-label="<?php esc_attr_e( 'Progreso del formulario', 'convoca-members' ); ?>" aria-valuenow="1"
 		aria-valuemin="1" aria-valuemax="4">
 		<div class="conv-step-dot active" data-step="1" aria-label="<?php esc_attr_e( 'Paso 1: Plan', 'convoca-members' ); ?>">1</div>
@@ -128,7 +129,7 @@ endif;
 
 		<!-- ═══ STEP 1: Plan ═══ -->
 		<div class="conv-form-step active" data-step="1">
-			<h2><?php esc_html_e( 'Paso 1 — Elige tu forma de colaborar', 'convoca-members' ); ?></h2>
+			<h2 id="conv-step-title-1" tabindex="-1"><?php esc_html_e( 'Paso 1 — Elige tu forma de colaborar', 'convoca-members' ); ?></h2>
 			<p><?php esc_html_e( 'Todas las cuotas se abonan anualmente. Con horas de voluntariado puedes renovar sin pagar a partir del segundo año.', 'convoca-members' ); ?></p>
 
 			<?php
@@ -230,7 +231,7 @@ endif;
 
 		<!-- ═══ STEP 2: Personal Data ═══ -->
 		<div class="conv-form-step" data-step="2">
-			<h2><?php esc_html_e( 'Paso 2 — Tus datos personales', 'convoca-members' ); ?></h2>
+			<h2 id="conv-step-title-2" tabindex="-1"><?php esc_html_e( 'Paso 2 — Tus datos personales', 'convoca-members' ); ?></h2>
 
 			<div class="convoca-grid-2">
 				<div class="convoca-field">
@@ -326,7 +327,7 @@ endif;
 
 		<!-- ═══ STEP 3: Payment + RGPD ═══ -->
 		<div class="conv-form-step" data-step="3">
-			<h2><?php esc_html_e( 'Paso 3 — Tu cuota', 'convoca-members' ); ?></h2>
+			<h2 id="conv-step-title-3" tabindex="-1"><?php esc_html_e( 'Paso 3 — Tu cuota', 'convoca-members' ); ?></h2>
 			<p><?php esc_html_e( 'La cuota del primer año se abona siempre: es lo que te hace socio/a. Si además te comprometes a hacer horas de voluntariado, a partir del año que viene podrás renovar sin pagar.', 'convoca-members' ); ?></p>
 
 			<!-- El modo económico es el único camino del alta: los métodos de pago van
@@ -465,7 +466,7 @@ endif;
 
 		<!-- ═══ STEP 4: Summary ═══ -->
 		<div class="conv-form-step" data-step="4">
-			<h2><?php esc_html_e( 'Paso 4 — Revisa tu alta', 'convoca-members' ); ?></h2>
+			<h2 id="conv-step-title-4" tabindex="-1"><?php esc_html_e( 'Paso 4 — Revisa tu alta', 'convoca-members' ); ?></h2>
 			<p><?php esc_html_e( 'Verifica que todo esté bien antes de confirmar.', 'convoca-members' ); ?></p>
 
 			<table class="conv-summary-table">
