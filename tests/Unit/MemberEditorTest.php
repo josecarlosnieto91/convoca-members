@@ -215,6 +215,7 @@ final class MemberEditorTest extends TestCase {
 		$this->assertSame( 'activo', $meta['_convoca_estado_miembro'] );
 		$this->assertSame( 'activa', $meta['_convoca_estado_cuota'] );
 		$this->assertNotSame( '', (string) $meta['_convoca_numero_socio'], 'con número de socio' );
+		$this->assertTrue( \Convoca\Members\Roles_Miembro::es_socio( 60 ), 'y con la condición de socio' );
 	}
 
 	/**

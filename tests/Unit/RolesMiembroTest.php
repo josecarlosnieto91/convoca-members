@@ -192,6 +192,15 @@ class RolesMiembroTest extends TestCase {
 		$this->assertSame( 'pago', Roles_Miembro::cumplimiento( self::ID ) );
 	}
 
+	public function test_socio_por_activacion_manual(): void {
+		$this->con_usuario();
+
+		$this->assertTrue( Roles_Miembro::registrar_socio_manual( self::ID ) );
+
+		$this->assertTrue( Roles_Miembro::es_socio( self::ID ) );
+		$this->assertSame( 'manual', Roles_Miembro::cumplimiento( self::ID ) );
+	}
+
 	public function test_cumplimiento_por_horas(): void {
 		Roles_Miembro::anadir( self::ID, Roles_Miembro::SOCIO );
 
