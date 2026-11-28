@@ -30,12 +30,14 @@ final class ProcessMemberReactivacionTest extends TestCase {
 	 */
 	protected function setUp(): void {
 		$this->limpiar();
+		add_filter( 'convoca_cifrado_clave', static fn(): string => base64_encode( str_repeat( 'k', 32 ) ) );
 	}
 
 	/**
 	 * Limpia el caso.
 	 */
 	protected function tearDown(): void {
+		remove_all_filters( 'convoca_cifrado_clave' );
 		$this->limpiar();
 	}
 

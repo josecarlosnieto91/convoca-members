@@ -297,9 +297,9 @@ final class EditorDeSocioTest extends TestCase {
 		$meta = $GLOBALS['_wp_stores']['post_meta'][ $id ] ?? array();
 		$this->assertSame( 'Ada Lovelace', $GLOBALS['_wp_stores']['posts'][ $id ]->post_title );
 		$this->assertSame( 'ada@example.test', $meta['_convoca_email'] ?? '' );
-		$this->assertSame( '00000000T', $meta['_convoca_dni'] ?? '' );
+		$this->assertSame( '00000000T', \Convoca\Members\Datos_Socio::leer_meta( $id, 'dni' ) );
 		$this->assertSame( 'Oviedo', $meta['_convoca_municipio'] ?? '' );
-		$this->assertStringNotContainsString( '<b>', (string) ( $meta['_convoca_observaciones'] ?? '' ), 'el texto libre va saneado' );
+		$this->assertStringNotContainsString( '<b>', (string) \Convoca\Members\Datos_Socio::leer_meta( $id, 'observaciones' ), 'el texto libre va saneado' );
 	}
 
 	/**

@@ -88,7 +88,8 @@ final class DuplicadosDeImportacionTest extends TestCase {
 
 		$GLOBALS['_wp_stores']['post_meta'][ $id ] = array( '_convoca_email' => $email );
 		if ( '' !== $dni ) {
-			$GLOBALS['_wp_stores']['post_meta'][ $id ]['_convoca_dni'] = $dni;
+			$GLOBALS['_wp_stores']['post_meta'][ $id ]['_convoca_dni']     = $dni;
+			$GLOBALS['_wp_stores']['post_meta'][ $id ]['_convoca_dni_idx'] = \Convoca\Members\Datos_Socio::indice( $dni );
 		}
 	}
 

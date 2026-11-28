@@ -1,4 +1,10 @@
 <?php
+
+// Clave de pruebas: el core falla cerrado sin ella (core#65).
+if ( ! defined( 'CONVOCA_ENCRYPTION_KEY' ) ) {
+	define( 'CONVOCA_ENCRYPTION_KEY', base64_encode( str_repeat( 'k', 32 ) ) );
+}
+
 /**
  * Unit test bootstrap — standalone, no WordPress needed.
  *

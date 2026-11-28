@@ -108,6 +108,9 @@ final class BusquedaYFiltrosListadoTest extends TestCase {
 			'post_title'  => $titulo,
 			'post_date'   => '2026-01-01 00:00:00',
 		);
+		if ( ! empty( $meta['_convoca_dni'] ) ) {
+			$meta['_convoca_dni_idx'] = \Convoca\Members\Datos_Socio::indice( (string) $meta['_convoca_dni'] );
+		}
 		$GLOBALS['_wp_stores']['post_meta'][ $id ] = $meta;
 	}
 

@@ -102,6 +102,9 @@ final class RestApiBusquedaTest extends TestCase {
 			'post_date'    => $fecha,
 			'post_content' => '',
 		);
+		if ( ! empty( $meta['_convoca_dni'] ) ) {
+			$meta['_convoca_dni_idx'] = \Convoca\Members\Datos_Socio::indice( (string) $meta['_convoca_dni'] );
+		}
 		$GLOBALS['_test_posts'][ $id ]             = $post;
 		$GLOBALS['_wp_stores']['posts'][ $id ]     = $post;
 		$GLOBALS['_wp_stores']['post_meta'][ $id ] = $meta;

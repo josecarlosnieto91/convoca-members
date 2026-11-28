@@ -83,6 +83,9 @@ final class ImportCsvTest extends TestCase {
 		$post->post_status = 'publish';
 		$post->post_title  = $meta['_convoca_email'] ?? 'Socio';
 
+		if ( ! empty( $meta['_convoca_dni'] ) ) {
+			$meta['_convoca_dni_idx'] = \Convoca\Members\Datos_Socio::indice( (string) $meta['_convoca_dni'] );
+		}
 		$GLOBALS['_wp_stores']['posts'][ $id ]     = $post;
 		$GLOBALS['_wp_stores']['post_meta'][ $id ] = $meta;
 	}

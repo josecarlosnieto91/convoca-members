@@ -144,7 +144,7 @@ final class ProcessMemberAltaTest extends TestCase {
 		$this->assertSame( 'publish', (string) get_post( $id )->post_status );
 
 		// El DNI se normaliza: en mayúsculas y sin espacios ni guiones (si no, no casa en las búsquedas).
-		$this->assertSame( '00000000T', (string) get_post_meta( $id, '_convoca_dni', true ) );
+		$this->assertSame( '00000000T', (string) \Convoca\Members\Datos_Socio::leer_meta( $id, 'dni' ) );
 		$this->assertSame( 'ada@example.test', (string) get_post_meta( $id, '_convoca_email', true ) );
 		$this->assertSame( 'bronze', (string) get_post_meta( $id, '_convoca_plan', true ) );
 		// Ojo con los nombres, que se cruzan: `forma_pago` es **qué** se paga (cuota o voluntariado) y el método
@@ -161,7 +161,7 @@ final class ProcessMemberAltaTest extends TestCase {
 		// Los datos de contacto y de sitio: sin ellos no se puede avisar al socio ni agruparlo por municipio.
 		$this->assertSame( '600000000', (string) get_post_meta( $id, '_convoca_telefono', true ) );
 		$this->assertSame( 'Oviedo', (string) get_post_meta( $id, '_convoca_municipio', true ) );
-		$this->assertSame( 'Calle de prueba 1', (string) get_post_meta( $id, '_convoca_direccion', true ) );
+		$this->assertSame( 'Calle de prueba 1', (string) \Convoca\Members\Datos_Socio::leer_meta( $id, 'direccion' ) );
 		// Y el alias heredado del plan, que todavía leen trozos antiguos del plugin.
 		$this->assertSame( 'bronze', (string) get_post_meta( $id, '_convoca_cuota', true ), 'alias heredado de la cuota' );
 	}

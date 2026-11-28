@@ -118,7 +118,8 @@ final class ImportarUnaFilaTest extends TestCase {
 		);
 		$GLOBALS['_wp_stores']['post_meta'][ $id ] = array( '_convoca_email' => $email );
 		if ( '' !== $dni ) {
-			$GLOBALS['_wp_stores']['post_meta'][ $id ]['_convoca_dni'] = $dni;
+			$GLOBALS['_wp_stores']['post_meta'][ $id ]['_convoca_dni']     = $dni;
+			$GLOBALS['_wp_stores']['post_meta'][ $id ]['_convoca_dni_idx'] = \Convoca\Members\Datos_Socio::indice( $dni );
 		}
 	}
 
@@ -216,7 +217,7 @@ final class ImportarUnaFilaTest extends TestCase {
 
 		$meta = $GLOBALS['_wp_stores']['post_meta'][ $r ] ?? array();
 		$this->assertSame( 'ada@example.test', $meta['_convoca_email'] ?? '' );
-		$this->assertSame( '00000000T', $meta['_convoca_dni'] ?? '' );
+		$this->assertSame( '00000000T', \Convoca\Members\Datos_Socio::leer_meta( $r, 'dni' ) );
 		$this->assertSame( '600000000', $meta['_convoca_telefono'] ?? '' );
 		$this->assertSame( 'Oviedo', $meta['_convoca_municipio'] ?? '' );
 	}

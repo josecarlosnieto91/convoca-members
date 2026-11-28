@@ -120,7 +120,7 @@ class Admin_List extends \WP_List_Table {
 
 	public function process_bulk_action(): void {
 		if ( 'bulk-baja' === $this->current_action() ) {
-			check_admin_referer( 'bulk-members' );
+			check_admin_referer( 'bulk-members', '_convoca_nonce' );
 
 			$ids = isset( $_REQUEST['miembros'] ) ? array_map( 'intval', $_REQUEST['miembros'] ) : array();
 			if ( empty( $ids ) ) {
