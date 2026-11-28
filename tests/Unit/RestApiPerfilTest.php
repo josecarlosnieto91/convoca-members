@@ -132,13 +132,25 @@ final class RestApiPerfilTest extends TestCase {
 
 		$primera = $this->api->update_profile( new \WP_REST_Request( array( 'cumpleanos' => '1990-05-17' ) ) );
 		$this->assertTrue( $primera->get_data()['success'] );
-		$this->assertSame( '1990-05-17', get_post_meta( 55, '_convoca_cumpleanos', true ) );
+		$this->assertSame( '1990-05-17', get_post_meta( 55, '_convoca_fecha_nacimiento', true ), 'se guarda en el meta canónico' );
+		$this->assertSame( '1990-05-17', get_post_meta( 55, '_convoca_cumpleanos', true ), 'y se mantiene el espejo legado' );
 
 		$segunda = $this->api->update_profile( new \WP_REST_Request( array( 'cumpleanos' => '1991-01-01' ) ) );
 
 		$this->assertSame( 400, $segunda->get_status(), 'no se puede cambiar' );
 		$this->assertStringContainsString( 'ya está establecido', $segunda->get_data()['error'] );
 		$this->assertSame( '1990-05-17', get_post_meta( 55, '_convoca_cumpleanos', true ), 'y el valor no se toca' );
+	}
+
+	/**
+	 * El meta antiguo se migra al canónico sin perder la fecha (#140).
+	 */
+	public function test_el_meta_antiguo_se_migra_al_canonico(): void {
+		$this->con_sesion( 55, array( '_convoca_cumpleanos' => '1988-03-09' ) );
+
+		$this->assertSame( '1988-03-09', \Convoca\Members\Datos_Socio::fecha_nacimiento( 55 ) );
+		$this->assertSame( '1988-03-09', get_post_meta( 55, '_convoca_fecha_nacimiento', true ) );
+		$this->assertSame( '1988-03-09', get_post_meta( 55, '_convoca_cumpleanos', true ), 'el original no se borra' );
 	}
 
 	/**

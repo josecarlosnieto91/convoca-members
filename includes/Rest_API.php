@@ -690,7 +690,7 @@ class Rest_API {
 				'direccion'           => Datos_Socio::leer_meta( $member_id, 'direccion' ),
 				'telefono'            => get_post_meta( $member_id, '_convoca_telefono', true ),
 				'telefono_verificado' => '1' === get_post_meta( $member_id, '_convoca_telefono_verificado', true ),
-				'cumpleanos'          => get_post_meta( $member_id, '_convoca_cumpleanos', true ),
+				'cumpleanos'          => Datos_Socio::fecha_nacimiento( (int) $member_id ),
 				'estado'              => $estado,
 				'plan'                => get_post_meta( $member_id, '_convoca_plan_label', true ) ?: get_post_meta( $member_id, '_convoca_plan', true ),
 				'forma_pago'          => get_post_meta( $member_id, '_convoca_forma_pago', true ),
@@ -1501,7 +1501,7 @@ class Rest_API {
 
 		// ── Cumpleaños (una sola vez) ──
 		$cumpleanos = sanitize_text_field( $request->get_param( 'cumpleanos' ) ?? '' );
-		$actual_c   = get_post_meta( $member_id, '_convoca_cumpleanos', true );
+		$actual_c   = Datos_Socio::fecha_nacimiento( (int) $member_id );
 		if ( $request->get_param( 'cumpleanos' ) !== null && ! empty( $cumpleanos ) ) {
 			if ( ! empty( $actual_c ) ) {
 				return new \WP_REST_Response(
@@ -1521,6 +1521,8 @@ class Rest_API {
 			if ( ! $fecha || $fecha->format( 'Y-m-d' ) !== $cumpleanos || $fecha > new \DateTime( 'today' ) ) {
 				return new \WP_REST_Response( array( 'error' => __( 'Fecha de cumpleaños no válida.', 'convoca-members' ) ), 400 );
 			}
+			update_post_meta( $member_id, '_convoca_fecha_nacimiento', $fecha->format( 'Y-m-d' ) );
+			// Se conserva el meta antiguo solo como espejo de compatibilidad (#140).
 			update_post_meta( $member_id, '_convoca_cumpleanos', $fecha->format( 'Y-m-d' ) );
 			$changes[] = 'cumpleanos';
 		}
