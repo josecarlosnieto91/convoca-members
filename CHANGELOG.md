@@ -1,3 +1,10 @@
+## [2.16.19] — 2026-11-27
+
+### Corregido
+
+- **La descarga de documentos usa el vínculo canónico (#146).** El titular se resuelve con
+  `_convoca_user_id` de la ficha; para fichas sin cuenta se mantiene `_convoca_member_id`.
+
 ## [2.16.18] — 2026-11-27
 
 ### Corregido
