@@ -81,7 +81,13 @@
     conv.$$(criticalSelectors, form).forEach(function (input) {
       input.addEventListener('blur', function () {
         const field = input.closest('.convoca-field');
-        if (field) conv.validateField(field);
+        if (!field) return;
+        const ok = conv.validateField(field);
+        // La fecha de nacimiento no puede ser futura: `validateField` solo mira que exista.
+        if (ok && 'conv-fechanac' === input.id && input.value) {
+          const fecha = new Date(input.value + 'T00:00:00');
+          if (fecha > new Date()) conv.showFieldError(field, 'La fecha de nacimiento no puede ser futura.');
+        }
       });
       input.addEventListener('input', function () {
         const field = input.closest('.convoca-field');

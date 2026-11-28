@@ -1,3 +1,10 @@
+## [2.16.35] — 2026-11-27
+
+### Corregido
+
+- **La fecha de nacimiento también se valida al salir del campo (#131).** Además de los otros
+  cuatro campos, una fecha futura se marca en el sitio.
+
 ## [2.16.34] — 2026-11-27
 
 ### Corregido
