@@ -179,6 +179,25 @@ class AltaSocioTest extends TestCase {
 	}
 
 	/**
+	 * Por REST: un plan con cuota no acepta «voluntariado» (#132).
+	 */
+	public function test_rest_rechaza_voluntariado_en_un_plan_con_cuota(): void {
+		$GLOBALS['_wp_stores']['nonces_validos'] = array( 'el-bueno' );
+
+		$peticion = new \WP_REST_Request();
+		$peticion->set_param( 'nonce', 'el-bueno' );
+		foreach ( array_merge( $this->alta_valida(), array( 'forma_pago' => 'voluntariado' ) ) as $campo => $valor ) {
+			$peticion->set_param( $campo, $valor );
+		}
+
+		$respuesta = Form_Handler::handle_submit_rest( $peticion );
+
+		$this->assertSame( 400, $respuesta->get_status() );
+		$this->assertStringContainsString( 'formulario de voluntariado', (string) $respuesta->get_data()['data']['errors'][0] );
+		$this->assertSame( array(), $GLOBALS['convoca_test_posts'], 'no se crea la ficha' );
+	}
+
+	/**
 	 * El mensaje de bloqueo dice a quién escribir, y usa el correo de contacto del centro.
 	 */
 	public function test_el_mensaje_de_bloqueo_lleva_el_correo_de_contacto(): void {

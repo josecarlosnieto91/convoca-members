@@ -218,8 +218,15 @@ final class ProcessMemberReactivacionTest extends TestCase {
 	 */
 	public function test_voluntariado_empieza_periodo_hoy_y_conserva_el_alta(): void {
 		$this->ficha_en_baja( 55 );
+		add_filter(
+			'convoca_members_plans',
+			static function ( array $planes ): array {
+				$planes['gratis'] = array( 'label' => 'Gratis', 'price' => 0, 'modalidad' => 'Numerario', 'hours' => 0, 'payment_methods' => array() );
+				return $planes;
+			}
+		);
 
-		Process_Member::register( $this->realta( array( 'forma_pago' => 'voluntariado' ) ) );
+		Process_Member::register( $this->realta( array( 'plan' => 'gratis', 'forma_pago' => 'voluntariado' ) ) );
 
 		$this->assertSame(
 			current_time( 'Y-m-d' ),
