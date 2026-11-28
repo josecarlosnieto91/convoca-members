@@ -1,3 +1,10 @@
+## [2.16.12] — 2026-11-27
+
+### Corregido
+
+- **El cambio de correo actualiza la cuenta de WordPress (#123).** Al confirmar, el correo se aplica
+  también a `wp_users.user_email`; si otro usuario ya lo usa, no se cambia y se avisa.
+
 ## [2.16.11] — 2026-11-27
 
 ### Corregido

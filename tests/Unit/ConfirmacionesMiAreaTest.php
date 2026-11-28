@@ -230,12 +230,14 @@ final class ConfirmacionesMiAreaTest extends TestCase {
 	#[RunInSeparateProcess]
 	#[PreserveGlobalState( false )]
 	public function test_con_token_valido_se_aplica_el_correo(): void {
+		$GLOBALS['_wp_stores']['usuarios'][55] = (object) array( 'ID' => 55, 'user_email' => 'viejo@example.test' );
 		$id = $this->ficha(
 			array(
 				'_convoca_email'           => 'viejo@example.test',
 				'_convoca_email_pendiente' => 'nuevo@example.test',
 				'_convoca_email_token'     => 'el-bueno',
 				'_convoca_email_token_exp' => (string) ( time() + 3600 ),
+				'_convoca_user_id'          => '55',
 			)
 		);
 		$_GET = array(
@@ -248,12 +250,44 @@ final class ConfirmacionesMiAreaTest extends TestCase {
 		$destino = (string) $this->ejecutar( 'handle_email_confirmation' );
 
 		$this->assertStringContainsString( 'convoca_confirm_ok=1', $destino );
+		$this->assertSame( 'nuevo@example.test', $GLOBALS['_wp_stores']['usuarios'][55]->user_email, 'la cuenta de WordPress usa el correo nuevo' );
 		$meta = $GLOBALS['_wp_stores']['post_meta'][ $id ];
 		$this->assertSame( 'nuevo@example.test', $meta['_convoca_email'] ?? '' );
 		$this->assertArrayNotHasKey( '_convoca_email_pendiente', $meta, 'el pendiente se consume' );
 		$this->assertArrayNotHasKey( '_convoca_email_token', $meta, 'y el token no se puede reusar' );
 		$this->assertArrayNotHasKey( '_convoca_email_token_exp', $meta );
 		$this->assertContains( 'convoca_members_email_cambiado', array_column( (array) $GLOBALS['_wp_actions'], 'hook' ) );
+	}
+
+	/**
+	 * Si otro usuario ya usa el correo nuevo, no se cambia nada (#123).
+	 */
+	#[RunInSeparateProcess]
+	#[PreserveGlobalState( false )]
+	public function test_un_correo_de_otra_cuenta_no_se_aplica(): void {
+		$GLOBALS['_wp_stores']['usuarios'][55] = (object) array( 'ID' => 55, 'user_email' => 'viejo@example.test' );
+		$GLOBALS['_wp_stores']['usuarios'][77] = (object) array( 'ID' => 77, 'user_email' => 'ocupado@example.test' );
+		$id = $this->ficha(
+			array(
+				'_convoca_email'           => 'viejo@example.test',
+				'_convoca_email_pendiente' => 'ocupado@example.test',
+				'_convoca_email_token'     => 'el-bueno',
+				'_convoca_email_token_exp' => (string) ( time() + 3600 ),
+				'_convoca_user_id'          => '55',
+			)
+		);
+		$_GET = array(
+			'convoca_confirm_email' => '1',
+			'member'                => (string) $id,
+			'token'                 => 'el-bueno',
+		);
+		$_REQUEST = $_GET;
+
+		$destino = (string) $this->ejecutar( 'handle_email_confirmation' );
+
+		$this->assertStringContainsString( 'convoca_confirm_error=email_ocupado', $destino );
+		$this->assertSame( 'viejo@example.test', $GLOBALS['_wp_stores']['usuarios'][55]->user_email );
+		$this->assertSame( 'viejo@example.test', $GLOBALS['_wp_stores']['post_meta'][ $id ]['_convoca_email'] ?? '' );
 	}
 
 	/**

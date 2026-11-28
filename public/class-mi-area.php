@@ -64,6 +64,11 @@ class Mi_Area {
 			exit;
 		}
 
+		if ( ! Datos_Socio::sincronizar_email_usuario( $member_id, (string) $pendiente ) ) {
+			wp_safe_redirect( add_query_arg( 'convoca_confirm_error', 'email_ocupado', home_url( '/mi-cuenta/' ) ) );
+			exit;
+		}
+
 		update_post_meta( $member_id, '_convoca_email', $pendiente );
 		delete_post_meta( $member_id, '_convoca_email_pendiente' );
 		delete_post_meta( $member_id, '_convoca_email_token' );

@@ -1584,6 +1584,10 @@ class Rest_API {
 			return new \WP_REST_Response( array( 'error' => __( 'El enlace de confirmación ha caducado. Solicítalo de nuevo.', 'convoca-members' ) ), 400 );
 		}
 
+		if ( ! Datos_Socio::sincronizar_email_usuario( $member_id, (string) $pendiente ) ) {
+			return new \WP_REST_Response( array( 'error' => __( 'Ese correo ya pertenece a otra cuenta.', 'convoca-members' ) ), 409 );
+		}
+
 		// Apply the email and clean up.
 		update_post_meta( $member_id, '_convoca_email', $pendiente );
 		delete_post_meta( $member_id, '_convoca_email_pendiente' );

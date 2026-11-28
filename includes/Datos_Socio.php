@@ -207,6 +207,34 @@ class Datos_Socio {
 	}
 
 	/**
+	 * Lleva el correo confirmado a la cuenta de WordPress vinculada (#123).
+	 *
+	 * @param int    $ficha Ficha.
+	 * @param string $email Correo nuevo.
+	 * @return bool False si otro usuario ya usa ese correo o la actualización falla.
+	 */
+	public static function sincronizar_email_usuario( int $ficha, string $email ): bool {
+		$user_id = (int) get_post_meta( $ficha, '_convoca_user_id', true );
+		if ( $user_id <= 0 ) {
+			return true;
+		}
+
+		$ocupado = email_exists( $email );
+		if ( $ocupado && (int) $ocupado !== $user_id ) {
+			return false;
+		}
+
+		return ! is_wp_error(
+			wp_update_user(
+				array(
+					'ID'         => $user_id,
+					'user_email' => $email,
+				)
+			)
+		);
+	}
+
+	/**
 	 * Guarda el DNI en el usuario, cifrado, con su índice.
 	 *
 	 * @param int    $user_id Usuario.
