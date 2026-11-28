@@ -126,8 +126,9 @@ class Admin_Webhooks {
 			}
 
 			if ( $action === 'test' ) {
-				Webhook_Manager::test_webhook( $id );
-				wp_safe_redirect( admin_url( 'admin.php?page=convoca-webhooks&msg=tested' ) );
+				$entregado = Webhook_Manager::test_webhook( $id );
+				$msg       = $entregado ? 'tested' : 'test_failed';
+				wp_safe_redirect( admin_url( 'admin.php?page=convoca-webhooks&msg=' . $msg ) );
 				exit;
 			}
 
@@ -164,6 +165,7 @@ class Admin_Webhooks {
 			'updated'      => array( 'success', 'Webhook actualizado.' ),
 			'deleted'      => array( 'warning', 'Webhook eliminado.' ),
 			'tested'       => array( 'info', 'Ping de prueba enviado.' ),
+			'test_failed'  => array( 'warning', 'No se pudo entregar el ping: revisa la URL y los registros de entrega.' ),
 			'toggled'      => array( 'info', 'Estado del webhook actualizado.' ),
 			'logs_cleared' => array( 'info', 'Registro de entregas limpiado.' ),
 		);

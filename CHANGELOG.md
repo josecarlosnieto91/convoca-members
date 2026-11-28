@@ -1,3 +1,10 @@
+## [2.16.7] — 2026-11-27
+
+### Corregido
+
+- **Probar un webhook dice la verdad (#50).** Si la entrega falla, la pantalla avisa del fallo en vez de
+  anunciar «Ping enviado»; con un 200 sigue confirmando el envío.
+
 ## [2.16.6] — 2026-11-27
 
 ### Corregido
