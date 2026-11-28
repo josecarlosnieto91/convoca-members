@@ -19,6 +19,7 @@ final class ValidacionEnVivoAltaTest extends TestCase {
 		$tpl = (string) file_get_contents( dirname( __DIR__, 2 ) . '/templates/form-alta.php' );
 
 		$this->assertStringNotContainsString( '#conv-alta-dni', $js );
+		$this->assertStringContainsString( 'no puede ser futura', $js, 'la fecha también se valida en vivo' );
 		foreach ( array( 'conv-dni', 'conv-email', 'conv-telefono', 'conv-nombre', 'conv-fechanac' ) as $id ) {
 			$this->assertStringContainsString( '#' . $id, $js, "el JS escucha #{$id}" );
 			if ( 'conv-dni' === $id ) {
