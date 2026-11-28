@@ -194,6 +194,64 @@ final class MemberEditorTest extends TestCase {
 	}
 
 	/**
+	 * Una transición permitida deja estado, número y cuota coherentes.
+	 */
+	public function test_transicion_permitida_activa_con_numero_y_cuota(): void {
+		$this->ficha( 60, array( '_convoca_estado_miembro' => 'pendiente_documentacion', '_convoca_estado_cuota' => 'pendiente' ) );
+		$_POST = array(
+			'_convoca_nonce'         => 'bueno',
+			'post_id'                => '60',
+			'convoca_nombre'         => 'Ada Lovelace',
+			'convoca_estado_miembro' => 'activo',
+		);
+
+		try {
+			$this->editor->handle_save();
+		} catch ( \RuntimeException $r ) {
+			$this->assertStringContainsString( 'id=60', $r->getMessage() );
+		}
+
+		$meta = $GLOBALS['_wp_stores']['post_meta'][60];
+		$this->assertSame( 'activo', $meta['_convoca_estado_miembro'] );
+		$this->assertSame( 'activa', $meta['_convoca_estado_cuota'] );
+		$this->assertNotSame( '', (string) $meta['_convoca_numero_socio'], 'con número de socio' );
+	}
+
+	/**
+	 * Una transición denegada no toca nada y se explica (#120).
+	 */
+	public function test_transicion_denegada_no_guarda_ni_cambia_numero_ni_cuota(): void {
+		$this->ficha(
+			55,
+			array(
+				'_convoca_estado_miembro' => 'suspendido',
+				'_convoca_numero_socio'   => '0042',
+				'_convoca_estado_cuota'   => 'activa',
+			)
+		);
+		$_POST = array(
+			'_convoca_nonce'           => 'bueno',
+			'post_id'                  => '55',
+			'convoca_nombre'           => 'Nombre que no debe guardarse',
+			'convoca_estado_miembro'   => 'pendiente_pago',
+		);
+
+		try {
+			$this->editor->handle_save();
+			$this->fail( 'debía redirigir' );
+		} catch ( \RuntimeException $r ) {
+			$this->assertStringContainsString( 'id=55', $r->getMessage() );
+		}
+
+		$this->assertSame( 'Nombre viejo', $GLOBALS['_wp_stores']['posts'][55]->post_title, 'el título no cambia' );
+		$meta = $GLOBALS['_wp_stores']['post_meta'][55];
+		$this->assertSame( 'suspendido', $meta['_convoca_estado_miembro'], 'el estado sigue igual' );
+		$this->assertSame( '0042', $meta['_convoca_numero_socio'], 'el número no se toca' );
+		$this->assertSame( 'activa', $meta['_convoca_estado_cuota'], 'la cuota no se toca' );
+		$this->assertStringContainsString( 'no está permitida', (string) ( $GLOBALS['_wp_stores']['transients'][ 'convoca_member_saved_' . get_current_user_id() ] ?? '' ) );
+	}
+
+	/**
 	 * Edición: actualiza la ficha que había, no crea otra.
 	 */
 	public function test_edicion_actualiza(): void {

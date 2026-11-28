@@ -348,6 +348,24 @@ class Admin_Member_Editor {
 			}
 		}
 
+		// Validar la transición ANTES de tocar nada: un rechazo no deja efectos parciales (#120).
+		$nuevo_estado = sanitize_key( (string) ( $data['convoca_estado_miembro'] ?? '' ) );
+		$viejo_estado = $is_edit ? (string) get_post_meta( $post_id, '_convoca_estado_miembro', true ) : '';
+		if ( $is_edit && '' !== $nuevo_estado && '' !== $viejo_estado && $nuevo_estado !== $viejo_estado && ! Estados::permite( $viejo_estado, $nuevo_estado ) ) {
+			set_transient(
+				'convoca_member_saved_' . get_current_user_id(),
+				sprintf(
+					/* translators: %1$s: current state, %2$s: target state */
+					__( 'No se ha guardado: la transición de %1$s a %2$s no está permitida.', 'convoca-members' ),
+					Estados::labels()[ $viejo_estado ] ?? $viejo_estado,
+					Estados::labels()[ $nuevo_estado ] ?? $nuevo_estado
+				),
+				30
+			);
+			wp_safe_redirect( admin_url( 'admin.php?page=' . self::SLUG . '&id=' . $post_id ) );
+			exit;
+		}
+
 		// Get the full name (used as post title).
 		$nombre = sanitize_text_field( $data['convoca_nombre'] ?? '' );
 		if ( empty( $nombre ) ) {
@@ -430,8 +448,10 @@ class Admin_Member_Editor {
 
 		// Handle state change via state machine.
 		// Leer $old_state ANTES de tocar el meta (el post puede ser nuevo → '').
-		$new_state = $data['convoca_estado_miembro'] ?? '';
-		$old_state = get_post_meta( $post_id, '_convoca_estado_miembro', true );
+		$new_state    = $data['convoca_estado_miembro'] ?? '';
+		$old_state    = get_post_meta( $post_id, '_convoca_estado_miembro', true );
+		$num_previo   = get_post_meta( $post_id, '_convoca_numero_socio', true );
+		$cuota_previa = get_post_meta( $post_id, '_convoca_estado_cuota', true );
 
 		if ( $new_state && $new_state !== $old_state ) {
 			// Si se activa: asignar número y cuota ANTES de Estados::change,
@@ -450,7 +470,23 @@ class Admin_Member_Editor {
 				}
 			}
 
-			Estados::change( $post_id, $new_state, esc_html__( 'Cambio manual desde editor de miembro.', 'convoca-members' ) );
+			$cambio = Estados::change( $post_id, $new_state, esc_html__( 'Cambio manual desde editor de miembro.', 'convoca-members' ) );
+			if ( is_wp_error( $cambio ) ) {
+				// Deshacer número y cuota: el estado no cambió y no puede quedar media operación.
+				if ( '' === (string) $num_previo ) {
+					delete_post_meta( $post_id, '_convoca_numero_socio' );
+				} else {
+					update_post_meta( $post_id, '_convoca_numero_socio', $num_previo );
+				}
+				if ( '' === (string) $cuota_previa ) {
+					delete_post_meta( $post_id, '_convoca_estado_cuota' );
+				} else {
+					update_post_meta( $post_id, '_convoca_estado_cuota', $cuota_previa );
+				}
+				set_transient( 'convoca_member_saved_' . get_current_user_id(), $cambio->get_error_message(), 30 );
+				wp_safe_redirect( admin_url( 'admin.php?page=' . self::SLUG . '&id=' . $post_id ) );
+				exit;
+			}
 		} elseif ( $new_state && $new_state === $old_state && $new_state === 'activo' ) {
 			// Miembro ya activo: garantizar número/cuota si por algún flujo anterior faltaron.
 			$num = get_post_meta( $post_id, '_convoca_numero_socio', true );
