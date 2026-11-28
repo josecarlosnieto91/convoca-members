@@ -1,3 +1,11 @@
+## [2.16.29] — 2026-11-27
+
+### Corregido
+
+- **Voluntariado y socios comprueban el DNI en el mismo sitio (#135).** El alta de voluntariado
+  consulta la ficha (`Datos_Socio::ficha_por_dni()`), no la meta de usuario que el alta de socios no
+  escribe.
+
 ## [2.16.28] — 2026-11-27
 
 ### Corregido
