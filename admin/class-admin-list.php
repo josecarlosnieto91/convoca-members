@@ -203,6 +203,11 @@ class Admin_List extends \WP_List_Table {
 					'compare' => 'LIKE',
 				),
 				array(
+					'key'     => '_convoca_apellidos',
+					'value'   => $search,
+					'compare' => 'LIKE',
+				),
+				array(
 					'key'     => Datos_Socio::clave_busqueda_dni(),
 					'value'   => Datos_Socio::valor_busqueda_dni( $cleaned_search ),
 					'compare' => '=',

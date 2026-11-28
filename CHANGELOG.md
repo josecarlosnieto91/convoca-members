@@ -1,3 +1,10 @@
+## [2.16.11] — 2026-11-27
+
+### Corregido
+
+- **El buscador encuentra por nombre y apellidos (#124).** El alta y la importación guardan
+  `_convoca_nombre` y la búsqueda incluye nombre, apellidos, correo, DNI y teléfono.
+
 ## [2.16.10] — 2026-11-27
 
 ### Corregido

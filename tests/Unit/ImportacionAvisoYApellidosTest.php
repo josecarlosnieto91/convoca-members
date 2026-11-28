@@ -55,7 +55,7 @@ class ImportacionAvisoYApellidosTest extends TestCase {
 
 		$this->assertStringContainsString( "'apellidos' => 'Apellidos'", $f, 'El mapeo tiene que ofrecerlo' );
 		$this->assertStringContainsString( "\$headers = array( 'nombre', 'apellidos', ", $f, 'Y estar entre las columnas esperadas' );
-		$this->assertStringContainsString( "\$meta_map = array( 'apellidos', ", $f, 'Y guardarse como `_convoca_apellidos`' );
+		$this->assertStringContainsString( "\$meta_map = array( 'nombre', 'apellidos', ", $f, 'Y guardarse como `_convoca_apellidos`' );
 		$this->assertStringContainsString( 'nombre, apellidos, email, dni', $f, 'Y decirlo en la ayuda de la pantalla' );
 	}
 }
