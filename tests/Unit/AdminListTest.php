@@ -54,6 +54,45 @@ final class AdminListTest extends TestCase {
 	}
 
 	/**
+	 * La caché se mira antes de consultar y crear una ficha la invalida (#127).
+	 */
+	public function test_la_cache_evita_la_consulta_y_se_invalida_al_guardar(): void {
+		$post             = new \WP_Post();
+		$post->ID         = 700;
+		$post->post_type  = 'miembro';
+		$post->post_status = 'publish';
+		$post->post_title = 'Socia 700';
+		$GLOBALS['_wp_stores']['posts'][700] = $post;
+		$_GET = $_REQUEST = array();
+
+		$primera = new Admin_List();
+		$primera->prepare_items();
+		$this->assertCount( 1, $primera->items );
+
+		unset( $GLOBALS['_wp_stores']['posts'][700] );
+		$segunda = new Admin_List();
+		$segunda->prepare_items();
+		$this->assertCount( 1, $segunda->items, 'la caché caliente evita la consulta' );
+
+		\Convoca\Members\Listado_Cache::invalidar();
+		$tercera = new Admin_List();
+		$tercera->prepare_items();
+		$this->assertCount( 0, $tercera->items, 'invalidar hace que se vuelva a consultar' );
+	}
+
+	/**
+	 * Guardar una ficha invalida el listado.
+	 */
+	public function test_guardar_una_ficha_invalida_el_listado(): void {
+		\Convoca\Members\Listado_Cache::init();
+		$antes = \Convoca\Members\Listado_Cache::version();
+
+		do_action( 'save_post_miembro', 700, new \WP_Post(), true );
+
+		$this->assertNotSame( $antes, \Convoca\Members\Listado_Cache::version() );
+	}
+
+	/**
 	 * Limpia.
 	 */
 	protected function tearDown(): void {

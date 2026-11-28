@@ -37,6 +37,28 @@ final class Listado_Cache {
 	}
 
 	/**
+	 * Engancha la invalidación a los cambios de ficha.
+	 *
+	 * @return void
+	 */
+	public static function init(): void {
+		add_action( 'save_post_miembro', array( __CLASS__, 'invalidar' ) );
+		add_action( 'deleted_post', array( __CLASS__, 'invalidar_si_miembro' ) );
+	}
+
+	/**
+	 * Invalida solo si el borrado era una ficha de socio.
+	 *
+	 * @param int $post_id Ficha.
+	 * @return void
+	 */
+	public static function invalidar_si_miembro( int $post_id ): void {
+		if ( 'miembro' === get_post_type( $post_id ) ) {
+			self::invalidar();
+		}
+	}
+
+	/**
 	 * Tira la caché del listado subiendo su versión.
 	 *
 	 * @return void
