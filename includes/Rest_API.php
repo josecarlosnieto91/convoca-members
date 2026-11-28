@@ -1466,7 +1466,13 @@ class Rest_API {
 		// Dos pulsaciones no pueden apilar dos pagos: se reutiliza el pendiente y su enlace (#128).
 		$pendiente = $this->pago_pendiente_renovacion( (int) $member_id );
 		if ( $pendiente > 0 ) {
-			$url = self::url_pago_pendiente( $pendiente );
+			$url = (string) get_post_meta( $pendiente, '_convoca_members_payment_url', true );
+			if ( '' === $url ) {
+				$url = self::url_pago_pendiente( $pendiente );
+				if ( '' !== $url ) {
+					update_post_meta( $pendiente, '_convoca_members_payment_url', $url );
+				}
+			}
 			if ( '' !== $url ) {
 				return new \WP_REST_Response(
 					array(
@@ -1501,6 +1507,7 @@ class Rest_API {
 		}
 
 		update_post_meta( $member_id, '_convoca_pago_id', $payment['pago_id'] );
+		update_post_meta( $payment['pago_id'], '_convoca_members_payment_url', $payment['payment_url'] );
 		\Convoca\Core\Logger::info( "Renovación manual solicitada (Pago #{$payment['pago_id']}) para el miembro #$member_id.", 'Members/Renewal', $member_id );
 
 		return new \WP_REST_Response(
