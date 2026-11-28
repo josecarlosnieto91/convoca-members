@@ -1,3 +1,10 @@
+## [2.16.17] — 2026-11-27
+
+### Corregido
+
+- **El enlace del aviso de renovación alcanza contraste AA (#114).** Las alertas declaran fondo y
+  color propios (`--info`, `--warning`) y el enlace hereda el color del texto con subrayado.
+
 ## [2.16.16] — 2026-11-27
 
 ### Corregido

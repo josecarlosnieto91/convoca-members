@@ -534,3 +534,22 @@
     background: rgba(255, 255, 255, 0.06);
     color: #f4f4f4;
 }
+
+/* ── Alerts: contraste AA (members#114) ───────── */
+.convoca-alert--info {
+    background: #e8f0fe;
+    border: 1px solid #1a3a5c;
+    color: #1a3a5c;
+}
+
+.convoca-alert--warning {
+    background: #fff4e5;
+    border: 1px solid #8a4b00;
+    color: #5c3200;
+}
+
+.convoca-alert > a {
+    color: inherit;
+    text-decoration: underline;
+    font-weight: 700;
+}
