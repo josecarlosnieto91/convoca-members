@@ -1344,6 +1344,32 @@ class Rest_API {
 	}
 
 	/**
+	 * ¿Puede la persona actual ver este documento?
+	 *
+	 * Usa el vínculo canónico de la ficha (`_convoca_user_id`) y respeta el vínculo directo
+	 * documento→ficha (`_convoca_member_id`) para fichas sin cuenta (#146).
+	 *
+	 * @param int $id Documento.
+	 * @return bool
+	 */
+	public function puede_ver_documento( int $id ): bool {
+		if ( current_user_can( 'manage_options' ) ) {
+			return true;
+		}
+
+		$user_id        = (int) get_post_meta( $id, '_convoca_usuario_id', true );
+		$member_id      = Member_Auth::get_current_member_id();
+		$member_user_id = $member_id ? (int) get_post_meta( $member_id, '_convoca_user_id', true ) : 0;
+		$wp_user_id     = get_current_user_id();
+
+		if ( $user_id > 0 && ( $user_id === $wp_user_id || ( $member_user_id > 0 && $user_id === $member_user_id ) ) ) {
+			return true;
+		}
+
+		return 0 === $user_id && $member_id > 0 && (int) get_post_meta( $id, '_convoca_member_id', true ) === $member_id;
+	}
+
+	/**
 	 * Serve a document PDF securely.
 	 */
 	public function get_document( \WP_REST_Request $request ): void {
@@ -1354,21 +1380,7 @@ class Rest_API {
 			wp_die( esc_html__( 'Documento no encontrado.', 'convoca-members' ), esc_html__( 'Error', 'convoca-members' ), array( 'response' => 404 ) );
 		}
 
-		$user_id   = (int) get_post_meta( $id, '_convoca_usuario_id', true );
-		$member_id = Member_Auth::get_current_member_id();
-		// El documento puede estar vinculado al WP user del socio, o al propio miembro (CPT).
-		$member_user_id = 0;
-		if ( $member_id ) {
-			$member_user_id = (int) get_post_meta( $member_id, '_convoca_usuario_id', true );
-		}
-		$wp_user_id = get_current_user_id();
-
-		// Admin OR propietario real. La sesión de socio (cookie propia) NO setea el WP user,
-		// por eso comparamos contra el miembro autenticado y su user WP vinculado.
-		$is_owner = ( $user_id > 0 && ( $user_id === $wp_user_id || ( $member_user_id > 0 && $user_id === $member_user_id ) ) )
-			|| ( 0 === $user_id && $member_id > 0 && (int) get_post_meta( $id, '_convoca_member_id', true ) === $member_id );
-
-		if ( ! current_user_can( 'manage_options' ) && ! $is_owner ) {
+		if ( ! $this->puede_ver_documento( $id ) ) {
 			wp_die( esc_html__( 'No tienes permiso para ver este documento.', 'convoca-members' ), esc_html__( 'Acceso Denegado', 'convoca-members' ), array( 'response' => 403 ) );
 		}
 

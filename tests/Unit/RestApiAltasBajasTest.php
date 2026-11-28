@@ -239,6 +239,28 @@ final class RestApiAltasBajasTest extends TestCase {
 	}
 
 	/**
+	 * El documento propio se ve con el vínculo canónico de la ficha (#146).
+	 */
+	public function test_el_documento_propio_respeta_el_vinculo_canonico(): void {
+		$GLOBALS['_test_caps']['manage_options'] = false;
+		$this->con_sesion( 55, array( '_convoca_user_id' => 90055 ) );
+
+		$propio = wp_insert_post( array( 'post_type' => 'convoca_documento', 'post_status' => 'publish' ) );
+		update_post_meta( $propio, '_convoca_usuario_id', 90055 );
+		$ajeno = wp_insert_post( array( 'post_type' => 'convoca_documento', 'post_status' => 'publish' ) );
+		update_post_meta( $ajeno, '_convoca_usuario_id', 90056 );
+		$por_ficha = wp_insert_post( array( 'post_type' => 'convoca_documento', 'post_status' => 'publish' ) );
+		update_post_meta( $por_ficha, '_convoca_member_id', 55 );
+		$de_otra_ficha = wp_insert_post( array( 'post_type' => 'convoca_documento', 'post_status' => 'publish' ) );
+		update_post_meta( $de_otra_ficha, '_convoca_member_id', 56 );
+
+		$this->assertTrue( $this->api->puede_ver_documento( $propio ), 'el documento de su cuenta' );
+		$this->assertTrue( $this->api->puede_ver_documento( $por_ficha ), 'el vinculado a su ficha' );
+		$this->assertFalse( $this->api->puede_ver_documento( $ajeno ), 'el de otra cuenta' );
+		$this->assertFalse( $this->api->puede_ver_documento( $de_otra_ficha ), 'el de otra ficha' );
+	}
+
+	/**
 	 * Si el bloqueo de estado está tomado, la baja responde error y no avisa (#121).
 	 */
 	public function test_la_baja_no_finge_exito_con_el_bloqueo_tomado(): void {
