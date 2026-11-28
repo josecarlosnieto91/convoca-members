@@ -274,6 +274,30 @@ class Datos_Socio {
 	}
 
 	/**
+	 * Fecha de nacimiento canónica, con migración sin pérdida del meta antiguo.
+	 *
+	 * El alta escribe `_convoca_fecha_nacimiento`; el autoservicio antiguo escribía
+	 * `_convoca_cumpleanos`. Si solo existe el segundo, se copia al canónico una vez
+	 * y se conserva el original (#140).
+	 *
+	 * @param int $ficha Ficha.
+	 * @return string Fecha `Y-m-d` o cadena vacía.
+	 */
+	public static function fecha_nacimiento( int $ficha ): string {
+		$canonica = (string) get_post_meta( $ficha, '_convoca_fecha_nacimiento', true );
+		if ( '' !== $canonica ) {
+			return $canonica;
+		}
+
+		$legado = (string) get_post_meta( $ficha, '_convoca_cumpleanos', true );
+		if ( '' !== $legado ) {
+			update_post_meta( $ficha, '_convoca_fecha_nacimiento', $legado );
+		}
+
+		return $legado;
+	}
+
+	/**
 	 * Clave de búsqueda por DNI: índice ciego si hay llave; si no, el meta antiguo.
 	 *
 	 * @return string

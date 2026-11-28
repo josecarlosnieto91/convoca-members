@@ -1,3 +1,10 @@
+## [2.16.25] — 2026-11-27
+
+### Corregido
+
+- **Una sola fecha de nacimiento (#140).** El alta y el autoservicio usan
+  `_convoca_fecha_nacimiento`; `_convoca_cumpleanos` se migra al canónico sin borrarse.
+
 ## [2.16.24] — 2026-11-27
 
 ### Corregido
