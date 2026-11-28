@@ -3,7 +3,7 @@
  * Plugin Name:       Convoca Members
  * Plugin URI:        https://getconvoca.app
  * Description:       Members, volunteers and communications management.
- * Version: 2.16.12
+ * Version: 2.16.13
  * Requires at least: 6.4
  * Requires PHP:      8.2
  * Tested up to:      7.1.3
@@ -341,6 +341,12 @@ add_action(
 
 		$id = (int) ( $_GET['member_id'] ?? 0 );
 		check_admin_referer( 'convoca_approve_member_' . $id );
+
+		$estado = (string) get_post_meta( $id, '_convoca_estado_miembro', true );
+		if ( ! \Convoca\Members\Estados::permite( $estado, 'activo' ) ) {
+			wp_safe_redirect( admin_url( 'admin.php?page=conv-members&msg=error' ) );
+			exit;
+		}
 
 		if ( $id && \Convoca\Members\CPT_Miembro::approve_member( $id ) ) {
 			// Generate WP user + send credentials.

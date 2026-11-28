@@ -1,3 +1,10 @@
+## [2.16.13] — 2026-11-27
+
+### Corregido
+
+- **«Aprobar alta» solo aparece cuando procede (#122).** Exige `edit_users` y una transición válida
+  a `activo`; una baja no se reactiva con un clic y las reactivaciones piden confirmación.
+
 ## [2.16.12] — 2026-11-27
 
 ### Corregido
