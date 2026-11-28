@@ -274,6 +274,31 @@ class Datos_Socio {
 	}
 
 	/**
+	 * Ficha que ya tiene este DNI, buscando en el índice que escribe el alta.
+	 *
+	 * @param string $dni DNI normalizado.
+	 * @return int 0 si no existe.
+	 */
+	public static function ficha_por_dni( string $dni ): int {
+		if ( '' === $dni ) {
+			return 0;
+		}
+
+		$fichas = get_posts(
+			array(
+				'post_type'      => 'miembro',
+				'post_status'    => array( 'publish', 'private', 'pending', 'draft' ),
+				'posts_per_page' => 1,
+				'fields'         => 'ids',
+				'meta_key'       => self::clave_busqueda_dni(),
+				'meta_value'     => self::valor_busqueda_dni( $dni ),
+			)
+		);
+
+		return $fichas ? (int) $fichas[0] : 0;
+	}
+
+	/**
 	 * Fecha de nacimiento canónica, con migración sin pérdida del meta antiguo.
 	 *
 	 * El alta escribe `_convoca_fecha_nacimiento`; el autoservicio antiguo escribía

@@ -227,14 +227,20 @@ class Form_Voluntariado {
 			wp_send_json_error( array( 'errors' => array( __( 'Ese correo ya está registrado en el sistema.', 'convoca-members' ) ) ) );
 		}
 
-		// Check for duplicate DNI in user meta (new canonical key; legacy _convoca_shifts_dni covered by migration).
-		$existing_dni = get_users(
-			array(
-				'meta_key'   => Datos_Socio::clave_busqueda_dni(),
-				'meta_value' => Datos_Socio::valor_busqueda_dni( $dni ),
-				'number'     => 1,
-			)
-		);
+		// El alta de socios guarda el índice del DNI en la ficha (post meta), no en el usuario:
+		// la comprobación tiene que mirar donde escribe el otro circuito (#135).
+		$ficha_dni    = Datos_Socio::ficha_por_dni( $dni );
+		$existing_dni = $ficha_dni ? array( $ficha_dni ) : array();
+		if ( empty( $existing_dni ) ) {
+			// Compatibilidad con cuentas antiguas que guardaban el índice en el usuario.
+			$existing_dni = get_users(
+				array(
+					'meta_key'   => Datos_Socio::clave_busqueda_dni(),
+					'meta_value' => Datos_Socio::valor_busqueda_dni( $dni ),
+					'number'     => 1,
+				)
+			);
+		}
 		if ( empty( $existing_dni ) ) {
 			// Still check the legacy key during transition.
 			$existing_dni = get_users(
