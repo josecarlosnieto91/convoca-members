@@ -1,3 +1,11 @@
+## [2.16.23] — 2026-11-27
+
+### Corregido
+
+- **Los seis filtros del listado tienen etiqueta propia (#142).** El lector de pantalla anuncia
+  «Estado del socio», «Tipo», «Plan», «Cuota», «Privacidad» o «Consentimiento» aunque el valor
+  elegido no sea la primera opción.
+
 ## [2.16.22] — 2026-11-27
 
 ### Corregido
