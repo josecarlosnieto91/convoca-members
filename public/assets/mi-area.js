@@ -51,12 +51,10 @@
                 self.requestUnsubscribe();
             }
         } else {
-            const tabBtn = e.target.closest('.conv-panel-nav li');
+            const tabBtn = e.target.closest('.conv-panel-nav [role="tab"]');
             if (tabBtn) {
                 if (tabBtn.classList.contains('active')) return;
-                conv.$$('.conv-panel-nav li', self.$container).forEach(t => t.classList.remove('active'));
-                tabBtn.classList.add('active');
-                self.switchTab(tabBtn.dataset.tab);
+                self.activarPestana(tabBtn, false);
             }
 
             // Notifications: mark single read
@@ -72,6 +70,29 @@
                 e.preventDefault();
                 self.markAllNotificationsRead();
             }
+        }
+      });
+
+      // Teclado en las pestañas: flechas recorren, Intro/Espacio activan (#129).
+      this.$container.addEventListener('keydown', function(e) {
+        const tab = e.target.closest('.conv-panel-nav [role="tab"]');
+        if (!tab) return;
+        const tabs = conv.$$('.conv-panel-nav [role="tab"]', self.$container);
+        const i = tabs.indexOf(tab);
+        if (i < 0) return;
+        if ('ArrowRight' === e.key || 'ArrowLeft' === e.key || 'Home' === e.key || 'End' === e.key) {
+          e.preventDefault();
+          let next = i;
+          if ('ArrowRight' === e.key) next = (i + 1) % tabs.length;
+          if ('ArrowLeft' === e.key) next = (i - 1 + tabs.length) % tabs.length;
+          if ('Home' === e.key) next = 0;
+          if ('End' === e.key) next = tabs.length - 1;
+          tabs[next].focus();
+          return;
+        }
+        if ('Enter' === e.key || ' ' === e.key) {
+          e.preventDefault();
+          self.activarPestana(tab, true);
         }
       });
     },
@@ -145,6 +166,19 @@
         method: 'POST',
         headers: { 'X-WP-Nonce': window.convMiArea.nonce }
       }).finally(() => location.reload());
+    },
+
+    activarPestana: function(tabEl, focus) {
+      const tabs = conv.$$('.conv-panel-nav [role="tab"]', this.$container);
+      tabs.forEach(function(t) {
+        const activa = t === tabEl;
+        t.classList.toggle('active', activa);
+        t.setAttribute('aria-selected', activa ? 'true' : 'false');
+        t.setAttribute('tabindex', activa ? '0' : '-1');
+      });
+      if (this.$main && tabEl.id) this.$main.setAttribute('aria-labelledby', tabEl.id);
+      if (focus) tabEl.focus();
+      this.switchTab(tabEl.dataset.tab);
     },
 
     switchTab: function(tab) {
