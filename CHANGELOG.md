@@ -1,3 +1,10 @@
+## [2.16.14] — 2026-11-27
+
+### Corregido
+
+- **La solicitud de baja no finge éxito (#121).** Si `Estados::change` falla, responde `409` con el
+  motivo, no cambia nada y no dispara el aviso; solo hay `success` cuando el estado cambió.
+
 ## [2.16.13] — 2026-11-27
 
 ### Corregido

@@ -1287,10 +1287,29 @@ class Rest_API {
 	public function unsubscribe_request( \WP_REST_Request $request ): \WP_REST_Response {
 		$member_id = Member_Auth::get_current_member_id();
 
-		// Log the request and notify admin.
-		Estados::change( $member_id, 'baja_solicitada', 'Solicitud de baja desde el panel de socio.' );
+		$resultado = Estados::change( $member_id, 'baja_solicitada', 'Solicitud de baja desde el panel de socio.' );
 
-		// Action for Email Manager to hook into.
+		if ( is_wp_error( $resultado ) ) {
+			return new \WP_REST_Response(
+				array(
+					'success' => false,
+					'message' => $resultado->get_error_message(),
+				),
+				409
+			);
+		}
+
+		if ( true !== $resultado ) {
+			return new \WP_REST_Response(
+				array(
+					'success' => false,
+					'message' => __( 'No se pudo registrar la solicitud de baja. Inténtalo de nuevo.', 'convoca-members' ),
+				),
+				500
+			);
+		}
+
+		// Action for Email Manager to hook into: solo cuando el estado cambió de verdad.
 		\Convoca\Core\Utils::do_action( 'convoca_members_unsubscribe_request', 'convoca_member_unsubscribe_request', $member_id );
 
 		return new \WP_REST_Response( array( 'success' => true ) );

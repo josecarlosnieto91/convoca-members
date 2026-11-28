@@ -239,6 +239,22 @@ final class RestApiAltasBajasTest extends TestCase {
 	}
 
 	/**
+	 * Si el bloqueo de estado está tomado, la baja responde error y no avisa (#121).
+	 */
+	public function test_la_baja_no_finge_exito_con_el_bloqueo_tomado(): void {
+		$this->con_sesion( 55 );
+		$this->assertNotFalse( \Convoca\Core\Utils::acquire_lock( 'convoca_state_change_55', 10 ) );
+		$GLOBALS['_wp_actions'] = array();
+
+		$respuesta = $this->api->unsubscribe_request( new \WP_REST_Request() );
+
+		$this->assertSame( 409, $respuesta->get_status() );
+		$this->assertFalse( $respuesta->get_data()['success'] );
+		$this->assertSame( 'activo', (string) get_post_meta( 55, '_convoca_estado_miembro', true ) );
+		$this->assertNotContains( 'convoca_members_unsubscribe_request', array_column( (array) $GLOBALS['_wp_actions'], 'hook' ) );
+	}
+
+	/**
 	 * La supresión desde el panel: devuelve su fecha, y sin ficha falla con 500 (no finge éxito).
 	 */
 	public function test_solicitar_la_supresion_desde_el_panel(): void {
