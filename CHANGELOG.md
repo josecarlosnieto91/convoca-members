@@ -1,3 +1,11 @@
+## [2.16.38] — 2026-11-27
+
+### Corregido
+
+- **Renovar dos veces reutiliza el pago pendiente (#128).** La renovación manual devuelve el mismo
+  `pago_id` y enlace si ya hay uno pendiente, y elige el método de `payment_methods` del plan en vez
+  de forzar tarjeta.
+
 ## [2.16.37] — 2026-11-27
 
 ### Corregido

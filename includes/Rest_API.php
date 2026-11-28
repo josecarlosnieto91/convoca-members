@@ -1411,6 +1411,31 @@ class Rest_API {
 	}
 
 	/**
+	 * Pago pendiente de renovación de una ficha, si lo hay (#128).
+	 *
+	 * @param int $member_id Ficha.
+	 * @return int
+	 */
+	private function pago_pendiente_renovacion( int $member_id ): int {
+		global $wpdb;
+
+		return (int) $wpdb->get_var(
+			$wpdb->prepare(
+				"SELECT pm.post_id FROM {$wpdb->postmeta} pm
+                 JOIN {$wpdb->posts} p ON p.ID = pm.post_id
+                 WHERE p.post_type = 'pago'
+                   AND p.post_status = 'publish'
+                   AND pm.meta_key = '_convoca_origin_id' AND pm.meta_value = %d
+                   AND pm.post_id IN (
+                       SELECT post_id FROM {$wpdb->postmeta} WHERE meta_key = '_convoca_estado' AND meta_value = 'pendiente'
+                   )
+                 ORDER BY p.ID DESC LIMIT 1",
+				$member_id
+			)
+		);
+	}
+
+	/**
 	 * Renew membership: creates a payment for one more year.
 	 */
 	public function renew_membership( \WP_REST_Request $request ): \WP_REST_Response {
@@ -1438,10 +1463,30 @@ class Rest_API {
 			return new \WP_REST_Response( array( 'error' => __( 'La pasarela de pago no está disponible.', 'convoca-members' ) ), 503 );
 		}
 
+		// Dos pulsaciones no pueden apilar dos pagos: se reutiliza el pendiente y su enlace (#128).
+		$pendiente = $this->pago_pendiente_renovacion( (int) $member_id );
+		if ( $pendiente > 0 ) {
+			$url = self::url_pago_pendiente( $pendiente );
+			if ( '' !== $url ) {
+				return new \WP_REST_Response(
+					array(
+						'success'     => true,
+						'payment_url' => $url,
+						'pago_id'     => $pendiente,
+						'reused'      => true,
+					)
+				);
+			}
+		}
+
+		// El método sale del plan; si no admite tarjeta, no se fuerza (#128).
+		$metodos = array_values( array_filter( array_map( 'sanitize_key', (array) ( $plan_data['payment_methods'] ?? array() ) ) ) );
+		$metodo  = in_array( 'tarjeta', $metodos, true ) ? 'tarjeta' : ( $metodos[0] ?? 'tarjeta' );
+
 		$payment = \Convoca\Gateway\convoca_gateway_create_payment(
 			array(
 				'amount_cents' => (int) round( $importe * 100 ),
-				'method'       => 'tarjeta',
+				'method'       => $metodo,
 				'origin'       => 'members',
 				'origin_id'    => $member_id,
 				'product_desc' => mb_substr( 'RENOVACIÓN ' . strtoupper( get_bloginfo( 'name' ) ) . ' - ' . strtoupper( $plan_data['label'] ?? 'SOCIO' ), 0, 125 ),
