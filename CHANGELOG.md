@@ -1,3 +1,11 @@
+## [2.16.32] — 2026-11-27
+
+### Corregido
+
+- **El aviso de alta lleva los dos argumentos que espera Core (#133).** En 2.16.31 el hook
+  `convoca_members_created` se emitía con un solo argumento y Core lanzaba un fatal al registrar;
+  ahora recibe `id` y los datos del alta, después de construirlos.
+
 ## [2.16.31] — 2026-11-27
 
 ### Corregido

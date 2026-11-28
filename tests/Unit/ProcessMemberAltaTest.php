@@ -156,6 +156,10 @@ final class ProcessMemberAltaTest extends TestCase {
 		$this->assertSame( 'pendiente_pago', $historial[0]['a'] );
 		$this->assertStringContainsString( 'Registro inicial', $historial[0]['nota'] );
 		$this->assertNotSame( '', (string) get_post_meta( $id, '_convoca_fecha_pendiente_pago', true ) );
+
+		$eventos = array_values( array_filter( (array) $GLOBALS['_wp_actions'], static fn( $a ) => 'convoca_members_created' === $a['hook'] ) );
+		$this->assertNotEmpty( $eventos );
+		$this->assertGreaterThanOrEqual( 2, count( $eventos[0]['args'] ), 'Core espera id y datos' );
 	}
 
 	/**
