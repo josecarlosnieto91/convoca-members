@@ -960,7 +960,7 @@ class Cron_Manager {
                    AND p.post_status = 'publish'
                    AND pm.meta_key = '_convoca_origin_id' AND pm.meta_value = %d
                    AND pm.post_id IN (
-                       SELECT post_id FROM {$wpdb->postmeta} WHERE meta_key = '_convoca_estado' AND meta_value = 'pendiente'
+                       SELECT post_id FROM {$wpdb->postmeta} WHERE meta_key = '_convoca_status' AND meta_value = 'pending'
                    )
                  ORDER BY p.ID DESC LIMIT 1",
 					$post_id
