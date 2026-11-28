@@ -102,6 +102,7 @@ final class RestApiListadosTest extends TestCase {
 			'_convoca_estado_miembro' => 'activo',
 			'_convoca_email'          => $email,
 			'_convoca_dni'            => $dni,
+			'_convoca_dni_idx'        => '' !== $dni ? \Convoca\Members\Datos_Socio::indice( $dni ) : '',
 		);
 	}
 
@@ -122,6 +123,9 @@ final class RestApiListadosTest extends TestCase {
 			'post_date'    => '2026-10-01 10:00:00',
 			'post_content' => '',
 		);
+		if ( ! empty( $meta['_convoca_dni'] ) ) {
+			$meta['_convoca_dni_idx'] = \Convoca\Members\Datos_Socio::indice( (string) $meta['_convoca_dni'] );
+		}
 		$GLOBALS['_wp_stores']['posts'][ $id ]     = $post;
 		$GLOBALS['_wp_stores']['post_meta'][ $id ] = $meta;
 	}

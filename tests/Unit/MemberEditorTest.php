@@ -183,7 +183,7 @@ final class MemberEditorTest extends TestCase {
 		$this->assertSame( 'Grace Hopper', $GLOBALS['_wp_stores']['posts'][ $id ]->post_title );
 		$meta = $GLOBALS['_wp_stores']['post_meta'][ $id ];
 		$this->assertSame( 'grace@example.test', $meta['_convoca_email'] );
-		$this->assertSame( 'Socia nueva', $meta['_convoca_observaciones'] );
+		$this->assertSame( 'Socia nueva', \Convoca\Members\Datos_Socio::leer_meta( $id, 'observaciones' ) );
 		$this->assertSame( '1', $meta['_convoca_pago_recurrente'] );
 		$this->assertSame( '0', $meta['_convoca_es_voluntario'], 'casilla sin marcar es 0' );
 		$this->assertArrayHasKey(

@@ -364,7 +364,7 @@ final class FormVoluntariadoTest extends TestCase {
 		$this->assertNotSame( array(), $GLOBALS['_wp_stores']['usuarios'], 'el alta siguió adelante' );
 		$ids = array_keys( $GLOBALS['_wp_stores']['usuarios'] );
 		$id  = (int) end( $ids );
-		$this->assertSame( '00000000T', $GLOBALS['_wp_stores']['user_meta'][ $id ]['_convoca_dni'] ?? '', 'guardado sin guion' );
+		$this->assertSame( '00000000T', \Convoca\Members\Datos_Socio::leer_meta_usuario( $id, 'dni' ), 'guardado sin guion' );
 	}
 
 	/**
@@ -403,7 +403,10 @@ final class FormVoluntariadoTest extends TestCase {
 			'user_email' => 'otra@example.test',
 			'roles'      => array( 'suscriptor' ),
 		);
-		$GLOBALS['_wp_stores']['user_meta'][55] = array( '_convoca_dni' => '00000000T' );
+		$GLOBALS['_wp_stores']['user_meta'][55] = array(
+			'_convoca_dni'     => '00000000T',
+			'_convoca_dni_idx' => \Convoca\Members\Datos_Socio::indice( '00000000T' ),
+		);
 
 		$errores = $this->rechazo( $this->solicitud() );
 
@@ -498,7 +501,7 @@ final class FormVoluntariadoTest extends TestCase {
 
 		$meta = $GLOBALS['_wp_stores']['post_meta'][ $ficha->ID ] ?? array();
 		$this->assertSame( 'ada@example.test', $meta['_convoca_email'] ?? '' );
-		$this->assertSame( '00000000T', $meta['_convoca_dni'] ?? '' );
+		$this->assertSame( '00000000T', \Convoca\Members\Datos_Socio::leer_meta( $ficha->ID, 'dni' ) );
 		$this->assertSame( 'pendiente_documentacion', $meta['_convoca_estado_miembro'] ?? '', 'entra pendiente' );
 		$this->assertNotEmpty( $meta['_convoca_access_code'] ?? '', 'con código de acceso' );
 

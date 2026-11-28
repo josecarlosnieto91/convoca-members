@@ -152,7 +152,7 @@ class EstadosTest extends TestCase
         $uniquePostId = 9999;
         // El bloqueo real es el de Utils (tabla de bloqueos o su respaldo en opciones), no un
         // transient: hay que cogerlo de verdad para que la segunda entrada lo encuentre ocupado.
-        $this->assertTrue(\Convoca\Core\Utils::acquire_lock("convoca_state_change_{$uniquePostId}", 10));
+        $this->assertNotFalse(\Convoca\Core\Utils::acquire_lock("convoca_state_change_{$uniquePostId}", 10));
 
         $result = Estados::change($uniquePostId, 'activo');
         $this->assertInstanceOf(\WP_Error::class, $result);

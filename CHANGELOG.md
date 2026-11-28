@@ -1,3 +1,12 @@
+## [2.16.8] — 2026-11-27
+
+### Corregido
+
+- **La baja en lote ya se aplica (#125).** El manejador comprueba `_convoca_nonce`, el nonce que emite
+  el formulario, en vez de `_wpnonce`; sigue comprobando `edit_post` ficha a ficha y deja historial.
+- **Pruebas alineadas con el cifrado del core.** La suite inyecta la clave y los dobles siembran el
+  índice ciego del DNI, como los datos reales.
+
 ## [2.16.7] — 2026-11-27
 
 ### Corregido

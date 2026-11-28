@@ -151,7 +151,7 @@ final class ListadoDeSociosTest extends TestCase {
 		$id = $this->ficha( array( '_convoca_estado_miembro' => 'activo' ) );
 		$_REQUEST = array(
 			'action'   => 'bulk-baja',
-			'_wpnonce' => 'nonce-bueno',
+			'_convoca_nonce' => 'nonce-bueno',
 			'miembros' => array( (string) $id ),
 		);
 
@@ -180,7 +180,7 @@ final class ListadoDeSociosTest extends TestCase {
 
 		$_REQUEST = array(
 			'action'   => 'bulk-baja',
-			'_wpnonce' => 'nonce-bueno',
+			'_convoca_nonce' => 'nonce-bueno',
 			'miembros' => array( (string) $sin_permiso, (string) $con_permiso ),
 		);
 
@@ -204,7 +204,7 @@ final class ListadoDeSociosTest extends TestCase {
 	public function test_sin_fichas_seleccionadas_no_hace_nada(): void {
 		$_REQUEST = array(
 			'action'   => 'bulk-baja',
-			'_wpnonce' => 'nonce-bueno',
+			'_convoca_nonce' => 'nonce-bueno',
 			'miembros' => array(),
 		);
 
@@ -220,7 +220,7 @@ final class ListadoDeSociosTest extends TestCase {
 		$id = $this->ficha( array( '_convoca_estado_miembro' => 'activo' ) );
 		$_REQUEST = array(
 			'action'   => 'bulk-exportar',
-			'_wpnonce' => 'nonce-bueno',
+			'_convoca_nonce' => 'nonce-bueno',
 			'miembros' => array( (string) $id ),
 		);
 
