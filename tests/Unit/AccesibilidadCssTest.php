@@ -15,7 +15,8 @@ final class AccesibilidadCssTest extends TestCase {
 	 * Las alertas definen fondo y color, y el enlace no hereda el naranja de marca.
 	 */
 	public function test_las_alertas_tienen_contraste_aa(): void {
-		$css = (string) file_get_contents( dirname( __DIR__, 2 ) . '/assets/css/convoca-members-public.css' );
+		$css = (string) file_get_contents( dirname( __DIR__, 2 ) . '/assets/css/convoca-members-public.css' )
+			. (string) file_get_contents( dirname( __DIR__, 2 ) . '/public/assets/mi-area.css' );
 
 		$this->assertStringContainsString( '.convoca-alert--info', $css );
 		$this->assertStringContainsString( '.convoca-alert--warning', $css );
