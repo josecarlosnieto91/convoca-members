@@ -1,3 +1,11 @@
+## [2.16.39] — 2026-11-27
+
+### Corregido
+
+- **La búsqueda del pago pendiente usa el meta real del gateway (#128).** El gateway guarda
+  `_convoca_status`/`pending`, no `_convoca_estado`/`pendiente`; la consulta corregida reutiliza el
+  pago también desde el cron.
+
 ## [2.16.38] — 2026-11-27
 
 ### Corregido

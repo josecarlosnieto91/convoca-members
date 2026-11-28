@@ -20,6 +20,8 @@ final class RenewalPaymentPolicyTest extends TestCase {
 		$this->assertStringContainsString( '$pendiente = $this->pago_pendiente_renovacion( (int) $member_id )', $src );
 		$this->assertStringContainsString( "'reused'      => true", $src );
 		$this->assertStringContainsString( 'self::url_pago_pendiente( $pendiente )', $src );
+		$this->assertStringContainsString( "meta_key = '_convoca_status' AND meta_value = 'pending'", $src );
+		$this->assertStringNotContainsString( "meta_key = '_convoca_estado' AND meta_value = 'pendiente'", $src );
 	}
 
 	/**
