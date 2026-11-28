@@ -99,10 +99,13 @@ class AltaValidacionMinimoTest extends TestCase {
 	}
 
 	/**
-	 * El voluntariado no es un cobro: se admite aunque el plan no lo liste como pasarela.
+	 * «voluntariado» no paga un plan con cuota: se rechaza y se explica la vía correcta (#132).
 	 */
-	public function test_el_voluntariado_no_es_un_metodo_de_pago(): void {
-		$this->assertTrue( Process_Member::validate( $this->alta( array( 'forma_pago' => 'voluntariado' ) ) ) );
+	public function test_el_voluntariado_no_paga_un_plan_con_cuota(): void {
+		$error = Process_Member::validate( $this->alta( array( 'forma_pago' => 'voluntariado' ) ) );
+
+		$this->assertInstanceOf( \WP_Error::class, $error );
+		$this->assertStringContainsString( 'formulario de voluntariado', $error->get_error_message() );
 	}
 
 	/**

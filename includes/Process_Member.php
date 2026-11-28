@@ -359,12 +359,10 @@ class Process_Member {
 		}
 
 		// 6. Estado inicial.
-		// Modelo 2026-09: la condición de socio se adquiere ABONANDO la cuota del
-		// primer año. El compromiso de voluntariado no la sustituye; lo que hace es
-		// habilitar la vía de renovación por horas a partir del segundo ciclo. Por
-		// eso el alta queda siempre en 'pendiente_pago' y la cuota en 'pendiente':
-		// solo el cobro (o la activación expresa de la junta) pasa a 'activo'.
-		$estado = 'pendiente_pago';
+		// Modelo 2026-09: la condición de socio se adquiere ABONANDO la cuota del primer año.
+		// Con un plan sin cuota y «voluntariado» el alta es una solicitud, no un pendiente de pago (#132).
+		$sin_cuota = ( 'voluntariado' === $forma_pago && (float) ( $plan_data['price'] ?? 0 ) <= 0 );
+		$estado    = $sin_cuota ? 'pendiente_documentacion' : 'pendiente_pago';
 
 		// 7. Create Post with transaction
 		global $wpdb;
@@ -474,12 +472,12 @@ class Process_Member {
 				// `forma_pago` es cuota/voluntariado en todo el plugin; el método elegido en el alta
 				// (tarjeta/bizum/transferencia) va a su propio meta. Payment_Listener lo normaliza a
 				// 'cuota' al confirmarse el pago; hasta entonces, la cuota está pendiente.
-				'forma_pago'           => 'cuota',
+				'forma_pago'           => $sin_cuota ? 'voluntariado' : 'cuota',
 				'metodo_pago'          => $forma_pago,
 				'cuota'                => $plan_key, // legacy alias.
 				'modalidad'            => $plan_data['modalidad'] ?? 'Numerario',
 				'importe_cuota'        => $plan_data['price'] ?? 0,
-				'estado_cuota'         => 'pendiente',
+				'estado_cuota'         => $sin_cuota ? 'no_aplica' : 'pendiente',
 				// Volunteer annual cycle starts at registration.
 				'fecha_inicio_periodo' => '',
 				'fecha_alta'           => current_time( 'Y-m-d' ),
@@ -632,9 +630,10 @@ class Process_Member {
 		bool $menor,
 		array $settings
 	) {
-		$nombre = sanitize_text_field( $data['nombre'] ?? '' );
-		$dni    = strtoupper( str_replace( array( ' ', '-' ), '', trim( $data['dni'] ?? '' ) ) );
-		$email  = sanitize_email( $data['email'] ?? '' );
+		$sin_cuota = ( 'voluntariado' === $forma_pago && (float) ( $plan_data['price'] ?? 0 ) <= 0 );
+		$nombre    = sanitize_text_field( $data['nombre'] ?? '' );
+		$dni       = strtoupper( str_replace( array( ' ', '-' ), '', trim( $data['dni'] ?? '' ) ) );
+		$email     = sanitize_email( $data['email'] ?? '' );
 
 		$post = get_post( $existing_id );
 		if ( ! $post || $post->post_type !== 'miembro' ) {
@@ -651,12 +650,12 @@ class Process_Member {
 			'plan_label'        => $plan_data['label'] ?? $plan_key,
 			'sub_plan'          => $sub_plan,
 			// Igual que en el alta: la forma de pago es la cuota; el método va aparte.
-			'forma_pago'        => 'cuota',
+			'forma_pago'        => $sin_cuota ? 'voluntariado' : 'cuota',
 			'metodo_pago'       => $forma_pago,
 			'cuota'             => $plan_key,
 			'modalidad'         => $plan_data['modalidad'] ?? 'Numerario',
 			'importe_cuota'     => $plan_data['price'] ?? 0,
-			'estado_cuota'      => 'pendiente',
+			'estado_cuota'      => $sin_cuota ? 'no_aplica' : 'pendiente',
 			'dni'               => $dni,
 			'email'             => $email,
 			'telefono'          => Telefono::normalizar( (string) ( $data['telefono'] ?? '' ) ),
@@ -981,8 +980,12 @@ class Process_Member {
 			$plan_para_metodos = CPT_Miembro::get_plan( self::clave_plan( $data ) );
 			$admitidos         = (array) ( $plan_para_metodos['payment_methods'] ?? array() );
 
-			// «voluntariado» no es un cobro: es la vía de quien colabora con horas y no paga cuota.
-			if ( 'voluntariado' !== $forma_pago && array() !== $admitidos && ! in_array( $forma_pago, $admitidos, true ) ) {
+			// «voluntariado» no es un cobro. Solo vale si el plan no tiene cuota; con un plan de
+			// pago dejaría una ficha en `pendiente_pago` que nadie va a cobrar (#132).
+			$precio_plan = (float) ( $plan_para_metodos['price'] ?? 0 );
+			if ( 'voluntariado' === $forma_pago && $precio_plan > 0 ) {
+				$errors[] = 'El plan elegido tiene cuota. Para colaborar sin cuota, usa el formulario de voluntariado; para ser socio/a, elige tarjeta, Bizum o transferencia.';
+			} elseif ( 'voluntariado' !== $forma_pago && array() !== $admitidos && ! in_array( $forma_pago, $admitidos, true ) ) {
 				$errors[] = 'Ese método de pago no está disponible para tu cuota.';
 			}
 		}

@@ -143,6 +143,37 @@ final class ProcessMemberAltaTest extends TestCase {
 	}
 
 	/**
+	 * Un plan con cuota no acepta «voluntariado» como forma de pago (#132).
+	 */
+	public function test_voluntariado_no_paga_un_plan_con_cuota(): void {
+		$resultado = Process_Member::validate( $this->alta( array( 'forma_pago' => 'voluntariado' ) ) );
+
+		$this->assertInstanceOf( \WP_Error::class, $resultado );
+		$this->assertStringContainsString( 'formulario de voluntariado', implode( ' ', $resultado->get_error_messages() ) );
+	}
+
+	/**
+	 * Un plan sin cuota sí puede entrar como solicitud de voluntariado, no como pendiente de pago.
+	 */
+	public function test_voluntariado_sin_cuota_queda_como_solicitud(): void {
+		add_filter(
+			'convoca_members_plans',
+			static function ( array $planes ): array {
+				$planes['gratis'] = array( 'label' => 'Gratis', 'price' => 0, 'modalidad' => 'Numerario', 'hours' => 0, 'payment_methods' => array() );
+				return $planes;
+			}
+		);
+
+		$resultado = Process_Member::register( $this->alta( array( 'plan' => 'gratis', 'forma_pago' => 'voluntariado' ) ) );
+		$this->assertIsArray( $resultado );
+		$id = (int) $resultado['id'];
+
+		$this->assertSame( 'pendiente_documentacion', (string) get_post_meta( $id, '_convoca_estado_miembro', true ) );
+		$this->assertSame( 'voluntariado', (string) get_post_meta( $id, '_convoca_forma_pago', true ) );
+		$this->assertSame( 'no_aplica', (string) get_post_meta( $id, '_convoca_estado_cuota', true ) );
+	}
+
+	/**
 	 * El alta deja su asiento inicial y la fecha de pendiente de pago (#133).
 	 */
 	public function test_el_alta_deja_historial_y_fecha_pendiente(): void {

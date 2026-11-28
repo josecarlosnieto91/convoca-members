@@ -1,3 +1,11 @@
+## [2.16.33] — 2026-11-27
+
+### Corregido
+
+- **«voluntariado» no se acepta como pago de un plan con cuota (#132).** Se rechaza con un mensaje
+  que remite al formulario de voluntariado. Con un plan de importe 0 el alta queda como
+  `pendiente_documentacion`, con cuota `no_aplica` y sin pedido de pago.
+
 ## [2.16.32] — 2026-11-27
 
 ### Corregido

@@ -101,6 +101,7 @@ class CPT_Miembro {
 		'activa'    => 'Activa',
 		'pendiente' => 'Pendiente',
 		'vencida'   => 'Vencida',
+		'no_aplica' => 'No aplica',
 	);
 
 	/** Plan definitions (price in €, hours in h). */
