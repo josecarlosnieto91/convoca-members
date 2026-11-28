@@ -1,3 +1,11 @@
+## [2.16.15] — 2026-11-27
+
+### Corregido
+
+- **El editor no anuncia un cambio de estado que no ocurrió (#120).** Valida la transición antes de
+  escribir; si falla, no toca título, número ni cuota y muestra el motivo. Si el fallo llega después,
+  restaura número y cuota.
+
 ## [2.16.14] — 2026-11-27
 
 ### Corregido
