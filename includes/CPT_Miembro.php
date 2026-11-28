@@ -604,8 +604,8 @@ class CPT_Miembro {
 		$status = get_post_meta( $post_id, '_convoca_estado_miembro', true );
 		$num    = get_post_meta( $post_id, '_convoca_numero_socio', true );
 
-		// If already active AND already has a number, nothing to do.
-		if ( $status === 'activo' && ! empty( $num ) ) {
+		// Si ya está activo, numerado y es socio, no hay nada que hacer.
+		if ( $status === 'activo' && ! empty( $num ) && \Convoca\Members\Roles_Miembro::es_socio( $post_id ) ) {
 			return false;
 		}
 
@@ -643,7 +643,11 @@ class CPT_Miembro {
 			delete_post_meta( $post_id, '_convoca_fecha_baja' );
 
 			// Activate via state machine (triggers audit log + hooks).
-			Estados::change( $post_id, 'activo', "Aprobado manualmente. Socio #$num" );
+			$cambio = Estados::change( $post_id, 'activo', "Aprobado manualmente. Socio #$num" );
+			if ( is_wp_error( $cambio ) ) {
+				throw new \RuntimeException( $cambio->get_error_message() );
+			}
+			\Convoca\Members\Roles_Miembro::registrar_socio_manual( $post_id );
 
 			$wpdb->query( 'COMMIT' );
 

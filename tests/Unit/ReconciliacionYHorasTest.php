@@ -100,6 +100,21 @@ class ReconciliacionYHorasTest extends TestCase {
 		$this->assertTrue( Roles_Miembro::es_socio( $id ), 'Y la ficha queda como socia' );
 	}
 
+	/** La activación manual se reconoce sin inventar un pago. */
+	public function test_la_activacion_manual_se_reconoce(): void {
+		$id = (int) wp_insert_post( array( 'post_type' => 'miembro', 'post_status' => 'publish' ) );
+		update_post_meta( $id, '_convoca_estado_miembro', 'activo' );
+		update_post_meta( $id, '_convoca_numero_socio', '0042' );
+		update_post_meta( $id, '_convoca_estado_cuota', 'activa' );
+
+		$this->assertFalse( Roles_Miembro::es_socio( $id ) );
+		$cambios = Roles_Miembro::reconciliar( $id );
+
+		$this->assertContains( 'socio (activación manual)', $cambios );
+		$this->assertTrue( Roles_Miembro::es_socio( $id ) );
+		$this->assertSame( 'manual', Roles_Miembro::cumplimiento( $id ) );
+	}
+
 	/** Reconciliar una ficha que ya está bien no toca nada (y no ensucia el registro). */
 	public function test_reconciliar_lo_que_esta_bien_no_hace_nada(): void {
 		$id = $this->ficha_con_cuota();

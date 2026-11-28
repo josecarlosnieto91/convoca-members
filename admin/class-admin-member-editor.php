@@ -487,6 +487,9 @@ class Admin_Member_Editor {
 				wp_safe_redirect( admin_url( 'admin.php?page=' . self::SLUG . '&id=' . $post_id ) );
 				exit;
 			}
+			if ( 'activo' === $new_state ) {
+				Roles_Miembro::registrar_socio_manual( $post_id );
+			}
 		} elseif ( $new_state && $new_state === $old_state && $new_state === 'activo' ) {
 			// Miembro ya activo: garantizar número/cuota si por algún flujo anterior faltaron.
 			$num = get_post_meta( $post_id, '_convoca_numero_socio', true );

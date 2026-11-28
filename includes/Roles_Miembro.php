@@ -76,7 +76,7 @@ final class Roles_Miembro {
 	public const META_MONITOR = '_convoca_es_monitor';
 
 	/** Vías válidas de cumplimiento. */
-	public const VIAS = array( 'pago', 'horas' );
+	public const VIAS = array( 'pago', 'horas', 'manual' );
 
 	/**
 	 * Meta que guarda cada rol.
@@ -763,9 +763,38 @@ final class Roles_Miembro {
 			if ( class_exists( '\\Convoca\\Core\\Logger' ) ) {
 				\Convoca\Core\Logger::info( sprintf( 'Reconciliación de la ficha #%d: recupera la condición de socio (cuota pagada y al día).', $miembro_id ), 'Members/Roles' );
 			}
+		} elseif (
+			! self::es_socio( $miembro_id )
+			&& 'activo' === (string) get_post_meta( $miembro_id, '_convoca_estado_miembro', true )
+			&& '' !== (string) get_post_meta( $miembro_id, '_convoca_numero_socio', true )
+			&& 'activa' === (string) get_post_meta( $miembro_id, '_convoca_estado_cuota', true )
+		) {
+			// Activación manual: no hay recibo, pero la ficha ya está activa, numerada y con cuota.
+			self::registrar_socio_manual( $miembro_id );
+			$cambios[] = 'socio (activación manual)';
+			if ( class_exists( '\\Convoca\\Core\\Logger' ) ) {
+				\Convoca\Core\Logger::info( sprintf( 'Reconciliación de la ficha #%d: condición de socio desde activación manual.', $miembro_id ), 'Members/Roles' );
+			}
 		}
 
 		return $cambios;
+	}
+
+	/**
+	 * Concede la condición de socio por activación manual (sin recibo).
+	 *
+	 * @param int $miembro_id Ficha.
+	 * @return bool
+	 */
+	public static function registrar_socio_manual( int $miembro_id ): bool {
+		if ( $miembro_id <= 0 ) {
+			return false;
+		}
+
+		self::anadir( $miembro_id, self::SOCIO );
+		self::marcar_cumplimiento( $miembro_id, 'manual' );
+
+		return self::es_socio( $miembro_id );
 	}
 
 	public static function registrar_socio_por_pago( int $miembro_id ): bool {

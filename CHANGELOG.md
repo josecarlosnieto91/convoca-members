@@ -1,3 +1,11 @@
+## [2.16.16] — 2026-11-27
+
+### Corregido
+
+- **Activar a mano concede la condición de socio (#119).** Aprobar desde el listado o activar en el
+  editor registra `es_socio` con cumplimiento `manual`; la reconciliación reconoce la activación
+  manual sin inventar un pago.
+
 ## [2.16.15] — 2026-11-27
 
 ### Corregido
