@@ -1,3 +1,10 @@
+## [2.16.10] — 2026-11-27
+
+### Corregido
+
+- **La paginación sobrevive a la página 2 (#126).** La consulta ya no desactiva el recuento: con 21
+  fichas hay dos páginas y con 45, tres; la búsqueda y los filtros se conservan al navegar.
+
 ## [2.16.9] — 2026-11-27
 
 ### Corregido
