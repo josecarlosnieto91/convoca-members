@@ -85,6 +85,35 @@ final class ProcessMemberAltaTest extends TestCase {
 	}
 
 	/**
+	 * Dos altas simultáneas de la misma persona se serializan (#134).
+	 */
+	public function test_el_alta_simultanea_no_crea_dos_fichas(): void {
+		$lock = 'convoca_alta_' . md5( '00000000T|ada@example.test' );
+		$this->assertNotFalse( \Convoca\Core\Utils::acquire_lock( $lock, 60 ) );
+
+		$resultado = Process_Member::register( $this->alta() );
+
+		$this->assertInstanceOf( \WP_Error::class, $resultado );
+		$this->assertSame( 'busy', $resultado->get_error_code() );
+		$this->assertSame( 409, $resultado->get_error_data()['status'] );
+		$this->assertSame( array(), $GLOBALS['_wp_stores']['posts'], 'no se creó ninguna ficha' );
+
+		\Convoca\Core\Utils::release_lock( $lock );
+	}
+
+	/**
+	 * El cerrojo se libera al terminar, para que el reintento sea posible.
+	 */
+	public function test_el_cerrojo_del_alta_se_libera(): void {
+		$resultado = Process_Member::register( $this->alta() );
+		$this->assertIsArray( $resultado );
+
+		$lock = 'convoca_alta_' . md5( '00000000T|ada@example.test' );
+		$this->assertNotFalse( \Convoca\Core\Utils::acquire_lock( $lock, 5 ), 'el alta dejó el cerrojo tomado' );
+		\Convoca\Core\Utils::release_lock( $lock );
+	}
+
+	/**
 	 * Sin nombre ni DNI no se crea ficha (#23).
 	 */
 	public function test_el_alta_rechaza_nombre_y_dni_vacios(): void {

@@ -1,3 +1,11 @@
+## [2.16.30] — 2026-11-27
+
+### Corregido
+
+- **Altas simultáneas de la misma persona se serializan (#134).** Cerrojo
+  `convoca_alta_<hash>` por DNI+correo antes de la transacción; la segunda recibe `409` y el
+  cerrojo se libera siempre en `finally`.
+
 ## [2.16.29] — 2026-11-27
 
 ### Corregido
