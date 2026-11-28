@@ -466,7 +466,6 @@ class Process_Member {
 			// Se guarda la clave que se cobra (`fam-bronze`), no la modalidad (`familiar`):
 			// renovación, horas y filtros resuelven el plan por esta meta (issue #115).
 			$meta = array(
-				'estado_miembro'       => $estado,
 				'nombre'               => $nombre,
 				'plan'                 => $plan_key,
 				'plan_label'           => $plan_data['label'] ?? $plan_key,
@@ -525,7 +524,9 @@ class Process_Member {
 			);
 
 			// Initial state log.
-			Estados::change( $post_id, $estado, 'Registro inicial desde formulario' );
+			// El meta de estado NO se guarda antes: la máquina de estados leería el nuevo como
+			// «ya estaba» y no dejaría el asiento inicial (#133).
+			Estados::change( $post_id, $estado, 'Registro inicial desde formulario', false );
 
 			// Commit transaction.
 			$wpdb->query( 'COMMIT' );
@@ -643,7 +644,6 @@ class Process_Member {
 
 		// Update the record with the new entry data.
 		$meta = array(
-			'estado_miembro'    => $estado,
 			'nombre'            => $nombre,
 			'plan'              => $plan_key,
 			'plan_label'        => $plan_data['label'] ?? $plan_key,
@@ -706,7 +706,9 @@ class Process_Member {
 			update_post_meta( $existing_id, '_convoca_estado_cuota', $meta['estado_cuota'] );
 
 			// Re-entry through the state machine (audit trail preserved).
-			Estados::change( $existing_id, $estado, "Re-alta tras baja. Histórico reactivado (nº $numero_socio)." );
+			// Sin volver a escribir el meta antes: así el estado anterior sigue siendo 'baja' y
+			// queda el asiento «Re-alta» sin borrar el historial (#133).
+			Estados::change( $existing_id, $estado, "Re-alta tras baja. Histórico reactivado (nº $numero_socio).", false );
 
 			if ( $wpdb ) {
 				$wpdb->query( 'COMMIT' );

@@ -143,6 +143,22 @@ final class ProcessMemberAltaTest extends TestCase {
 	}
 
 	/**
+	 * El alta deja su asiento inicial y la fecha de pendiente de pago (#133).
+	 */
+	public function test_el_alta_deja_historial_y_fecha_pendiente(): void {
+		$resultado = Process_Member::register( $this->alta() );
+		$this->assertIsArray( $resultado );
+		$id = (int) $resultado['id'];
+
+		$historial = \Convoca\Members\Estados::get_history( $id );
+		$this->assertCount( 1, $historial );
+		$this->assertSame( '', $historial[0]['de'], 'primer estado: sin anterior' );
+		$this->assertSame( 'pendiente_pago', $historial[0]['a'] );
+		$this->assertStringContainsString( 'Registro inicial', $historial[0]['nota'] );
+		$this->assertNotSame( '', (string) get_post_meta( $id, '_convoca_fecha_pendiente_pago', true ) );
+	}
+
+	/**
 	 * La ficha creada por un alta.
 	 *
 	 * @param array $resultado Resultado del alta.
