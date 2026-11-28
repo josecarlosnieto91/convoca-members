@@ -432,22 +432,22 @@ class Mi_Area {
 	private function render_navegacion_panel(): void {
 		?>
 		<nav class="conv-panel-nav card-glass">
-			<ul>
-				<li class="active" data-tab="profile">👤 <?php esc_html_e( 'Mis Datos', 'convoca-members' ); ?></li>
-				<li data-tab="membership">🪪 <?php esc_html_e( 'Carnet Digital', 'convoca-members' ); ?></li>
-				<li data-tab="inscriptions">📝 <?php esc_html_e( 'Inscripciones', 'convoca-members' ); ?></li>
-				<li data-tab="hours">⏳ <?php esc_html_e( 'Voluntariado', 'convoca-members' ); ?></li>
-				<li data-tab="payments">💳 <?php esc_html_e( 'Pagos y Cuotas', 'convoca-members' ); ?></li>
+			<ul role="tablist" aria-label="<?php esc_attr_e( 'Secciones de Mi Área', 'convoca-members' ); ?>">
+				<li id="conv-tab-profile" class="active" role="tab" aria-selected="true" aria-controls="conv-main-content" tabindex="0" data-tab="profile">👤 <?php esc_html_e( 'Mis Datos', 'convoca-members' ); ?></li>
+				<li id="conv-tab-membership" role="tab" aria-selected="false" aria-controls="conv-main-content" tabindex="-1" data-tab="membership">🪪 <?php esc_html_e( 'Carnet Digital', 'convoca-members' ); ?></li>
+				<li id="conv-tab-inscriptions" role="tab" aria-selected="false" aria-controls="conv-main-content" tabindex="-1" data-tab="inscriptions">📝 <?php esc_html_e( 'Inscripciones', 'convoca-members' ); ?></li>
+				<li id="conv-tab-hours" role="tab" aria-selected="false" aria-controls="conv-main-content" tabindex="-1" data-tab="hours">⏳ <?php esc_html_e( 'Voluntariado', 'convoca-members' ); ?></li>
+				<li id="conv-tab-payments" role="tab" aria-selected="false" aria-controls="conv-main-content" tabindex="-1" data-tab="payments">💳 <?php esc_html_e( 'Pagos y Cuotas', 'convoca-members' ); ?></li>
 				<?php
 				// Mis turnos (shifts#19): solo si el plugin de turnos está puesto. El contenido lo pone él
 				// (sus shortcodes), aquí no se reescribe nada suyo.
 				if ( shortcode_exists( 'convoca_proximos_turnos' ) ) :
 					?>
-					<li data-tab="turnos">📅 <?php esc_html_e( 'Mis turnos', 'convoca-members' ); ?></li>
+					<li id="conv-tab-turnos" role="tab" aria-selected="false" aria-controls="conv-main-content" tabindex="-1" data-tab="turnos">📅 <?php esc_html_e( 'Mis turnos', 'convoca-members' ); ?></li>
 				<?php endif; ?>
-				<li data-tab="privacy">🔒 <?php esc_html_e( 'Mis datos y privacidad', 'convoca-members' ); ?></li>
-				<li data-tab="search">🔍 <?php esc_html_e( 'Buscar', 'convoca-members' ); ?></li>
-				<li data-tab="notifications" class="conv-notif-tab">🔔 <?php esc_html_e( 'Notificaciones', 'convoca-members' ); ?> <span class="conv-notif-badge" id="conv-notif-count" style="display:none">0</span></li>
+				<li id="conv-tab-privacy" role="tab" aria-selected="false" aria-controls="conv-main-content" tabindex="-1" data-tab="privacy">🔒 <?php esc_html_e( 'Mis datos y privacidad', 'convoca-members' ); ?></li>
+				<li id="conv-tab-search" role="tab" aria-selected="false" aria-controls="conv-main-content" tabindex="-1" data-tab="search">🔍 <?php esc_html_e( 'Buscar', 'convoca-members' ); ?></li>
+				<li id="conv-tab-notifications" role="tab" aria-selected="false" aria-controls="conv-main-content" tabindex="-1" data-tab="notifications" class="conv-notif-tab">🔔 <?php esc_html_e( 'Notificaciones', 'convoca-members' ); ?> <span class="conv-notif-badge" id="conv-notif-count" style="display:none">0</span></li>
 			</ul>
 			<?php $this->render_enlaces_panel(); ?>
 		</nav>
@@ -522,7 +522,7 @@ class Mi_Area {
 				<?php $this->render_navegacion_panel(); ?>
 
 				<!-- Content -->
-				<main class="conv-panel-content card-glass" id="conv-main-content">
+				<main class="conv-panel-content card-glass" id="conv-main-content" role="tabpanel" aria-labelledby="conv-tab-profile">
 					<div class="conv-spinner"></div>
 				</main>
 			</div>

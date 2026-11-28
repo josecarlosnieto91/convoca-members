@@ -1,3 +1,11 @@
+## [2.16.37] — 2026-11-27
+
+### Corregido
+
+- **Pestañas de Mi Área operables con teclado (#129).** `role="tablist"`/`tab`/`tabpanel`,
+  `aria-selected` y `tabindex` gestionados; flechas recorren, Intro y Espacio activan, y el panel
+  anuncia su pestaña con `aria-labelledby`.
+
 ## [2.16.36] — 2026-11-27
 
 ### Corregido
