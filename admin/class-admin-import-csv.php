@@ -704,7 +704,7 @@ class Admin_Import_CSV {
 		}
 
 		// Save meta (for both new and updated members).
-		$meta_map = array( 'apellidos', 'email', 'dni', 'telefono', 'direccion', 'municipio', 'plan' );
+		$meta_map = array( 'nombre', 'apellidos', 'email', 'dni', 'telefono', 'direccion', 'municipio', 'plan' );
 		foreach ( $meta_map as $m ) {
 			if ( ! empty( $row[ $m ] ) ) {
 				Datos_Socio::guardar_meta( $post_id, $m, sanitize_text_field( $row[ $m ] ) );

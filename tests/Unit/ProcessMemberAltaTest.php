@@ -146,6 +146,7 @@ final class ProcessMemberAltaTest extends TestCase {
 		// El DNI se normaliza: en mayúsculas y sin espacios ni guiones (si no, no casa en las búsquedas).
 		$this->assertSame( '00000000T', (string) \Convoca\Members\Datos_Socio::leer_meta( $id, 'dni' ) );
 		$this->assertSame( 'ada@example.test', (string) get_post_meta( $id, '_convoca_email', true ) );
+		$this->assertSame( 'Ada Lovelace', (string) get_post_meta( $id, '_convoca_nombre', true ), 'el nombre también vive en su meta, para el buscador' );
 		$this->assertSame( 'bronze', (string) get_post_meta( $id, '_convoca_plan', true ) );
 		// Ojo con los nombres, que se cruzan: `forma_pago` es **qué** se paga (cuota o voluntariado) y el método
 		// elegido en el alta va en `metodo_pago`. Confundirlos deja la ficha diciendo que paga «transferencia»

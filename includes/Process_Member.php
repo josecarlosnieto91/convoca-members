@@ -459,6 +459,7 @@ class Process_Member {
 			// renovación, horas y filtros resuelven el plan por esta meta (issue #115).
 			$meta = array(
 				'estado_miembro'       => $estado,
+				'nombre'               => $nombre,
 				'plan'                 => $plan_key,
 				'plan_label'           => $plan_data['label'] ?? $plan_key,
 				'plan_modalidad'       => $plan,
@@ -633,6 +634,7 @@ class Process_Member {
 		// Update the record with the new entry data.
 		$meta = array(
 			'estado_miembro'    => $estado,
+			'nombre'            => $nombre,
 			'plan'              => $plan_key,
 			'plan_label'        => $plan_data['label'] ?? $plan_key,
 			'sub_plan'          => $sub_plan,

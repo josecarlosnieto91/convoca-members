@@ -217,6 +217,7 @@ final class ImportarUnaFilaTest extends TestCase {
 
 		$meta = $GLOBALS['_wp_stores']['post_meta'][ $r ] ?? array();
 		$this->assertSame( 'ada@example.test', $meta['_convoca_email'] ?? '' );
+		$this->assertSame( 'Ada Lovelace', $meta['_convoca_nombre'] ?? '' );
 		$this->assertSame( '00000000T', \Convoca\Members\Datos_Socio::leer_meta( $r, 'dni' ) );
 		$this->assertSame( '600000000', $meta['_convoca_telefono'] ?? '' );
 		$this->assertSame( 'Oviedo', $meta['_convoca_municipio'] ?? '' );

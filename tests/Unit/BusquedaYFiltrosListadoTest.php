@@ -234,6 +234,17 @@ final class BusquedaYFiltrosListadoTest extends TestCase {
 	}
 
 	/**
+	 * La búsqueda encuentra por nombre y apellidos, también en fichas del formulario (#124).
+	 */
+	public function test_la_busqueda_encuentra_por_nombre_y_apellidos(): void {
+		$this->ficha( 600, 'Ana Pérez', array( '_convoca_nombre' => 'Ana Pérez' ) );
+		$this->ficha( 601, 'Bea López', array( '_convoca_nombre' => 'Bea López', '_convoca_apellidos' => 'López' ) );
+
+		$this->assertSame( array( 600 ), $this->listar( array( 's' => 'Pérez' ) ) );
+		$this->assertSame( array( 601 ), $this->listar( array( 's' => 'López' ) ) );
+	}
+
+	/**
 	 * Y por DNI.
 	 */
 	public function test_la_busqueda_encuentra_por_dni(): void {
