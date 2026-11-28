@@ -1,3 +1,11 @@
+## [2.16.34] — 2026-11-27
+
+### Corregido
+
+- **La validación en vivo escucha los campos reales (#131).** Los selectores usan los `id` del
+  formulario (`#conv-dni`, `#conv-email`, `#conv-telefono`, `#conv-nombre`, `#conv-fechanac`), no la
+  copia inexistente con prefijo `conv-alta-`.
+
 ## [2.16.33] — 2026-11-27
 
 ### Corregido

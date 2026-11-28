@@ -77,7 +77,7 @@
     );
 
     /* ── Real‑time blur validation on critical fields ── */
-    const criticalSelectors = '#conv-alta-dni, #conv-alta-email, #conv-alta-telefono, #conv-alta-nombre, #conv-alta-fechanac';
+    const criticalSelectors = '#conv-dni, #conv-email, #conv-telefono, #conv-nombre, #conv-fechanac';
     conv.$$(criticalSelectors, form).forEach(function (input) {
       input.addEventListener('blur', function () {
         const field = input.closest('.convoca-field');
