@@ -147,6 +147,15 @@ class EstadosTest extends TestCase
         $this->assertEquals('pendiente_pago', get_post_meta(self::POST_ID, '_convoca_estado_miembro', true));
     }
 
+    public function test_change_no_permite_reactivar_baja_solicitando_baja(): void
+    {
+        update_post_meta(self::POST_ID, '_convoca_estado_miembro', 'baja');
+        $resultado = \Convoca\Members\Estados::change(self::POST_ID, 'baja_solicitada');
+
+        $this->assertInstanceOf(\WP_Error::class, $resultado);
+        $this->assertSame('invalid_transition', $resultado->get_error_code());
+    }
+
     public function test_change_concurrent_lock_returns_error(): void
     {
         $uniquePostId = 9999;
