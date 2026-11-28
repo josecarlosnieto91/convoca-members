@@ -36,6 +36,8 @@ class Payment_Listener {
 		// Only listen to the unified hook to avoid duplication.
 		add_action( 'convoca_gateway_payment_completed', array( $this, 'on_payment_completed' ), 10, 5 );
 		add_action( 'convoca_gateway_payment_failed', array( $this, 'on_payment_failed' ), 10, 2 );
+		// Si el cron tiene el cerrojo de la ficha, el pago se reintenta en vez de perderse (#136).
+		add_action( 'convoca_members_reintentar_pago', array( $this, 'on_payment_completed' ), 10, 4 );
 	}
 
 	/**
@@ -69,104 +71,121 @@ class Payment_Listener {
 			return;
 		}
 
-		// Fetch specific meta fields individually to avoid array-vs-string comparison issues.
-		$current_member_state = get_post_meta( $origin_id, '_convoca_estado_miembro', true );
-		$old_renewal_date     = get_post_meta( $origin_id, '_convoca_fecha_renovacion', true );
-		// E2E-9: dedupe contra el pago realmente APLICADO (lo escribe este listener
-		// al procesar). Comparar con _convoca_pago_id era incorrecto porque el
-		// flujo de alta lo pre-vincula al crear el pago → skip siempre.
-		$applied_pago_id = (int) get_post_meta( $origin_id, '_convoca_pago_aplicado_id', true );
-
-		if ( $applied_pago_id === (int) $pago_id ) {
-			\Convoca\Core\Logger::info( "Member payment $pago_id already applied to member #$origin_id, skipping.", 'Members/Payment' );
-			return;
-		}
-
-		// El plan se valida ANTES de tocar nada (members#39). Antes se marcaba la cuota como
-		// «activa» (y se guardaban método y pago) y DESPUÉS se comprobaba el plan: si el plan no
-		// existía, el listener salía dejando la ficha con la cuota pagada, sin fecha de renovación
-		// y sin la condición de socio —un estado que se veía en la ficha y que nadie había anotado
-		// en ninguna parte (medido: ficha con plan inexistente → cuota «activa» + es_socio false).
-		$plan_key  = get_post_meta( $origin_id, '_convoca_plan', true );
-		$plan_data = CPT_Miembro::get_plan( $plan_key );
-		if ( ! $plan_data ) {
-			\Convoca\Core\Logger::error( "No se pudo procesar renovación: el plan '$plan_key' no existe para el miembro #$origin_id.", 'Members/Payment', $origin_id );
-
-			// Y queda anotado donde la junta lo lee: el campo «Incidencias» de la ficha, que ya
-			// existe y ya tiene pantalla. Sin esto el pago entraba y nadie sabía por qué la
-			// persona no contaba como socia.
-			self::anotar_incidencia_cuota(
-				(int) $origin_id,
-				sprintf(
-					/* translators: 1: plan key, 2: payment id */
-					__( 'Cuota pagada (pago %2$d) que NO se ha podido aplicar: el plan «%1$s» no existe en esta ficha. Corregir el plan y volver a aplicar el pago antes de darla por renovada.', 'convoca-members' ),
-					(string) $plan_key,
-					(int) $pago_id
-				)
+		// Mismo cerrojo que el cron de renovación: el cobro y la revisión de vencimientos no pueden
+		// leer y escribir la ficha a la vez (#136). Si está ocupado, se reintenta el pago completo.
+		$member_lock = 'convoca_autorenewal_' . (int) $origin_id;
+		if ( ! \Convoca\Core\Utils::acquire_lock( $member_lock, 300 ) ) {
+			wp_schedule_single_event(
+				time() + 600,
+				'convoca_members_reintentar_pago',
+				array( $pago_id, $origin, $origin_id, $meta )
 			);
+			\Convoca\Core\Logger::warning( "Pago $pago_id espera: la ficha #$origin_id está siendo renovada por el cron. Reintento programado.", 'Members/Payment', $origin_id );
 			return;
 		}
 
-		// Update fee information.
-		update_post_meta( $origin_id, '_convoca_estado_cuota', 'activa' );
-		update_post_meta( $origin_id, '_convoca_metodo_pago', $meta['method'] ?? '' );
-		update_post_meta( $origin_id, '_convoca_pago_id', $pago_id );
-		update_post_meta( $origin_id, '_convoca_forma_pago', 'cuota' );
+		try {
+			// Fetch specific meta fields individually to avoid array-vs-string comparison issues.
+			$current_member_state = get_post_meta( $origin_id, '_convoca_estado_miembro', true );
+			$old_renewal_date     = get_post_meta( $origin_id, '_convoca_fecha_renovacion', true );
+			// E2E-9: dedupe contra el pago realmente APLICADO (lo escribe este listener
+			// al procesar). Comparar con _convoca_pago_id era incorrecto porque el
+			// flujo de alta lo pre-vincula al crear el pago → skip siempre.
+			$applied_pago_id = (int) get_post_meta( $origin_id, '_convoca_pago_aplicado_id', true );
 
-		// Update renewal date.
-		// Policy (2026-09): a late renewal always adds one year to the previous
-		// vencimiento — never from today. First activation (no previous date)
-		// starts from today.
-		$today = current_time( 'Y-m-d' );
-		if ( ! empty( $old_renewal_date ) && in_array( $current_member_state, array( 'activo', 'suspendido', 'baja_solicitada' ), true ) ) {
-			// Renewal (on time or late, in grace): base = previous vencimiento.
-			$new_renewal = \Convoca\Core\Utils::format_date( $old_renewal_date . ' +1 year', 'Y-m-d' );
-		} else {
-			// First activation or re-entry after baja: new cycle from today.
-			$new_renewal = \Convoca\Core\Utils::format_date( $today . ' +1 year', 'Y-m-d' );
-		}
-
-		update_post_meta( $origin_id, '_convoca_fecha_renovacion', $new_renewal );
-		delete_post_meta( $origin_id, '_convoca_last_renewal_notice' );
-		delete_post_meta( $origin_id, '_convoca_msg_renovacion_proxima' );
-
-		// Pagar la cuota concede (o confirma) la condición de socio, sin tocar el voluntariado:
-		// quien colabora y además paga sigue siendo las dos cosas. Si es una renovación, el
-		// ciclo anterior se cierra y empieza uno nuevo.
-		if ( ! empty( $old_renewal_date ) ) {
-			\Convoca\Members\Roles_Miembro::reiniciar_ciclo( (int) $origin_id );
-		}
-		\Convoca\Members\Roles_Miembro::registrar_socio_por_pago( (int) $origin_id );
-
-		$email_manager = new Email_Manager();
-
-		// Activation / Renewal logic.
-		if ( $current_member_state === 'pendiente_pago' || $current_member_state === 'pendiente_documentacion' ) {
-			// First activation via approve_member (assigns number, sets dates, etc.).
-			CPT_Miembro::approve_member( $origin_id );
-			// Generate WP user + send credentials.
-			Process_Member::handle_approved( $origin_id );
-			\Convoca\Core\Logger::info( "Membresía activada tras pago completado (ID: $pago_id) para el miembro #$origin_id.", 'Members/Payment', $origin_id );
-		} else {
-			// Renewal (activo, suspendido in grace, or re-entry from baja).
-			// Return to 'activo' when needed — approve_member is NOT used here so
-			// the computed $new_renewal (from vencimiento) is preserved and the
-			// WP user / credentials are left untouched.
-			if ( $current_member_state !== 'activo' ) {
-				Estados::change( $origin_id, 'activo', "Cuota renovada tras pago (ID: $pago_id). Reactivación desde {$current_member_state}." );
+			if ( $applied_pago_id === (int) $pago_id ) {
+				\Convoca\Core\Logger::info( "Member payment $pago_id already applied to member #$origin_id, skipping.", 'Members/Payment' );
+				return;
 			}
-			delete_post_meta( $origin_id, '_convoca_fecha_baja' );
-			update_post_meta( $origin_id, '_convoca_fecha_inicio_periodo', '' );
-			\Convoca\Core\Logger::info( "Cuota renovada por un año (Nueva fecha: $new_renewal) para el miembro #$origin_id.", 'Members/Payment', $origin_id );
 
-			// Send renewal completed email.
-			$email_manager->send_renovacion_completada( $origin_id );
+			// El plan se valida ANTES de tocar nada (members#39). Antes se marcaba la cuota como
+			// «activa» (y se guardaban método y pago) y DESPUÉS se comprobaba el plan: si el plan no
+			// existía, el listener salía dejando la ficha con la cuota pagada, sin fecha de renovación
+			// y sin la condición de socio —un estado que se veía en la ficha y que nadie había anotado
+			// en ninguna parte (medido: ficha con plan inexistente → cuota «activa» + es_socio false).
+			$plan_key  = get_post_meta( $origin_id, '_convoca_plan', true );
+			$plan_data = CPT_Miembro::get_plan( $plan_key );
+			if ( ! $plan_data ) {
+				\Convoca\Core\Logger::error( "No se pudo procesar renovación: el plan '$plan_key' no existe para el miembro #$origin_id.", 'Members/Payment', $origin_id );
+
+				// Y queda anotado donde la junta lo lee: el campo «Incidencias» de la ficha, que ya
+				// existe y ya tiene pantalla. Sin esto el pago entraba y nadie sabía por qué la
+				// persona no contaba como socia.
+				self::anotar_incidencia_cuota(
+					(int) $origin_id,
+					sprintf(
+					/* translators: 1: plan key, 2: payment id */
+						__( 'Cuota pagada (pago %2$d) que NO se ha podido aplicar: el plan «%1$s» no existe en esta ficha. Corregir el plan y volver a aplicar el pago antes de darla por renovada.', 'convoca-members' ),
+						(string) $plan_key,
+						(int) $pago_id
+					)
+				);
+				return;
+			}
+
+			// Update fee information.
+			update_post_meta( $origin_id, '_convoca_estado_cuota', 'activa' );
+			update_post_meta( $origin_id, '_convoca_metodo_pago', $meta['method'] ?? '' );
+			update_post_meta( $origin_id, '_convoca_pago_id', $pago_id );
+			update_post_meta( $origin_id, '_convoca_forma_pago', 'cuota' );
+
+			// Update renewal date.
+			// Policy (2026-09): a late renewal always adds one year to the previous
+			// vencimiento — never from today. First activation (no previous date)
+			// starts from today.
+			$today = current_time( 'Y-m-d' );
+			if ( ! empty( $old_renewal_date ) && in_array( $current_member_state, array( 'activo', 'suspendido', 'baja_solicitada' ), true ) ) {
+				// Renewal (on time or late, in grace): base = previous vencimiento.
+				$new_renewal = \Convoca\Core\Utils::format_date( $old_renewal_date . ' +1 year', 'Y-m-d' );
+			} else {
+				// First activation or re-entry after baja: new cycle from today.
+				$new_renewal = \Convoca\Core\Utils::format_date( $today . ' +1 year', 'Y-m-d' );
+			}
+
+			update_post_meta( $origin_id, '_convoca_fecha_renovacion', $new_renewal );
+			delete_post_meta( $origin_id, '_convoca_last_renewal_notice' );
+			delete_post_meta( $origin_id, '_convoca_msg_renovacion_proxima' );
+
+			// Pagar la cuota concede (o confirma) la condición de socio, sin tocar el voluntariado:
+			// quien colabora y además paga sigue siendo las dos cosas. Si es una renovación, el
+			// ciclo anterior se cierra y empieza uno nuevo.
+			if ( ! empty( $old_renewal_date ) ) {
+				\Convoca\Members\Roles_Miembro::reiniciar_ciclo( (int) $origin_id );
+			}
+			\Convoca\Members\Roles_Miembro::registrar_socio_por_pago( (int) $origin_id );
+
+			$email_manager = new Email_Manager();
+
+			// Activation / Renewal logic.
+			if ( $current_member_state === 'pendiente_pago' || $current_member_state === 'pendiente_documentacion' ) {
+				// First activation via approve_member (assigns number, sets dates, etc.).
+				CPT_Miembro::approve_member( $origin_id );
+				// Generate WP user + send credentials.
+				Process_Member::handle_approved( $origin_id );
+				\Convoca\Core\Logger::info( "Membresía activada tras pago completado (ID: $pago_id) para el miembro #$origin_id.", 'Members/Payment', $origin_id );
+			} else {
+				// Renewal (activo, suspendido in grace, or re-entry from baja).
+				// Return to 'activo' when needed — approve_member is NOT used here so
+				// the computed $new_renewal (from vencimiento) is preserved and the
+				// WP user / credentials are left untouched.
+				if ( $current_member_state !== 'activo' ) {
+					Estados::change( $origin_id, 'activo', "Cuota renovada tras pago (ID: $pago_id). Reactivación desde {$current_member_state}." );
+				}
+				delete_post_meta( $origin_id, '_convoca_fecha_baja' );
+				update_post_meta( $origin_id, '_convoca_fecha_inicio_periodo', '' );
+				\Convoca\Core\Logger::info( "Cuota renovada por un año (Nueva fecha: $new_renewal) para el miembro #$origin_id.", 'Members/Payment', $origin_id );
+
+				// Send renewal completed email.
+				$email_manager->send_renovacion_completada( $origin_id );
+			}
+
+			// Fire custom action for other integrations.
+			// E2E-9: marcar el pago como aplicado SOLO tras procesar con éxito.
+			update_post_meta( $origin_id, '_convoca_pago_aplicado_id', $pago_id );
+			\Convoca\Core\Utils::do_action( 'convoca_members_cuota_pagada', 'convoca_miembro_cuota_pagada', $origin_id, $pago_id );
+		} finally {
+			\Convoca\Core\Utils::release_lock( $member_lock );
 		}
-
-		// Fire custom action for other integrations.
-		// E2E-9: marcar el pago como aplicado SOLO tras procesar con éxito.
-		update_post_meta( $origin_id, '_convoca_pago_aplicado_id', $pago_id );
-		\Convoca\Core\Utils::do_action( 'convoca_members_cuota_pagada', 'convoca_miembro_cuota_pagada', $origin_id, $pago_id );
 	}
 
 	/**

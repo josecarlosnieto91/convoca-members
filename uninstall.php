@@ -86,6 +86,7 @@ $wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}convoca_member_sequence" );
 // Clear cron.
 wp_clear_scheduled_hook( 'convoca_members_reminder_week' );
 wp_clear_scheduled_hook( 'convoca_members_reminder_month' );
+wp_clear_scheduled_hook( 'convoca_members_reintentar_pago' );
 // Faltaban los dos diarios de verdad (convoca-members.php): seguían disparándose.
 wp_clear_scheduled_hook( 'convoca_daily_event' );
 wp_clear_scheduled_hook( 'convoca_weekly_event' );

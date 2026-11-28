@@ -1,3 +1,11 @@
+## [2.16.28] — 2026-11-27
+
+### Corregido
+
+- **Cobro y revisión de vencimientos comparten cerrojo (#136).** El listener de pago usa
+  `convoca_autorenewal_{id}`; si el cron lo tiene tomado, reprograma el pago en 10 minutos y lo
+  libera siempre en `finally`.
+
 ## [2.16.27] — 2026-11-27
 
 ### Corregido
