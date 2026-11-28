@@ -101,7 +101,7 @@ class Estados {
 	 * @param string $note     Optional note for the audit log.
 	 * @return bool|\WP_Error
 	 */
-	public static function change( int $post_id, string $nuevo, string $note = '' ): bool|\WP_Error {
+	public static function change( int $post_id, string $nuevo, string $note = '', bool $notificar = true ): bool|\WP_Error {
 		// Prevenir cambios de estado concurrentes con lock atómico en BD (Utils::acquire_lock).
 		$lock_key = "convoca_state_change_{$post_id}";
 		if ( ! \Convoca\Core\Utils::acquire_lock( $lock_key, 10 ) ) {
@@ -170,7 +170,9 @@ class Estados {
 		 * @param string $nuevo      New state.
 		 * @param string $old      Previous state.
 		 */
-		\Convoca\Core\Utils::do_action( 'convoca_members_estado_changed', 'convoca_estado_changed', $post_id, $nuevo, $old );
+		if ( $notificar ) {
+			\Convoca\Core\Utils::do_action( 'convoca_members_estado_changed', 'convoca_estado_changed', $post_id, $nuevo, $old );
+		}
 
 		return true;
 	}

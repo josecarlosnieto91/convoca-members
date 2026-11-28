@@ -1,3 +1,11 @@
+## [2.16.31] — 2026-11-27
+
+### Corregido
+
+- **Alta y re-alta dejan su asiento en el historial (#133).** El estado se escribe desde
+  `Estados::change()`, no antes; el alta registra «Registro inicial» y
+  `_convoca_fecha_pendiente_pago`, y la re-alta «Re-alta» sin borrar lo anterior.
+
 ## [2.16.30] — 2026-11-27
 
 ### Corregido

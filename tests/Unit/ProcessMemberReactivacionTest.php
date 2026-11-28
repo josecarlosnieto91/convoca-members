@@ -152,6 +152,28 @@ final class ProcessMemberReactivacionTest extends TestCase {
 	}
 
 	/**
+	 * La re-alta deja su asiento y no borra el historial anterior (#133).
+	 */
+	public function test_la_realta_deja_asiento_sin_borrar_historial(): void {
+		$this->ficha_en_baja(
+			55,
+			array(
+				'_convoca_historial' => array(
+					array( 'de' => 'activo', 'a' => 'baja', 'fecha' => '2025-06-30 10:00:00', 'usuario' => 1, 'nota' => 'Baja' ),
+				),
+			)
+		);
+
+		Process_Member::register( $this->realta() );
+
+		$historial = \Convoca\Members\Estados::get_history( 55 );
+		$this->assertCount( 2, $historial, 'se conserva el asiento anterior' );
+		$this->assertSame( 'baja', $historial[1]['de'] );
+		$this->assertSame( 'pendiente_pago', $historial[1]['a'] );
+		$this->assertStringContainsString( 'Re-alta', $historial[1]['nota'] );
+	}
+
+	/**
 	 * Y no deja una segunda ficha de la misma persona.
 	 */
 	public function test_no_se_duplica_la_ficha(): void {
