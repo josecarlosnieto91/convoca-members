@@ -1,3 +1,10 @@
+## [2.16.18] — 2026-11-27
+
+### Corregido
+
+- **Contraste AA en la vista de renovación (#114).** Las reglas de alerta se aplican también en
+  `mi-area.css`, que es la hoja que carga esa pantalla; antes solo estaban en la CSS pública.
+
 ## [2.16.17] — 2026-11-27
 
 ### Corregido
