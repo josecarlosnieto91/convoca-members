@@ -1,3 +1,10 @@
+## [2.16.20] — 2026-11-27
+
+### Corregido
+
+- **El alta AJAX devuelve `member_id` (#145).** El adaptador expone el `id` real, evita avisos de
+  índice indefinido y no repite el hook legado de creación, que Core ya atiende.
+
 ## [2.16.19] — 2026-11-27
 
 ### Corregido

@@ -251,6 +251,17 @@ class Form_Handler {
 		);
 	}
 
+	/**
+	 * Contrato del alta AJAX: el JS consume `member_id` (#145).
+	 *
+	 * @param array<string, mixed> $result Resultado de Process_Member.
+	 * @return array<string, mixed>
+	 */
+	public static function resultado_ajax( array $result ): array {
+		$result['member_id'] = (int) ( $result['id'] ?? 0 );
+		return $result;
+	}
+
 	public function handle_submit(): void {
 		check_ajax_referer( 'convoca_alta_nonce', 'nonce' );
 
@@ -268,9 +279,9 @@ class Form_Handler {
 			);
 		}
 
-		do_action( 'convoca_member_created', $result['id'], $result );
-
-		wp_send_json_success( $result );
+		// El aviso canónico lo emite Process_Member (`convoca_members_created`); no se repite aquí
+		// el hook legado, que Core también escucha y duplicaría la notificación (#145).
+		wp_send_json_success( self::resultado_ajax( $result ) );
 	}
 
 	/**
