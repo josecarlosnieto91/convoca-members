@@ -42,6 +42,16 @@ class RenovacionPorHorasTest extends TestCase {
 		);
 	}
 
+	/** La renovación por horas deja su asiento en el historial, sin pago. */
+	public function test_la_renovacion_por_horas_deja_historial(): void {
+		$cpt = $this->leer( 'includes/CPT_Miembro.php' );
+
+		$this->assertSame( 1, substr_count( $cpt, 'Estados::registrar_nota(' ), 'un único asiento' );
+		$this->assertStringContainsString( "'Renovación por horas: %1\$sh de %2\$sh. Vigencia: %3\$s → %4\$s.'", $cpt );
+		$this->assertStringContainsString( '$base,', $cpt );
+		$this->assertStringContainsString( '$next', $cpt );
+	}
+
 	/** El panel recibe las horas; sin esto el socio no puede saber nada. */
 	public function test_el_panel_recibe_las_horas(): void {
 		$api = $this->leer( 'includes/Rest_API.php' );

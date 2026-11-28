@@ -856,6 +856,17 @@ class CPT_Miembro {
 		update_post_meta( $post_id, '_convoca_fecha_inicio_periodo', $base );
 		update_post_meta( $post_id, '_convoca_estado_cuota', 'activa' );
 
+		Estados::registrar_nota(
+			$post_id,
+			sprintf(
+				'Renovación por horas: %1$sh de %2$sh. Vigencia: %3$s → %4$s.',
+				$ciclo['horas'],
+				$ciclo['objetivo'],
+				$base,
+				$next
+			)
+		);
+
 		\Convoca\Core\Logger::info(
 			"#$post_id renueva por horas ({$ciclo['horas']}h >= {$ciclo['objetivo']}h, desde {$origen}). Nueva renovación: {$next}.",
 			'Members/' . ( 'cron' === $origen ? 'Cron' : 'Panel' ),
