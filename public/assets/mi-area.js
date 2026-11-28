@@ -109,11 +109,6 @@
       }
     },
 
-    /* ── Fetch Profile (current session) ──────── */
-    fetchProfile: function() {
-      // TODO: implementar carga del perfil
-    },
-
     handleLogin: function(form) {
       const btn = form.querySelector('button');
       const result = conv.$('.form-result', form);

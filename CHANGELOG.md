@@ -1,3 +1,10 @@
+## [2.16.21] — 2026-11-27
+
+### Corregido
+
+- **Una sola definición de `fetchProfile` (#144).** Se retira el stub sobrescrito; el panel
+  conserva la implementación efectiva que carga el perfil.
+
 ## [2.16.20] — 2026-11-27
 
 ### Corregido
