@@ -609,6 +609,11 @@ class CPT_Miembro {
 			return false;
 		}
 
+		// Una baja no se reactiva con un clic: exige el flujo de re-alta o pago.
+		if ( 'baja' === $status ) {
+			return false;
+		}
+
 		$wpdb->query( 'START TRANSACTION' );
 
 		try {

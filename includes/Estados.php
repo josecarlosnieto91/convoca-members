@@ -52,6 +52,17 @@ class Estados {
 	);
 
 	/**
+	 * ¿La transición está permitida por la máquina de estados?
+	 *
+	 * @param string $desde Estado actual.
+	 * @param string $hasta Estado destino.
+	 * @return bool
+	 */
+	public static function permite( string $desde, string $hasta ): bool {
+		return in_array( $hasta, self::TRANSITIONS[ $desde ] ?? array(), true );
+	}
+
+	/**
 	 * Human-readable labels.
 	 *
 	 * @return array<string, string>

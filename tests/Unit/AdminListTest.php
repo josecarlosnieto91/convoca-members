@@ -212,6 +212,36 @@ final class AdminListTest extends TestCase {
 	}
 
 	/**
+	 * «Aprobar alta» solo con transición válida y permiso (#122).
+	 */
+	public function test_aprobar_alta_solo_cuando_procede_y_se_puede(): void {
+		$GLOBALS['_test_caps']['edit_users'] = true;
+		$lista = new class() extends Admin_List {
+			public function row_actions( $actions, $always_visible = false ): string {
+				return implode( '|', $actions );
+			}
+		};
+
+		$pendiente = $this->ficha( 40, array( '_convoca_estado_miembro' => 'pendiente_documentacion' ) );
+		$baja      = $this->ficha( 41, array( '_convoca_estado_miembro' => 'baja' ) );
+		$suspendido = $this->ficha( 42, array( '_convoca_estado_miembro' => 'suspendido' ) );
+
+		$html = $lista->column_nombre( $pendiente );
+		$this->assertStringContainsString( 'convoca_approve_member', $html );
+		$this->assertDoesNotMatchRegularExpression( '/convoca_approve_member[^>]*onclick/', $html, 'una pendiente no pide confirmación' );
+
+		$this->assertFalse( CPT_Miembro::approve_member( 41 ), 'el manejador tampoco reactiva una baja' );
+		$html = $lista->column_nombre( $baja );
+		$this->assertStringNotContainsString( 'convoca_approve_member', $html, 'una baja no se reactiva con un clic' );
+
+		$html = $lista->column_nombre( $suspendido );
+		$this->assertMatchesRegularExpression( '/convoca_approve_member[^>]*onclick="return confirm\(/', $html, 'reactivar pide confirmación' );
+
+		$GLOBALS['_test_caps']['edit_users'] = false;
+		$this->assertStringNotContainsString( 'convoca_approve_member', $lista->column_nombre( $pendiente ) );
+	}
+
+	/**
 	 * El número sale relleno a cuatro cifras; sin número lo dice y, si procede, ofrece arreglarlo.
 	 */
 	public function test_el_numero(): void {

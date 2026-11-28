@@ -509,14 +509,18 @@ class Admin_List extends \WP_List_Table {
 			) . '">' . __( 'Ver ficha', 'convoca-members' ) . '</a>',
 		);
 
-		// Approval action.
-		$status = get_post_meta( $item->ID, '_convoca_estado_miembro', true );
-		if ( $status !== 'activo' ) {
+		// Approval action: mismo permiso que el manejador y solo si la transición tiene sentido.
+		$status     = (string) get_post_meta( $item->ID, '_convoca_estado_miembro', true );
+		$aprobables = array( 'pendiente_documentacion', 'pendiente_pago', 'suspendido', 'baja_solicitada' );
+		if ( current_user_can( 'edit_users' ) && in_array( $status, $aprobables, true ) && Estados::permite( $status, 'activo' ) ) {
 			$approve_url        = wp_nonce_url(
 				admin_url( 'admin-post.php?action=convoca_approve_member&member_id=' . $item->ID ),
 				'convoca_approve_member_' . $item->ID
 			);
-			$actions['approve'] = '<a href="' . esc_url( $approve_url ) . '" style="color:#00a32a" aria-label="' . esc_attr(
+			$confirmar          = in_array( $status, array( 'suspendido', 'baja_solicitada' ), true )
+				? ' onclick="return confirm(\'' . esc_js( __( '¿Reactivar esta ficha como socio activo?', 'convoca-members' ) ) . '\');"'
+				: '';
+			$actions['approve'] = '<a href="' . esc_url( $approve_url ) . '" style="color:#00a32a"' . $confirmar . ' aria-label="' . esc_attr(
 				sprintf(
 				/* translators: %s: member name */
 					__( 'Aprobar alta de %s', 'convoca-members' ),
